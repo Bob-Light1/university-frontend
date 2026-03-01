@@ -200,7 +200,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
                 </ListItemIcon>
                 <ListItemText
                   primary="Matricule"
-                  secondary={teacher.matricule || 'N/A'}
+                  secondary={teacher.matricule || 'TEA'}
                   slotProps={{
                     primary: { variant: 'caption', color: 'text.secondary' },
                     secondary: { variant: 'body2', fontWeight: 600 },
@@ -429,7 +429,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
                   <Chip
                     key={subject._id}
                     icon={<School sx={{ fontSize: 14 }} />}
-                    label={subject.name}
+                    label={subject.subject_name}
                     size="small"
                     variant="outlined"
                     color="primary"

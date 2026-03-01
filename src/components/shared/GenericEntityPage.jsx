@@ -193,6 +193,8 @@ const GenericEntityPage = ({
   //   - a function(classes)     → filter array   (legacy style – only classes)
   //   - a static array
   const computedFilters = useMemo(() => {
+     if (relatedDataLoading) return [];
+
     if (typeof filterConfig === 'function') {
       // Detect legacy signature: function expects a plain array (classes only)
       // We call it with the full relatedData object; configs that only use
@@ -201,7 +203,7 @@ const GenericEntityPage = ({
     }
     if (Array.isArray(filterConfig)) return filterConfig;
     return [];
-  }, [filterConfig, relatedData]);
+  }, [filterConfig, relatedData, relatedDataLoading]);
 
   const metrics = useMemo(
     () => getKPIMetrics(kpis, theme),
@@ -350,9 +352,27 @@ const GenericEntityPage = ({
       </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end', px: 2 }}>
-        <IconButton size="small" onClick={() => handleOpenDrawer(entity)}    sx={{ color: 'primary.main' }}><Visibility fontSize="small" /></IconButton>
-        <IconButton size="small" onClick={() => handleOpenFormModal(entity)} sx={{ color: 'info.main'    }}><Edit      fontSize="small" /></IconButton>
-        <IconButton size="small" onClick={() => handleArchive(entity._id)}   sx={{ color: 'error.main'   }}><Delete    fontSize="small" /></IconButton>
+        <IconButton 
+          size="small" 
+          onClick={() => handleOpenDrawer(entity)}    
+          sx={{ color: 'primary.main' }}
+        >
+          <Visibility fontSize="small" />
+        </IconButton>
+        <IconButton 
+          size="small" 
+          onClick={() => handleOpenFormModal(entity)} 
+          sx={{ color: 'info.main'    }}
+        >
+          <Edit fontSize="small" />
+        </IconButton>
+        <IconButton 
+          size="small" 
+          onClick={() => handleArchive(entity._id)}   
+          sx={{ color: 'error.main' }}
+        >
+          <Delete fontSize="small" />
+        </IconButton>
       </CardActions>
     </Card>
   );
@@ -392,9 +412,7 @@ const GenericEntityPage = ({
               <Stack direction="row" spacing={1} alignItems="center">
                 {showArchiveToggle && <ArchiveToggle />}
 
-                {/* Extra actions slot (e.g. "Manage Departments") */}
-                {extraHeaderActions}
-
+                
                 {(enableImport || enableExport) && (
                   <IconButton
                     onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
@@ -404,11 +422,23 @@ const GenericEntityPage = ({
                   </IconButton>
                 )}
 
+                {/* Extra actions slot (e.g. "Manage Departments") */}
+                {extraHeaderActions}
+
+
                 <Button
                   startIcon={addButtonIcon || <Add />}
                   variant="contained"
                   onClick={() => handleOpenFormModal()}
-                  sx={{ px: 3, py: 1.5, borderRadius: 2, textTransform: 'none', fontWeight: 600, boxShadow: theme.shadows[4], whiteSpace: 'nowrap' }}
+                  sx={{ 
+                    px: 3, 
+                    py: 1.5, 
+                    borderRadius: 2, 
+                    textTransform: 'none', 
+                    fontWeight: 600, 
+                    boxShadow: theme.shadows[4], 
+                    whiteSpace: 'nowrap' 
+                  }}
                 >
                   {addButtonText || `Add ${entityName}`}
                 </Button>

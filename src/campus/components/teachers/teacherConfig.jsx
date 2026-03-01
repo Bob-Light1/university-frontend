@@ -21,7 +21,7 @@ import {
   Phone,
   Badge as BadgeIcon,
 } from '@mui/icons-material';
-
+import { IMAGE_BASE_URL } from '../../../config/env';
 /**
  * TEACHER ENTITY CONFIGURATION
  * Demonstrates how easily we can create a new entity page
@@ -33,7 +33,7 @@ import {
 export const getKPIMetrics = (kpis, theme) => [
   {
     label: 'Total Teachers',
-    value: kpis.total || 0,
+    value: kpis?.teachers?.total || 0,
     icon: <People sx={{ fontSize: 28 }} />,
     color: theme.palette.primary.main,
     trend: 3.5,
@@ -41,7 +41,7 @@ export const getKPIMetrics = (kpis, theme) => [
   },
   {
     label: 'New Hires',
-    value: kpis.newThisMonth || 0,
+    value: kpis?.teachers?.newThisMonth || 0,
     icon: <PersonAdd sx={{ fontSize: 28 }} />,
     color: theme.palette.success.main,
     trend: 8.2,
@@ -49,16 +49,16 @@ export const getKPIMetrics = (kpis, theme) => [
   },
   {
     label: 'Teaching Hours',
-    value: kpis.totalHours || 0,
+    value: kpis?.teachers?.totalHours || 0,
     icon: <Schedule sx={{ fontSize: 28 }} />,
     color: theme.palette.info.main,
     subtitle: 'Weekly total',
-    progress: kpis.hoursUtilization || 0,
+    progress: kpis?.hoursUtilization || 0,
     progressLabel: 'Utilization',
   },
   {
     label: 'Performance',
-    value: `${(kpis.avgPerformance || 0).toFixed(1)}%`,
+    value: `${(kpis?.avgPerformance || 0).toFixed(1)}%`,
     icon: <TrendingUp sx={{ fontSize: 28 }} />,
     color: theme.palette.success.main,
     trend: 4.1,
@@ -136,6 +136,12 @@ export const getFilterConfig = (relatedData = {}) => {
 export const renderTableRow = (teacher, helpers) => {
   const { selected, onSelect, onView, onEdit, onArchive, theme, isMobile } = helpers;
   
+ const profileImageUrl = teacher.profileImage 
+    ? (teacher.profileImage.startsWith('http') 
+        ? teacher.profileImage 
+        : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${teacher.profileImage.replace(/^\//, '')}`)
+    : null;
+
   return (
     <TableRow key={teacher._id} hover selected={selected}>
       <TableCell padding="checkbox">
@@ -146,7 +152,7 @@ export const renderTableRow = (teacher, helpers) => {
       <TableCell>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar
-            src={teacher.profileImage}
+            src={profileImageUrl}
             sx={{
               width: 40,
               height: 40,
@@ -167,7 +173,7 @@ export const renderTableRow = (teacher, helpers) => {
         </Stack>
       </TableCell>
 
-      {/* Staff ID */}
+      {/* Matricule */}
       <TableCell>
         <Chip
           icon={<BadgeIcon />}
@@ -190,7 +196,7 @@ export const renderTableRow = (teacher, helpers) => {
           {(teacher.subjects || []).slice(0, 2).map((subject) => (
             <Chip
               key={subject._id}
-              label={subject.name}
+              label={subject.subject_name}
               size="small"
               sx={{ fontSize: '0.7rem' }}
             />
@@ -279,7 +285,7 @@ export const teacherConfig = {
     classes:     (campusId) => `/campus/${campusId}/classes`,
 
     // Format A — generic route
-    // subjects: '/subject',
+    subjects:    (campusId) => `/subject?campusId=${campusId}`,
   }
 
 };

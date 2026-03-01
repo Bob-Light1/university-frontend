@@ -51,11 +51,18 @@ const useRelatedData = (relatedDataEndpoints = {}, campusId) => {
           })
         );
 
+
+         
         const newData = {};
         entries.forEach(([key], index) => {
           const result = results[index];
           if (result.status === 'fulfilled' && result.value.data?.success) {
-            newData[key] = result.value.data.data || [];
+             
+            const payload = result.value.data.data;
+            //Normalization : Object -> table ; table -> table.
+             newData[key] = Array.isArray(payload) 
+              ? payload 
+              : ( payload ? [payload] : [] );
           } else {
             newData[key] = [];
             if (

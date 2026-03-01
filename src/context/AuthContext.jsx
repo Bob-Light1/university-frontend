@@ -8,11 +8,11 @@ const USER_TYPE_ENDPOINTS = {
   admin: '/admin/login',
   director: '/director/login',
   manager: '/campus/login',
-  teacher: '/teacher/login',
-  student: '/student/login',
-  parent: '/parent/login',
-  mentor: '/mentor/login',
-  partner: '/partner/login',
+  teacher: '/teachers/login',
+  student: '/students/login',
+  parent: '/parents/login',
+  mentor: '/mentors/login',
+  partner: '/partners/login',
 };
 
 export function AuthProvider({ children }) {

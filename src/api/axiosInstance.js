@@ -1,16 +1,23 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../config/env';
 
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Supporte les cookies httpOnly pour refresh token (recommandé)
-  timeout: 15000,        // Évite les requêtes qui pendent trop longtemps
+  timeout: 10000,
 });
+
+const refreshClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Supports httpOnly cookies for refresh token (recommended)
+  timeout: 15000,        // Avoids requests that hang for too long
+});
+
 
 let isRefreshing = false;
 let failedQueue = [];
 
-// Fonction utilitaire pour gérer la file d'attente
+// Utility function to manage the queue
 const processQueue = (error, token = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) reject(error);
@@ -19,7 +26,7 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-// Permet d'injecter / supprimer le token manuellement (après login, logout, etc.)
+// Allows manual injection/removal of the token (after login, logout, etc.)
 export const setAuthToken = (token) => {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -28,12 +35,12 @@ export const setAuthToken = (token) => {
   }
 };
 
-// Intercepteur de requêtes : ajoute le token si présent (fallback localStorage)
+// Request interceptor: adds the token if present (fallback to localStorage)
 api.interceptors.request.use(
   (config) => {
-    // Si le token n'est pas déjà dans les headers (par ex. après refresh)
+    // If the token is not already in the headers (e.g., after refresh)
     if (!config.headers.Authorization) {
-      const token = localStorage.getItem('token'); // ou sessionStorage, ou ton store
+      const token = localStorage.getItem('token'); // or sessionStorage, or your store
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -43,15 +50,15 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Intercepteur de réponses : gestion refresh + queue
+// Response interceptor: handles refresh + queue
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+   const originalRequest = error.config || {};
 
-    // Cas 401 non déjà traité
+    // Case for 401 not already handled
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Déjà en train de refresh → on met en attente
+      // Already refreshing → we put it on hold
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -63,38 +70,37 @@ api.interceptors.response.use(
           .catch((err) => Promise.reject(err));
       }
 
-      // Premier 401 → on lance le refresh
+      // First 401 → we initiate the refresh
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        // Appel au refresh (adapte l'URL si différente)
-        const { data } = await api.post('/auth/refresh', {}, { withCredentials: true });
-
+        // Call to refresh (adapt the URL if different)
+        const { data } = await refreshClient.post('/auth/refresh');
         const newAccessToken = data.accessToken;
-        // Optionnel : data.refreshToken si ton backend en renvoie un nouveau
+        // Optional: data.refreshToken if your backend returns a new one
 
         setAuthToken(newAccessToken);
-        localStorage.setItem('token', newAccessToken); // ou ton store
+        localStorage.setItem('token', newAccessToken); // or your store
 
-        // Résout toutes les requêtes en attente avec le nouveau token
+        // Resolves all pending requests with the new token
         processQueue(null, newAccessToken);
 
-        // Relance la requête originale
+        // Restart the original request
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh a échoué → logout forcé
+        // Refresh failed → forced logout
         processQueue(refreshError, null);
         localStorage.removeItem('token');
-        window.location.href = '/login?session_expired=true'; // Peut-être avec un param pour afficher un message
+        window.location.href = '/login?session_expired=true'; // Maybe with a parameter to show a message
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    // Autres erreurs → on les laisse passer
+    // Other errors → let them pass
     return Promise.reject(error);
   }
 );

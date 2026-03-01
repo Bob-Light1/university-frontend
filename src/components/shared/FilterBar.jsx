@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Box,
   Paper,
@@ -13,6 +13,9 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 import {
   Search,
@@ -25,11 +28,6 @@ import {
 
 /**
  * REUSABLE ADVANCED FILTER BAR COMPONENT - FIXED
- * 
- * ✅ CORRECTIONS:
- * - Added protection against filters being a function
- * - Added array validation
- * - Added useMemo for performance
  * 
  * @param {String} searchValue - Current search value
  * @param {Function} onSearchChange - Search change handler
@@ -59,7 +57,7 @@ const FilterBar = ({
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // ========================================
-  // ✅ FIX: Normalize filters to array
+  // Normalize filters to array
   // ========================================
   const filtersArray = useMemo(() => {
     // If filters is a function, call it (with empty args)
@@ -88,12 +86,6 @@ const FilterBar = ({
     (v) => v !== '' && v !== null && v !== undefined
   ).length;
 
-  // Handle filter removal via chip
-  const handleRemoveFilter = (filterKey) => {
-    if (onFilterChange) {
-      onFilterChange(filterKey, '');
-    }
-  };
 
   // ========================================
   // Use filtersArray instead of filters
@@ -107,6 +99,13 @@ const FilterBar = ({
         value: f.options?.find((opt) => opt.value === filterValues[f.key])?.label || filterValues[f.key],
       }));
   }, [filtersArray, filterValues]);
+
+   // Handle filter removal via chip
+  const handleRemoveFilter = (filterKey) => {
+    if (onFilterChange) {
+      onFilterChange(filterKey, '');
+    }
+  };
 
   return (
     <Paper
@@ -127,6 +126,8 @@ const FilterBar = ({
             {/* Search Input */}
             <TextField
               fullWidth
+              id="global-search"                    // ← id fixe → très recommandé
+              label="Global search"
               placeholder={searchPlaceholder}
               value={searchValue || ''}
               onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
@@ -268,30 +269,62 @@ const FilterBar = ({
                   flexWrap="wrap"
                   useFlexGap
                 >
-                  {filtersArray.map((filter) => (
-                    <TextField
-                      key={filter.key}
-                      select={filter.type === 'select'}
-                      label={filter.label}
-                      value={filterValues[filter.key] || ''}
-                      onChange={(e) => onFilterChange && onFilterChange(filter.key, e.target.value)}
-                      sx={{
-                        minWidth: 200,
-                        flex: { xs: '1 1 100%', sm: '1 1 200px' },
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
+                  {filtersArray.map((filter) => {
+                    if (filter.type === 'select' && !(filter.options?.length > 0)) return null;
+                    
+                    const fieldSx = {
+                      minWidth: 200,
+                      flex: { xs: '1 1 100%', sm: '1 1 200px' },
+                      '& .MuiOutlinedInput-root': { borderRadius: 2 },
+                    };
+                    
+                    if (filter.type === 'select') {
+                      const labelId = `filter-${filter.key}-label`;
+                      const inputId = `filter-${filter.key}`;
+
+                      return (
+                        <FormControl key={filter.key} size="small" sx={fieldSx}>
+                          <InputLabel id={labelId}>{filter.label}</InputLabel>
+                          <Select
+                            labelId={labelId}
+                            id={inputId}
+                            name={filter.key}
+                            value={filterValues[filter.key] || ''}
+                            label={filter.label}
+                            onChange={(e) => onFilterChange?.(filter.key, e.target.value)}
+                          >
+                            {filter.options.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      );
+                    }
+
+                    // ── Text / date / number filter ───────────────────────
+                    return (
+                      <TextField
+                        key={filter.key}
+                        id={`filter-${filter.key}`}
+                        label={filter.label}
+                        type={filter.type || 'text'}
+                        value={filterValues[filter.key] || ''}
+                        onChange={(e) => onFilterChange?.(filter.key, e.target.value)}
+                        size="small"
+                        sx={fieldSx}
+                        slotProps={{
+                        input: {
+                          id: inputId,
                         },
+                        inputLabel: {
+                          shrink: filter.type === 'date',
+                        }
                       }}
-                      size="small"
-                    >
-                      {filter.type === 'select' &&
-                        filter.options?.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                    </TextField>
-                  ))}
+                      />
+                    );
+                  })}
                 </Stack>
               </Box>
             </Collapse>

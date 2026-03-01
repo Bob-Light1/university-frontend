@@ -2,7 +2,7 @@ import React from 'react';
 import GenericEntityPage from '../../../components/shared/GenericEntityPage';
 import StudentForm from './StudentForm';
 import StudentDetailDrawer from './StudentDetailDrawer';
-import { studentConfig } from './config';
+import { studentConfig } from './studentConfig';
 
 
 const Students = () => {

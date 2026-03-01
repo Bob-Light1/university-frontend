@@ -1,758 +1,287 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { 
-  Grid, TextField, Button, MenuItem, CircularProgress, 
-  InputAdornment, Divider, Typography, Box, Avatar, IconButton,
-  Stack, Paper, Snackbar, Alert, useTheme, useMediaQuery, Collapse
+import { useEffect } from 'react';
+import {
+  Grid, Button, CircularProgress, Collapse,
+  Stack, Snackbar, Alert,
+  useTheme, useMediaQuery,
 } from '@mui/material';
-import { 
-  Person, Email, Phone, Badge, Lock, School, Domain,
-  PhotoCamera, Close, Check, Cancel,
-  VisibilityOff,
-  Visibility
+import {
+  Person, Email, Phone, Badge,
+  Domain, School, Check, Cancel,
 } from '@mui/icons-material';
 import NumbersIcon from '@mui/icons-material/Numbers';
-import PersonIcon from '@mui/icons-material/Person';
-
 
 import { useFormik } from 'formik';
-import axios from 'axios';
-import { createStudentSchema } from '../../../yupSchema/createStudentSchema';
-import { API_BASE_URL, IMAGE_BASE_URL } from '../../../config/env';
 import { useParams } from 'react-router-dom';
+
+import { createStudentSchema }  from '../../../yupSchema/createStudentSchema';
+import api                      from '../../../api/axiosInstance';
+import useRelatedData           from '../../../hooks/useRelatedData';
+import useFormSnackbar          from '../../../hooks/useFormSnackBar';
+import useImagePreview          from '../../../hooks/useImagePreview';
+import { getSubmitErrorMessage } from '../../../utils/handleSubmitError';
+
+import ProfileImageUpload from '../../../components/form/ProfileImageUpload';
+import FormSection        from '../../../components/form/FormSection';
+import {
+  FormTextField, FormDateField,
+  FormSelectField, FormPasswordField, CampusField,
+} from '../../../components/form/FormFields';
+
+// ─── Static option lists ─────────────────────────────────────────────────────
+
+const GENDER_OPTIONS = [
+  { value: 'male',   label: 'Male'   },
+  { value: 'female', label: 'Female' },
+];
+
+// ─── Endpoint config (stable reference – defined outside the component) ──────
+
+const ENDPOINTS = {
+  campus:  (id) => `/campus/${id}`,
+  classes: (id) => `/campus/${id}/classes`,
+};
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 const StudentForm = ({ initialData, onSuccess, onCancel }) => {
   const { campusId } = useParams();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const fileInputRef = useRef(null);
-  
-  const [campus, setCampus] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const theme        = useTheme();
+  const isMobile     = useMediaQuery(theme.breakpoints.down('sm'));
+  const isEdit       = !!initialData;
 
-  const [imagePreview, setImagePreview] = useState(
-    initialData?.profileImage 
-      ? (initialData.profileImage.startsWith('http') 
-          ? initialData.profileImage 
-          : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${initialData.profileImage.replace(/^\//, '')}`) 
-      : null
-  );
+  const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+  const { preview, file: imageFile, accept: acceptImage, remove: removeImage } =
+    useImagePreview(initialData?.profileImage);
 
-  const isEdit = !!initialData;
-  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-  const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
-  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+  // campus is a single object returned in an array; classes is a list
+  const { data: related, loading } = useRelatedData(ENDPOINTS, campusId);
+  const campus  = related.campus?.[0] ?? null;
+  const classes = related.classes     ?? [];
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
+  // ── Formik ────────────────────────────────────────────────────────────────
 
-  const showSnackbar = (message, severity = 'success') => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  const authHeader = () => ({
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-  });
-
-  // Load reference data (campus, classes)
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [resCampus, resClasses] = await Promise.all([
-          axios.get(`${API_BASE_URL}/campus/${campusId}`, authHeader()),
-          axios.get(`${API_BASE_URL}/class`, authHeader()),
-        ]);
-        
-        setCampus(resCampus.data.data || []);
-        setClasses(resClasses.data.data || []);
-
-      } catch (err) {
-        console.error('Error loading form data:', err);
-        showSnackbar('Failed to load form data', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [campusId]);
-
-  // Formik configuration
   const formik = useFormik({
     initialValues: {
-      firstName: initialData?.firstName || '',
-      lastName: initialData?.lastName || '',
-      email: initialData?.email || '',
-      schoolCampus: initialData?.schoolCampus?._id || campus?._id || '',
-      studentClass: initialData?.studentClass?._id || '',
-      username: initialData?.username || '',
-      phone: initialData?.phone || '',
-      gender: initialData?.gender || 'male',
-      matricule: initialData?.matricule || '',
-      password: '',
-      dateOfBirth: initialData?.dateOfBirth ? initialData.dateOfBirth.split('T')[0] : '',
-      profileImage: null, // File object
+      firstName:    initialData?.firstName              || '',
+      lastName:     initialData?.lastName               || '',
+      email:        initialData?.email                  || '',
+      username:     initialData?.username               || '',
+      password:     '',
+      phone:        initialData?.phone                  || '',
+      gender:       initialData?.gender                 || 'male',
+      matricule:    initialData?.matricule              || '',
+      dateOfBirth:  initialData?.dateOfBirth?.split('T')[0] || '',
+      studentClass: initialData?.studentClass?._id     || '',
+      schoolCampus: initialData?.schoolCampus?._id     || campusId || '',
     },
-
     validationSchema: createStudentSchema(isEdit),
     validateOnChange: true,
-    validateOnBlur: true,
+    validateOnBlur:   true,
 
-    onSubmit: async (values) => {
-      if(submitting) return;
-      setSubmitting(true);
+    onSubmit: async (values, { resetForm }) => {
+      const formData = buildFormData(values, imageFile, isEdit);
 
       try {
-        const formData = new FormData();
-        
-        // Append all form values
-        Object.keys(values).forEach(key => {
-          if (key === 'profileImage') {
-            // Handle file separately
-            if (values.profileImage instanceof File) {
-              formData.append('profileImage', values.profileImage);
-            }
-          } else if (values[key] !== null && values[key] !== '') {
-            if (isEdit && key === 'password' && !values[key]) return;
-            formData.append(key, values[key]);
-          }
-        });
-
-        const config = {
-          headers: { 
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        };
-
         if (isEdit) {
-          await axios.put(
-            `${API_BASE_URL}/students/${initialData._id}`, 
-            formData,
-            config
-          );
+          await api.put(`/students/${initialData._id}`, formData);
           onSuccess?.('Student updated successfully');
         } else {
-          await axios.post(
-            `${API_BASE_URL}/students`, 
-            formData,
-            config
-          );
+          await api.post('/students', formData);
           onSuccess?.('Student created successfully');
-          
-          // Reset form after successful creation
-          formik.resetForm();
-          setImagePreview(null);
+          resetForm();
+          removeImage();
         }
-
       } catch (err) {
-        console.error('Submit error:', err);
-        
-        let errorMessage = 'An error occurred';
-        
-        if (err.response?.status === 400) {
-          errorMessage = err.response.data?.error 
-            || err.response.data?.message 
-            || 'Validation error';
-
-        } 
-        
-        else if (err.response?.status === 413) {
-          errorMessage = 'File too large. Maximum size is 5MB';
-        }
-        
-        else if (err.response?.status === 401) {
-          errorMessage = 'Session expired. Please login again';
-            setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
-        }
-
-        else if (err.code === 'ECONNABORTED') {
-          errorMessage = 'Upload timeout. Please check your connection';
-        }
-        
-        else if (err.response?.status >= 500) {
-          errorMessage = 'Server error. Please try again later';
-        }
-        
-        showSnackbar(errorMessage, 'error');
-        
-      } finally {
-        setSubmitting(false);
+        console.error('StudentForm submit error:', err);
+        showSnackbar(getSubmitErrorMessage(err), 'error');
       }
     },
   });
 
+  // Keep schoolCampus in sync once campus data is loaded
   useEffect(() => {
-    if (campus?._id) {
-    formik.setFieldValue('schoolCampus', campus._id, true);
+    const id = campus?._id ?? campusId;
+    if (id && formik.values.schoolCampus !== id) {
+      formik.setFieldValue('schoolCampus', id, false);
     }
-   }, [campus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campus?._id]);
 
-  // Handle image selection
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  // ── Render ────────────────────────────────────────────────────────────────
 
-    // Check MIME type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      showSnackbar('Only JPG, PNG and WEBP images are allowed', 'error');
-      return;
-    }
+  if (loading) return <LoadingSpinner />;
 
-    // Check extension (protection against spoofing)
-    const extension = file.name.toLowerCase().match(/\.[^.]+$/)?.[0];
-    if (!extension || !ALLOWED_EXTENSIONS.includes(extension)) {
-      showSnackbar('Invalid file extension', 'error');
-      return;
-    }
-    
-    // Validate file size (max 5MB)
-    if (file.size > MAX_IMAGE_SIZE) {
-      showSnackbar('Image size should not exceed 5MB', 'error');
-      return;
-    }
-
-    
-    // Check if it's a real image
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-
-      img.onload = () => {
-        // Valid image
-        formik.setFieldValue('profileImage', file);
-        setImagePreview(e.target.result);
-      };
-
-      img.onerror = () => {
-        showSnackbar('File is not a valid image', 'error');
-      };
-
-      img.src = e.target.result;
-    };
-
-    reader.onerror = () => {
-      showSnackbar('Error reading file', 'error');
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveImage = () => {
-    formik.setFieldValue('profileImage', null);
-
-    const originalImage = initialData?.profileImage 
-    ? (initialData.profileImage.startsWith('http') 
-        ? initialData.profileImage 
-        : `${API_BASE_URL}/${initialData.profileImage}`) 
-    : null;
-
-    setImagePreview(originalImage);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const classOptions = classes.map((c) => ({ value: c._id, label: c.className }));
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} noValidate>
         <Grid container spacing={3}>
-          
-          {/* PROFILE IMAGE SECTION */}
+
+          {/* Profile image */}
           <Grid size={{ xs: 12 }}>
-            <Paper 
-              elevation={0}
-              sx={{ 
-                p: 3, 
-                textAlign: 'center',
-                bgcolor: 'background.neutral',
-                borderRadius: 2,
-                border: `2px dashed ${theme.palette.divider}`
-              }}
-            >
-              <Stack spacing={2} alignItems="center">
-                <Box sx={{ position: 'relative' }}>
-                  <Avatar
-                    src={imagePreview}
-                    alt={`${formik.values.firstName} ${formik.values.lastName}`}
-                    sx={{ 
-                      width: 120, 
-                      height: 120,
-                      border: `4px solid ${theme.palette.primary.main}`,
-                      boxShadow: theme.shadows[4],
-                      bgcolor: theme.palette.grey[200]
-                    }}
-                  >
-                    <Person sx={{ fontSize: 60 }} />
-                  </Avatar>
-                  {imagePreview && (
-                    <IconButton
-                      onClick={handleRemoveImage}
-                      sx={{
-                        position: 'absolute',
-                        top: -8,
-                        right: -8,
-                        bgcolor: 'error.main',
-                        color: 'white',
-                        '&:hover': { bgcolor: 'error.dark' },
-                        width: 32,
-                        height: 32
-                      }}
-                    >
-                      <Close fontSize="small" />
-                    </IconButton>
-                  )}
-                </Box>
-                
-                <input
-                  ref={fileInputRef}
-                  accept="image/*"
-                  type="file"
-                  hidden
-                  onChange={handleImageChange}
-                />
-                
-                <Button
-                  variant="outlined"
-                  startIcon={<PhotoCamera />}
-                  onClick={() => fileInputRef.current?.click()}
-                  sx={{ 
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontWeight: 600
-                  }}
-                >
-                  {imagePreview ? 'Change Photo' : 'Upload Photo'}
-                </Button>
-                
-                <Typography variant="caption" color="text.secondary">
-                  Recommended: Square image, max 5MB (JPG, PNG, WEBP)
-                </Typography>
-              </Stack>
-            </Paper>
-          </Grid>
-
-          {/* IDENTITY SECTION */}
-          <Grid size={{ xs: 12 }}>
-            <Typography variant="overline" color="primary" fontWeight="bold" fontSize="0.875rem">
-              Personal Information
-            </Typography>
-            <Divider sx={{ mt: 0.5, mb: 2 }} />
-          </Grid>
-          
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="firstName" 
-              label="First Name"
-              value={formik.values.firstName} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-              helperText={formik.touched.firstName && formik.errors.firstName}
-              slotProps={{
-                input: {
-                  id: 'firstName',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Person fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'firstName',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+            <ProfileImageUpload
+              preview={preview}
+              altText={`${formik.values.firstName} ${formik.values.lastName}`}
+              onFileAccepted={acceptImage}
+              onRemove={removeImage}
+              onError={(msg) => showSnackbar(msg, 'error')}
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="lastName" 
-              label="Last Name"
-              value={formik.values.lastName} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-              helperText={formik.touched.lastName && formik.errors.lastName}
-              slotProps={{
-                input: {
-                  id: 'lastName',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                     <PersonIcon fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'lastName',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
-          </Grid>
+          {/* ── Personal information ── */}
+          <FormSection title="Personal Information" />
 
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="username" 
-              label="Username"
-              value={formik.values.username} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.username && Boolean(formik.errors.username)}
-              helperText={formik.touched.username && formik.errors.username}
-              slotProps={{
-                input: {
-                  id: 'userName',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Badge fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'userName',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
+            <FormTextField formik={formik} name="firstName" label="First Name" icon={Person} />
           </Grid>
-
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="matricule" 
-              label="Matricule"
-              value={formik.values.matricule} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.matricule && Boolean(formik.errors.matricule)}
-              helperText={formik.touched.matricule && formik.errors.matricule}
-              slotProps={{
-                input: {
-                  id: 'matricule',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <NumbersIcon fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'matricule',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
+            <FormTextField formik={formik} name="lastName"  label="Last Name"  icon={Person} />
           </Grid>
-
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              select 
-              name="gender" 
+            <FormTextField formik={formik} name="username"  label="Username"   icon={Badge}  />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormTextField formik={formik} name="matricule" label="Matricule (auto-generated if empty)"  icon={NumbersIcon} />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormSelectField
+              formik={formik}
+              name="gender"
               label="Gender"
-              value={formik.values.gender} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              slotProps={{
-                input: { id: 'gender'},
-                inputLabel: { htmlFor: 'gender'},
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            >
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              name="dateOfBirth"
-              label="Date of Birth"
-              type="date"
-              {...formik.getFieldProps('dateOfBirth')}
-              error={formik.touched.dateOfBirth && !!formik.errors.dateOfBirth}
-              helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
-              slotProps={{
-                input: {
-                  id: 'dateOfBirth', 
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Badge fontSize="small" color="action" /> 
-                    </InputAdornment>
-                  ),
-                },
-                inputLabel: {
-                  shrink: true,
-                  htmlFor: 'dateOfBirth'
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              options={GENDER_OPTIONS}
             />
           </Grid>
-
-          {/* CONTACT & SECURITY SECTION */}
-          <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
-            <Typography variant="overline" color="primary" fontWeight="bold" fontSize="0.875rem">
-              Contact & Security
-            </Typography>
-            <Divider sx={{ mt: 0.5, mb: 2 }} />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormDateField formik={formik} name="dateOfBirth" label="Date of Birth" />
           </Grid>
+
+          {/* ── Contact & security ── */}
+          <FormSection title="Contact & Security" />
 
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="email" 
-              label="Email Address"
-              type="email"
-              value={formik.values.email} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-              slotProps={{
-                input: {
-                  id: 'email', 
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'email'
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
+            <FormTextField formik={formik} name="email" label="Email Address" type="email" icon={Email} />
           </Grid>
-
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              name="phone" 
-              label="Phone Number"
-              value={formik.values.phone} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.phone && Boolean(formik.errors.phone)}
-              helperText={formik.touched.phone && formik.errors.phone}
-              slotProps={{
-                input: {
-                  id: 'phone',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Phone fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'phone',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
+            <FormTextField formik={formik} name="phone" label="Phone Number" icon={Phone} />
           </Grid>
 
-          {/* Password field - only for creation */}
           <Collapse in={!isEdit} sx={{ width: '100%' }}>
             <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
               <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth 
-                  name="password" 
-                  label="Password" 
-                  type={showPassword ? 'text' : 'password'}
-                  value={formik.values.password} 
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock fontSize="small" color="action" />
-                        </InputAdornment> 
-                      ),
-
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                />
+                <FormPasswordField formik={formik} />
               </Grid>
             </Grid>
           </Collapse>
 
-          {/* ACADEMIC ASSIGNMENT SECTION */}
-          <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
-            <Typography variant="overline" color="primary" fontWeight="bold" fontSize="0.875rem">
-              Academic Assignment
-            </Typography>
-            <Divider sx={{ mt: 0.5, mb: 2 }} />
-          </Grid>
+          {/* ── Academic assignment ── */}
+          <FormSection title="Academic Assignment" />
 
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth 
-              select 
-              name="studentClass" 
+            <FormSelectField
+              formik={formik}
+              name="studentClass"
               label="Class"
-              value={formik.values.studentClass} 
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.studentClass && Boolean(formik.errors.studentClass)}
-              helperText={formik.touched.studentClass && formik.errors.studentClass}
-              slotProps={{
-                input: {
-                  id: 'studentClass',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                    <School fontSize="small" color="action" />
-                  </InputAdornment> 
-                  ),
-                },
-                inputLabel: {
-                  htmlFor: 'studentClass',
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            >
-              {(Array.isArray(classes) ? classes : []).map((cls) => (
-                <MenuItem key={cls._id} value={cls._id}>
-                  {cls.className}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              label="Campus"
-              value={campus?.campus_name || ''}
-              disabled
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Domain fontSize="small" color="action" />
-                    </InputAdornment> 
-                  ),
-                },
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              icon={School}
+              options={classOptions}
             />
           </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <CampusField campusName={campus?.campus_name} icon={Domain} />
+          </Grid>
 
-          {/* ACTION BUTTONS */}
+          {/* ── Action buttons ── */}
           <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
-              spacing={2} 
-              justifyContent="flex-end"
-            >
-              {onCancel && (
-                <Button 
-                  variant="outlined" 
-                  onClick={onCancel}
-                  startIcon={<Cancel />}
-                  disabled={submitting}
-                  fullWidth={isMobile}
-                  sx={{ 
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontWeight: 600
-                  }}
-                >
-                  Cancel
-                </Button>
-              )}
-              <Button 
-                variant="contained" 
-                type="submit" 
-                startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : <Check />}
-                disabled={submitting || !formik.isValid}
-                fullWidth={isMobile}
-                sx={{ 
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  boxShadow: theme.shadows[4],
-                  '&:hover': {
-                    boxShadow: theme.shadows[8]
-                  }
-                }}
-              >
-                {submitting ? 'Saving...' : (isEdit ? 'Save Changes' : 'Create Student')}
-              </Button>
-            </Stack>
+            <FormActions
+              isEdit={isEdit}
+              submitting={formik.isSubmitting}
+              disabled={!formik.isValid}
+              onCancel={onCancel}
+              isMobile={isMobile}
+              theme={theme}
+            />
           </Grid>
 
         </Grid>
       </form>
 
-      {/* SNACKBAR */}
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={4000} 
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ 
-            width: '100%',
-            borderRadius: 2,
-            boxShadow: theme.shadows[8]
-          }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <FormSnackbar snackbar={snackbar} onClose={closeSnackbar} theme={theme} />
     </>
   );
 };
 
 export default StudentForm;
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const buildFormData = (values, imageFile, isEdit) => {
+  const fd = new FormData();
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (isEdit && key === 'password' && !value) return;
+    if (value === null || value === '') return; 
+      fd.append(key, value);
+  });
+
+  if (imageFile instanceof File) fd.append('profileImage', imageFile);
+
+  return fd;
+};
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+const LoadingSpinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
+    <CircularProgress />
+  </div>
+);
+
+const FormActions = ({ isEdit, submitting, disabled, onCancel, isMobile, theme }) => (
+  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="flex-end">
+    {onCancel && (
+      <Button
+        variant="outlined"
+        onClick={onCancel}
+        startIcon={<Cancel />}
+        disabled={submitting}
+        fullWidth={isMobile}
+        sx={{ px: 4, py: 1.5, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+      >
+        Cancel
+      </Button>
+    )}
+    <Button
+      variant="contained"
+      type="submit"
+      startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : <Check />}
+      disabled={submitting || disabled}
+      fullWidth={isMobile}
+      sx={{
+        px: 4, py: 1.5, borderRadius: 2,
+        textTransform: 'none', fontWeight: 600,
+        boxShadow: theme.shadows[4],
+        '&:hover': { boxShadow: theme.shadows[8] },
+      }}
+    >
+      {submitting ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Student'}
+    </Button>
+  </Stack>
+);
+
+const FormSnackbar = ({ snackbar, onClose, theme }) => (
+  <Snackbar
+    open={snackbar.open}
+    autoHideDuration={4000}
+    onClose={onClose}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+  >
+    <Alert
+      onClose={onClose}
+      severity={snackbar.severity}
+      variant="filled"
+      sx={{ width: '100%', borderRadius: 2, boxShadow: theme.shadows[8] }}
+    >
+      {snackbar.message}
+    </Alert>
+  </Snackbar>
+);
