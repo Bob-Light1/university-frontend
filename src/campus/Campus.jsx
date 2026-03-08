@@ -39,6 +39,7 @@ import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import ExplicitIcon from '@mui/icons-material/Explicit';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 const drawerWidth = 240;
 
@@ -164,6 +165,7 @@ export default function Campus() {
     { link: `/campus/${campusId}/classes`, component: "Classes", icon: LibraryBooksIcon },
     { link: `/campus/${campusId}/subjects`, component: "Subjects", icon: SubjectIcon },
     { link: `/campus/${campusId}/examination`, component: "Examination", icon: ExplicitIcon },
+    { link: `/campus/${campusId}/results`, component: "Results", icon: AssessmentIcon },
     { link: `/campus/${campusId}/schedule`, component: "Schedule", icon: EventNoteIcon },
     { link: `/campus/${campusId}/attendance`, component: "Attendance", icon: ChecklistRtlIcon },
     { link: `/campus/${campusId}/notification`, component: "Notification", icon: NotificationsActiveIcon },

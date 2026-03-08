@@ -33,16 +33,18 @@ import {
   Psychology,
   AccessTime,
   Business,
+  ManageAccounts,
+  Class as ClassIcon,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
 
 /**
  * TEACHER DETAIL DRAWER
  *
- * Shows complete teacher information
+ * Displays the complete profile of a teacher.
+ * Classes section shows which class the teacher manages (classManager badge).
  *
- * @param {Object}   props.entity    - Selected teacher
- * @param {Boolean}  props.open      - Drawer open/close state
+ * @param {Object}   props.entity    - Populated teacher document
  * @param {Function} props.onClose   - Close callback
  * @param {Function} props.onEdit    - Edit callback
  * @param {Function} props.onArchive - Archive callback
@@ -50,22 +52,22 @@ import { IMAGE_BASE_URL } from '../../../config/env';
 const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) => {
   if (!teacher) return null;
 
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      year: 'numeric', month: 'long', day: 'numeric',
     });
   };
 
   const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
-    const today = new Date();
+    const today     = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
@@ -80,18 +82,30 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
   const employmentColors = {
     'full-time': 'success',
     'part-time': 'warning',
-    contract: 'info',
-    temporary: 'default',
+    contract:    'info',
+    temporary:   'default',
   };
 
-  const statusColor = teacher.status === 'active' ? 'success'
-    : teacher.status === 'inactive' ? 'warning'
-    : teacher.status === 'suspended' ? 'error'
-    : 'default';
+  const statusColor =
+    teacher.status === 'active'    ? 'success' :
+    teacher.status === 'inactive'  ? 'warning' :
+    teacher.status === 'suspended' ? 'error'   : 'default';
+
+  // Determine which class (if any) this teacher manages.
+  // The populated class objects carry classManager as an object or ObjectId.
+  const teacherId = teacher._id?.toString();
+  const managedClassId = teacher.classes?.find((cls) => {
+    const mgr = cls.classManager;
+    if (!mgr) return false;
+    return (mgr._id?.toString() ?? mgr.toString()) === teacherId;
+  })?._id?.toString();
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <Box
         sx={{
           p: 3,
@@ -111,18 +125,17 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
           <Avatar
             src={profileImageUrl}
             sx={{
-              width: 100,
-              height: 100,
+              width: 100, height: 100,
               border: '4px solid white',
               boxShadow: 3,
-              fontSize: '2rem',
-              fontWeight: 700,
+              fontSize: '2rem', fontWeight: 700,
               bgcolor: 'rgba(255,255,255,0.2)',
             }}
           >
             {teacher.firstName?.[0]}
             {teacher.lastName?.[0]}
           </Avatar>
+
           <Box textAlign="center">
             <Typography variant="h5" fontWeight={700}>
               {teacher.firstName} {teacher.lastName}
@@ -147,9 +160,10 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
         </Stack>
       </Box>
 
-      {/* Content */}
+      {/* ── Content ────────────────────────────────────────────────────────── */}
       <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
         <Stack spacing={3}>
+
           {/* Status & Quick Actions */}
           <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
             <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
@@ -194,75 +208,28 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             </Typography>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <List disablePadding>
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Badge color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Matricule"
-                  secondary={teacher.matricule || 'TEA'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
+              <DetailListItem icon={<Badge color="action" />}  primary="Matricule" secondary={teacher.matricule || 'N/A'} />
+              <DetailListItem icon={<Person color="action" />} primary="Username"  secondary={teacher.username  || 'N/A'} />
+              <DetailListItem
+                icon={
+                  teacher.gender === 'male'   ? <Male color="action" />   :
+                  teacher.gender === 'female' ? <Female color="action" /> :
                   <Person color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Username"
-                  secondary={teacher.username || 'N/A'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  {teacher.gender === 'male' ? (
-                    <Male color="action" />
-                  ) : teacher.gender === 'female' ? (
-                    <Female color="action" />
-                  ) : (
-                    <Person color="action" />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primary="Gender"
-                  secondary={
-                    teacher.gender
-                      ? teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
-                      : 'N/A'
-                  }
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Cake color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Date of Birth"
-                  secondary={
-                    teacher.dateOfBirth
-                      ? `${formatDate(teacher.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
-                      : 'N/A'
-                  }
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
+                }
+                primary="Gender"
+                secondary={teacher.gender
+                  ? teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
+                  : 'N/A'}
+              />
+              <DetailListItem
+                icon={<Cake color="action" />}
+                primary="Date of Birth"
+                secondary={
+                  teacher.dateOfBirth
+                    ? `${formatDate(teacher.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
+                    : 'N/A'
+                }
+              />
             </List>
           </Box>
 
@@ -274,42 +241,21 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <List disablePadding>
               <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Email color="action" />
-                </ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 40 }}><Email color="action" /></ListItemIcon>
                 <ListItemText
                   primary="Email"
                   secondary={teacher.email || 'N/A'}
                   onClick={() => window.location.href = `mailto:${teacher.email}`}
                   slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
+                    primary:   { variant: 'caption', color: 'text.secondary' },
                     secondary: {
-                      variant: 'body2',
-                      fontWeight: 600,
-                      sx: {
-                        wordBreak: 'break-word',
-                        color: 'primary.main',
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                      },
+                      variant: 'body2', fontWeight: 600,
+                      sx: { wordBreak: 'break-word', color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' },
                     },
                   }}
                 />
               </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Phone color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Phone"
-                  secondary={teacher.phone || 'N/A'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
+              <DetailListItem icon={<Phone color="action" />} primary="Phone" secondary={teacher.phone || 'N/A'} />
             </List>
           </Box>
 
@@ -320,104 +266,34 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             </Typography>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <List disablePadding>
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Business color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Department"
-                  secondary={teacher.department?.name || 'N/A'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Star color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Qualification"
-                  secondary={teacher.qualification || 'N/A'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
+              <DetailListItem icon={<Business color="action" />}   primary="Department"      secondary={teacher.department?.name || 'N/A'} />
+              <DetailListItem icon={<Star color="action" />}       primary="Qualification"   secondary={teacher.qualification    || 'N/A'} />
               {teacher.specialization && (
-                <ListItem disablePadding sx={{ py: 1 }}>
-                  <ListItemIcon sx={{ minWidth: 40 }}>
-                    <Psychology color="action" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Specialization"
-                    secondary={teacher.specialization}
-                    slotProps={{
-                      primary: { variant: 'caption', color: 'text.secondary' },
-                      secondary: { variant: 'body2', fontWeight: 600 },
-                    }}
-                  />
-                </ListItem>
+                <DetailListItem icon={<Psychology color="action" />} primary="Specialization" secondary={teacher.specialization} />
               )}
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <AccessTime color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Experience"
-                  secondary={
-                    teacher.experience !== undefined && teacher.experience !== null
-                      ? `${teacher.experience} year${teacher.experience !== 1 ? 's' : ''}`
-                      : 'N/A'
-                  }
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Work color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Employment Type"
-                  secondary={
-                    teacher.employmentType
-                      ? teacher.employmentType.charAt(0).toUpperCase() +
-                        teacher.employmentType.slice(1)
-                      : 'N/A'
-                  }
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
-
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Cake color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Hire Date"
-                  secondary={formatDate(teacher.hireDate)}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
+              <DetailListItem
+                icon={<AccessTime color="action" />}
+                primary="Experience"
+                secondary={
+                  teacher.experience != null
+                    ? `${teacher.experience} year${teacher.experience !== 1 ? 's' : ''}`
+                    : 'N/A'
+                }
+              />
+              <DetailListItem
+                icon={<Work color="action" />}
+                primary="Employment Type"
+                secondary={
+                  teacher.employmentType
+                    ? teacher.employmentType.charAt(0).toUpperCase() + teacher.employmentType.slice(1)
+                    : 'N/A'
+                }
+              />
+              <DetailListItem icon={<Cake color="action" />} primary="Hire Date" secondary={formatDate(teacher.hireDate)} />
             </List>
           </Box>
 
-          {/* Subjects */}
+          {/* Subjects Taught */}
           {teacher.subjects?.length > 0 && (
             <Box>
               <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
@@ -439,7 +315,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             </Box>
           )}
 
-          {/* Classes */}
+          {/* Classes Assigned */}
           {teacher.classes?.length > 0 && (
             <Box>
               <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
@@ -447,16 +323,34 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
               </Typography>
               <Divider sx={{ mb: 2, mt: 0.5 }} />
               <Stack direction="row" flexWrap="wrap" gap={1}>
-                {teacher.classes.map((cls) => (
-                  <Chip
-                    key={cls._id}
-                    label={cls.className}
-                    size="small"
-                    color="secondary"
-                    variant="outlined"
-                  />
-                ))}
+                {teacher.classes.map((cls) => {
+                  const isManager = cls._id?.toString() === managedClassId;
+                  return (
+                    <Tooltip
+                      key={cls._id}
+                      title={isManager ? 'Class Manager (homeroom teacher)' : ''}
+                      disableHoverListener={!isManager}
+                    >
+                      <Chip
+                        label={cls.className}
+                        size="small"
+                        color={isManager ? 'primary' : 'secondary'}
+                        variant={isManager ? 'filled' : 'outlined'}
+                        icon={isManager
+                          ? <ManageAccounts sx={{ fontSize: 14 }} />
+                          : <ClassIcon sx={{ fontSize: 14 }} />
+                        }
+                      />
+                    </Tooltip>
+                  );
+                })}
               </Stack>
+              {managedClassId && (
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                  <ManageAccounts sx={{ fontSize: 12, mr: 0.5, verticalAlign: 'middle' }} />
+                  Filled chip = Class Manager
+                </Typography>
+              )}
             </Box>
           )}
 
@@ -467,19 +361,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             </Typography>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <List disablePadding>
-              <ListItem disablePadding sx={{ py: 1 }}>
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Domain color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Campus"
-                  secondary={teacher.schoolCampus?.campus_name || 'N/A'}
-                  slotProps={{
-                    primary: { variant: 'caption', color: 'text.secondary' },
-                    secondary: { variant: 'body2', fontWeight: 600 },
-                  }}
-                />
-              </ListItem>
+              <DetailListItem icon={<Domain color="action" />} primary="Campus" secondary={teacher.schoolCampus?.campus_name || 'N/A'} />
             </List>
           </Box>
 
@@ -491,19 +373,11 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
               </Typography>
               <Divider sx={{ mb: 2, mt: 0.5 }} />
               <List disablePadding>
-                <ListItem disablePadding sx={{ py: 1 }}>
-                  <ListItemIcon sx={{ minWidth: 40 }}>
-                    <Person color="action" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={teacher.emergencyContact.relationship || 'Contact'}
-                    secondary={`${teacher.emergencyContact.name}${teacher.emergencyContact.phone ? ` — ${teacher.emergencyContact.phone}` : ''}`}
-                    slotProps={{
-                      primary: { variant: 'caption', color: 'text.secondary' },
-                      secondary: { variant: 'body2', fontWeight: 600 },
-                    }}
-                  />
-                </ListItem>
+                <DetailListItem
+                  icon={<Person color="action" />}
+                  primary={teacher.emergencyContact.relationship || 'Contact'}
+                  secondary={`${teacher.emergencyContact.name}${teacher.emergencyContact.phone ? ` — ${teacher.emergencyContact.phone}` : ''}`}
+                />
               </List>
             </Box>
           )}
@@ -516,45 +390,29 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             <Divider sx={{ mb: 1, mt: 0.5 }} />
             <Grid container spacing={1}>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary">
-                  Created
-                </Typography>
-                <Typography variant="body2" fontWeight={500}>
-                  {formatDate(teacher.createdAt)}
-                </Typography>
+                <Typography variant="caption" color="text.secondary">Created</Typography>
+                <Typography variant="body2" fontWeight={500}>{formatDate(teacher.createdAt)}</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary">
-                  Last Updated
-                </Typography>
-                <Typography variant="body2" fontWeight={500}>
-                  {formatDate(teacher.updatedAt)}
-                </Typography>
+                <Typography variant="caption" color="text.secondary">Last Updated</Typography>
+                <Typography variant="body2" fontWeight={500}>{formatDate(teacher.updatedAt)}</Typography>
               </Grid>
               {teacher.lastLogin && (
                 <Grid size={{ xs: 12 }}>
-                  <Typography variant="caption" color="text.secondary">
-                    Last Login
-                  </Typography>
-                  <Typography variant="body2" fontWeight={500}>
-                    {formatDate(teacher.lastLogin)}
-                  </Typography>
+                  <Typography variant="caption" color="text.secondary">Last Login</Typography>
+                  <Typography variant="body2" fontWeight={500}>{formatDate(teacher.lastLogin)}</Typography>
                 </Grid>
               )}
             </Grid>
           </Box>
+
         </Stack>
       </Box>
 
-      {/* Footer Actions */}
+      {/* ── Footer Actions ──────────────────────────────────────────────────── */}
       <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider' }}>
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={onClose}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button variant="outlined" fullWidth onClick={onClose} sx={{ borderRadius: 2 }}>
             Close
           </Button>
           <Button
@@ -568,8 +426,28 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
           </Button>
         </Stack>
       </Box>
+
     </Box>
   );
 };
 
 export default TeacherDetailDrawer;
+
+// ─── Shared sub-component ─────────────────────────────────────────────────────
+
+/**
+ * Reusable read-only list row used throughout the drawer.
+ */
+const DetailListItem = ({ icon, primary, secondary }) => (
+  <ListItem disablePadding sx={{ py: 1 }}>
+    <ListItemIcon sx={{ minWidth: 40 }}>{icon}</ListItemIcon>
+    <ListItemText
+      primary={primary}
+      secondary={secondary}
+      slotProps={{
+        primary:   { variant: 'caption', color: 'text.secondary' },
+        secondary: { variant: 'body2',   fontWeight: 600 },
+      }}
+    />
+  </ListItem>
+);

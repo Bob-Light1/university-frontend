@@ -7,6 +7,7 @@ import {
 import {
   CalendarMonth, List, AccessTime, CheckCircle,
   RateReview, PlayCircle,
+  HowToReg,
 } from '@mui/icons-material';
 
 import KPICards             from '../../../components/shared/KpiCard';
@@ -20,7 +21,13 @@ import useFormSnackbar      from '../../../hooks/useFormSnackBar';
 //      requestPostponement is the correct API call for teacher postponement workflow
 import { requestPostponement } from '../../../services/schedule.service';
 import PostponementForm from './PostponementForm';
+import { useNavigate } from 'react-router-dom';
 
+
+const isSessionLiveOrPast = (session) => {
+  const now = new Date();
+  return new Date(session.startTime) <= now;
+};
 /**
  * Teacher schedule page.
  * Teachers can view their sessions and submit postponement requests.
@@ -29,7 +36,7 @@ import PostponementForm from './PostponementForm';
  */
 const ScheduleTeacher = () => {
   const theme = useTheme();
-
+ 
   const [view,            setView]            = useState('calendar');
   const [detailSession,   setDetailSession]   = useState(null);
   const [detailOpen,      setDetailOpen]      = useState(false);
@@ -195,9 +202,15 @@ const ScheduleTeacher = () => {
 const TeacherSessionCard = ({ session, onView, onPostpone }) => {
   const now    = new Date();
   const isLive = new Date(session.startTime) <= now && new Date(session.endTime) >= now;
+  const navigate = useNavigate();
+  const canRollCall = session.status === 'PUBLISHED'
+    && !session.isCancelled
+    && isSessionLiveOrPast(session);
+
 
   // A teacher can only request postponement on a PUBLISHED upcoming session
-  const canPostpone = session.status === 'PUBLISHED' && new Date(session.startTime) > now;
+  const canPostpone = session.status === 'PUBLISHED' 
+    && new Date(session.startTime) > now;
 
   return (
     <Box sx={{ position: 'relative' }}>
@@ -217,6 +230,7 @@ const TeacherSessionCard = ({ session, onView, onPostpone }) => {
           }}
         />
       )}
+      
       <ScheduleCard
         session={session}
         onView={onView}
@@ -225,6 +239,21 @@ const TeacherSessionCard = ({ session, onView, onPostpone }) => {
         //      on upcoming PUBLISHED sessions (not live, not past, not already cancelled)
         onEdit={canPostpone ? () => onPostpone(session) : undefined}
       />
+
+      {canRollCall && (
+      <Box sx={{ px: 1, pb: 1, mt: -1 }}>
+        <Button
+          fullWidth
+          size="small"
+          variant="contained"
+          color="success"
+          startIcon={<HowToReg />}
+          onClick={() => navigate('/teacher/attendance', { state: { session } })}
+        >
+          Start Roll-call
+        </Button>
+      </Box>
+    )}
     </Box>
   );
 };

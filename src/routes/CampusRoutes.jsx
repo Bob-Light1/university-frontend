@@ -26,6 +26,9 @@ const Schedule = lazy(() =>
 const Examination = lazy(() =>
   import('../campus/components/examination/Examination')
 );
+const Results = lazy(() =>
+  import('../campus/components/results/Results')
+);
 const Attendance = lazy(() =>
   import('../campus/components/attendance/Attendance')
 );
@@ -44,6 +47,7 @@ export const campusRoutes = (
     <Route path="subjects" element={<Subjects />} />
     <Route path="schedule" element={<Schedule />} />
     <Route path="examination" element={<Examination />} />
+     <Route path="results" element={<Results /> } />
     <Route path="attendance" element={<Attendance />} />
     <Route path="notification" element={<Notification />} />
   </>

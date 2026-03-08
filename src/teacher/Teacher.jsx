@@ -25,6 +25,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import ExplicitIcon from '@mui/icons-material/Explicit';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 
 const drawerWidth = 240;
@@ -123,6 +124,7 @@ export default function Teacher() {
     {link:"/", component:"Home", icon:HomeIcon},
     {link:"/teacher", component:"Your Details", icon:DashboardCustomizeIcon},
     {link:"/teacher/examination", component:"Examination", icon:ExplicitIcon},
+    { link: "/teacher/results", component: "Results", icon: AssessmentIcon },
     {link:"/teacher/schedule", component:"Schedule", icon:EventNoteIcon},
     {link:"/teacher/attendance", component:"Attendance", icon:ChecklistRtlIcon},
     {link:"/teacher/notification", component:"Notification", icon:NotificationsActiveIcon},

@@ -11,6 +11,9 @@ const ScheduleTeacher = lazy(() =>
 const ExamTeacher = lazy(() =>
   import('../teacher/components/examination/ExamTeacher')
 );
+const ResultTeacher = lazy(() =>
+  import('../teacher/components/results/ResultTeacher')
+);
 const AttendanceTeacher = lazy(() =>
   import('../teacher/components/attendance/AttendanceTeacher')
 );
@@ -23,6 +26,7 @@ export const teacherRoutes = (
       <Route index element={<TeacherDetails />} />
       <Route path="schedule" element={<ScheduleTeacher />} />
       <Route path="examination" element={<ExamTeacher />} />
+      <Route path="results" element={<ResultTeacher />} />
       <Route path="attendance" element={<AttendanceTeacher />} />
       <Route path="notification" element={<NotifTeacher />} />
     </>

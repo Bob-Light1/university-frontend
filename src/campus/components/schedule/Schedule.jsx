@@ -237,16 +237,29 @@ const Schedule = () => {
         </DialogTitle>
         <DialogContent dividers sx={{ pt: 2 }}>
           <ScheduleForm
-            initialData={editTarget} campusId={campusId}
-            teacherOptions={teacherOptions} classOptions={classOptions} subjectOptions={subjectOptions}
-            onSubmit={handleFormSubmit} onCancel={() => setFormOpen(false)}
+            initialData={editTarget} 
+            campusId={campusId}
+            teacherOptions={teacherOptions} 
+            classOptions={classOptions} 
+            subjectOptions={subjectOptions}
+            onSubmit={handleFormSubmit} 
+            onCancel={() => setFormOpen(false)}
           />
         </DialogContent>
       </Dialog>
 
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert onClose={closeSnackbar} severity={snackbar.severity} variant="filled" sx={{ borderRadius: 2 }}>
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={closeSnackbar} 
+          severity={snackbar.severity} 
+          variant="filled" 
+          sx={{ borderRadius: 2 }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -257,8 +270,15 @@ const Schedule = () => {
 const EmptyState = ({ onAction }) => {
   const theme = useTheme();
   return (
-    <Box sx={{ textAlign: 'center', py: 8, bgcolor: alpha(theme.palette.primary.main, 0.04),
-      borderRadius: 3, border: `2px dashed ${alpha(theme.palette.primary.main, 0.2)}` }}>
+    <Box 
+      sx={{ 
+          textAlign: 'center', 
+          py: 8, 
+          bgcolor: alpha(theme.palette.primary.main, 0.04),
+          borderRadius: 3, 
+          border: `2px dashed ${alpha(theme.palette.primary.main, 0.2)}` 
+        }}
+    >
       <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: alpha(theme.palette.primary.main, 0.1), width: 64, height: 64 }}>
         <CalendarMonth sx={{ fontSize: 32, color: 'primary.main' }} />
       </Avatar>

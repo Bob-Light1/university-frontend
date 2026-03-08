@@ -1,11 +1,14 @@
 import * as Yup from 'yup';
 
 /**
- * Yup validation schema for Teacher creation/update form
- * @param {boolean} isEdit - Whether we're editing an existing teacher
+ * Yup validation schema for Teacher creation / update form.
+ *
+ * @param {boolean} isEdit - true when editing an existing teacher record
  */
 export const createTeacherSchema = (isEdit = false) =>
   Yup.object().shape({
+    // ── Personal information ──────────────────────────────────────────────────
+
     firstName: Yup.string()
       .trim()
       .min(2, 'First name must be at least 2 characters')
@@ -65,6 +68,8 @@ export const createTeacherSchema = (isEdit = false) =>
       .max(new Date(), 'Date of birth cannot be in the future')
       .typeError('Please enter a valid date'),
 
+    // ── Professional information ──────────────────────────────────────────────
+
     qualification: Yup.string()
       .trim()
       .max(100, 'Qualification must not exceed 100 characters')
@@ -88,16 +93,44 @@ export const createTeacherSchema = (isEdit = false) =>
       )
       .required('Employment type is required'),
 
-    department: Yup.string()
-      .required('Department is required'),
+    // ── Academic assignment ───────────────────────────────────────────────────
+
+    department: Yup.string().required('Department is required'),
+
+    /**
+     * Classes the teacher is assigned to teach.
+     * Optional array of class ObjectIds (strings from the select/chips UI).
+     * All class IDs must belong to the same campus — enforced by the backend.
+     */
+    classes: Yup.array()
+      .of(Yup.string().required())
+      .notRequired()
+      .default([]),
+
+    /**
+     * Optional: ID of the class for which this teacher is the classManager.
+     * Must be one of the classes already selected in `classes[]`.
+     * Backend enforces campus isolation and sets Class.classManager accordingly.
+     */
+    classManagerOf: Yup.string()
+      .nullable()
+      .notRequired()
+      .test(
+        'classManager-in-classes',
+        'The managed class must be one of the assigned classes',
+        function (value) {
+          if (!value) return true; // optional — null/empty is fine
+          const { classes = [] } = this.parent;
+          return classes.includes(value);
+        }
+      ),
 
     matricule: Yup.string()
       .trim()
       .uppercase()
       .notRequired(),
 
-    schoolCampus: Yup.string()
-      .required('Campus is required'),
+    schoolCampus: Yup.string().required('Campus is required'),
 
     profileImage: Yup.mixed().nullable().notRequired(),
   });

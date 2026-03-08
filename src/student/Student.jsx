@@ -25,6 +25,7 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import ExplicitIcon from '@mui/icons-material/Explicit';
 import HomeIcon from '@mui/icons-material/Home';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 
 const drawerWidth = 240;
@@ -123,6 +124,7 @@ export default function Student() {
     {link:"/", component:"Home", icon:HomeIcon},
     {link:"/student", component:"Your Details", icon:DashboardCustomizeIcon},
     {link:"/student/examination", component:"Examination", icon:ExplicitIcon},
+    { link: `/student/results`, component: "Results", icon: AssessmentIcon },
     {link:"/student/schedule", component:"Schedule", icon:EventNoteIcon},
     {link:"/student/attendance", component:"Attendance", icon:ChecklistRtlIcon},
     {link:"/student/notification", component:"Notification", icon:NotificationsActiveIcon},

@@ -75,6 +75,15 @@ export default function CampusDashboard() {
       color: '#f59e0b',
       description: 'Assessment management'
     },
+    { 
+      id: 10, 
+      name: 'Student Reports', // Ou "Results"
+      type: 'Evaluation', 
+      path: `/campus/${campusId}/results`, 
+      icon: '🏆', 
+      color: '#f59e0b',
+      description: 'Academic transcripts and reports'
+    },
 
     // USER GROUP
     { 
