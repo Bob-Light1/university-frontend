@@ -1,7 +1,6 @@
 import { Route } from 'react-router-dom';
 import { lazy } from 'react';
 
-
 const StudentDetails = lazy(() =>
   import('../student/components/studentDetails/StudentDetails')
 );
@@ -20,15 +19,18 @@ const AttendanceStudent = lazy(() =>
 const NotifStudent = lazy(() =>
   import('../student/components/notification/NotifStudent')
 );
-
+const DocumentStudent = lazy(() =>
+  import('../student/components/documents/DocumentStudent')
+);
 
 export const studentRoutes = (
-    <>
-      <Route index element={<StudentDetails />} />
-      <Route path="schedule" element={<ScheduleStudent />} />
-      <Route path="examination" element={<ExamStudent />} />
-       <Route path="results" element={<ResultStudent />} />
-      <Route path="attendance" element={<AttendanceStudent />} />
-      <Route path="notification" element={<NotifStudent />} />
-    </>
+  <>
+    <Route index element={<StudentDetails />} />
+    <Route path="schedule"   element={<ScheduleStudent />} />
+    <Route path="examination" element={<ExamStudent />} />
+    <Route path="results"    element={<ResultStudent />} />
+    <Route path="attendance" element={<AttendanceStudent />} />
+    <Route path="notification" element={<NotifStudent />} />
+    <Route path="documents"  element={<DocumentStudent />} />
+  </>
 );

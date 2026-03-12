@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom';
-import { lazy} from 'react';
+import { lazy } from 'react';
 
 // Lazy-loaded pages
 const Dashboard = lazy(() =>
@@ -29,29 +29,34 @@ const Examination = lazy(() =>
 const Results = lazy(() =>
   import('../campus/components/results/Results')
 );
+const Courses = lazy(() =>
+  import('../campus/components/courses/Course')
+);
 const Attendance = lazy(() =>
   import('../campus/components/attendance/Attendance')
 );
 const Notification = lazy(() =>
   import('../campus/components/notification/Notification')
 );
+const Document = lazy(() =>
+  import('../campus/components/documents/Document')
+);
 
 export const campusRoutes = (
   <>
     <Route index element={<Dashboard />} />
-    <Route path="dashboard" element={<Dashboard />} />
-    <Route path="students" element={<Students />} />
-    <Route path="teachers" element={<Teachers />} />
-    <Route path="parents" element={<Parents />} />
-    <Route path="classes" element={<Classes />} />
-    <Route path="subjects" element={<Subjects />} />
-    <Route path="schedule" element={<Schedule />} />
+    <Route path="dashboard"  element={<Dashboard />} />
+    <Route path="students"   element={<Students />} />
+    <Route path="teachers"   element={<Teachers />} />
+    <Route path="parents"    element={<Parents />} />
+    <Route path="classes"    element={<Classes />} />
+    <Route path="subjects"   element={<Subjects />} />
+    <Route path="courses"   element={<Courses />} />
+    <Route path="schedule"   element={<Schedule />} />
     <Route path="examination" element={<Examination />} />
-     <Route path="results" element={<Results /> } />
+    <Route path="results"    element={<Results />} />
     <Route path="attendance" element={<Attendance />} />
     <Route path="notification" element={<Notification />} />
+    <Route path="documents"  element={<Document />} />
   </>
-); 
-
-
-
+);

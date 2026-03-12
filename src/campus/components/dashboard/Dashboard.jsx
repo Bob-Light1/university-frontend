@@ -27,6 +27,7 @@ import { IMAGE_BASE_URL, API_BASE_URL } from '../../../config/env';
 import EditCampusModal from './EditCampusModal';
 import { useNavigate, useParams } from 'react-router-dom';
 
+
 export default function CampusDashboard() {
   const { campusId } = useParams();
   const [campus, setCampus] = useState(null);
@@ -37,103 +38,96 @@ export default function CampusDashboard() {
   const navigate = useNavigate();
 
   // Campus modules configuration
-  const campusModules = [
-    // ACADEMIC GROUP
-    { 
-      id: 1, 
-      name: 'Class Management', 
-      type: 'Academic', 
-      path: `/campus/${campusId}/classes`, 
-      icon: '🏫', 
-      color: '#4989c8',
-      description: 'Manage classes and levels'
-    },
-    { 
-      id: 2, 
-      name: 'Schedule', 
-      type: 'Academic', 
-      path: `/campus/${campusId}/schedule`, 
-      icon: '📅', 
-      color: '#4989c8',
-      description: 'Class timetables'
-    },
-    { 
-      id: 3, 
-      name: 'Subjects & Units', 
-      type: 'Academic', 
-      path: `/campus/${campusId}/subjects`, 
-      icon: '📚', 
-      color: '#4989c8',
-      description: 'Course curriculum'
-    },
-    { 
-      id: 4, 
-      name: 'Exams & Grades', 
-      type: 'Evaluation', 
-      path: `/campus/${campusId}/examination`, 
-      icon: '📊', 
-      color: '#f59e0b',
-      description: 'Assessment management'
-    },
-    { 
-      id: 10, 
-      name: 'Student Reports', // Ou "Results"
-      type: 'Evaluation', 
-      path: `/campus/${campusId}/results`, 
-      icon: '🏆', 
-      color: '#f59e0b',
-      description: 'Academic transcripts and reports'
-    },
+ const campusModules = [
+  // --- GROUP: ACADEMIC
+  { 
+    id: 1, 
+    name: 'Class Management', 
+    type: 'Academic', 
+    path: `/campus/${campusId}/classes`, 
+    icon: '🏫', 
+    color: '#4989c8',
+    description: 'Manage classes and levels'
+  },
+  { 
+    id: 2, 
+    name: 'Schedule', 
+    type: 'Academic', 
+    path: `/campus/${campusId}/schedule`, 
+    icon: '📅', 
+    color: '#4989c8',
+    description: 'Class timetables'
+  },
+  { 
+    id: 3, 
+    name: 'Subjects & Units', 
+    type: 'Academic', 
+    path: `/campus/${campusId}/subjects`, 
+    icon: '📚', 
+    color: '#4989c8',
+    description: 'Course curriculum'
+  },
+  { 
+    id: 4, 
+    name: 'Courses Catalog',
+    type: 'Academic', 
+    path: `/campus/${campusId}/courses`, 
+    icon: '📖', 
+    color: '#14b8a6', 
+    description: 'Global academic courses'
+  },
 
-    // USER GROUP
-    { 
-      id: 5, 
-      name: 'Student Register', 
-      type: 'Users', 
-      path: `/campus/${campusId}/students`, 
-      icon: '👨‍🎓', 
-      color: '#10b981',
-      description: 'Student database'
-    },
-    { 
-      id: 6, 
-      name: 'Teaching Staff', 
-      type: 'Users', 
-      path: `/campus/${campusId}/teachers`, 
-      icon: '👨‍🏫', 
-      color: '#10b981',
-      description: 'Faculty members'
-    },
-    { 
-      id: 7, 
-      name: 'Parents Area', 
-      type: 'Users', 
-      path: `/campus/${campusId}/parents`, 
-      icon: '👨‍👩‍👧', 
-      color: '#10b981',
-      description: 'Parent portal'
-    },
+  // --- GROUP: EVALUATION
+  { 
+    id: 5, 
+    name: 'Exams & Grades', 
+    type: 'Evaluation', 
+    path: `/campus/${campusId}/examination`, 
+    icon: '📊', 
+    color: '#f59e0b',
+    description: 'Assessment management'
+  },
+  { 
+    id: 6, 
+    name: 'Student Reports',
+    type: 'Evaluation', 
+    path: `/campus/${campusId}/results`, 
+    icon: '🏆', 
+    color: '#f59e0b',
+    description: 'Academic transcripts and reports'
+  },
 
-    // MANAGEMENT & COMMUNICATION
-    { 
-      id: 8, 
-      name: 'Attendance Tracking', 
-      type: 'Management', 
-      path: `/campus/${campusId}/attendance`, 
-      icon: '📝', 
-      color: '#6366f1',
-      description: 'Daily attendance'
-    },
-    { 
-      id: 9, 
-      name: 'Notification Center', 
-      type: 'Communication', 
-      path: `/campus/${campusId}/notification`, 
-      icon: '🔔', 
-      color: '#ef4444',
-      description: 'Announcements'
-    },
-  ];
+  // --- GROUP: USERS (Green) ---
+  { 
+    id: 7, 
+    name: 'Student Register', 
+    type: 'Users', 
+    path: `/campus/${campusId}/students`, 
+    icon: '👨‍🎓', 
+    color: '#10b981',
+    description: 'Student database'
+  },
+  { 
+    id: 8, 
+    name: 'Teaching Staff', 
+    type: 'Users', 
+    path: `/campus/${campusId}/teachers`, 
+    icon: '👨‍🏫', 
+    color: '#10b981',
+    description: 'Faculty members'
+  },
+
+  // --- GROUP: MANAGEMENT & COMMUNICATION (Indigo / Red) ---
+  { 
+    id: 10, 
+    name: 'Attendance Tracking', 
+    type: 'Management', 
+    path: `/campus/${campusId}/attendance`, 
+    icon: '📝', 
+    color: '#6366f1',
+    description: 'Daily attendance'
+  },
+];
 
   useEffect(() => {
     const fetchDashboardData = async () => {

@@ -26,6 +26,8 @@ import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import ExplicitIcon from '@mui/icons-material/Explicit';
 import HomeIcon from '@mui/icons-material/Home';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 
 const drawerWidth = 240;
@@ -127,6 +129,8 @@ export default function Student() {
     { link: `/student/results`, component: "Results", icon: AssessmentIcon },
     {link:"/student/schedule", component:"Schedule", icon:EventNoteIcon},
     {link:"/student/attendance", component:"Attendance", icon:ChecklistRtlIcon},
+    { link: `/student/courses`, component: "Courses", icon: MenuBookIcon },
+    {link:"/student/documents", component:"Documents", icon:DescriptionIcon},
     {link:"/student/notification", component:"Notification", icon:NotificationsActiveIcon},
   ];
 

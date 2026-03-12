@@ -40,6 +40,8 @@ import ExplicitIcon from '@mui/icons-material/Explicit';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const drawerWidth = 240;
 
@@ -168,6 +170,8 @@ export default function Campus() {
     { link: `/campus/${campusId}/results`, component: "Results", icon: AssessmentIcon },
     { link: `/campus/${campusId}/schedule`, component: "Schedule", icon: EventNoteIcon },
     { link: `/campus/${campusId}/attendance`, component: "Attendance", icon: ChecklistRtlIcon },
+    { link: `/campus/${campusId}/courses`, component: "Course", icon: MenuBookIcon },
+    { link: `/campus/${campusId}/documents`, component: "Document", icon: DescriptionIcon },
     { link: `/campus/${campusId}/notification`, component: "Notification", icon: NotificationsActiveIcon },
   ];
 
