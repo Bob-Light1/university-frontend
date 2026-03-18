@@ -1,10 +1,23 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../config/env';
 
+/**
+ * Default request timeout for regular API calls (10 s).
+ * PDF/binary export endpoints use EXPORT_TIMEOUT instead,
+ * because server-side PDF generation (Puppeteer / wkhtmltopdf) can take
+ * several seconds even for cached documents.
+ */
+export const DEFAULT_TIMEOUT = 10_000;
+
+/**
+ * Extended timeout for PDF export and bulk binary download requests (90 s).
+ * Covers: cold PDF generation, ZIP packaging, large imported-file streaming.
+ */
+export const EXPORT_TIMEOUT = 90_000;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: DEFAULT_TIMEOUT,
 });
 
 const refreshClient = axios.create({

@@ -39,7 +39,7 @@
  *    value is preserved and applied once the options list is populated.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, Grid, TextField, MenuItem, Divider, Typography,
@@ -160,7 +160,7 @@ const FieldText = ({
 // ─── Default initial values ────────────────────────────────────────────────────
 
 const DEFAULT_VALUES = {
-  schoolCampus:         '',
+  schoolCampus:         null,  // null until campusId is known; optionalObjectId accepts null
   academicYear:         `${currentYear}-${currentYear + 1}`,
   semester:             'S1',
   evaluationType:       'CC',
@@ -224,18 +224,30 @@ const ResultForm = ({
       subject:      toId(iv.subject),                       // 3
       student:      toId(iv.student),                       // 3
       gradingScale: toId(iv.gradingScale),                  // 3
-      schoolCampus: campusId || toId(iv.schoolCampus),      // 4
+      schoolCampus: campusId || toId(iv.schoolCampus) || null,  // 4 — null for ADMIN/DIRECTOR
       teacher:      defaultTeacherId || toId(iv.teacher) || '',  // 5
       examDate:     iv.examDate ? String(iv.examDate).substring(0, 10) : '',  // 6
     };
   }, [initialValues, campusId, defaultTeacherId]);
 
   /**
-   * safeStudentValue — returns '' while students are loading so MUI Select
-   * never receives an ID that isn't yet in its options list.
-   * The actual Formik value is unaffected and applied after loading ends.
+   * safeStudentValue — prevents the MUI "out-of-range value" warning by
+   * returning '' whenever the current Formik student ID is not present in
+   * the current options list. This covers two cases:
+   *   1. studentsLoading=true  → students not yet fetched, list is empty.
+   *   2. Dialog closing/closed → parent resets students=[], Formik still
+   *      holds the previous ID for a brief render cycle before unmount.
+   * The actual Formik field value is never mutated here — this is display-only.
    */
-  const safeStudentValue = (vals) => (studentsLoading ? '' : (vals.student ?? ''));
+  const studentIds = useMemo(() => new Set(students.map((s) => s._id)), [students]);
+
+  const safeStudentValue = (vals) => {
+    const v = vals.student ?? '';
+    if (!v) return '';
+    if (studentsLoading) return '';
+    // Return '' if the stored ID is not (yet) in the visible options
+    return studentIds.has(v) ? v : '';
+  };
 
   return (
     <Dialog

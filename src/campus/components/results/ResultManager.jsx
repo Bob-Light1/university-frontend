@@ -22,9 +22,6 @@ import {
   TablePagination, Paper, IconButton, Tooltip, TextField,
   MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
   CircularProgress, Divider, Tab, Tabs, Badge,
-  FormControl,
-  InputLabel,
-  Select,
 } from '@mui/material';
 import {
   Add, CloudUpload, Publish, Lock, Refresh, Delete, Edit,
@@ -51,10 +48,10 @@ import {
 } from '../../../components/results/ResultShared';
 
 // ─── Semester lock dialog ─────────────────────────────────────────────────────
-         
+
 const LockSemesterDialog = ({ open, onClose, onConfirm, loading }) => {
   const [academicYear, setAcademicYear] = useState('');
-  const [semester, setSemester] = useState('S1');
+  const [semester, setSemester]         = useState('S1');
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => {
@@ -62,83 +59,41 @@ const LockSemesterDialog = ({ open, onClose, onConfirm, loading }) => {
     return `${y}-${y + 1}`;
   });
 
-  // IDs uniques pour les labels
-  const academicYearId = 'lock-academic-year';
-  const semesterId = 'lock-semester';
-
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="xs"
-      fullWidth
-      disableEnforceFocus
-      closeAfterTransition={false}
-      aria-labelledby="result-manager"
+    <Dialog 
+        open={open} 
+        onClose={onClose} 
+        maxWidth="xs" 
+        fullWidth
+        disableEnforceFocus={true}
+        closeAfterTransition={false}
+        aria-labelledby="result-manager"
     >
       <DialogTitle>Lock Semester</DialogTitle>
-
       <DialogContent>
         <Alert severity="warning" sx={{ mb: 2 }}>
           This will freeze all PUBLISHED results and generate official transcripts.
-          <br />
           This action cannot be undone.
         </Alert>
-
         <Grid container spacing={2}>
-          <Grid size={{ xs: 8 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel id={`${academicYearId}-label`}>Academic Year</InputLabel>
-              <Select
-                id={academicYearId}
-                labelId={`${academicYearId}-label`}
-                value={academicYear}
-                label="Academic Year"
-                onChange={(e) => setAcademicYear(e.target.value)}
-                disabled={loading}
-              >
-                <MenuItem value="" disabled>
-                  — Select academic year —
-                </MenuItem>
-                {years.map((y) => (
-                  <MenuItem key={y} value={y}>
-                    {y}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Grid item xs={8}>
+            <TextField select fullWidth size="small" label="Academic Year"
+              value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}>
+              {years.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+            </TextField>
           </Grid>
-
-          <Grid size={{ xs: 4 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel id={`${semesterId}-label`}>Semester</InputLabel>
-              <Select
-                id={semesterId}
-                labelId={`${semesterId}-label`}
-                value={semester}
-                label="Semester"
-                onChange={(e) => setSemester(e.target.value)}
-                disabled={loading}
-              >
-                {['S1', 'S2', 'Annual'].map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Grid item xs={4}>
+            <TextField select fullWidth size="small" label="Semester"
+              value={semester} onChange={(e) => setSemester(e.target.value)}>
+              {['S1', 'S2', 'Annual'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+            </TextField>
           </Grid>
         </Grid>
       </DialogContent>
-
       <DialogActions>
-        <Button onClick={onClose} disabled={loading}>
-          Cancel
-        </Button>
+        <Button onClick={onClose} disabled={loading}>Cancel</Button>
         <Button
-          variant="contained"
-          color="error"
-          disabled={!academicYear || loading}
+          variant="contained" color="error" disabled={!academicYear || loading}
           startIcon={loading ? <CircularProgress size={16} /> : <Lock />}
           onClick={() => onConfirm({ academicYear, semester })}
         >
@@ -173,8 +128,14 @@ const ResultManager = () => {
   const [classes,          setClasses]          = useState([]);
   const [subjects,         setSubjects]         = useState([]);
   const [teachers,         setTeachers]         = useState([]);
-  const [students,         setStudents]         = useState([]);
   const [gradingScales,    setGradingScales]    = useState([]);
+
+  // Students loaded on-demand when a class is selected — prevents
+  // cross-class assignment and avoids mounting with hundreds of records.
+  const [singleStudents,   setSingleStudents]   = useState([]);
+  const [bulkStudents,     setBulkStudents]     = useState([]);
+  const [studentsLoading,  setStudentsLoading]  = useState(false);
+
   const [selectedResult,   setSelectedResult]   = useState(null);
   const [detailOpen,       setDetailOpen]       = useState(false);
   const [formOpen,         setFormOpen]         = useState(false);
@@ -187,52 +148,71 @@ const ResultManager = () => {
   const [snackMsg,         setSnackMsg]         = useState('');
 
   /**
-   * Load all reference data needed by forms and filters.
-   * Campus isolation is enforced server-side (req.user); campusId is passed only
-   * as an optional hint for ADMIN/DIRECTOR who may see multiple campuses.
+   * Load reference data (classes, subjects, teachers, grading scales).
+   * Students are intentionally excluded — loaded on-demand via
+   * fetchStudentsByClass() when the user selects a class in a form.
+   * This enforces class-scoped student selection and avoids loading
+   * potentially hundreds of students at mount time.
    *
-   * E1 fix: do NOT guard on campusId — ADMIN / DIRECTOR users have no campusId
-   * in their token and the guard was silently preventing data from loading.
+   * API paths (server mounts at /api/<resource>):
+   *   /class    → GET /api/class
+   *   /subject  → GET /api/subject
+   *   /teachers → GET /api/teachers
+   * Campus isolation enforced server-side via req.user JWT.
    */
   useEffect(() => {
     const load = async () => {
       try {
-        const [cls, sub, tch, stu, scales] = await Promise.all([
+        const [cls, sub, tch, scales] = await Promise.all([
           api.get('/class',    { params: { limit: 200 } }),
           api.get('/subject',  { params: { limit: 200 } }),
           api.get('/teachers', { params: { limit: 200 } }),
-          api.get('/students', { params: { limit: 500, status: 'active' } }),
           listGradingScales(),
         ]);
-
-        // sendPaginated returns { data: [...], pagination: {...} }
-        // sendSuccess returns  { data: [...] }
-        // Support both shapes for resilience.
+        // Normalise response shape — backend may return data.data or data.records
         const pick = (res) =>
-          Array.isArray(res.data?.data)
-            ? res.data.data
-            : Array.isArray(res.data?.records)
-            ? res.data.records
-            : Array.isArray(res.data?.results)
-            ? res.data.results
-            : [];
+          res.data?.data ?? res.data?.records ?? res.data?.results ?? [];
 
         setClasses(pick(cls));
         setSubjects(pick(sub));
         setTeachers(pick(tch));
-        setStudents(pick(stu));
-        setGradingScales(Array.isArray(scales.data?.data) ? scales.data.data : []);
+        setGradingScales(scales.data?.data ?? []);
       } catch (err) {
-        console.error(
-          '[ResultManager] reference data load error:',
-          err?.response?.data?.message ?? err?.message,
-        );
+        console.error('[ResultManager] reference data load error:', err?.response?.data?.message ?? err?.message);
       }
     };
-
+    // Always load reference data.
+    // ADMIN/DIRECTOR have no campusId in their JWT — the backend scopes
+    // data visibility via buildCampusFilter(req.user) server-side.
     load();
-    // Re-run only when the campus context changes (e.g. ADMIN switches campus)
-  }, [campusId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [campusId]);
+
+  /**
+   * fetchStudentsByClass — loads active students for a specific class on-demand.
+   * Isolated state per form type prevents cross-contamination between
+   * ResultForm (single entry) and BulkResultForm (bulk entry).
+   *
+   * @param {string} classId  — Mongo ObjectId of the selected class
+   * @param {'single'|'bulk'} target — which form triggered the request
+   */
+  const fetchStudentsByClass = useCallback(async (classId, target = 'single') => {
+    if (!classId) return;
+    setStudentsLoading(true);
+    try {
+      const res = await api.get('/students', {
+        params: { classId, status: 'active', limit: 200 },
+      });
+      const list = res.data?.data ?? res.data?.records ?? res.data?.results ?? [];
+      if (target === 'bulk') setBulkStudents(list);
+      else                   setSingleStudents(list);
+    } catch (err) {
+      console.error('[ResultManager] fetchStudentsByClass error:', err?.response?.data?.message ?? err?.message);
+      if (target === 'bulk') setBulkStudents([]);
+      else                   setSingleStudents([]);
+    } finally {
+      setStudentsLoading(false);
+    }
+  }, []);
 
   // Load overview on first render
   useEffect(() => { fetchOverview(); }, [fetchOverview]);
@@ -489,10 +469,15 @@ const ResultManager = () => {
 
       {/* ── Modals ────────────────────────────────────────────────────────── */}
 
-      {/* Create / Edit form */}
+      {/* Create / Edit form
+        * students:      loaded on-demand via onClassChange → singleStudents.
+        *                Cleared on close to prevent stale IDs triggering
+        *                the MUI "out-of-range value" warning next open.
+        * studentsLoading: forwarded so the Student select shows loading state.
+        */}
       <ResultForm
         open={formOpen}
-        onClose={() => { setFormOpen(false); setEditTarget(null); }}
+        onClose={() => { setFormOpen(false); setEditTarget(null); setSingleStudents([]); }}
         onSubmit={editTarget
           ? (values) => update(editTarget._id, values)
           : (values) => create(values)
@@ -503,20 +488,33 @@ const ResultManager = () => {
         classes={classes}
         subjects={subjects}
         teachers={teachers}
-        students={students}
+        students={singleStudents}
+        studentsLoading={studentsLoading}
         gradingScales={gradingScales}
+        onClassChange={(classId) => {
+          setSingleStudents([]);
+          fetchStudentsByClass(classId, 'single');
+        }}
       />
 
-      {/* Bulk entry */}
+      {/* Bulk entry
+        * students: loaded on-demand via onClassChange → bulkStudents.
+        */}
       <BulkResultForm
         open={bulkOpen}
-        onClose={() => setBulkOpen(false)}
+        onClose={() => { setBulkOpen(false); setBulkStudents([]); }}
         onSubmit={bulkCreate}
         campusId={campusId}
         classes={classes}
         subjects={subjects}
         teachers={teachers}
+        students={bulkStudents}
+        studentsLoading={studentsLoading}
         gradingScales={gradingScales}
+        onClassChange={(classId) => {
+          setBulkStudents([]);
+          fetchStudentsByClass(classId, 'bulk');
+        }}
       />
 
       {/* Lock semester */}

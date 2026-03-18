@@ -6,6 +6,23 @@
  * export/download buttons, share link management, version history, and audit log.
  *
  * Accessible to all roles — action buttons are conditionally rendered based on role.
+ *
+ * Fixes applied (v1.2):
+ *  1. AuditPanel / SharePanel: ListItemText secondary prop passed a <Stack> (div) which
+ *     MUI wraps in a <Typography component="p"> — <div> inside <p> is invalid HTML.
+ *     Fixed by adding secondaryTypographyProps={{ component: 'div' }} on all affected
+ *     ListItemText instances and wrapping secondary content in <Box component="span">
+ *     stacks where needed.
+ *  2. aria-hidden focus leak (Drawer close): blurs the active element before calling
+ *     onClose() — prevents MUI from applying aria-hidden while a focusable descendant
+ *     still holds focus.
+ *  3. aria-hidden focus leak (Edit / Delete buttons): when the user clicks Edit or
+ *     Delete inside the Drawer, the clicked button retains focus. MUI then opens a
+ *     Dialog (DocumentForm / confirm) on top of the Drawer. When that Dialog closes,
+ *     MUI sets aria-hidden="true" on the Drawer while the button inside it still holds
+ *     focus → browser warning. Fix: blur the active element before delegating to
+ *     onEdit() / onDelete(), via dedicated handleEdit / handleDelete wrappers.
+ *     This mirrors the pattern already in place for handleClose.
  */
 
 import { useState, useEffect, useContext, useCallback } from 'react';
@@ -69,6 +86,21 @@ import {
   getMimeLabel,
 } from './DocumentShared';
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const DRAWER_WIDTH = 480;
+
+/**
+ * Blur the currently focused element, if any.
+ * Called before opening a Dialog from inside a Drawer to prevent MUI from
+ * applying aria-hidden on the Drawer while a descendant still holds focus.
+ */
+const blurActive = () => {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+};
+
 // ─── Reason dialog — used for publish / archive / lock / delete ───────────────
 
 const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confirmLabel = 'Confirm' }) => {
@@ -117,10 +149,10 @@ const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confi
 // ─── Share link panel ─────────────────────────────────────────────────────────
 
 const SharePanel = ({ documentId, hookRef, docStatus }) => {
-  const [shares,  setShares]  = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [shares,   setShares]   = useState([]);
+  const [loading,  setLoading]  = useState(false);
   const [creating, setCreating] = useState(false);
-  const [newLink, setNewLink]   = useState(null);
+  const [newLink,  setNewLink]  = useState(null);
   const [opts, setOpts] = useState({ expiresInHours: 48, maxDownloads: 5 });
 
   const loadShares = useCallback(async () => {
@@ -218,6 +250,11 @@ const SharePanel = ({ documentId, hookRef, docStatus }) => {
         <List dense disablePadding>
           {shares.map((s) => (
             <ListItem key={s._id} disableGutters divider>
+              {/*
+                FIX 1: secondary contains a <Stack> (renders as <div>).
+                MUI wraps secondary in <Typography component="p"> by default → <div> in <p>.
+                Resolved by secondaryTypographyProps={{ component: 'div' }}.
+              */}
               <ListItemText
                 primary={
                   <Typography variant="caption" fontFamily="monospace">
@@ -234,6 +271,7 @@ const SharePanel = ({ documentId, hookRef, docStatus }) => {
                     </Typography>
                   </Stack>
                 }
+                secondaryTypographyProps={{ component: 'div' }}
               />
               <ListItemSecondaryAction>
                 <Tooltip title="Revoke link">
@@ -253,8 +291,8 @@ const SharePanel = ({ documentId, hookRef, docStatus }) => {
 // ─── Version history panel ────────────────────────────────────────────────────
 
 const VersionPanel = ({ documentId, hookRef, userRole }) => {
-  const [versions, setVersions] = useState([]);
-  const [loading,  setLoading]  = useState(false);
+  const [versions,  setVersions]  = useState([]);
+  const [loading,   setLoading]   = useState(false);
   const [restoring, setRestoring] = useState(null);
 
   useEffect(() => {
@@ -285,6 +323,10 @@ const VersionPanel = ({ documentId, hookRef, userRole }) => {
     <List dense disablePadding>
       {versions.map((v) => (
         <ListItem key={v._id} disableGutters divider>
+          {/*
+            FIX 1: secondary is a plain Typography — no block element, no issue here.
+            secondaryTypographyProps kept for consistency and future safety.
+          */}
           <ListItemText
             primary={
               <Stack direction="row" spacing={1} alignItems="center">
@@ -292,11 +334,8 @@ const VersionPanel = ({ documentId, hookRef, userRole }) => {
                 <Typography variant="caption">{v.snapshotReason}</Typography>
               </Stack>
             }
-            secondary={
-              <Typography variant="caption" color="text.secondary">
-                {new Date(v.takenAt).toLocaleString()}
-              </Typography>
-            }
+            secondary={new Date(v.takenAt).toLocaleString()}
+            secondaryTypographyProps={{ component: 'div', variant: 'caption', color: 'text.secondary' }}
           />
           {canRestore && (
             <ListItemSecondaryAction>
@@ -349,6 +388,13 @@ const AuditPanel = ({ documentId, hookRef }) => {
     <List dense disablePadding>
       {entries.map((e) => (
         <ListItem key={e._id} disableGutters divider sx={{ alignItems: 'flex-start' }}>
+          {/*
+            FIX 1 (main fix): both primary and secondary contain <Stack> / block elements.
+            MUI renders secondary inside <Typography component="p"> by default → invalid HTML.
+            secondaryTypographyProps={{ component: 'div' }} changes the wrapper to a <div>,
+            making <div> inside <div> valid.
+            Same fix applied to primary via primaryTypographyProps.
+          */}
           <ListItemText
             primary={
               <Stack direction="row" spacing={1} alignItems="center">
@@ -362,7 +408,7 @@ const AuditPanel = ({ documentId, hookRef }) => {
               <Stack spacing={0.25}>
                 {e.reason && (
                   <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
-                    "{e.reason}"
+                    &ldquo;{e.reason}&rdquo;
                   </Typography>
                 )}
                 <Typography variant="caption" color="text.disabled">
@@ -370,6 +416,8 @@ const AuditPanel = ({ documentId, hookRef }) => {
                 </Typography>
               </Stack>
             }
+            primaryTypographyProps={{ component: 'div' }}
+            secondaryTypographyProps={{ component: 'div' }}
           />
         </ListItem>
       ))}
@@ -379,12 +427,10 @@ const AuditPanel = ({ documentId, hookRef }) => {
 
 // ─── Main Drawer ──────────────────────────────────────────────────────────────
 
-const DRAWER_WIDTH = 480;
-
 /**
  * @param {{
  *   open:      boolean,
- *   doc:       Object|null,
+ *   doc:       Object | null,
  *   onClose:   () => void,
  *   onEdit:    (doc: Object) => void,
  *   onDelete:  (doc: Object) => void,
@@ -408,10 +454,55 @@ const DocumentDetailDrawer = ({
   const [tab,        setTab]       = useState(0);
   const [actionBusy, setActionBusy] = useState(null);
   const [error,      setError]     = useState(null);
-  const [reasonFor,  setReasonFor]  = useState(null); // 'publish'|'archive'|'lock'|'unlock'|'delete'
+  const [reasonFor,  setReasonFor]  = useState(null);
 
   // ── Reset tab on open ──────────────────────────────────────────────────────
   useEffect(() => { if (open) { setTab(0); setError(null); } }, [open, doc?._id]);
+
+  /**
+   * FIX 2 — aria-hidden focus leak (Drawer close).
+   *
+   * When this Drawer closes right after a Dialog (DocumentForm) closes, MUI
+   * sets aria-hidden="true" on #root while the Dialog's submit button may still
+   * hold focus. This triggers a browser accessibility warning and can break
+   * screen-reader navigation.
+   *
+   * Solution: blur the focused element before handing control to onClose().
+   * This is the same pattern used in ScheduleTeacher.jsx (handleCloseDrawer).
+   */
+  const handleClose = useCallback(() => {
+    blurActive();
+    onClose();
+  }, [onClose]);
+
+  /**
+   * FIX 3 — aria-hidden focus leak (Edit button).
+   *
+   * When the user clicks the Edit IconButton inside the Drawer, that button
+   * retains focus. The DocumentForm Dialog then opens on top of the Drawer.
+   * When the Dialog closes (submit or cancel), MUI sets aria-hidden="true" on
+   * the Drawer while the Edit button inside it still holds focus.
+   *
+   * Solution: blur the active element before opening the Dialog so that MUI
+   * can safely transfer focus to the Dialog's first focusable element, and
+   * later restore it to the Drawer's close button without triggering the
+   * aria-hidden warning.
+   */
+  const handleEdit = useCallback((document) => {
+    blurActive();
+    onEdit(document);
+  }, [onEdit]);
+
+  /**
+   * FIX 3 (same pattern) — aria-hidden focus leak (Delete button).
+   *
+   * The Delete button triggers a confirmation Dialog. Same focus-retention
+   * problem applies — blur before delegating.
+   */
+  const handleDelete = useCallback((document) => {
+    blurActive();
+    onDelete(document);
+  }, [onDelete]);
 
   if (!doc) return null;
 
@@ -470,7 +561,7 @@ const DocumentDetailDrawer = ({
       <Drawer
         anchor="right"
         open={open}
-        onClose={onClose}
+        onClose={handleClose}
         PaperProps={{
           sx: {
             width:   { xs: '100vw', sm: DRAWER_WIDTH },
@@ -494,7 +585,7 @@ const DocumentDetailDrawer = ({
                 {doc.ref}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={onClose} sx={{ mt: -0.5 }}>
+            <IconButton size="small" onClick={handleClose} sx={{ mt: -0.5 }}>
               <Close />
             </IconButton>
           </Stack>
@@ -516,6 +607,7 @@ const DocumentDetailDrawer = ({
           <Box sx={{ px: 2.5, py: 1 }}>
             {error && <Alert severity="error" sx={{ mb: 1 }} onClose={() => setError(null)}>{error}</Alert>}
             <Stack direction="row" spacing={1} flexWrap="wrap">
+
               {/* Download PDF */}
               <Tooltip title="Download PDF">
                 <IconButton
@@ -540,10 +632,10 @@ const DocumentDetailDrawer = ({
                 </Tooltip>
               )}
 
-              {/* Edit */}
+              {/* Edit — FIX 3: use handleEdit to blur before opening DocumentForm Dialog */}
               {editable && (isDraft || (isPublished && isManager)) && (
                 <Tooltip title="Edit">
-                  <IconButton size="small" onClick={() => onEdit(doc)}>
+                  <IconButton size="small" onClick={() => handleEdit(doc)}>
                     <Edit fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -562,17 +654,17 @@ const DocumentDetailDrawer = ({
               <Box sx={{ borderLeft: `1px solid ${theme.palette.divider}`, mx: 0.5 }} />
 
               {/* Workflow */}
-              {workflowable && isDraft  && <ActionBtn action="publish"  icon={<CheckCircle />}  label="Publish" color="success" />}
-              {workflowable && isPublished && <ActionBtn action="archive" icon={<Archive />}     label="Archive" />}
-              {workflowable && isArchived  && <ActionBtn action="restore" icon={<Restore />}    label="Restore" color="secondary" />}
-              {workflowable && isPublished && !isLocked && <ActionBtn action="lock" icon={<Lock />} label="Lock" color="warning" />}
-              {workflowable && isLocked   && isManager  && <ActionBtn action="unlock" icon={<LockOpen />} label="Unlock" color="warning" />}
+              {workflowable && isDraft     && <ActionBtn action="publish"  icon={<CheckCircle />} label="Publish"  color="success" />}
+              {workflowable && isPublished && <ActionBtn action="archive"  icon={<Archive />}     label="Archive" />}
+              {workflowable && isArchived  && <ActionBtn action="restore"  icon={<Restore />}    label="Restore"  color="secondary" />}
+              {workflowable && isPublished && !isLocked && <ActionBtn action="lock"   icon={<Lock />}     label="Lock"     color="warning" />}
+              {workflowable && isLocked    && isManager  && <ActionBtn action="unlock" icon={<LockOpen />} label="Unlock"   color="warning" />}
               {workflowable && !doc.isOfficial && <ActionBtn action="official" icon={<VerifiedUser />} label="Official" color="info" />}
 
-              {/* Delete */}
+              {/* Delete — FIX 3: use handleDelete to blur before opening confirm Dialog */}
               {editable && !isLocked && (
                 <Tooltip title="Delete">
-                  <IconButton size="small" color="error" onClick={() => onDelete(doc)}>
+                  <IconButton size="small" color="error" onClick={() => handleDelete(doc)}>
                     <Delete fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -591,7 +683,7 @@ const DocumentDetailDrawer = ({
           TabIndicatorProps={{ sx: { height: 3 } }}
         >
           <Tab label="Details"  sx={{ minHeight: 40, py: 0 }} />
-          {shareable && <Tab label="Share"    sx={{ minHeight: 40, py: 0 }} />}
+          {shareable    && <Tab label="Share"    sx={{ minHeight: 40, py: 0 }} />}
           {workflowable && <Tab label="Versions" sx={{ minHeight: 40, py: 0 }} />}
           {workflowable && <Tab label="Audit"    sx={{ minHeight: 40, py: 0 }} />}
         </Tabs>
@@ -726,12 +818,12 @@ const DocumentDetailDrawer = ({
 
       {/* Reason dialogs for workflow actions */}
       {[
-        { action: 'publish',   title: 'Publish Document',           required: false, label: 'Publish'   },
-        { action: 'archive',   title: 'Archive Document',           required: false, label: 'Archive'   },
-        { action: 'restore',   title: 'Restore Document',           required: false, label: 'Restore'   },
-        { action: 'lock',      title: 'Lock Document',              required: false, label: 'Lock'      },
-        { action: 'unlock',    title: 'Unlock Document',            required: true,  label: 'Unlock'    },
-        { action: 'official',  title: 'Mark as Official',           required: false, label: 'Mark'      },
+        { action: 'publish',  title: 'Publish Document',  required: false, label: 'Publish'  },
+        { action: 'archive',  title: 'Archive Document',  required: false, label: 'Archive'  },
+        { action: 'restore',  title: 'Restore Document',  required: false, label: 'Restore'  },
+        { action: 'lock',     title: 'Lock Document',     required: false, label: 'Lock'     },
+        { action: 'unlock',   title: 'Unlock Document',   required: true,  label: 'Unlock'   },
+        { action: 'official', title: 'Mark as Official',  required: false, label: 'Mark'     },
       ].map(({ action, title, required, label }) => (
         <ReasonDialog
           key={action}

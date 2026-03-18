@@ -1,34 +1,45 @@
+/**
+ * @file Teacher.jsx
+ * @description Teacher layout shell.
+ *   Wraps all teacher-scoped routes with a mini/full side drawer
+ *   and the shared AppNavBar.
+ */
+
 import * as React from 'react';
+import { Suspense }         from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Box                  from '@mui/material/Box';
+import MuiDrawer            from '@mui/material/Drawer';
+import List                 from '@mui/material/List';
+import CssBaseline          from '@mui/material/CssBaseline';
+import Divider              from '@mui/material/Divider';
+import IconButton           from '@mui/material/IconButton';
+import ListItem             from '@mui/material/ListItem';
+import ListItemButton       from '@mui/material/ListItemButton';
+import ListItemIcon         from '@mui/material/ListItemIcon';
+import ListItemText         from '@mui/material/ListItemText';
+import Tooltip              from '@mui/material/Tooltip';
+import Typography           from '@mui/material/Typography';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+
+import ChevronLeftIcon  from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { Outlet, useNavigate } from 'react-router-dom';
 
-//IMPORT ICONS
+// ── Nav icons ──────────────────────────────────────────────────────────────
+import HomeIcon               from '@mui/icons-material/Home';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
-import HomeIcon from '@mui/icons-material/Home';
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import ExplicitIcon           from '@mui/icons-material/Explicit';
+import AssessmentIcon         from '@mui/icons-material/Assessment';
+import EventNoteIcon          from '@mui/icons-material/EventNote';
+import ChecklistRtlIcon       from '@mui/icons-material/ChecklistRtl';
+import MenuBookIcon           from '@mui/icons-material/MenuBook';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
-import ExplicitIcon from '@mui/icons-material/Explicit';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import DescriptionIcon from '@mui/icons-material/Description';
+import DescriptionIcon        from '@mui/icons-material/Description';
 
+import AppNavBar from '../components/AppNavBar';
+import Loader    from '../components/Loader';
+
+// ─── Drawer layout constants ──────────────────────────────────────────────────
 
 const drawerWidth = 240;
 
@@ -58,31 +69,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-      },
-    },
-  ],
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -110,124 +97,101 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function Teacher() {
-  const theme = useTheme();
+  const theme    = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const navArray = [
-    {link:"/", component:"Home", icon:HomeIcon},
-    {link:"/teacher", component:"Your Details", icon:DashboardCustomizeIcon},
-    {link:"/teacher/examination", component:"Examination", icon:ExplicitIcon},
-    { link: "/teacher/results", component: "Results", icon: AssessmentIcon },
-    {link:"/teacher/schedule", component:"Schedule", icon:EventNoteIcon},
-    {link:"/teacher/attendance", component:"Attendance", icon:ChecklistRtlIcon},
-    { link: `/teacher/courses`, component: "Courses", icon: MenuBookIcon },
-    {link:"/teacher/notification", component:"Notification", icon:NotificationsActiveIcon},
-    {link:"/teacher/documents", component:"Documents", icon:DescriptionIcon},
+  const navItems = [
+    { link: '/',                    label: 'Home',         icon: HomeIcon },
+    { link: '/teacher',             label: 'My Details',   icon: DashboardCustomizeIcon },
+    { link: '/teacher/examination', label: 'Examination',  icon: ExplicitIcon },
+    { link: '/teacher/results',     label: 'Results',      icon: AssessmentIcon },
+    { link: '/teacher/schedule',    label: 'Schedule',     icon: EventNoteIcon },
+    { link: '/teacher/attendance',  label: 'Attendance',   icon: ChecklistRtlIcon },
+    { link: '/teacher/courses',     label: 'Courses',      icon: MenuBookIcon },
+    { link: '/teacher/documents',   label: 'Documents',    icon: DescriptionIcon },
   ];
-
-  const navigate = useNavigate();
-  const handleNavigation = (link) =>{
-    navigate(link);
-  }
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={[
-              {
-                marginRight: 5,
-              },
-              open && { display: 'none' },
-            ]}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Teacher page
-          </Typography>
-        </Toolbar>
-      </AppBar>
+
+      <AppNavBar
+        drawerOpen={open}
+        onDrawerOpen={() => setOpen(true)}
+        pageTitle="Teacher Dashboard"
+      />
+
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
+          {open && (
+            <Typography
+              variant="caption"
+              fontWeight={700}
+              color="primary"
+              sx={{ flexGrow: 1, pl: 1, letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            >
+              Teacher Portal
+            </Typography>
+          )}
+          <IconButton onClick={() => setOpen(false)} aria-label="close drawer">
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
-        <Divider />
-        <List>
-          {navArray.map((navItem, index) => (
-            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  {
-                    minHeight: 48,
-                    px: 2.5,
-                  },
-                  open
-                    ? {
-                        justifyContent: 'initial',
-                      }
-                    : {
-                        justifyContent: 'center',
-                      },
-                ]}
 
-                onClick={() => { handleNavigation(navItem.link)}}
-              >
-                <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: 'center',
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: 'auto',
-                        },
-                  ]}
-                >
-                  {<navItem.icon />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={navItem.component}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+        <Divider />
+
+        <List>
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.link;
+            return (
+              <ListItem key={item.link} disablePadding sx={{ display: 'block' }}>
+                <Tooltip title={open ? '' : item.label} placement="right">
+                  <ListItemButton
+                    onClick={() => navigate(item.link)}
+                    selected={isActive}
+                    sx={[
+                      { minHeight: 48, px: 2.5 },
+                      open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
+                      isActive && {
+                        bgcolor: 'rgba(73,137,200,0.12)',
+                        borderRight: '3px solid',
+                        borderColor: 'primary.main',
+                      },
+                    ]}
+                  >
+                    <ListItemIcon
+                      sx={[
+                        { minWidth: 0, justifyContent: 'center', color: isActive ? 'primary.main' : 'inherit' },
+                        open ? { mr: 3 } : { mr: 'auto' },
+                      ]}
+                    >
+                      <item.icon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: isActive ? 600 : 400 }}
+                      sx={[open ? { opacity: 1 } : { opacity: 0 }]}
+                    />
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            );
+          })}
         </List>
+
         <Divider />
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+
+      <Box component="main" sx={{ flexGrow: 1, minHeight: '100vh' }}>
         <DrawerHeader />
-        <Outlet />
+        <Suspense fallback={<Loader />}>
+          <Outlet />
+        </Suspense>
       </Box>
     </Box>
   );

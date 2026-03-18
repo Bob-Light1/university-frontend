@@ -1,4 +1,3 @@
-import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from './utility-components/navbar/Navbar'
 import { Box } from '@mui/material'

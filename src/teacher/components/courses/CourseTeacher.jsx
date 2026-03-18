@@ -180,9 +180,11 @@ const CourseTeacher = () => {
           </Typography>
         </Box>
         <Tooltip title="Refresh">
-          <IconButton size="small" onClick={() => course.fetch()} disabled={course.loading}>
-            <Refresh fontSize="small" />
-          </IconButton>
+          <span>
+            <IconButton size="small" onClick={() => course.fetch()} disabled={course.loading}>
+              <Refresh fontSize="small" />
+            </IconButton>
+          </span>
         </Tooltip>
       </Stack>
 

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../src/routes/ProtectedRoute';
+import CampusGuard from '../src/routes/CampusGuard';
 import CssBaseline from '@mui/material/CssBaseline';
 import { GlobalStyles } from '@mui/material';
 import { campusRoutes } from './routes/CampusRoutes';
@@ -12,10 +13,10 @@ import { lazy } from 'react';
 import { adminRoutes } from './routes/AdminRoutes';
 
 
-const Campus = lazy(() => import('../src/campus/Campus'));
+const Campus  = lazy(() => import('../src/campus/Campus'));
 const Teacher = lazy(() => import('../src/teacher/Teacher'));
 const Student = lazy(() => import('../src/student/Student'));
-const Parent = lazy(() => import('../src/parent/Parent'));
+const Parent  = lazy(() => import('../src/parent/Parent'));
 const Partner = lazy(() => import('../src/partner/Partner'));
 
 
@@ -41,42 +42,48 @@ function App() {
       }} />
 
       <Routes>
-        {/* CLient Routes - public */}
-          {clientRoutes}
+        {/* Public client routes */}
+        {clientRoutes}
 
-        {/* Admin Login Routes - public */}
-         {adminRoutes}
+        {/* Admin routes (public login + admin dashboard) */}
+        {adminRoutes}
 
-
-        {/* Campus Routes - protected */}
+        {/*
+         * Campus routes — two-layer protection:
+         *   1. ProtectedRoute  → verifies authentication + allowed roles
+         *   2. CampusGuard     → verifies the user belongs to this specific campus
+         *                        (ADMIN & DIRECTOR bypass the campus isolation check)
+         */}
         <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'CAMPUS_MANAGER', 'DIRECTOR']} />}>
-          <Route path="campus/:campusId" element={<Campus />}>
-            {campusRoutes}
+          <Route element={<CampusGuard />}>
+            <Route path="campus/:campusId" element={<Campus />}>
+              {campusRoutes}
+            </Route>
           </Route>
         </Route>
 
-        {/* Teacher Routes - protected */}
+        {/* Teacher routes */}
         <Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
           <Route path="teacher" element={<Teacher />}>
             {teacherRoutes}
           </Route>
         </Route>
 
-        {/* Student Routes - protected */}
+        {/* Student routes */}
         <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
           <Route path="student" element={<Student />}>
             {studentRoutes}
           </Route>
         </Route>
 
-        {/* Parent Routes - protected */}
+        {/* Parent routes */}
         <Route element={<ProtectedRoute allowedRoles={['PARENT']} />}>
           <Route path="parent" element={<Parent />}>
             {parentRoutes}
           </Route>
         </Route>
 
-        {/* Parent Routes - protected */}
+        {/* Partner routes */}
         <Route element={<ProtectedRoute allowedRoles={['PARTNER']} />}>
           <Route path="partner" element={<Partner />}>
             {partnerRoutes}

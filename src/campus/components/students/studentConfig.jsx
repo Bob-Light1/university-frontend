@@ -23,135 +23,126 @@ import {
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
 
-/**
- * STUDENT ENTITY CONFIGURATION
- * All student-specific settings in one place
- */
+// ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
-// ========================================
-// KPI METRICS
-// ========================================
 export const getKPIMetrics = (kpis, theme) => [
   {
-    label: 'Total Students',
-    value: kpis?.students?.total || 0,
-    icon: <Groups sx={{ fontSize: 28 }} />,
-    color: theme.palette.primary.main,
-    trend: 5.2,
+    label:    'Total Students',
+    value:    kpis?.students?.total || 0,
+    icon:     <Groups sx={{ fontSize: 28 }} />,
+    color:    theme.palette.primary.main,
+    trend:    5.2,
     subtitle: 'Active enrollments',
   },
   {
-    label: 'New Enrollments',
-    value: kpis?.students?.newThisMonth || 0,
-    icon: <PersonAdd sx={{ fontSize: 28 }} />,
-    color: theme.palette.success.main,
-    trend: 12.5,
+    label:    'New Enrollments',
+    value:    kpis?.students?.newThisMonth || 0,
+    icon:     <PersonAdd sx={{ fontSize: 28 }} />,
+    color:    theme.palette.success.main,
+    trend:    12.5,
     subtitle: 'This month',
   },
   {
-    label: 'Absence Rate',
-    value: `${(kpis?.avgAbsenceRate || 0).toFixed(1)}%`,
-    icon: <Warning sx={{ fontSize: 28 }} />,
-    color: (kpis?.avgAbsenceRate || 0) > 10 
-      ? theme.palette.error.main 
+    label:         'Absence Rate',
+    value:         `${(kpis?.avgAbsenceRate || 0).toFixed(1)}%`,
+    icon:          <Warning sx={{ fontSize: 28 }} />,
+    color:         (kpis?.avgAbsenceRate || 0) > 10
+      ? theme.palette.error.main
       : theme.palette.warning.main,
-    trend: -2.1,
-    subtitle: 'Average campus rate',
-    progress: kpis?.avgAbsenceRate || 0,
+    trend:         -2.1,
+    subtitle:      'Average campus rate',
+    progress:      kpis?.avgAbsenceRate || 0,
     progressLabel: 'Attendance',
   },
   {
-    label: 'Payment Alerts',
-    value: kpis?.paymentAlerts || 0,
-    icon: <TrendingUp sx={{ fontSize: 28 }} />,
-    color: theme.palette.error.main,
-    alert: (kpis?.paymentAlerts || 0) > 0 ? kpis.paymentAlerts : null,
+    label:    'Payment Alerts',
+    value:    kpis?.paymentAlerts || 0,
+    icon:     <TrendingUp sx={{ fontSize: 28 }} />,
+    color:    theme.palette.error.main,
+    alert:    (kpis?.paymentAlerts || 0) > 0 ? kpis.paymentAlerts : null,
     subtitle: 'Pending payments',
   },
 ];
 
-// ========================================
-// TABLE COLUMNS
-// ========================================
+// ─── Table Columns ────────────────────────────────────────────────────────────
+
 export const tableColumns = [
-  { key: 'student', label: 'Student' },
-  { key: 'matricule', label: 'Matricule' },
-  { key: 'class', label: 'Class' },
-  { key: 'contact', label: 'Contact' },
-  { key: 'status', label: 'Status' },
-  { key: 'actions', label: 'Actions', align: 'right' },
+  { key: 'student',  label: 'Student'           },
+  { key: 'matricule', label: 'Matricule'         },
+  { key: 'class',    label: 'Class'              },
+  { key: 'contact',  label: 'Contact'            },
+  { key: 'status',   label: 'Status'             },
+  { key: 'actions',  label: 'Actions', align: 'right' },
 ];
 
-// ========================================
-// FILTERS CONFIGURATION
-// ========================================
+// ─── Filter Configuration ─────────────────────────────────────────────────────
+
+/**
+ * Called by GenericEntityPage with the full relatedData object.
+ * `relatedData.classes` is always available because GenericEntityPage merges
+ * the 'classes' endpoint by default AND studentConfig declares it explicitly.
+ */
 export const getFilterConfig = (relatedData = {}) => {
   const classes = relatedData.classes || [];
 
   return [
     {
-      key: 'studentClass',
-      label: 'Class',
-      type: 'select',
+      key:     'studentClass',
+      label:   'Class',
+      type:    'select',
       options: [
         { value: '', label: 'All Classes' },
         ...classes.map((c) => ({ value: c._id, label: c.className })),
       ],
     },
     {
-      key: 'status',
-      label: 'Status',
-      type: 'select',
+      key:     'status',
+      label:   'Status',
+      type:    'select',
       options: [
-        { value: '', label: 'All Statuses' },
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-        { value: 'suspended', label: 'Suspended' },
-        { value: 'archived', label: 'Archived' },
+        { value: '',          label: 'All Statuses' },
+        { value: 'active',    label: 'Active'       },
+        { value: 'inactive',  label: 'Inactive'     },
+        { value: 'suspended', label: 'Suspended'    },
+        { value: 'archived',  label: 'Archived'     },
       ],
     },
     {
-      key: 'gender',
-      label: 'Gender',
-      type: 'select',
+      key:     'gender',
+      label:   'Gender',
+      type:    'select',
       options: [
-        { value: '', label: 'All Genders' },
-        { value: 'male', label: 'Male' },
-        { value: 'female', label: 'Female' },
+        { value: '',       label: 'All Genders' },
+        { value: 'male',   label: 'Male'        },
+        { value: 'female', label: 'Female'      },
       ],
     },
   ];
 };
 
-// ========================================
-// TABLE ROW RENDERER
-// ========================================
+// ─── Table Row Renderer ───────────────────────────────────────────────────────
+
 export const renderTableRow = (student, helpers) => {
   const { selected, onSelect, onView, onEdit, onArchive, theme, isMobile } = helpers;
 
-  const profileImageUrl = student.profileImage 
-    ? (student.profileImage.startsWith('http') 
-        ? student.profileImage 
+  const profileImageUrl = student.profileImage
+    ? (student.profileImage.startsWith('http')
+        ? student.profileImage
         : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${student.profileImage.replace(/^\//, '')}`)
     : null;
 
-  
   return (
     <TableRow key={student._id} hover selected={selected}>
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onChange={onSelect} />
       </TableCell>
 
-      {/* Student Info */}
+      {/* Student info */}
       <TableCell>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar
             src={profileImageUrl}
-            sx={{
-              width: 40,
-              height: 40,
-              border: `2px solid ${theme.palette.primary.light}`,
-            }}
+            sx={{ width: 40, height: 40, border: `2px solid ${theme.palette.primary.light}` }}
           >
             {student.firstName?.[0]}
             {student.lastName?.[0]}
@@ -167,11 +158,11 @@ export const renderTableRow = (student, helpers) => {
         </Stack>
       </TableCell>
 
-      {/* Matricule */}
+      {/* Matricule — always generated by the backend; 'N/A' only for legacy records */}
       <TableCell>
         <Chip
           icon={<BadgeIcon />}
-          label={student.matricule || 'STD'}
+          label={student.matricule || 'N/A'}
           size="small"
           variant="outlined"
         />
@@ -186,7 +177,7 @@ export const renderTableRow = (student, helpers) => {
 
       {/* Contact */}
       <TableCell>
-        <Typography variant="caption" sx={{ display: 'flex', gap: 0.5 }}>
+        <Typography variant="caption" sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
           <Phone sx={{ fontSize: 14 }} />
           {student.phone}
         </Typography>
@@ -228,32 +219,37 @@ export const renderTableRow = (student, helpers) => {
   );
 };
 
-// ========================================
-// MAIN CONFIGURATION OBJECT
-// ========================================
+// ─── Main Configuration Object ────────────────────────────────────────────────
+
 export const studentConfig = {
   // Entity identification
-  entityName: 'Student',
+  entityName:       'Student',
   entityNamePlural: 'Students',
-  apiEndpoint: 'students',
-  
-  // UI Customization
-  addButtonText: 'Enroll New Student',
-  addButtonIcon: <PersonAdd />,
-  searchPlaceholder: 'Search by name, email, matricule, phone...',
-  
-  // Features
+  apiEndpoint:      'students',
+
+  // UI customisation
+  addButtonText:     'Enroll New Student',
+  addButtonIcon:     <PersonAdd />,
+  searchPlaceholder: 'Search by name, email, matricule, phone…',
+
+  // Composed functions
   getKPIMetrics,
   tableColumns,
   getFilterConfig,
   renderTableRow,
-  
-  // Available bulk actions
+
+  // Bulk actions supported for students
   bulkActions: ['changeClass', 'sendEmail', 'archive', 'export'],
-  
-  // Related data to fetch
+
+  /**
+   * Related data endpoints consumed by GenericEntityPage.
+   * Classes use the campus-scoped route for strict campus isolation.
+   * GenericEntityPage also merges `classes: '/class'` as a fallback, but
+   * declaring it here explicitly makes the dependency visible and ensures
+   * the correct campus-scoped URL is used.
+   */
   relatedDataEndpoints: {
-    classes: '/class',
+    classes: (campusId) => `/campus/${campusId}/classes`,
   },
 };
 

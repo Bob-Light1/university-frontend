@@ -1,50 +1,57 @@
 import React from 'react';
-import GenericEntityPage from '../../../components/shared/GenericEntityPage';
-import StudentForm from './StudentForm';
-import StudentDetailDrawer from './StudentDetailDrawer';
-import { studentConfig } from './studentConfig';
+import GenericEntityPage    from '../../../components/shared/GenericEntityPage';
+import StudentForm          from './StudentForm';
+import StudentDetailDrawer  from './StudentDetailDrawer';
+import { studentConfig }    from './studentConfig';
 
+/**
+ * STUDENTS PAGE
+ *
+ * Thin orchestrator: wires student-specific configuration into GenericEntityPage.
+ * All logic (CRUD, bulk, filters, KPIs, pagination) lives in GenericEntityPage.
+ */
+const Students = () => (
+  <GenericEntityPage
+    // ── Entity identity ──────────────────────────────────────────────────────
+    entityName={studentConfig.entityName}
+    entityNamePlural={studentConfig.entityNamePlural}
+    apiEndpoint={studentConfig.apiEndpoint}
 
-const Students = () => {
-  return (
-    <GenericEntityPage
-      // basic configurations from config.jsx
-      entityName={studentConfig.entityName}
-      entityNamePlural={studentConfig.entityNamePlural}
-      apiEndpoint={studentConfig.apiEndpoint}
-      
-      // Table configuration
-      tableColumns={studentConfig.tableColumns}
-      renderTableRow={studentConfig.renderTableRow}
-      
-      // Filters & Search
-      filterConfig={studentConfig.getFilterConfig}
-      searchPlaceholder={studentConfig.searchPlaceholder}
-      
-      // KPIs
-      getKPIMetrics={studentConfig.getKPIMetrics}
-      
-      // Bulk actions disponibles
-      bulkActions={studentConfig.bulkActions}
-      
-      // Bouton d'ajout personnalisé
-      addButtonText={studentConfig.addButtonText}
-      addButtonIcon={studentConfig.addButtonIcon}
-      
-      // Composants UI (REQUIS)
-      FormComponent={StudentForm}              
-      DetailComponent={StudentDetailDrawer}  
+    // ── Table ─────────────────────────────────────────────────────────────────
+    tableColumns={studentConfig.tableColumns}
+    renderTableRow={studentConfig.renderTableRow}
 
-      //Show archived
-      showArchiveToggle={true} 
+    // ── Filters & search ──────────────────────────────────────────────────────
+    filterConfig={studentConfig.getFilterConfig}
+    searchPlaceholder={studentConfig.searchPlaceholder}
 
-      // Activate import
-      enableImport={true}  
-      
-      // Activate export 
-      enableExport={true}   
-    />
-  );
-};
+    // ── KPIs ──────────────────────────────────────────────────────────────────
+    getKPIMetrics={studentConfig.getKPIMetrics}
+
+    // ── Bulk actions ──────────────────────────────────────────────────────────
+    bulkActions={studentConfig.bulkActions}
+
+    // ── Add button ────────────────────────────────────────────────────────────
+    addButtonText={studentConfig.addButtonText}
+    addButtonIcon={studentConfig.addButtonIcon}
+
+    /**
+     * Related data required by filterConfig (classes dropdown) and the
+     * BulkClassModal (changeClass action).
+     * Declared explicitly so the campus-scoped URL is used instead of the
+     * generic '/class' fallback that GenericEntityPage would otherwise inject.
+     */
+    relatedDataEndpoints={studentConfig.relatedDataEndpoints}
+
+    // ── UI components ─────────────────────────────────────────────────────────
+    FormComponent={StudentForm}
+    DetailComponent={StudentDetailDrawer}
+
+    // ── Feature flags ─────────────────────────────────────────────────────────
+    showArchiveToggle={true}
+    enableImport={true}
+    enableExport={true}
+  />
+);
 
 export default Students;

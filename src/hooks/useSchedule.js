@@ -26,24 +26,29 @@ const DEFAULT_FILTERS = {
 
 const DEFAULT_PAGINATION = { page: 1, limit: 20, total: 0 };
 
+/** Formats a Date to YYYY-MM-DD (ISO date string, no time). */
+const toISODate = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
 /**
  * Returns the start of today as an ISO date string (YYYY-MM-DD).
- * Used as the default `from` parameter so the overview always shows
- * sessions from today onwards, regardless of the backend default.
+ * Used as the default `from` parameter for the admin overview so sessions
+ * from today onwards are always shown regardless of the backend default.
  */
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
+const todayISO = () => toISODate(new Date());
 
 /**
  * Returns a date 90 days from today as an ISO date string.
- * Covers a full academic term so newly-created sessions are always visible.
+ * Covers a full academic term so newly-created future sessions are visible.
  */
-const in90DaysISO = () => {
-  const d = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
+const in90DaysISO = () => toISODate(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000));
+
+/**
+ * Returns a date 30 days in the past as an ISO date string.
+ * Used as the teacher calendar default `from` so recently-past sessions
+ * (e.g. last month's classes) remain visible without manual filter input.
+ */
+const minus30DaysISO = () => toISODate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
 const normaliseSessionsResponse = (raw) => {
   if (Array.isArray(raw))            return raw;
@@ -77,8 +82,13 @@ const useSchedule = (mode = 'admin', internalParams = {}) => {
         limit: pagination.limit,
       };
 
-      // Teacher calendar uses 'from'/'to' instead of 'dateFrom'/'dateTo', and has no pagination
+      // Teacher calendar uses 'from'/'to' instead of 'dateFrom'/'dateTo', and has no pagination.
+      // Inject a wide default window (-30d → +90d) so ALL published sessions are visible
+      // without the teacher needing to manually adjust filters.
+      // The backend's own default is only the current week (7 days), which is far too narrow.
       if (mode === 'teacher') {
+        if (!params.dateFrom) params.dateFrom = minus30DaysISO();
+        if (!params.dateTo)   params.dateTo   = in90DaysISO();
         if (params.dateFrom) { params.from = params.dateFrom; delete params.dateFrom; }
         if (params.dateTo)   { params.to   = params.dateTo;   delete params.dateTo; }
         delete params.page;

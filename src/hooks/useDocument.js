@@ -11,6 +11,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 
+import api, { EXPORT_TIMEOUT } from '../api/axiosInstance';
 import {
   listDocuments,
   getDocumentById,
@@ -27,9 +28,6 @@ import {
   lockDocument,
   unlockDocument,
   markOfficial,
-  exportDocumentPdf,
-  exportDocumentRaw,
-  bulkExportDocuments,
   createShareLink,
   listShareLinks,
   revokeShareLink,
@@ -38,6 +36,37 @@ import {
   listDocumentVersions,
   restoreDocumentVersion,
 } from '../services/document.service';
+
+// ─── Binary download helper ────────────────────────────────────────────────────
+
+/**
+ * Performs a binary GET request bypassing the global 10 s timeout.
+ * Used for PDF generation and raw file streaming, which can take up to 90 s.
+ * responseType: 'blob' ensures the browser handles the binary payload correctly.
+ *
+ * @param {string} url - Relative API path
+ * @returns {Promise<import('axios').AxiosResponse>}
+ */
+const fetchBinary = (url) =>
+  api.get(url, { responseType: 'blob', timeout: EXPORT_TIMEOUT });
+
+/**
+ * Triggers a browser file download from a Blob response.
+ * Cleans up the object URL immediately after the download is initiated.
+ *
+ * @param {Blob}   blob     - Binary data received from the server
+ * @param {string} filename - Full filename including extension
+ * @param {string} mime     - MIME type (fallback if blob.type is absent)
+ */
+const triggerDownload = (blob, filename, mime = 'application/octet-stream') => {
+  const type = blob.type || mime;
+  const url  = URL.createObjectURL(new Blob([blob], { type }));
+  const link = document.createElement('a');
+  link.href     = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+};
 
 // ─── Default filter state ─────────────────────────────────────────────────────
 
@@ -176,44 +205,44 @@ const useDocument = (mode = 'manager') => {
 
   /**
    * Triggers a browser download for the PDF export of a document.
+   * Uses a dedicated 90 s timeout — PDF generation is server-side and can be slow.
+   *
    * @param {string} id
    * @param {string} filename - Suggested filename without extension
    */
   const downloadPdf = useCallback(async (id, filename = 'document') => {
-    const res  = await exportDocumentPdf(id);
-    const url  = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    const link = document.createElement('a');
-    link.href     = url;
-    link.download = `${filename}.pdf`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const res = await fetchBinary(`/documents/${id}/export/pdf`);
+    triggerDownload(res.data, `${filename}.pdf`, 'application/pdf');
   }, []);
 
   /**
    * Triggers a browser download for the raw file of an IMPORTED document.
+   * Uses a dedicated 90 s timeout — large files may take time to stream.
+   *
    * @param {string} id
    * @param {string} filename - Suggested filename with extension
    */
   const downloadRaw = useCallback(async (id, filename = 'document') => {
-    const res  = await exportDocumentRaw(id);
-    const contentType = res.headers?.['content-type'] ?? 'application/octet-stream';
-    const url  = URL.createObjectURL(new Blob([res.data], { type: contentType }));
-    const link = document.createElement('a');
-    link.href     = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
+    const res = await fetchBinary(`/documents/${id}/export/raw`);
+    // Prefer server-provided content-type for correct file association
+    const mime = res.headers?.['content-type'] ?? 'application/octet-stream';
+    triggerDownload(res.data, filename, mime);
   }, []);
 
-  /** Bulk export multiple documents as a ZIP/PDF archive. */
+  /**
+   * Bulk export multiple documents as a ZIP archive.
+   * Uses a dedicated 90 s timeout — ZIP packaging of many PDFs can be slow.
+   *
+   * @param {string[]} documentIds
+   * @param {object}   options      - Optional extra params forwarded to the backend
+   */
   const bulkExport = useCallback(async (documentIds, options = {}) => {
-    const res = await bulkExportDocuments(documentIds, options);
-    const url = URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-    const link = document.createElement('a');
-    link.href     = url;
-    link.download = 'documents-export.zip';
-    link.click();
-    URL.revokeObjectURL(url);
+    const res = await api.post(
+      '/documents/bulk/export',
+      { documentIds, ...options },
+      { responseType: 'blob', timeout: EXPORT_TIMEOUT },
+    );
+    triggerDownload(res.data, 'documents-export.zip', 'application/zip');
   }, []);
 
   // ─── SHARE ACTIONS ─────────────────────────────────────────────────────────

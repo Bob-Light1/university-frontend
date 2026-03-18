@@ -60,7 +60,12 @@ const academicYearField = Yup.string()
  *  2. score must be 0 when examAttendance is 'absent' (mirrors model pre-save).
  */
 export const createResultSchema = Yup.object({
-  schoolCampus: objectId('Campus'),
+  // schoolCampus is optional at the form level:
+  // - CAMPUS_MANAGER / TEACHER: enforced from JWT on the backend via resolveCampusId()
+  // - ADMIN / DIRECTOR: may not have a campusId in their JWT; they pass it in the body
+  //   or the backend resolves it from the class document.
+  // Making it required here would silently block submit for ADMIN/DIRECTOR.
+  schoolCampus: optionalObjectId('Campus'),
 
   academicYear: academicYearField,
 
@@ -279,7 +284,8 @@ const bulkResultEntrySchema = Yup.object({
  *   bulkCreateResultSchema.validate(payload, { context: { maxScore: payload.maxScore } })
  */
 export const bulkCreateResultSchema = Yup.object({
-  schoolCampus:    objectId('Campus'),
+  // Optional — see createResultSchema comment above
+  schoolCampus:    optionalObjectId('Campus'),
   academicYear:    academicYearField,
   semester:        Yup.string().oneOf(SEMESTER).required('Semester is required'),
   evaluationType:  Yup.string().oneOf(EVALUATION_TYPE).required('Evaluation type is required'),

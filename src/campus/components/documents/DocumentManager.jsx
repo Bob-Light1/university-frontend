@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useCallback, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -156,6 +157,7 @@ const STATUS_TABS = [
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const DocumentManager = () => {
+  const { campusId } = useParams();
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -497,6 +499,7 @@ const DocumentManager = () => {
         initial={editDoc}
         isEdit={!!editDoc}
         hookRef={hookRef}
+        campusId={campusId ?? ''}
       />
 
       {/* ── Detail drawer ─────────────────────────────────────────────────────── */}

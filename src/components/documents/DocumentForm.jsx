@@ -10,11 +10,20 @@
  *   - TEACHER: can only create COURSE_MATERIAL
  *   - CAMPUS_MANAGER and above: all non-restricted types
  *   - ADMIN / DIRECTOR: all types including restricted
+ *
+ * Campus isolation:
+ *   - CAMPUS_MANAGER: campusId lives in their JWT → req.campusId on the server.
+ *   - ADMIN / DIRECTOR: they have no campusId in their JWT (cross-campus accounts).
+ *     Their campusId is the URL param (/campus/:campusId/...) and is passed here
+ *     via the required `campusId` prop by the parent (DocumentManager).
+ *   In both cases the resolved campusId is injected into every write payload so the
+ *   backend controller can route the document to the correct campus regardless of
+ *   the caller's role.
  */
 
-import { useCallback, useContext }   from 'react';
-import { useFormik }                 from 'formik';
-import * as Yup                      from 'yup';
+import { useCallback, useContext } from 'react';
+import { useFormik }               from 'formik';
+import * as Yup                    from 'yup';
 
 import {
   Box,
@@ -44,33 +53,30 @@ import { DOCUMENT_ENUMS, getAccessibleTypes } from './DocumentShared';
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 
-const buildSchema = (isImport) =>
+const buildSchema = () =>
   Yup.object({
-    title:       Yup.string().trim().min(3, 'Min 3 characters').max(200).required('Title is required'),
-    description: Yup.string().max(500),
-    type:        Yup.string().required('Document type is required'),
-    category:    Yup.string().required('Category is required'),
-    tags:        Yup.string(), // Comma-separated string — split on submit
-    isOfficial:  Yup.boolean(),
-    // Metadata fields
+    title:        Yup.string().trim().min(3, 'Min 3 characters').max(200).required('Title is required'),
+    description:  Yup.string().max(500),
+    type:         Yup.string().required('Document type is required'),
+    category:     Yup.string().required('Category is required'),
+    tags:         Yup.string(), // Comma-separated — split on submit
+    isOfficial:   Yup.boolean(),
     academicYear: Yup.string().max(20),
     semester:     Yup.string().oneOf(['S1', 'S2', 'Annual', '']),
-    // File import
-    file: isImport
-      ? Yup.mixed().required('A file is required for import')
-      : Yup.mixed().nullable(),
+    file:         Yup.mixed().nullable(),
   });
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
  * @param {{
- *   open:      boolean,
- *   onClose:   () => void,
- *   onSuccess: (doc: Object) => void,
- *   initial?:  Object,          // Pre-filled values for edit mode
- *   isEdit?:   boolean,
- *   hookRef:   ReturnType<typeof useDocument>,
+ *   open:       boolean,
+ *   onClose:    () => void,
+ *   onSuccess:  (doc: Object) => void,
+ *   campusId:   string,          // Required — from useParams() in DocumentManager
+ *   initial?:   Object,          // Pre-filled values for edit mode
+ *   isEdit?:    boolean,
+ *   hookRef:    ReturnType<typeof useDocument>,
  *   forceType?: string,          // Lock the type field (e.g. from a parent context)
  * }} props
  */
@@ -78,6 +84,8 @@ const DocumentForm = ({
   open,
   onClose,
   onSuccess,
+  campusId  = '',   // Resolved upstream: useParams().campusId (ADMIN/DIRECTOR) or
+                    // user.campusId from JWT (CAMPUS_MANAGER) — both land the same value.
   initial   = null,
   isEdit    = false,
   hookRef,
@@ -85,8 +93,6 @@ const DocumentForm = ({
 }) => {
   const { getUserRole } = useContext(AuthContext);
   const userRole        = getUserRole();
-
-  const isImportMode = !isEdit && !forceType;
   const accessibleTypes = getAccessibleTypes(userRole);
 
   // ── Formik ───────────────────────────────────────────────────────────────────
@@ -102,10 +108,9 @@ const DocumentForm = ({
       isOfficial:   initial?.isOfficial   ?? false,
       academicYear: initial?.metadata?.academicYear ?? '',
       semester:     initial?.metadata?.semester     ?? '',
-      importMode:   false,  // Toggle: rich content vs file import
       file:         null,
     },
-    validationSchema: buildSchema(false), // dynamic via submitForm override
+    validationSchema: buildSchema(),
     onSubmit: async (values, helpers) => {
       try {
         const tagsArray = values.tags
@@ -113,13 +118,20 @@ const DocumentForm = ({
           : [];
 
         if (values.file) {
-          // File import path — multipart/form-data
+          // ── File import path — multipart/form-data ────────────────────────
           const fd = new FormData();
           fd.append('file',        values.file);
           fd.append('title',       values.title);
           fd.append('description', values.description);
           fd.append('type',        'IMPORTED');
           fd.append('category',    values.category);
+
+          // Campus isolation: required for ADMIN/DIRECTOR (req.campusId is null
+          // server-side for global roles; controller reads dto.campusId as fallback).
+          // For CAMPUS_MANAGER the server already has it from the JWT, but sending
+          // it here is harmless and makes the payload self-contained.
+          if (campusId) fd.append('campusId', campusId);
+
           if (tagsArray.length) fd.append('tags', JSON.stringify(tagsArray));
           if (values.academicYear) fd.append('metadata[academicYear]', values.academicYear);
           if (values.semester)     fd.append('metadata[semester]',     values.semester);
@@ -127,7 +139,7 @@ const DocumentForm = ({
           const result = await hookRef.importFile(fd);
           onSuccess(result?.document ?? result);
         } else {
-          // Rich content / metadata-only path — JSON
+          // ── Rich content / metadata-only path — JSON ──────────────────────
           const payload = {
             title:       values.title,
             description: values.description,
@@ -139,6 +151,8 @@ const DocumentForm = ({
               academicYear: values.academicYear || null,
               semester:     values.semester     || null,
             },
+            // Campus isolation: always inject (see note above).
+            ...(campusId ? { campusId } : {}),
           };
 
           let result;
@@ -162,11 +176,11 @@ const DocumentForm = ({
   const handleFileChange = useCallback((e) => {
     const f = e.target.files?.[0] ?? null;
     formik.setFieldValue('file', f);
-    // Auto-fill title from filename when empty
+    // Auto-fill title from filename when the field is still empty
     if (f && !formik.values.title) {
       formik.setFieldValue('title', f.name.replace(/\.[^.]+$/, ''));
     }
-    // Force type to IMPORTED when file selected
+    // Force type to IMPORTED when a file is selected
     if (f) formik.setFieldValue('type', 'IMPORTED');
   }, [formik]);
 
@@ -185,7 +199,7 @@ const DocumentForm = ({
       fullWidth
       PaperProps={{ sx: { borderRadius: 2 } }}
     >
-      {/* DialogTitle renders as <h2> — avoid nesting block/heading elements inside it */}
+      {/* DialogTitle renders as <h2> — avoid nesting block elements inside it */}
       <DialogTitle
         component="div"
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
@@ -344,7 +358,7 @@ const DocumentForm = ({
             </FormControl>
           </Grid>
 
-          {/* File upload (import mode or optional attachment) */}
+          {/* File upload (import mode — creation only) */}
           {!isEdit && (
             <Grid size={{ xs: 12 }}>
               <Box
@@ -404,7 +418,12 @@ const DocumentForm = ({
       <Divider />
 
       <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button variant="outlined" color="inherit" onClick={handleClose} disabled={formik.isSubmitting}>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={handleClose}
+          disabled={formik.isSubmitting}
+        >
           Cancel
         </Button>
         <Button

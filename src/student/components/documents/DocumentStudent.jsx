@@ -136,9 +136,11 @@ const DocumentStudent = () => {
           </Typography>
         </Box>
         <Tooltip title="Refresh">
-          <IconButton size="small" onClick={() => fetch()} disabled={loading}>
-            {loading ? <CircularProgress size={18} /> : <Refresh />}
-          </IconButton>
+          <span>
+            <IconButton size="small" onClick={() => fetch()} disabled={loading}>
+              {loading ? <CircularProgress size={18} /> : <Refresh />}
+            </IconButton>
+          </span>
         </Tooltip>
       </Stack>
 

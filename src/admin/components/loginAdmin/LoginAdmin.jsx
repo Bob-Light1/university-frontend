@@ -1,73 +1,64 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+/**
+ * @file LoginAdmin.jsx
+ * @description Admin / Director login page.
+ *   Accessible at the hidden route /admin (not linked anywhere in the public UI).
+ *   Access methods:
+ *     1. Direct URL: /admin
+ *     2. Triple-click on the logo mark in Footer.jsx
+ *   Both ADMIN and DIRECTOR authenticate via POST /api/admin/login.
+ *   The backend resolves the real role — the role picker here is cosmetic only.
+ *
+ *   Changes vs previous version:
+ *   - Added a discrete "← Back to site" ghost link so admins can return.
+ *   - Added a small "Restricted access" badge below the form title so
+ *     anyone who lands here by mistake understands this is not for them.
+ *   - FormControl + InputLabel + OutlinedInput pattern preserved (no TextField[select]).
+ *   - No logic changes.
+ */
+
+import { useState }              from 'react';
+import { useNavigate }           from 'react-router-dom';
+import { useFormik }             from 'formik';
+import * as yup                  from 'yup';
 import {
-  Box,
-  Paper,
-  Stack,
-  Typography,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  FormHelperText,
-  CircularProgress,
-  Snackbar,
-  Alert,
-  Fade,
-  Zoom,
-  alpha,
+  Box, Paper, Stack, Typography, Button,
+  FormControl, InputLabel, OutlinedInput,
+  InputAdornment, IconButton, FormHelperText,
+  CircularProgress, Snackbar, Alert, Fade, Zoom, alpha,
 } from '@mui/material';
 import {
-  MailOutline,
-  LockOutlined,
-  Visibility,
-  VisibilityOff,
-  Business,
-  Handshake,
+  MailOutline, LockOutlined,
+  Visibility, VisibilityOff,
+  Business, Handshake,
   Login as LoginIcon,
+  ArrowBack,
+  Shield,
 } from '@mui/icons-material';
 
 import { useAuth } from '../../../hooks/useAuth';
 import '../../styles/Background.css';
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+// ─── Role picker configuration ────────────────────────────────────────────────
 
-/**
- * Roles available on the Admin login screen.
- *
- * Both ADMIN and DIRECTOR authenticate through the same endpoint:
- *   POST /api/admin/login  (see admin.router.js)
- * The backend resolves the actual role from the stored account —
- * selecting a role here only affects the UI theme color.
- */
 const USER_TYPES = [
   {
-    value: 'admin',
-    label: 'Admin',
-    icon: Business,
+    value:    'admin',
+    label:    'Admin',
+    icon:     Business,
     gradient: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
-    color: '#003285',
+    color:    '#003285',
   },
   {
-    value: 'director',
-    label: 'Director',
-    icon: Handshake,
+    value:    'director',
+    label:    'Director',
+    icon:     Handshake,
     gradient: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
-    color: '#ff7f3e',
+    color:    '#ff7f3e',
   },
 ];
 
-// ─── VALIDATION ───────────────────────────────────────────────────────────────
+// ─── Validation ───────────────────────────────────────────────────────────────
 
-/**
- * Login schema: email + password.
- * Username login is not supported by the admin backend endpoint.
- */
 const loginSchema = yup.object({
   email: yup
     .string()
@@ -80,7 +71,7 @@ const loginSchema = yup.object({
     .required('Password is required.'),
 });
 
-// ─── COMPONENT ────────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LoginAdmin() {
   const navigate  = useNavigate();
@@ -88,37 +79,29 @@ export default function LoginAdmin() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [selectedType, setSelectedType] = useState('admin');
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [snackbar, setSnackbar]          = useState({ open: false, message: '', severity: 'success' });
 
   const currentType = USER_TYPES.find((t) => t.value === selectedType) ?? USER_TYPES[0];
 
-  // ── Formik ──────────────────────────────────────────────────────────────────
+  // ── Formik ─────────────────────────────────────────────────────────────────
+
   const formik = useFormik({
     initialValues: { email: '', password: '' },
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        /**
-         * Both admin and director share the same /admin/login endpoint.
-         * AuthContext maps userType 'admin' → '/admin/login'.
-         * The returned user.role ('ADMIN' | 'DIRECTOR') is the authoritative value.
-         */
         await login(
           { email: values.email.trim().toLowerCase(), password: values.password },
-          'admin', // always 'admin' — the router handles both roles
+          'admin', // always 'admin' — backend resolves ADMIN vs DIRECTOR from the record
         );
 
-        setSnackbar({
-          open: true,
-          message: `Welcome back!`,
-          severity: 'success',
-        });
-
+        setSnackbar({ open: true, message: 'Welcome back!', severity: 'success' });
         setTimeout(() => navigate('/'), 1000);
+
       } catch (error) {
         setSnackbar({
-          open: true,
-          message: error.message || 'Login failed. Please check your credentials.',
+          open:     true,
+          message:  error.message || 'Login failed. Please check your credentials.',
           severity: 'error',
         });
       } finally {
@@ -129,8 +112,6 @@ export default function LoginAdmin() {
 
   const isLoading = formik.isSubmitting;
 
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-
   const handleTypeSelect = (value) => {
     if (value !== selectedType) {
       setSelectedType(value);
@@ -138,22 +119,20 @@ export default function LoginAdmin() {
     }
   };
 
+  // ── Render ──────────────────────────────────────────────────────────────────
+
   return (
     <Box
       className="animated-background"
       sx={{
         minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 2,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        p: 2, position: 'relative', overflow: 'hidden',
         background: currentType.gradient,
         transition: 'background 0.5s ease',
-        position: 'relative',
-        overflow: 'hidden',
       }}
     >
-      {/* Animated bubbles */}
+      {/* Bubbles */}
       <Box className="bubbles">
         <span className="bubble b1" />
         <span className="bubble b2" />
@@ -161,41 +140,45 @@ export default function LoginAdmin() {
         <span className="bubble b4" />
       </Box>
 
+      {/* Discrete back link — visible but unobtrusive */}
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => navigate('/')}
+        aria-label="Return to public site"
+        sx={{
+          position: 'fixed', top: 20, left: 20,
+          color: 'rgba(255,255,255,0.55)',
+          fontSize: '0.78rem', textTransform: 'none',
+          '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
+        }}
+      >
+        Back to site
+      </Button>
+
       <Zoom in timeout={600}>
         <Paper
           elevation={24}
           sx={{
-            display: 'flex',
-            width: '100%',
-            maxWidth: 1100,
-            borderRadius: 4,
-            overflow: 'hidden',
-            minHeight: 600,
-            zIndex: 2,
-            position: 'relative',
+            display: 'flex', width: '100%', maxWidth: 1100,
+            borderRadius: 4, overflow: 'hidden', minHeight: 600,
+            zIndex: 2, position: 'relative',
             backgroundColor: 'rgba(255,255,255,0.98)',
             boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
           }}
         >
-          {/* ── Left branding panel (md+) ─────────────────────────────────── */}
+          {/* ── Left branding panel (md+) ── */}
           <Box
             sx={{
               flex: 1,
               display: { xs: 'none', md: 'flex' },
               flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: 'center', alignItems: 'center',
               background: currentType.gradient,
-              color: 'white',
-              p: 6,
-              textAlign: 'center',
-              position: 'relative',
-              overflow: 'hidden',
+              color: 'white', p: 6, textAlign: 'center',
+              position: 'relative', overflow: 'hidden',
               transition: 'background 0.5s ease',
               '&::before': {
-                content: '""',
-                position: 'absolute',
-                inset: 0,
+                content: '""', position: 'absolute', inset: 0,
                 background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1), transparent 50%)',
                 animation: 'pulse 4s ease-in-out infinite',
               },
@@ -207,6 +190,15 @@ export default function LoginAdmin() {
           >
             <Fade in timeout={1000}>
               <Box sx={{ position: 'relative', zIndex: 1 }}>
+                {/* Shield icon — reinforces the "admin only" context */}
+                <Box sx={{
+                  width: 72, height: 72, borderRadius: '50%',
+                  bgcolor: 'rgba(255,255,255,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  mx: 'auto', mb: 3,
+                }}>
+                  <Shield sx={{ fontSize: 40 }} />
+                </Box>
                 <Typography variant="h2" fontWeight="900" gutterBottom>
                   wewigo
                 </Typography>
@@ -214,15 +206,14 @@ export default function LoginAdmin() {
                   variant="h6"
                   sx={{ opacity: 0.9, fontWeight: 300, mb: 4, maxWidth: 380, mx: 'auto' }}
                 >
-                  The excellent platform for managing your educational institution
+                  Administration Portal
                 </Typography>
                 <Box
                   component="img"
                   src="/vite.svg"
-                  alt="Wewigo"
+                  alt="wewigo"
                   sx={{
-                    width: '60%',
-                    maxWidth: 260,
+                    width: '60%', maxWidth: 260,
                     filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.3))',
                     animation: 'float 6s ease-in-out infinite',
                   }}
@@ -231,20 +222,14 @@ export default function LoginAdmin() {
             </Fade>
           </Box>
 
-          {/* ── Right form panel ─────────────────────────────────────────── */}
-          <Box
-            sx={{
-              flex: 1,
-              p: { xs: 3, sm: 6 },
-              bgcolor: 'white',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-          >
+          {/* ── Right form panel ── */}
+          <Box sx={{
+            flex: 1, p: { xs: 3, sm: 6 }, bgcolor: 'white',
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          }}>
             <Fade in timeout={800}>
               <Box>
-                {/* Title */}
+                {/* Title + restricted badge */}
                 <Stack spacing={0.5} sx={{ mb: 4 }}>
                   <Typography
                     variant="h4"
@@ -257,70 +242,67 @@ export default function LoginAdmin() {
                       transition: 'all 0.5s ease',
                     }}
                   >
-                    Welcome Back
+                    Administration
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
                     Select your role and sign in to continue
                   </Typography>
+
+                  {/* Subtle restricted access indicator */}
+                  <Box sx={{
+                    display: 'inline-flex', alignItems: 'center', gap: 0.75,
+                    mt: 1, px: 1.5, py: 0.5, borderRadius: 1,
+                    bgcolor: alpha('#ff7f3e', 0.08),
+                    border: `1px solid ${alpha('#ff7f3e', 0.2)}`,
+                    width: 'fit-content',
+                  }}>
+                    <Shield sx={{ fontSize: 13, color: '#ff7f3e' }} />
+                    <Typography variant="caption" sx={{ color: '#ff7f3e', fontWeight: 600, fontSize: '0.7rem' }}>
+                      Restricted access — authorised personnel only
+                    </Typography>
+                  </Box>
                 </Stack>
 
                 {/* Role picker */}
                 <Box sx={{ mb: 4 }}>
-                  <Typography
-                    variant="subtitle2"
-                    fontWeight="bold"
-                    sx={{ mb: 2, color: 'text.secondary' }}
-                  >
+                  <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2, color: 'text.secondary' }}>
                     I am a:
                   </Typography>
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
-                    {USER_TYPES.map((type) => {
-                      const Icon       = type.icon;
-                      const isSelected = selectedType === type.value;
-
+                    {USER_TYPES.map(({ value, label, icon: Icon, color, gradient }) => {
+                      const isSelected = selectedType === value;
                       return (
                         <Box
-                          key={type.value}
+                          key={value}
                           role="button"
                           tabIndex={0}
-                          onClick={() => handleTypeSelect(type.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleTypeSelect(type.value)}
+                          onClick={() => handleTypeSelect(value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleTypeSelect(value)}
+                          aria-pressed={isSelected}
                           sx={{
-                            cursor: 'pointer',
-                            borderRadius: 3,
-                            p: 2,
-                            textAlign: 'center',
-                            border: '2px solid',
-                            borderColor: isSelected ? type.color : 'divider',
-                            bgcolor: isSelected ? alpha(type.color, 0.08) : 'background.paper',
-                            transition: 'all 0.25s ease',
-                            boxShadow: isSelected
-                              ? `0 8px 24px ${alpha(type.color, 0.35)}`
-                              : 'none',
-                            outline: 'none',
+                            cursor: 'pointer', borderRadius: 3, p: 2,
+                            textAlign: 'center', border: '2px solid',
+                            borderColor: isSelected ? color : 'divider',
+                            bgcolor: isSelected ? alpha(color, 0.08) : 'background.paper',
+                            transition: 'all 0.25s ease', outline: 'none',
+                            boxShadow: isSelected ? `0 8px 24px ${alpha(color, 0.35)}` : 'none',
                             '&:hover': {
                               transform: 'translateY(-2px)',
-                              borderColor: type.color,
-                              boxShadow: `0 6px 18px ${alpha(type.color, 0.25)}`,
+                              borderColor: color,
+                              boxShadow: `0 6px 18px ${alpha(color, 0.25)}`,
                             },
                             '&:focus-visible': {
-                              boxShadow: `0 0 0 3px ${alpha(type.color, 0.4)}`,
+                              boxShadow: `0 0 0 3px ${alpha(color, 0.4)}`,
                             },
                           }}
                         >
-                          <Icon
-                            sx={{
-                              fontSize: 28,
-                              mb: 1,
-                              color: isSelected ? type.color : 'text.secondary',
-                            }}
-                          />
+                          <Icon sx={{ fontSize: 28, mb: 1, color: isSelected ? color : 'text.secondary' }} />
                           <Typography
                             variant="body2"
                             fontWeight={isSelected ? 700 : 500}
-                            color={isSelected ? type.color : 'text.primary'}
+                            color={isSelected ? color : 'text.primary'}
                           >
-                            {type.label}
+                            {label}
                           </Typography>
                         </Box>
                       );
@@ -328,17 +310,15 @@ export default function LoginAdmin() {
                   </Box>
                 </Box>
 
-                {/* Login form */}
+                {/* Form */}
                 <Box component="form" onSubmit={formik.handleSubmit} noValidate>
                   <Stack spacing={3}>
+
                     {/* Email */}
-                    <FormControl
-                      fullWidth
-                      error={formik.touched.email && Boolean(formik.errors.email)}
-                    >
-                      <InputLabel htmlFor="email">Email address</InputLabel>
+                    <FormControl fullWidth error={formik.touched.email && Boolean(formik.errors.email)}>
+                      <InputLabel htmlFor="admin-email">Email address</InputLabel>
                       <OutlinedInput
-                        id="email"
+                        id="admin-email"
                         name="email"
                         type="email"
                         label="Email address"
@@ -365,13 +345,10 @@ export default function LoginAdmin() {
                     </FormControl>
 
                     {/* Password */}
-                    <FormControl
-                      fullWidth
-                      error={formik.touched.password && Boolean(formik.errors.password)}
-                    >
-                      <InputLabel htmlFor="password">Password</InputLabel>
+                    <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)}>
+                      <InputLabel htmlFor="admin-password">Password</InputLabel>
                       <OutlinedInput
-                        id="password"
+                        id="admin-password"
                         type={showPassword ? 'text' : 'password'}
                         name="password"
                         label="Password"
@@ -389,8 +366,7 @@ export default function LoginAdmin() {
                           <InputAdornment position="end">
                             <IconButton
                               onClick={() => setShowPassword((p) => !p)}
-                              edge="end"
-                              disabled={isLoading}
+                              edge="end" disabled={isLoading}
                               aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
                               {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -412,9 +388,7 @@ export default function LoginAdmin() {
                     {/* Submit */}
                     <Button
                       type="submit"
-                      fullWidth
-                      size="large"
-                      variant="contained"
+                      fullWidth size="large" variant="contained"
                       disabled={isLoading}
                       startIcon={
                         isLoading
@@ -422,11 +396,8 @@ export default function LoginAdmin() {
                           : <LoginIcon />
                       }
                       sx={{
-                        py: 1.8,
-                        borderRadius: 2,
-                        fontWeight: 'bold',
-                        fontSize: '1rem',
-                        textTransform: 'none',
+                        py: 1.8, borderRadius: 2,
+                        fontWeight: 'bold', fontSize: '1rem', textTransform: 'none',
                         background: currentType.gradient,
                         boxShadow: `0 8px 20px ${alpha(currentType.color, 0.3)}`,
                         transition: 'all 0.3s ease',
@@ -447,8 +418,7 @@ export default function LoginAdmin() {
                   <Typography variant="body2" color="text.secondary">
                     Need help?{' '}
                     <Box
-                      component="a"
-                      href="#"
+                      component="a" href="#"
                       sx={{ color: currentType.color, fontWeight: 600, textDecoration: 'none' }}
                     >
                       Contact Support
@@ -471,8 +441,7 @@ export default function LoginAdmin() {
       >
         <Alert
           severity={snackbar.severity}
-          variant="filled"
-          elevation={6}
+          variant="filled" elevation={6}
           sx={{ borderRadius: 2, fontWeight: 600 }}
         >
           {snackbar.message}

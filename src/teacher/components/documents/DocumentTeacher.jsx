@@ -150,10 +150,15 @@ const DocumentTeacher = () => {
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
+          
+          
+            
           <Tooltip title="Refresh">
-            <IconButton size="small" onClick={() => fetch()} disabled={loading}>
-              {loading ? <CircularProgress size={18} /> : <Refresh />}
-            </IconButton>
+            <span>
+              <IconButton size="small" onClick={() => fetch()} disabled={loading}>
+                {loading ? <CircularProgress size={18} /> : <Refresh />}
+              </IconButton>
+            </span>
           </Tooltip>
           <Button
             variant="contained"

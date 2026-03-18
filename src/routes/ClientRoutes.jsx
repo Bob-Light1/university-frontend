@@ -8,7 +8,6 @@ import Contact from '../client/components/contact/Contact';
 const Client = lazy(() => import('../client/Client'));
 const Home = lazy(() => import('../client/components/home/Home'));
 const Login = lazy(() => import('../client/components/login/Login'));
-const NewCampus = lazy(() => import('../client/components/newCampus/NewCampus'));
 
 export const clientRoutes = (
   
@@ -36,14 +35,7 @@ export const clientRoutes = (
           </Suspense>
         }
       />
-      <Route
-        path="newcampus"
-        element={
-          <Suspense fallback={<Loader />}>
-            <NewCampus />
-          </Suspense>
-        }
-      />
+      
        <Route
         path="allcampus"
         element={

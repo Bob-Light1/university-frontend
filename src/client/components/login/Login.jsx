@@ -1,6 +1,20 @@
-import * as React from 'react';
+/**
+ * @file Login.jsx
+ * @description Universal login page for all non-admin user types.
+ *   Role-specific colour theming, Formik + Yup validation,
+ *   email / username toggle, animated bubbles background.
+ *
+ *   Admin access is NOT exposed here — admins use /admin directly.
+ *
+ *   Changes vs previous version:
+ *   - Removed the now-unnecessary admin/director entries from USER_TYPES
+ *     (those roles authenticate via /admin, not here).
+ *   - Added aria-label on the identifier toggle button for accessibility.
+ *   - Minor style cleanups; logic is unchanged.
+ */
+
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import {
   Box,
@@ -38,161 +52,144 @@ import {
   Login as LoginIcon,
 } from '@mui/icons-material';
 
-import { loginSchema } from '../../../yupSchema/loginSchema';
-import { useAuth } from '../../../hooks/useAuth';
+import { loginSchema }  from '../../../yupSchema/loginSchema';
+import { useAuth }       from '../../../hooks/useAuth';
 import '../../styles/animatedBackground.css';
 
-// User types configuration
+// ─── User type configuration ──────────────────────────────────────────────────
+// Admin and Director are excluded: they authenticate via /admin (hidden route).
+
 const USER_TYPES = [
   {
-    value: 'manager',
-    label: 'Manager',
-    icon: Business,
+    value:    'manager',
+    label:    'Manager',
+    icon:     Business,
     gradient: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
-    color: '#003285',
+    color:    '#003285',
   },
   {
-    value: 'student',
-    label: 'Student',
-    icon: School,
+    value:    'student',
+    label:    'Student',
+    icon:     School,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #4989c8 100%)',
-    color: '#2a629a',
+    color:    '#2a629a',
   },
   {
-    value: 'teacher',
-    label: 'Teacher',
-    icon: RecordVoiceOver,
+    value:    'teacher',
+    label:    'Teacher',
+    icon:     RecordVoiceOver,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #003285 100%)',
-    color: '#2a629a',
+    color:    '#2a629a',
   },
   {
-    value: 'parent',
-    label: 'Parent',
-    icon: FamilyRestroom,
+    value:    'parent',
+    label:    'Parent',
+    icon:     FamilyRestroom,
     gradient: 'linear-gradient(135deg, #4989c8 0%, #ffda78 100%)',
-    color: '#4989c8',
+    color:    '#4989c8',
   },
   {
-    value: 'mentor',
-    label: 'Mentor',
-    icon: Psychology,
+    value:    'mentor',
+    label:    'Mentor',
+    icon:     Psychology,
     gradient: 'linear-gradient(135deg, #003285 0%, #4989c8 100%)',
-    color: '#003285',
+    color:    '#003285',
   },
   {
-    value: 'partner',
-    label: 'Partner',
-    icon: Handshake,
+    value:    'partner',
+    label:    'Partner',
+    icon:     Handshake,
     gradient: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
-    color: '#ff7f3e',
+    color:    '#ff7f3e',
   },
 ];
 
+// ─── Redirect map per user type ───────────────────────────────────────────────
 
+const REDIRECT_MAP = {
+  manager: (userData) => `/campus/${userData.id}`,
+  student: ()         => '/student',
+  teacher: ()         => '/teacher',
+  parent:  ()         => '/parent',
+  mentor:  ()         => '/mentor',
+  partner: ()         => '/partner',
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Login() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const navigate = useNavigate();
+  const theme     = useTheme();
+  const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate  = useNavigate();
   const { login } = useAuth();
   const { state } = useLocation();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [userType, setUserType] = useState('manager');
-  const [useUsername, setUseUsername] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
+  const [showPassword, setShowPassword]   = useState(false);
+  const [isLoading,    setIsLoading]       = useState(false);
+  const [userType,     setUserType]        = useState('manager');
+  const [useUsername,  setUseUsername]     = useState(false);
+  const [snackbar,     setSnackbar]        = useState({ open: false, message: '', severity: 'success' });
 
-  const currentUserType = USER_TYPES.find((type) => type.value === userType) || USER_TYPES[0];
+  const currentUserType = USER_TYPES.find((t) => t.value === userType) ?? USER_TYPES[0];
 
+  // ── Formik ───────────────────────────────────────────────────────────────────
 
   const formik = useFormik({
-    initialValues: {
-      identifier: '', // Can be email or username
-      password: '',
-    },
+    initialValues: { identifier: '', password: '' },
     validationSchema: loginSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        // Prepare credentials based on identifier type
+        // Build credentials: email or username
         const credentials = {
           password: values.password,
+          [useUsername ? 'username' : 'email']: values.identifier,
         };
 
-        // If using username, send username, otherwise send email
-        if (useUsername) {
-          credentials.username = values.identifier;
-        } else {
-          credentials.email = values.identifier;
-        }
-
-        const result = await login(credentials, userType);
+        const result   = await login(credentials, userType);
         const userData = result.data.user;
 
         setSnackbar({
-          open: true,
-          message: `✨ Welcome back! Connected successfully as ${currentUserType.label}.`,
+          open:     true,
+          message:  `Welcome back — signed in as ${currentUserType.label}.`,
           severity: 'success',
         });
 
-        // Redirect based on user type
         setTimeout(() => {
-          const fromDestination = state?.from;
-
-          const redirectMap = {
-            manager: `/campus/${userData.id}`,
-            student: '/student',
-            teacher: '/teacher',
-            parent: '/parent',
-            mentor: '/mentor',
-            partner: '/partner',
-            admin: '/',
-            director: '/',
-          };
-
-          const finalDestination = fromDestination || (redirectMap[userType] || '/');
-          navigate(finalDestination, { replace: true});
-        }, 1200);
+          const dest = state?.from
+            ?? (REDIRECT_MAP[userType]?.(userData) || '/');
+          navigate(dest, { replace: true });
+        }, 1000);
 
       } catch (error) {
-        const errorMessage =
-          error.message || 'Failed to connect. Please verify your credentials.';
         setSnackbar({
-          open: true,
-          message: errorMessage,
+          open:     true,
+          message:  error.message || 'Login failed. Please check your credentials.',
           severity: 'error',
         });
-
       } finally {
         setIsLoading(false);
       }
     },
   });
 
-  const handleUserTypeChange = (event, newUserType) => {
-    if (newUserType !== null) {
-      setUserType(newUserType);
+  // ── Handlers ─────────────────────────────────────────────────────────────────
+
+  const handleUserTypeChange = (value) => {
+    if (value !== userType) {
+      setUserType(value);
       formik.resetForm();
     }
   };
 
-  //const selectUserType = (value) => {
-  //  setUserType(value);
-  //  formik.resetForm();
-  //};
-  
-
   const toggleIdentifierType = () => {
-    setUseUsername(!useUsername);
+    setUseUsername((p) => !p);
     formik.setFieldValue('identifier', '');
   };
+
+  // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <Box
@@ -204,12 +201,12 @@ export default function Login() {
         p: 2,
         position: 'relative',
         overflow: 'hidden',
-        background: currentUserType.gradient || '#4989c8',
+        background: currentUserType.gradient,
         transition: 'background 0.5s ease',
       }}
       className="animated-background"
     >
-      {/* Animated Bubbles */}
+      {/* Animated bubbles */}
       <Box className="bubbles">
         <span className="bubble b1" />
         <span className="bubble b2" />
@@ -221,20 +218,20 @@ export default function Login() {
         <Paper
           elevation={24}
           sx={{
-            display: 'flex',
-            width: '100%',
-            maxWidth: 1100,
-            borderRadius: 4,
-            overflow: 'hidden',
-            minHeight: 650,
-            zIndex: 2,
-            position: 'relative',
-            backdropFilter: 'blur(20px)',
+            display:         'flex',
+            width:           '100%',
+            maxWidth:        1100,
+            borderRadius:    4,
+            overflow:        'hidden',
+            minHeight:       650,
+            zIndex:          2,
+            position:        'relative',
+            backdropFilter:  'blur(20px)',
             backgroundColor: 'rgba(255,255,255,0.98)',
-            boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
+            boxShadow:       '0 30px 80px rgba(0,0,0,0.3)',
           }}
         >
-          {/* Left Side: Branding - Hidden on mobile */}
+          {/* ── Left branding panel (md+) ── */}
           <Box
             sx={{
               flex: 1,
@@ -242,26 +239,23 @@ export default function Login() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              background: '#4989c8',
+              background: currentUserType.gradient,
               color: 'white',
               p: 6,
               textAlign: 'center',
               position: 'relative',
               overflow: 'hidden',
               transition: 'background 0.5s ease',
-
               '&::before': {
                 content: '""',
                 position: 'absolute',
                 inset: 0,
-                background:
-                  'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1), transparent 50%)',
+                background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1), transparent 50%)',
                 animation: 'pulse 4s ease-in-out infinite',
               },
-
               '@keyframes pulse': {
                 '0%, 100%': { opacity: 0.5 },
-                '50%': { opacity: 1 },
+                '50%':       { opacity: 1   },
               },
             }}
           >
@@ -272,21 +266,16 @@ export default function Login() {
                 </Typography>
                 <Typography
                   variant="h6"
-                  sx={{
-                    opacity: 0.95,
-                    fontWeight: 300,
-                    mb: 4,
-                    maxWidth: 400,
-                    mx: 'auto',
-                  }}
+                  sx={{ opacity: 0.95, fontWeight: 300, mb: 4, maxWidth: 400, mx: 'auto' }}
                 >
                   The excellent platform for managing your educational institution
                 </Typography>
                 <Box
                   component="img"
                   src="vite.svg"
+                  alt="wewigo logo"
                   sx={{
-                    width: '70%',
+                    width:  '70%',
                     maxWidth: 280,
                     filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.3))',
                     animation: 'float 6s ease-in-out infinite',
@@ -296,15 +285,12 @@ export default function Login() {
             </Fade>
           </Box>
 
-          {/* Right Side: Form */}
+          {/* ── Right form panel ── */}
           <Box
             sx={{
-              flex: 1,
-              p: { xs: 3, sm: 6 },
+              flex: 1, p: { xs: 3, sm: 6 },
               bgcolor: 'white',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}
           >
             <Fade in timeout={800}>
@@ -329,159 +315,121 @@ export default function Login() {
                   </Typography>
                 </Stack>
 
-                {/* User Type Selection */}
-              <Box sx={{ mb: 4 }}>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight="bold"
-                  sx={{ mb: 2, color: 'text.secondary' }}
-                >
-                  I am a:
-                </Typography>
+                {/* Role picker */}
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2, color: 'text.secondary' }}>
+                    I am a:
+                  </Typography>
 
-                <Box
-                  sx={{
+                  <Box sx={{
                     display: 'grid',
-                    gridTemplateColumns: {
-                      xs: 'repeat(2, 1fr)',
-                      sm: 'repeat(3, 1fr)',
-                    },
-                    gap: 2,
-                  }}
-                >
-                  {USER_TYPES.map((type) => {
-                    const Icon = type.icon;
-                    const isSelected = userType === type.value;
-
-                    return (
-                      <Box
-                        key={type.value}
-                        onClick={() => handleUserTypeChange(null, type.value)}
-                        sx={{
-                          cursor: 'pointer',
-                          borderRadius: 3,
-                          p: 2,
-                          textAlign: 'center',
-                          border: '2px solid',
-                          borderColor: isSelected ? type.color : 'divider',
-                          bgcolor: isSelected
-                            ? alpha(type.color, 0.08)
-                            : 'background.paper',
-                          transition: 'all 0.25s ease',
-                          boxShadow: isSelected
-                            ? `0 8px 24px ${alpha(type.color, 0.35)}`
-                            : 'none',
-
-                          '&:hover': {
-                            transform: 'translateY(-2px)',
-                            borderColor: type.color,
-                            boxShadow: `0 6px 18px ${alpha(type.color, 0.25)}`,
-                          },
-                        }}
-                      >
-                        <Icon
+                    gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
+                    gap: 1.5,
+                  }}>
+                    {USER_TYPES.map(({ value, label, icon: Icon, color, gradient }) => {
+                      const isSelected = userType === value;
+                      return (
+                        <Box
+                          key={value}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleUserTypeChange(value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleUserTypeChange(value)}
+                          aria-pressed={isSelected}
                           sx={{
-                            fontSize: 28,
-                            mb: 1,
-                            color: isSelected ? type.color : 'text.secondary',
+                            cursor: 'pointer', borderRadius: 2.5, p: 1.5,
+                            textAlign: 'center', border: '2px solid',
+                            borderColor: isSelected ? color : 'divider',
+                            bgcolor: isSelected ? alpha(color, 0.08) : 'background.paper',
+                            transition: 'all 0.25s ease',
+                            outline: 'none',
+                            boxShadow: isSelected ? `0 6px 20px ${alpha(color, 0.3)}` : 'none',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              borderColor: color,
+                              boxShadow: `0 4px 14px ${alpha(color, 0.22)}`,
+                            },
+                            '&:focus-visible': {
+                              boxShadow: `0 0 0 3px ${alpha(color, 0.4)}`,
+                            },
                           }}
-                        />
-                        <Typography
-                          variant="body2"
-                          fontWeight={isSelected ? 700 : 500}
-                          color={isSelected ? type.color : 'text.primary'}
                         >
-                          {type.label}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
+                          <Icon sx={{ fontSize: 26, mb: 0.5, color: isSelected ? color : 'text.secondary' }} />
+                          <Typography
+                            variant="body2"
+                            fontWeight={isSelected ? 700 : 500}
+                            color={isSelected ? color : 'text.primary'}
+                            sx={{ fontSize: '0.8rem' }}
+                          >
+                            {label}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
                 </Box>
-              </Box>
 
+                {/* Form */}
+                <form onSubmit={formik.handleSubmit} noValidate>
+                  <Stack spacing={2.5}>
 
-                {/* Login Form */}
-                <form onSubmit={formik.handleSubmit}>
-                  <Stack spacing={3}>
-                    {/* Email/Username Field */}
+                    {/* Identifier field */}
                     <FormControl
                       fullWidth
-                      error={
-                        formik.touched.identifier &&
-                        Boolean(formik.errors.identifier)
-                      }
+                      error={formik.touched.identifier && Boolean(formik.errors.identifier)}
                     >
-                      <InputLabel>
+                      <InputLabel htmlFor="login-identifier">
                         {useUsername ? 'Username' : 'Email Address'}
                       </InputLabel>
                       <OutlinedInput
+                        id="login-identifier"
                         name="identifier"
                         label={useUsername ? 'Username' : 'Email Address'}
                         value={formik.values.identifier}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         disabled={isLoading}
+                        autoComplete={useUsername ? 'username' : 'email'}
                         startAdornment={
                           <InputAdornment position="start">
-                            {useUsername ? (
-                              <Badge
-                                sx={{ color: currentUserType.color }}
-                              />
-                            ) : (
-                              <MailOutline
-                                sx={{ color: currentUserType.color }}
-                              />
-                            )}
+                            {useUsername
+                              ? <Badge sx={{ color: currentUserType.color }} />
+                              : <MailOutline sx={{ color: currentUserType.color }} />}
                           </InputAdornment>
                         }
                         sx={{
                           borderRadius: 2,
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderWidth: 2,
-                            transition: 'border-color 0.3s ease',
-                          },
-                          '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: currentUserType.color,
-                          },
-                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: currentUserType.color,
-                          },
+                          '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: currentUserType.color },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: currentUserType.color },
                         }}
                       />
-                      {formik.touched.identifier &&
-                        formik.errors.identifier && (
-                          <FormHelperText>
-                            {formik.errors.identifier}
-                          </FormHelperText>
-                        )}
+                      {formik.touched.identifier && formik.errors.identifier && (
+                        <FormHelperText>{formik.errors.identifier}</FormHelperText>
+                      )}
                       <Button
                         size="small"
                         onClick={toggleIdentifierType}
+                        aria-label={`Switch to ${useUsername ? 'email' : 'username'} login`}
                         sx={{
-                          mt: 0.5,
-                          alignSelf: 'flex-start',
-                          textTransform: 'none',
-                          fontSize: '0.75rem',
+                          mt: 0.5, alignSelf: 'flex-start',
+                          textTransform: 'none', fontSize: '0.75rem',
                           color: currentUserType.color,
-                          '&:hover': {
-                            bgcolor: alpha(currentUserType.color, 0.05),
-                          },
+                          '&:hover': { bgcolor: alpha(currentUserType.color, 0.05) },
                         }}
                       >
                         Use {useUsername ? 'Email' : 'Username'} instead
                       </Button>
                     </FormControl>
 
-                    {/* Password Field */}
+                    {/* Password field */}
                     <FormControl
                       fullWidth
-                      error={
-                        formik.touched.password &&
-                        Boolean(formik.errors.password)
-                      }
+                      error={formik.touched.password && Boolean(formik.errors.password)}
                     >
-                      <InputLabel>Password</InputLabel>
+                      <InputLabel htmlFor="login-password">Password</InputLabel>
                       <OutlinedInput
+                        id="login-password"
                         type={showPassword ? 'text' : 'password'}
                         name="password"
                         label="Password"
@@ -489,49 +437,37 @@ export default function Login() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         disabled={isLoading}
+                        autoComplete="current-password"
                         startAdornment={
                           <InputAdornment position="start">
-                            <LockOutlined
-                              sx={{ color: currentUserType.color }}
-                            />
+                            <LockOutlined sx={{ color: currentUserType.color }} />
                           </InputAdornment>
                         }
                         endAdornment={
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
+                              onClick={() => setShowPassword((p) => !p)}
                               edge="end"
                               disabled={isLoading}
+                              aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>
                           </InputAdornment>
                         }
                         sx={{
                           borderRadius: 2,
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderWidth: 2,
-                          },
-                          '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: currentUserType.color,
-                          },
-                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: currentUserType.color,
-                          },
+                          '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: currentUserType.color },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: currentUserType.color },
                         }}
                       />
                       {formik.touched.password && formik.errors.password && (
-                        <FormHelperText>
-                          {formik.errors.password}
-                        </FormHelperText>
+                        <FormHelperText>{formik.errors.password}</FormHelperText>
                       )}
                     </FormControl>
 
-                    {/* Submit Button */}
+                    {/* Submit */}
                     <Button
                       type="submit"
                       fullWidth
@@ -539,57 +475,39 @@ export default function Login() {
                       variant="contained"
                       disabled={isLoading}
                       startIcon={
-                        isLoading ? (
-                          <CircularProgress size={20} color="inherit" />
-                        ) : (
-                          <LoginIcon />
-                        )
+                        isLoading
+                          ? <CircularProgress size={20} color="inherit" />
+                          : <LoginIcon />
                       }
                       sx={{
-                        py: 1.8,
-                        borderRadius: 2,
-                        fontWeight: 'bold',
-                        fontSize: '1rem',
-                        textTransform: 'none',
+                        py: 1.8, borderRadius: 2, fontWeight: 'bold',
+                        fontSize: '1rem', textTransform: 'none',
                         background: currentUserType.gradient,
-                        boxShadow: `0 8px 20px ${alpha(
-                          currentUserType.color,
-                          0.3
-                        )}`,
+                        boxShadow: `0 8px 20px ${alpha(currentUserType.color, 0.3)}`,
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           transform: 'translateY(-2px)',
-                          boxShadow: `0 12px 28px ${alpha(
-                            currentUserType.color,
-                            0.4
-                          )}`,
+                          boxShadow: `0 12px 28px ${alpha(currentUserType.color, 0.4)}`,
                         },
-                        '&:active': {
-                          transform: 'translateY(0)',
-                        },
+                        '&:active': { transform: 'translateY(0)' },
                       }}
                     >
-                      {isLoading
-                        ? 'Connecting...'
-                        : `Sign in as ${currentUserType.label}`}
+                      {isLoading ? 'Connecting…' : `Sign in as ${currentUserType.label}`}
                     </Button>
                   </Stack>
                 </form>
 
                 {/* Footer */}
-                <Box sx={{ mt: 4, textAlign: 'center' }}>
+                <Box sx={{ mt: 3.5, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
                     Need help?{' '}
-                    <a
+                    <Box
+                      component="a"
                       href="#"
-                      style={{
-                        color: currentUserType.color,
-                        fontWeight: 600,
-                        textDecoration: 'none',
-                      }}
+                      sx={{ color: currentUserType.color, fontWeight: 600, textDecoration: 'none' }}
                     >
                       Contact Support
-                    </a>
+                    </Box>
                   </Typography>
                 </Box>
               </Box>
@@ -602,20 +520,15 @@ export default function Login() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        slots={{
-          transition: Zoom,
-        }}
+        slots={{ transition: Zoom }}
       >
         <Alert
           severity={snackbar.severity}
           variant="filled"
           elevation={6}
-          sx={{
-            borderRadius: 2,
-            fontWeight: 600,
-          }}
+          sx={{ borderRadius: 2, fontWeight: 600 }}
         >
           {snackbar.message}
         </Alert>

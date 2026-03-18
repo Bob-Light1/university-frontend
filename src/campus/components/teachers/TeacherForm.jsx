@@ -94,8 +94,22 @@ const resolveCurrentClassManagerOf = (teacher, classList) => {
  * @param {boolean} isEdit    - Edit mode flag
  * @returns {FormData}
  */
+/**
+ * Emergency-contact flat Formik keys that must be collapsed into the
+ * nested `emergencyContact` object expected by the backend schema.
+ */
+const EMERGENCY_KEY_MAP = {
+  emergencyContactName:     'name',
+  emergencyContactPhone:    'phone',
+  emergencyContactRelation: 'relationship',
+};
+
 const buildFormData = (values, imageFile, isEdit) => {
   const fd = new FormData();
+
+  // Accumulate emergency-contact sub-fields; send as JSON blob at the end
+  // (multer does not support bracket-notation nesting for text fields).
+  const emergencyContact = {};
 
   Object.entries(values).forEach(([key, value]) => {
     // Skip blank password in edit mode
@@ -103,6 +117,12 @@ const buildFormData = (values, imageFile, isEdit) => {
 
     // Skip null / empty scalar values
     if (value === null || value === undefined || value === '') return;
+
+    // Collect emergency contact sub-fields into a single object
+    if (EMERGENCY_KEY_MAP[key]) {
+      emergencyContact[EMERGENCY_KEY_MAP[key]] = value;
+      return;
+    }
 
     // Map "subject" (single select) → "subjects" array on the backend
     if (key === 'subject') {
@@ -126,6 +146,12 @@ const buildFormData = (values, imageFile, isEdit) => {
 
     fd.append(key, value);
   });
+
+  // Serialize emergencyContact as a JSON string so multer receives it as a
+  // single text field; the backend (genericEntity_controller) will parse it.
+  if (Object.keys(emergencyContact).length > 0) {
+    fd.append('emergencyContact', JSON.stringify(emergencyContact));
+  }
 
   if (imageFile instanceof File) fd.append('profileImage', imageFile);
 
