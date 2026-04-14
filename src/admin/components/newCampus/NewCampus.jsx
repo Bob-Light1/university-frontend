@@ -97,6 +97,7 @@ export default function NewCampus() {
             'Content-Type':  'multipart/form-data',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
+          timeout: 30000, // 30 s — prevents infinite spinner if server hangs
         });
 
         setSnackbar({ open: true, message: '✨ Campus created successfully!', severity: 'success' });
@@ -105,9 +106,12 @@ export default function NewCampus() {
         setActiveStep(0);
 
       } catch (error) {
+        const isTimeout = error.code === 'ECONNABORTED';
         setSnackbar({
           open:     true,
-          message:  error.response?.data?.message || 'An error occurred while creating the campus.',
+          message:  isTimeout
+            ? 'Request timed out. Please check your connection and try again.'
+            : error.response?.data?.message || 'An error occurred while creating the campus.',
           severity: 'error',
         });
       } finally {
