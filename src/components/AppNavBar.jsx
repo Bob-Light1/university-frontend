@@ -275,7 +275,9 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
 
   // Build avatar source URL (with cache-busting)
   const avatarSrc = user?.image_url
-    ? `${IMAGE_BASE_URL}${user.image_url}?t=${Date.now()}`
+    ? (user.image_url.startsWith('http')
+        ? `${user.image_url}?t=${Date.now()}`
+        : `${IMAGE_BASE_URL}${user.image_url}?t=${Date.now()}`)
     : null;
 
   // Derive display name from any user type shape
