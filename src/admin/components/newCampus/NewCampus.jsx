@@ -79,30 +79,32 @@ export default function NewCampus() {
     validateOnBlur:   true,
     onSubmit: async (values) => {
       if (!values.campus_image) {
-        setSnackbar({ open: true, message: 'Please select a campus image.', severity: 'warning' });
+        setSnackbar({ open: true, message: 'Please upload a campus image first.', severity: 'warning' });
         return;
       }
       setIsLoading(true);
       try {
-        const formData = new FormData();
-        formData.append('campus_name',   values.campus_name);
-        formData.append('manager_name',  values.manager_name);
-        formData.append('email',         values.email);
-        formData.append('password',      values.password);
-        formData.append('manager_phone', values.manager_phone);
-        if (values.campus_number) formData.append('campus_number', values.campus_number);
-        if (values.campus_image instanceof File)
-          formData.append('campus_image', values.campus_image, values.campus_image.name);
-        if (values.location.address) formData.append('location[address]', values.location.address);
-        if (values.location.city)    formData.append('location[city]',    values.location.city);
-        formData.append('location[country]', values.location.country);
+        const payload = {
+          campus_name:   values.campus_name,
+          manager_name:  values.manager_name,
+          email:         values.email,
+          password:      values.password,
+          manager_phone: values.manager_phone,
+          campus_image:  values.campus_image, // Cloudinary URL — already uploaded by the browser
+          ...(values.campus_number && { campus_number: values.campus_number }),
+          location: {
+            ...(values.location.address && { address: values.location.address }),
+            ...(values.location.city    && { city:    values.location.city }),
+            country: values.location.country,
+          },
+        };
 
-        await axios.post(`${API_BASE_URL}/campus/create`, formData, {
+        await axios.post(`${API_BASE_URL}/campus/create`, payload, {
           headers: {
-            'Content-Type':  'multipart/form-data',
+            'Content-Type':  'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
-          timeout: 90000, // 90 s — covers Render cold start (50-90 s) + Cloudinary upload
+          timeout: 15000, // image already on Cloudinary — only DB write remains
         });
 
         setSnackbar({ open: true, message: '✨ Campus created successfully!', severity: 'success' });

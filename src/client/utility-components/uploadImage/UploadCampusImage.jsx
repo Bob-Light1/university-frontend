@@ -13,6 +13,8 @@ import {
   LinearProgress,
 } from '@mui/material';
 import { CloudUpload, Delete, Image as ImageIcon, CheckCircle } from '@mui/icons-material';
+import axios from 'axios';
+import { API_BASE_URL } from '../../../config/env';
 
 export default function UploadCampusImage({ onImageChange, disabled = false }) {
   const [file, setFile] = useState(null);
@@ -20,85 +22,94 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadDone, setUploadDone] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Simulate upload progress (remove this in production if not needed)
-  useEffect(() => {
-    if (file && !error) {
-      setIsUploading(true);
-      const timer = setTimeout(() => {
-        setIsUploading(false);
-      }, 500);
-      return () => clearTimeout(timer);
+  // While uploading, the component itself is also disabled
+  const isDisabled = disabled || isUploading;
+
+  const uploadToCloudinary = async (selectedFile) => {
+    setIsUploading(true);
+    setUploadDone(false);
+    try {
+      // 1. Fetch signed upload params from backend
+      const { data } = await axios.get(`${API_BASE_URL}/campus/upload-signature`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        timeout: 10000,
+      });
+      const { signature, timestamp, folder, cloudName, apiKey } = data.data;
+
+      // 2. POST the file directly to Cloudinary — no backend involvement
+      const form = new FormData();
+      form.append('file', selectedFile);
+      form.append('api_key', apiKey);
+      form.append('timestamp', String(timestamp));
+      form.append('folder', folder);
+      form.append('signature', signature);
+
+      const cloudRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        form,
+        { timeout: 30000 },
+      );
+
+      if (onImageChange) onImageChange(cloudRes.data.secure_url);
+      setUploadDone(true);
+    } catch (err) {
+      const msg =
+        err.response?.data?.error?.message ||
+        (err.code === 'ECONNABORTED' ? 'Upload timed out. Please try again.' : null) ||
+        'Image upload failed. Please try again.';
+      setError(msg);
+      setFile(null);
+      setImageUrl(null); // triggers useEffect cleanup → revokes blob URL
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (onImageChange) onImageChange(null);
+    } finally {
+      setIsUploading(false);
     }
-  }, [file, error]);
+  };
 
   const validateAndSetImage = (selectedFile) => {
     if (!selectedFile) return;
 
-    // Verify file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(selectedFile.type)) {
       setError('Invalid file format. Please use JPG, PNG or WEBP');
-      return false;
+      return;
     }
 
-    // Verify image size (max 5MB)
     const maxSize = 5 * 1024 * 1024;
     if (selectedFile.size > maxSize) {
       setError('File is too large. Maximum size is 5MB');
-      return false;
+      return;
     }
 
-    // Everything OK
     setError('');
+    setUploadDone(false);
     setFile(selectedFile);
-    
-    // Clean up previous URL if exists
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-    
-    const newUrl = URL.createObjectURL(selectedFile);
-    setImageUrl(newUrl);
-
-    if (onImageChange) {
-      onImageChange(selectedFile);
-    }
-
-    return true;
+    setImageUrl(URL.createObjectURL(selectedFile));
+    uploadToCloudinary(selectedFile);
   };
 
   const addImage = (event) => {
-    const selectedFile = event.target.files[0];
-    validateAndSetImage(selectedFile);
+    validateAndSetImage(event.target.files[0]);
   };
 
   const removeImage = () => {
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
     setFile(null);
-    setImageUrl(null);
+    setImageUrl(null); // triggers useEffect cleanup → revokes blob URL
     setError('');
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-
-    if (onImageChange) {
-      onImageChange(null);
-    }
+    setUploadDone(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (onImageChange) onImageChange(null);
   };
 
   // Drag and Drop handlers
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!disabled) {
-      setIsDragging(true);
-    }
+    if (!isDisabled) setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
@@ -116,23 +127,26 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
-
-    if (disabled) return;
-
+    if (isDisabled) return;
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      validateAndSetImage(droppedFile);
-    }
+    if (droppedFile) validateAndSetImage(droppedFile);
   };
 
-  // Cleanup on unmount
+  // Revoke blob URL on change or unmount to avoid memory leaks
   useEffect(() => {
     return () => {
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
-      }
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
     };
   }, [imageUrl]);
+
+  // ── Derived display helpers ────────────────────────────────────────────────
+  const mainLabel = isUploading
+    ? 'Uploading to Cloudinary…'
+    : uploadDone && imageUrl
+    ? '✓ Image Uploaded'
+    : isDragging
+    ? 'Drop image here'
+    : 'Choose a campus image';
 
   return (
     <Grid size={12}>
@@ -160,9 +174,9 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
               ? 'success.50'
               : 'grey.50',
             transition: 'all 0.3s ease',
-            opacity: disabled ? 0.6 : 1,
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            '&:hover': !disabled && {
+            opacity: isDisabled ? 0.6 : 1,
+            cursor: isDisabled ? 'not-allowed' : 'pointer',
+            '&:hover': !isDisabled && {
               borderColor: error ? 'error.dark' : 'primary.main',
               bgcolor: isDragging ? 'primary.100' : 'grey.100',
               transform: 'translateY(-2px)',
@@ -177,43 +191,39 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
             id="campus-image-upload"
             type="file"
             onChange={addImage}
-            disabled={disabled}
+            disabled={isDisabled}
           />
-          <label htmlFor="campus-image-upload" style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}>
+          <label htmlFor="campus-image-upload" style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}>
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 2,
-                pointerEvents: disabled ? 'none' : 'auto',
+                pointerEvents: isDisabled ? 'none' : 'auto',
               }}
             >
-              {imageUrl ? (
+              {uploadDone && imageUrl ? (
                 <CheckCircle sx={{ fontSize: 48, color: 'success.main' }} />
               ) : (
-                <ImageIcon 
-                  sx={{ 
-                    fontSize: 48, 
+                <ImageIcon
+                  sx={{
+                    fontSize: 48,
                     color: isDragging ? 'primary.main' : 'grey.400',
-                    transition: 'color 0.3s'
-                  }} 
+                    transition: 'color 0.3s',
+                  }}
                 />
               )}
-              
+
               <Box>
-                <Typography 
-                  variant="h6" 
-                  color={imageUrl ? 'success.main' : 'text.secondary'}
-                  sx={{ fontWeight: imageUrl ? 'bold' : 'normal' }}
+                <Typography
+                  variant="h6"
+                  color={uploadDone && imageUrl ? 'success.main' : 'text.secondary'}
+                  sx={{ fontWeight: uploadDone && imageUrl ? 'bold' : 'normal' }}
                 >
-                  {imageUrl 
-                    ? '✓ Image Selected' 
-                    : isDragging 
-                    ? 'Drop image here' 
-                    : 'Choose a campus image'}
+                  {mainLabel}
                 </Typography>
-                {!imageUrl && (
+                {!imageUrl && !isUploading && (
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
                     or drag and drop here
                   </Typography>
@@ -224,13 +234,13 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
                 component="span"
                 variant={imageUrl ? 'outlined' : 'contained'}
                 startIcon={<CloudUpload />}
-                disabled={disabled}
-                sx={{ 
+                disabled={isDisabled}
+                sx={{
                   mt: 1,
                   backgroundColor: imageUrl ? 'transparent' : '#4989c8',
                   '&:hover': {
                     backgroundColor: imageUrl ? 'transparent' : '#3a6fa8',
-                  }
+                  },
                 }}
               >
                 {imageUrl ? 'Change Image' : 'Browse Files'}
@@ -242,7 +252,7 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
             </Box>
           </label>
 
-          {/* Loading progress */}
+          {/* Real upload progress bar */}
           {isUploading && (
             <Box sx={{ width: '100%', mt: 2 }}>
               <LinearProgress />
@@ -257,11 +267,18 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
           </FormHelperText>
         )}
 
-        {/* Success message with file info */}
-        {file && !error && (
+        {/* Status messages */}
+        {file && !error && isUploading && (
+          <Fade in>
+            <FormHelperText sx={{ color: 'info.main', mt: 1, fontSize: '0.875rem' }}>
+              Uploading to Cloudinary…
+            </FormHelperText>
+          </Fade>
+        )}
+        {file && !error && uploadDone && (
           <Fade in>
             <FormHelperText sx={{ color: 'success.main', mt: 1, fontSize: '0.875rem' }}>
-              ✓ File: {file.name} • {(file.size / 1024).toFixed(2)} KB
+              ✓ Uploaded: {file.name} • {(file.size / 1024).toFixed(2)} KB
             </FormHelperText>
           </Fade>
         )}
@@ -294,7 +311,7 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
               {/* Delete button */}
               <IconButton
                 onClick={removeImage}
-                disabled={disabled}
+                disabled={isDisabled}
                 sx={{
                   position: 'absolute',
                   top: 8,

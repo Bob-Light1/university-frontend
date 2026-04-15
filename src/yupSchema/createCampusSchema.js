@@ -36,7 +36,7 @@ export const createCampusSchema = yup.object({
 
   campus_image: yup
     .string()
-    .required('Campus image is required.'),
+    .nullable(),
 
   password: yup
     .string()
