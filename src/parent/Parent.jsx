@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { Suspense }         from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box                  from '@mui/material/Box';
 import MuiDrawer            from '@mui/material/Drawer';
@@ -37,6 +37,7 @@ import DescriptionIcon   from '@mui/icons-material/Description';
 
 import AppNavBar from '../components/AppNavBar';
 import Loader    from '../components/Loader';
+import { getMyChildren } from '../services/parent.service';
 
 // ─── Drawer layout constants ──────────────────────────────────────────────────
 
@@ -102,17 +103,30 @@ export default function Parent() {
   const theme    = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen]         = React.useState(false);
+  const [firstChildId, setFirstChildId] = useState(null);
+
+  useEffect(() => {
+    getMyChildren()
+      .then(({ data }) => {
+        const children = data.data?.children ?? [];
+        if (children.length > 0) setFirstChildId(children[0]._id);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Child-scoped links resolve to the first child's page, or fall back to dashboard
+  const childLink = (section) =>
+    firstChildId ? `/parent/children/${firstChildId}/${section}` : '/parent';
 
   const navItems = [
-    { link: '/',                          label: 'Home',         icon: HomeIcon               },
-    { link: '/parent',                    label: 'Dashboard',    icon: DashboardCustomizeIcon  },
-    { link: '/parent/profile',            label: 'My Profile',   icon: AccountCircleIcon       },
-    { link: '/parent/children',           label: 'My Children',  icon: ChildCareIcon           },
-    { link: '/parent/components/children/results',   label: 'Results',      icon: TrendingUpIcon          },
-    { link: '/parent/components/children/attendance',label: 'Attendance',   icon: AccessTimeIcon          },
-    { link: '/parent/components/children/schedule',  label: 'Schedule',     icon: EventNoteIcon           },
-    { link: '/parent/components/children/transcripts',label:'Transcripts',  icon: DescriptionIcon         },
+    { link: '/',                    label: 'Home',        icon: HomeIcon,               disabled: false },
+    { link: '/parent',              label: 'Dashboard',   icon: DashboardCustomizeIcon, disabled: false },
+    { link: '/parent/profile',      label: 'My Profile',  icon: AccountCircleIcon,      disabled: false },
+    { link: childLink('results'),   label: 'Results',     icon: TrendingUpIcon,         disabled: !firstChildId },
+    { link: childLink('attendance'),label: 'Attendance',  icon: AccessTimeIcon,         disabled: !firstChildId },
+    { link: childLink('schedule'),  label: 'Schedule',    icon: EventNoteIcon,          disabled: !firstChildId },
+    { link: childLink('transcripts'),label:'Transcripts', icon: DescriptionIcon,        disabled: !firstChildId },
   ];
 
   return (
@@ -146,17 +160,19 @@ export default function Parent() {
 
         <List>
           {navItems.map((item) => {
-            const isActive = location.pathname === item.link;
+            const isActive = location.pathname.startsWith(item.link) && item.link !== '/';
+            const exactActive = item.link === '/' ? location.pathname === '/' : isActive;
             return (
-              <ListItem key={item.link} disablePadding sx={{ display: 'block' }}>
+              <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
                 <Tooltip title={open ? '' : item.label} placement="right">
                   <ListItemButton
-                    onClick={() => navigate(item.link)}
-                    selected={isActive}
+                    onClick={() => !item.disabled && navigate(item.link)}
+                    selected={exactActive}
+                    disabled={item.disabled}
                     sx={[
                       { minHeight: 48, px: 2.5 },
                       open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
-                      isActive && {
+                      exactActive && {
                         bgcolor: 'rgba(73,137,200,0.12)',
                         borderRight: '3px solid',
                         borderColor: 'primary.main',
@@ -165,7 +181,7 @@ export default function Parent() {
                   >
                     <ListItemIcon
                       sx={[
-                        { minWidth: 0, justifyContent: 'center', color: isActive ? 'primary.main' : 'inherit' },
+                        { minWidth: 0, justifyContent: 'center', color: exactActive ? 'primary.main' : 'inherit' },
                         open ? { mr: 3 } : { mr: 'auto' },
                       ]}
                     >
@@ -174,7 +190,7 @@ export default function Parent() {
                     <ListItemText
                       primary={item.label}
                       slotProps={{
-                        primary: { fontSize: '0.875rem', fontWeight: isActive ? 600 : 400 },
+                        primary: { fontSize: '0.875rem', fontWeight: exactActive ? 600 : 400 },
                       }}
                       sx={[open ? { opacity: 1 } : { opacity: 0 }]}
                     />
