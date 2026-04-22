@@ -1141,7 +1141,7 @@ const ExaminationManager = () => {
                             {s.status === 'DRAFT' && (
                               <Tooltip title="Schedule">
                                 <IconButton size="small" color="primary" disabled={actionLoading}
-                                  onClick={() => lifecycleAction(() => examService.scheduleSession(s._id), 'Session scheduled.')}>
+                                  onClick={() => lifecycleAction(() => examService.submitSession(s._id), 'Session scheduled.')}>
                                   <Schedule fontSize="small" />
                                 </IconButton>
                               </Tooltip>
