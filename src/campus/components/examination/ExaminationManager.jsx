@@ -179,7 +179,7 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData }) =
                   onBlur={handleBlur}
                 >
                   {subjects.map((s) => (
-                    <MenuItem key={s._id} value={s._id}>{s.subjectName}</MenuItem>
+                    <MenuItem key={s._id} value={s._id}>{s.subject_name}</MenuItem>
                   ))}
                 </Select>
                 {touched.subject && errors.subject && (
@@ -1109,7 +1109,7 @@ const ExaminationManager = () => {
                             {s.academicYear} · {s.semester}
                           </Typography>
                         </TableCell>
-                        <TableCell>{s.subject?.subjectName || '—'}</TableCell>
+                        <TableCell>{s.subject?.subject_name || '—'}</TableCell>
                         <TableCell>{s.examPeriod}</TableCell>
                         <TableCell>
                           <Typography variant="caption">
