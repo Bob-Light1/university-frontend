@@ -1,5 +1,15 @@
 import api from "../api/axiosInstance";
 
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+
+/**
+ * GET /teachers/me/dashboard
+ * Aggregated KPIs for the authenticated teacher's home screen.
+ * Returns: profile, stats, todaySessions, upcomingSessions, pendingRollCalls.
+ */
+export const getTeacherDashboard = () =>
+  api.get('/teachers/me/dashboard');
+
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
 export const createTeacher = (data) => api.post('/teachers', data);

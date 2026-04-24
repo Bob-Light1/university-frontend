@@ -1,8 +1,8 @@
 import { Route } from 'react-router-dom';
 import { lazy } from 'react';
 
-const StudentDetails = lazy(() =>
-  import('../student/components/studentDetails/StudentDetails')
+const StudentDashboard = lazy(() =>
+  import('../student/components/dashboard/StudentDashboard')
 );
 const ScheduleStudent = lazy(() =>
   import('../student/components/schedule/ScheduleStudent')

@@ -1,8 +1,8 @@
 import { Route } from 'react-router-dom';
 import { lazy } from 'react';
 
-const TeacherDetails = lazy(() =>
-  import('../teacher/components/teacherDetails/TeacherDetails')
+const TeacherDashboard = lazy(() =>
+  import('../teacher/components/dashboard/TeacherDashboard')
 );
 const ScheduleTeacher = lazy(() =>
   import('../teacher/components/schedule/ScheduleTeacher')
@@ -28,7 +28,7 @@ const DocumentTeacher = lazy(() =>
 
 export const teacherRoutes = (
   <>
-    <Route index element={<TeacherDetails />} />
+    <Route index element={<TeacherDashboard />} />
     <Route path="schedule"   element={<ScheduleTeacher />} />
     <Route path="examination" element={<ExamTeacher />} />
     <Route path="results"    element={<ResultTeacher />} />

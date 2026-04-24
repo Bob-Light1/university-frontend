@@ -11,6 +11,16 @@
 
 import api from '../api/axiosInstance';
 
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+
+/**
+ * GET /students/me/dashboard
+ * Aggregated KPIs for the authenticated student's home screen.
+ * Returns: profile, stats, todaySessions, upcomingSessions, recentResults, upcomingExams.
+ */
+export const getStudentDashboard = () =>
+  api.get('/students/me/dashboard');
+
 // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
 /**
