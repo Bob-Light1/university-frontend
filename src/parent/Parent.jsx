@@ -14,18 +14,29 @@ import EventNoteIcon          from '@mui/icons-material/EventNote';
 import DescriptionIcon        from '@mui/icons-material/Description';
 
 import AppShell          from '../components/AppShell';
+import { useAuth }       from '../hooks/useAuth';
 import { getMyChildren } from '../services/parent.service';
 
 export default function Parent() {
-  const [firstChildId, setFirstChildId] = useState(null);
+  const { user } = useAuth();
+
+  // Seed from the auth token immediately — avoids a blank nav on first render.
+  // The useEffect below updates with the fully-populated list once it resolves.
+  const [firstChildId, setFirstChildId] = useState(() => {
+    const ids = user?.children;
+    return Array.isArray(ids) && ids.length > 0 ? String(ids[0]) : null;
+  });
 
   useEffect(() => {
     getMyChildren()
       .then(({ data }) => {
-        const children = data.data?.children ?? [];
-        if (children.length > 0) setFirstChildId(children[0]._id);
+        // Filter out nulls in case a referenced student was deleted.
+        const children = (data.data?.children ?? []).filter(Boolean);
+        if (children.length > 0) setFirstChildId(String(children[0]._id));
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn('[Parent] Could not refresh children for nav:', err?.response?.data?.message ?? err.message);
+      });
   }, []);
 
   // Returns null when no child is known yet — AppShell treats null link as
