@@ -3,6 +3,7 @@ import { CalendarMonth, Check, Cancel, Info } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FormTextField } from '../../../components/form/FormFields';
+import { fDateWeekday } from '../../../utils/dateFormat';
 
 /**
  * Teacher postponement request form.
@@ -74,9 +75,7 @@ const PostponementForm = ({ session, onSubmit, onCancel }) => {
                 <Info fontSize="small" color="info" />
                 <Typography variant="body2" fontWeight={600}>
                   {session.subject?.subject_name}
-                  {session.startTime && ` — ${new Date(session.startTime).toLocaleDateString([], {
-                    weekday: 'short', day: 'numeric', month: 'short',
-                  })}`}
+                  {session.startTime && ` — ${fDateWeekday(session.startTime)}`}
                 </Typography>
               </Stack>
             </Box>

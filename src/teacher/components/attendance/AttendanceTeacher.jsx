@@ -56,6 +56,7 @@ import {
   submitRollCall as submitRollCallAPI,
 } from '../../../services/schedule.service';
 import { useLocation } from 'react-router-dom';
+import { fDateWeekday, fTime } from '../../../utils/dateFormat';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -287,10 +288,7 @@ const TeacherRollCallTab = ({ selectedSession, onSessionClear }) => {
               <Typography variant="h6" fontWeight={700}>{subjectName}</Typography>
               <Typography variant="body2" color="text.secondary">
                 {className}
-                {selectedSession.startTime && ` · ${new Date(selectedSession.startTime).toLocaleString('en-GB', {
-                  weekday: 'short', day: 'numeric', month: 'short',
-                  hour: '2-digit', minute: '2-digit',
-                })}`}
+                {selectedSession.startTime && ` · ${fDateWeekday(selectedSession.startTime)} · ${fTime(selectedSession.startTime)}`}
               </Typography>
             </Box>
           </Stack>
@@ -464,9 +462,7 @@ const TeacherSelfTab = () => {
                   <TableCell>
                     <Typography variant="body2" fontWeight={600}>
                       {record.attendanceDate
-                        ? new Date(record.attendanceDate).toLocaleDateString('en-GB', {
-                            weekday: 'short', day: 'numeric', month: 'short',
-                          })
+                        ? fDateWeekday(record.attendanceDate)
                         : '—'}
                     </Typography>
                   </TableCell>

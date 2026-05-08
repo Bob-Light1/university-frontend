@@ -53,6 +53,7 @@ import {
   DocumentEmptyState,
   getMimeLabel,
 } from '../../../components/documents/DocumentShared';
+import { fDate } from '../../../utils/dateFormat';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -231,7 +232,7 @@ const DocumentStudent = () => {
                   </TableCell>
                   <TableCell>
                     <Typography variant="caption" color="text.secondary">
-                      {doc.publishedAt ? new Date(doc.publishedAt).toLocaleDateString() : '—'}
+                      {fDate(doc.publishedAt)}
                     </Typography>
                   </TableCell>
                   <TableCell align="right" onClick={(e) => e.stopPropagation()}>

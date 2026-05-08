@@ -11,6 +11,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { getMyChildren, getChildSchedule } from '../../../services/parent.service';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDateWeekdayLong, fTime } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -21,15 +22,8 @@ const profileUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const formatDay = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-};
-
-const formatTime = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-};
+const formatDay  = (d) => fDateWeekdayLong(d);
+const formatTime = (d) => fTime(d);
 
 // ─── Child Header ─────────────────────────────────────────────────────────────
 

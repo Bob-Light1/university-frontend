@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { Lock, CheckCircle, Cancel, HelpOutline, Info } from '@mui/icons-material';
 import { useState } from 'react';
+import { fDate, fDateWeekdayLong } from '../../utils/dateFormat';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -80,7 +81,7 @@ export const AttendanceStatusChip = ({ status, isJustified = false, isLate = fal
 
 /** Small lock icon shown on locked records. */
 export const LockedBadge = ({ lockedAt }) => (
-  <Tooltip title={lockedAt ? `Locked on ${new Date(lockedAt).toLocaleDateString()}` : 'Locked'}>
+  <Tooltip title={lockedAt ? `Locked on ${fDate(lockedAt)}` : 'Locked'}>
     <Lock sx={{ fontSize: 14, color: 'text.disabled', ml: 0.5, verticalAlign: 'middle' }} />
   </Tooltip>
 );
@@ -250,9 +251,7 @@ export const JustificationDialog = ({ open, record, onClose, onSubmit, readOnly 
           <Box mb={2} p={1.5} bgcolor="grey.50" borderRadius={2}>
             <Typography variant="caption" color="text.secondary">Record</Typography>
             <Typography variant="body2" fontWeight={600}>
-              {record.attendanceDate ? new Date(record.attendanceDate).toLocaleDateString('en-GB', {
-                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-              }) : '—'}
+              {fDateWeekdayLong(record.attendanceDate)}
             </Typography>
           </Box>
         )}
@@ -283,7 +282,7 @@ export const JustificationDialog = ({ open, record, onClose, onSubmit, readOnly 
           <Box mt={2} display="flex" alignItems="center" gap={1}>
             <Info sx={{ fontSize: 16, color: 'info.main' }} />
             <Typography variant="caption" color="text.secondary">
-              Justified on {record.justifiedAt ? new Date(record.justifiedAt).toLocaleDateString() : '—'}
+              Justified on {fDate(record.justifiedAt)}
             </Typography>
           </Box>
         )}

@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { getMyChildren, getChildAttendance } from '../../../services/parent.service';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDateWeekday } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -21,11 +22,6 @@ const profileUrl = (img) => {
   return img.startsWith('http')
     ? img
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
-};
-
-const formatDate = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 // ─── Summary Stat Box ─────────────────────────────────────────────────────────
@@ -277,7 +273,7 @@ const ChildAttendance = () => {
                 {records.map((r) => (
                   <TableRow key={r._id} hover>
                     <TableCell>
-                      <Typography variant="body2">{formatDate(r.attendanceDate)}</Typography>
+                      <Typography variant="body2">{fDateWeekday(r.attendanceDate)}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" fontWeight={500}>

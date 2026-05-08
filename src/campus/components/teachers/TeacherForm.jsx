@@ -3,7 +3,7 @@ import {
   Grid, Button, CircularProgress, Collapse,
   Stack, Snackbar, Alert,
   useTheme, useMediaQuery,
-  Box, Chip, Typography,
+  Box, Chip, Typography, Tooltip,
   FormControl, InputLabel, Select, MenuItem, FormHelperText,
 } from '@mui/material';
 import {
@@ -249,18 +249,29 @@ const ClassChips = ({ formik, classOptions }) => {
 
   return (
     <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-      {classOptions.map(({ value, label }) => {
+      {classOptions.map(({ value, label, hasDifferentManager, currentManagerName }) => {
         const selected = selectedIds.includes(value);
+        const tooltipTitle = hasDifferentManager && currentManagerName
+          ? `Already managed by ${currentManagerName}`
+          : '';
         return (
-          <Chip
-            key={value}
-            label={label}
-            icon={selected ? <Remove fontSize="small" /> : <Add fontSize="small" />}
-            onClick={() => toggle(value)}
-            color={selected ? 'primary' : 'default'}
-            variant={selected ? 'filled' : 'outlined'}
-            sx={{ cursor: 'pointer', mb: 1 }}
-          />
+          <Tooltip key={value} title={tooltipTitle} disableHoverListener={!hasDifferentManager}>
+            <Chip
+              label={label}
+              icon={selected ? <Remove fontSize="small" /> : <Add fontSize="small" />}
+              onClick={() => toggle(value)}
+              color={selected ? 'primary' : 'default'}
+              variant={selected ? 'filled' : 'outlined'}
+              sx={{
+                cursor: 'pointer',
+                mb: 1,
+                ...(hasDifferentManager && !selected && {
+                  borderStyle: 'dashed',
+                  borderColor: 'warning.main',
+                }),
+              }}
+            />
+          </Tooltip>
         );
       })}
     </Stack>
@@ -281,6 +292,10 @@ const ClassManagerSelect = ({ formik, assignedOptions }) => {
     ? formik.values.classManagerOf
     : '';
 
+  // Warn when the selected class already has a different classManager
+  const selectedOption   = assignedOptions.find((o) => o.value === safeValue);
+  const showOverrideWarn = Boolean(selectedOption?.hasDifferentManager);
+
   return (
     <FormControl fullWidth error={hasError} sx={SELECT_SX}>
       <InputLabel id={labelId}>Class Manager of (optional)</InputLabel>
@@ -296,17 +311,32 @@ const ClassManagerSelect = ({ formik, assignedOptions }) => {
           <ManageAccounts fontSize="small" color="action" sx={{ mr: 1 }} />
         }
       >
-        {/* Allow clearing the selection */}
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        {assignedOptions.map(({ value, label }) => (
+        {assignedOptions.map(({ value, label, hasDifferentManager, currentManagerName }) => (
           <MenuItem key={value} value={value}>
-            {label}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <span>{label}</span>
+              {hasDifferentManager && currentManagerName && (
+                <Chip
+                  label={`Currently: ${currentManagerName}`}
+                  size="small"
+                  color="warning"
+                  variant="outlined"
+                  sx={{ fontSize: '0.65rem', height: 18, pointerEvents: 'none' }}
+                />
+              )}
+            </Stack>
           </MenuItem>
         ))}
       </Select>
 
+      {showOverrideWarn && (
+        <FormHelperText sx={{ color: 'warning.main' }}>
+          This class already has a classManager. Saving will replace them.
+        </FormHelperText>
+      )}
       {hasError && (
         <FormHelperText>{formik.errors.classManagerOf}</FormHelperText>
       )}
@@ -394,13 +424,15 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campus?._id]);
 
-  // Resolve classManagerOf once the class list is available (edit mode only)
+  // Resolve classManagerOf once the class list is available (edit mode only).
+  // Use resetForm (not setFieldValue) so Formik's initialValues are updated too —
+  // this prevents the form being marked dirty before the user has changed anything.
   useEffect(() => {
     if (!isEdit || classes.length === 0) return;
     const managerClassId = resolveCurrentClassManagerOf(initialData, classes);
-    if (managerClassId) {
-      formik.setFieldValue('classManagerOf', managerClassId, false);
-    }
+    formik.resetForm({
+      values: { ...formik.values, classManagerOf: managerClassId || '' },
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classes.length]);
 
@@ -414,10 +446,18 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
     () => subjects.map((s) => ({ value: s._id, label: s.subject_name || s.name })),
     [subjects]
   );
-  const classOptions = useMemo(
-    () => classes.map((c) => ({ value: c._id, label: c.className })),
-    [classes]
-  );
+  const classOptions = useMemo(() => {
+    const currentTeacherId = initialData?._id?.toString() ?? null;
+    return classes.map((c) => {
+      const mgr   = c.classManager;
+      const mgrId = mgr?._id?.toString() ?? mgr?.toString() ?? null;
+      const hasDifferentManager = Boolean(mgrId && mgrId !== currentTeacherId);
+      const currentManagerName  = hasDifferentManager && mgr?.firstName
+        ? `${mgr.firstName} ${mgr.lastName}`
+        : null;
+      return { value: c._id, label: c.className, hasDifferentManager, currentManagerName };
+    });
+  }, [classes, initialData?._id]);
 
   // Options available for classManager select = only assigned classes
   const assignedClassOptions = useMemo(

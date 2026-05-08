@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { getMyChildren, getChildResults } from '../../../services/parent.service';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDate } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -21,11 +22,6 @@ const profileUrl = (img) => {
   return img.startsWith('http')
     ? img
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
-};
-
-const formatDate = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 const GRADE_COLOR = { A: 'success', B: 'primary', C: 'info', D: 'warning', E: 'error', F: 'error' };
@@ -241,7 +237,7 @@ const ChildResults = () => {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="caption">{formatDate(r.publishedAt)}</Typography>
+                      <Typography variant="caption">{fDate(r.publishedAt)}</Typography>
                     </TableCell>
                   </TableRow>
                 ))}

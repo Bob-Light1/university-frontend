@@ -34,6 +34,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import api from '../../../api/axiosInstance';
 
 import * as examService from '../../../services/examination.service';
+import { fDate, fDateTime } from '../../../utils/dateFormat';
 
 // ─── Status meta ──────────────────────────────────────────────────────────────
 
@@ -1114,7 +1115,7 @@ const ExaminationManager = () => {
                         <TableCell>{s.examPeriod}</TableCell>
                         <TableCell>
                           <Typography variant="caption">
-                            {s.startTime ? new Date(s.startTime).toLocaleString() : '—'}
+                            {fDateTime(s.startTime)}
                           </Typography>
                         </TableCell>
                         <TableCell>{s.mode}</TableCell>
@@ -1372,7 +1373,7 @@ const ExaminationManager = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="caption">
-                            {a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '—'}
+                            {fDate(a.createdAt)}
                           </Typography>
                         </TableCell>
                         <TableCell align="right">

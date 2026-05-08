@@ -8,6 +8,7 @@ import {
   LocationOn, Videocam, MenuBook, Edit, Cancel, Launch, CheckCircle,
 } from '@mui/icons-material';
 import ScheduleStatusChip from './ScheduleStatusChip';
+import { fTime, fDateWeekdayLong } from '../../utils/dateFormat';
 
 const SESSION_TYPE_COLOR = {
   LECTURE:   '#1976d2',
@@ -84,10 +85,8 @@ const ScheduleDetailDrawer = ({
     ? (session.durationMinutes ?? Math.round((end - start) / 60000))
     : 0;
 
-  const fmtDate = (d) =>
-    d.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const fmtTime = (d) =>
-    d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const fmtDate = (d) => fDateWeekdayLong(d);
+  const fmtTime = (d) => fTime(d);
 
   const meetingLink =
     session?.virtualMeeting?.joinUrl || session?.virtualMeeting?.meetingUrl;

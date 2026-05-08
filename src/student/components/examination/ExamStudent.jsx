@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 
 import * as examService from '../../../services/examination.service';
+import { fDate, fDateTime, fTime } from '../../../utils/dateFormat';
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
@@ -517,7 +518,7 @@ const ExamStudent = () => {
                       <TableCell>{s.subject?.subjectName || '—'}</TableCell>
                       <TableCell>
                         <Typography variant="caption">
-                          {s.startTime ? new Date(s.startTime).toLocaleString() : '—'}
+                          {fDateTime(s.startTime)}
                         </Typography>
                       </TableCell>
                       <TableCell>{s.duration} min</TableCell>
@@ -561,7 +562,7 @@ const ExamStudent = () => {
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" fontWeight={700}>{activeAttempt.sessionTitle}</Typography>
             <Typography variant="caption" color="text.secondary">
-              Started at {new Date(activeAttempt.startedAt).toLocaleTimeString()}
+              Started at {fTime(activeAttempt.startedAt)}
             </Typography>
           </Paper>
           <TakeExamPanel
@@ -709,7 +710,7 @@ const ExamStudent = () => {
                       </TableCell>
                       <TableCell>
                         <Typography variant="caption">
-                          {a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '—'}
+                          {fDate(a.createdAt)}
                         </Typography>
                       </TableCell>
                     </TableRow>

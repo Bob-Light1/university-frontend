@@ -64,8 +64,6 @@ export function AuthProvider({ children }) {
       // Update state
       setUser(enrichedUserData);
 
-      console.log('✅ Login successful:', enrichedUserData);
-
       return responseData;
     } catch (error) {
       console.error('❌ Login error:', error);
@@ -87,24 +85,29 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Verify token validity
-   * @param {string} userType - Type of user to verify
+   * Verify token validity by decoding it client-side and checking expiry.
+   * Does NOT verify the signature (impossible without the secret) — the backend
+   * will reject any tampered/expired token on the first API call anyway.
    */
-  const verifyToken = async (userType) => {
+  const verifyToken = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return false;
 
-      // Optional: Call API to verify token based on user type
-      // For now, we just check if token exists
-      // You can implement specific verification endpoints later:
-      // GET /api/campus/verify
-      // GET /api/student/verify
-      // GET /api/teacher/verify
+      // JWT structure: header.payload.signature (base64url encoded)
+      const parts = token.split('.');
+      if (parts.length !== 3) return false;
+
+      // Decode payload (base64url → JSON)
+      const payload = JSON.parse(
+        atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))
+      );
+
+      // Reject if already expired
+      if (payload.exp && payload.exp * 1000 < Date.now()) return false;
 
       return true;
-    } catch (error) {
-      console.error('❌ Token verification failed:', error);
+    } catch {
       return false;
     }
   };
@@ -121,7 +124,7 @@ export function AuthProvider({ children }) {
 
         if (token && savedUser && savedUserType) {
           // Verify token is still valid
-          const isValid = await verifyToken(savedUserType);
+          const isValid = verifyToken();
 
           if (isValid) {
             setUser(JSON.parse(savedUser));

@@ -27,6 +27,7 @@ import {
   Male,
   Female,
   Archive,
+  Restore,
   Work,
   School,
   Star,
@@ -37,6 +38,7 @@ import {
   Class as ClassIcon,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDate } from '../../../utils/dateFormat';
 
 /**
  * TEACHER DETAIL DRAWER
@@ -49,17 +51,10 @@ import { IMAGE_BASE_URL } from '../../../config/env';
  * @param {Function} props.onEdit    - Edit callback
  * @param {Function} props.onArchive - Archive callback
  */
-const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) => {
+const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive, onRestore }) => {
   if (!teacher) return null;
 
   // ── Helpers ──────────────────────────────────────────────────────────────
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric',
-    });
-  };
 
   const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
@@ -190,10 +185,17 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
                     <Edit fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                {onArchive && (
+                {onArchive && teacher.status !== 'archived' && (
                   <Tooltip title="Archive Teacher">
                     <IconButton size="small" color="error" onClick={onArchive}>
                       <Archive fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {onRestore && teacher.status === 'archived' && (
+                  <Tooltip title="Restore Teacher">
+                    <IconButton size="small" color="success" onClick={onRestore}>
+                      <Restore fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 )}
@@ -226,7 +228,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
                 primary="Date of Birth"
                 secondary={
                   teacher.dateOfBirth
-                    ? `${formatDate(teacher.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
+                    ? `${fDate(teacher.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
                     : 'N/A'
                 }
               />
@@ -289,7 +291,7 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
                     : 'N/A'
                 }
               />
-              <DetailListItem icon={<Cake color="action" />} primary="Hire Date" secondary={formatDate(teacher.hireDate)} />
+              <DetailListItem icon={<Cake color="action" />} primary="Hire Date" secondary={fDate(teacher.hireDate)} />
             </List>
           </Box>
 
@@ -391,16 +393,16 @@ const TeacherDetailDrawer = ({ entity: teacher, onClose, onEdit, onArchive }) =>
             <Grid container spacing={1}>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Created</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(teacher.createdAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(teacher.createdAt)}</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Last Updated</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(teacher.updatedAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(teacher.updatedAt)}</Typography>
               </Grid>
               {teacher.lastLogin && (
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="caption" color="text.secondary">Last Login</Typography>
-                  <Typography variant="body2" fontWeight={500}>{formatDate(teacher.lastLogin)}</Typography>
+                  <Typography variant="body2" fontWeight={500}>{fDate(teacher.lastLogin)}</Typography>
                 </Grid>
               )}
             </Grid>

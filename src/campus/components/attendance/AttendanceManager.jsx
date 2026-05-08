@@ -48,6 +48,7 @@ import {
   getTeacherSessionsAdmin,
 } from '../../../services/schedule.service';
 import { getTeachers } from '../../../services/teacher.service';
+import { fDate, fTime, fDateTime } from '../../../utils/dateFormat';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN COMPONENT
@@ -227,7 +228,7 @@ const StudentAttendanceTab = () => {
                   <TableCell>
                     <Typography variant="body2">
                       {record.attendanceDate
-                        ? new Date(record.attendanceDate).toLocaleDateString('en-GB')
+                        ? fDate(record.attendanceDate)
                         : '—'}
                     </Typography>
                     {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
@@ -488,7 +489,7 @@ const TeacherAttendanceTab = () => {
                   <TableCell>
                     <Typography variant="body2">
                       {record.attendanceDate
-                        ? new Date(record.attendanceDate).toLocaleDateString('en-GB')
+                        ? fDate(record.attendanceDate)
                         : '—'}
                     </Typography>
                     {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
@@ -750,17 +751,11 @@ const PostponementTab = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {row.sessionStart
-                          ? new Date(row.sessionStart).toLocaleDateString('en-GB')
-                          : '—'}
+                        {fDate(row.sessionStart)}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {row.sessionStart
-                          ? new Date(row.sessionStart).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-                          : ''}
-                        {row.sessionEnd
-                          ? ` – ${new Date(row.sessionEnd).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`
-                          : ''}
+                        {row.sessionStart ? fTime(row.sessionStart) : ''}
+                        {row.sessionEnd ? ` – ${fTime(row.sessionEnd)}` : ''}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ maxWidth: 220 }}>
@@ -772,12 +767,12 @@ const PostponementTab = () => {
                       {row.proposedStart ? (
                         <>
                           <Typography variant="caption">
-                            {new Date(row.proposedStart).toLocaleDateString('en-GB')}
+                            {fDate(row.proposedStart)}
                           </Typography>
                           <br />
                           <Typography variant="caption" color="text.secondary">
-                            {new Date(row.proposedStart).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                            {row.proposedEnd ? ` – ${new Date(row.proposedEnd).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}` : ''}
+                            {fTime(row.proposedStart)}
+                            {row.proposedEnd ? ` – ${fTime(row.proposedEnd)}` : ''}
                           </Typography>
                         </>
                       ) : '—'}
@@ -1039,8 +1034,8 @@ const InitAttendanceDialog = ({ open, onClose, onSuccess }) => {
                 </MenuItem>
               )}
               {sessions.map((s) => {
-                const start = new Date(s.startTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                const end   = new Date(s.endTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                const start = fTime(s.startTime);
+                const end   = fTime(s.endTime);
                 return (
                   <MenuItem key={String(s._id)} value={String(s._id)}>
                     {start}–{end} · {s.subject?.subject_name || s.reference || String(s._id)}

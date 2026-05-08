@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { getMyChildren, getChildTranscripts, signTranscript } from '../../../services/parent.service';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDateLong } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -20,11 +21,6 @@ const profileUrl = (img) => {
   return img.startsWith('http')
     ? img
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
-};
-
-const formatDate = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 };
 
 // ─── Child Header ─────────────────────────────────────────────────────────────
@@ -128,7 +124,7 @@ const TranscriptCard = ({ transcript, onSign, signing }) => {
                 Signed on
               </Typography>
               <Typography variant="body2" fontWeight={600}>
-                {formatDate(transcript.parentSignature.signedAt)}
+                {fDateLong(transcript.parentSignature.signedAt)}
               </Typography>
             </Box>
           ) : canSign ? (

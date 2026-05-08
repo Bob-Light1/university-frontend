@@ -34,6 +34,7 @@ import {
   ResultStatusChip, EvalTypeChip, ScoreDisplay, GradeBandBadge,
   SCORE_COLOR,
 } from './ResultShared';
+import { fDate, fDateTime } from '../../utils/dateFormat';
 
 // ─── Audit correction schema ──────────────────────────────────────────────────
 
@@ -163,7 +164,7 @@ const ResultDetailDrawer = ({
           {result.examDate && (
             <Grid size={{ xs:  6 }}>
               <InfoRow icon={null} label="Exam Date"
-                value={new Date(result.examDate).toLocaleDateString()} />
+                value={fDate(result.examDate)} />
             </Grid>
           )}
         </Grid>
@@ -368,7 +369,7 @@ const ResultDetailDrawer = ({
                   {result.auditLog.map((entry) => (
                     <TableRow key={entry._id}>
                       <TableCell sx={{ fontSize: '0.7rem' }}>
-                        {new Date(entry.modifiedAt).toLocaleString()}
+                        {fDateTime(entry.modifiedAt)}
                       </TableCell>
                       <TableCell sx={{ fontSize: '0.7rem' }}>{entry.field}</TableCell>
                       <TableCell sx={{ fontSize: '0.7rem', color: 'error.main' }}>

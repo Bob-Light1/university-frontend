@@ -20,6 +20,7 @@ import {
 import { Refresh, Grade, Gavel, Visibility, BarChart } from '@mui/icons-material';
 
 import * as examService from '../../../services/examination.service';
+import { fDateTime } from '../../../utils/dateFormat';
 
 // ─── Status meta ──────────────────────────────────────────────────────────────
 
@@ -184,7 +185,7 @@ const SnapshotDialog = ({ open, onClose, session }) => {
               <Box mb={2}>
                 <Typography variant="subtitle2" fontWeight={600}>Session Snapshot</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Computed at: {snapshot.computedAt ? new Date(snapshot.computedAt).toLocaleString() : 'Pending'}
+                  Computed at: {snapshot.computedAt ? fDateTime(snapshot.computedAt) : 'Pending'}
                 </Typography>
               </Box>
             ) : (
@@ -403,7 +404,7 @@ const ExamTeacher = () => {
                       <TableCell>{s.examPeriod}</TableCell>
                       <TableCell>
                         <Typography variant="caption">
-                          {s.startTime ? new Date(s.startTime).toLocaleString() : '—'}
+                          {fDateTime(s.startTime)}
                         </Typography>
                       </TableCell>
                       <TableCell>

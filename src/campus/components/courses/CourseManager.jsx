@@ -79,6 +79,7 @@ import {
   VersionBadge,
   CourseEmptyState,
 } from '../../../components/courses/CourseShared';
+import { fDate } from '../../../utils/dateFormat';
 
 // ─── KPI config ───────────────────────────────────────────────────────────────
 
@@ -138,7 +139,7 @@ const VersionHistoryDialog = ({ open, onClose, courseId, courseCode }) => {
                   <TableCell>{v.isLatestVersion ? '✓' : ''}</TableCell>
                   <TableCell>
                     <Typography variant="caption">
-                      {v.createdAt ? new Date(v.createdAt).toLocaleDateString() : '—'}
+                      {fDate(v.createdAt)}
                     </Typography>
                   </TableCell>
                 </TableRow>

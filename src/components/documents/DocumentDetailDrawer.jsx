@@ -85,6 +85,7 @@ import {
   canUserWorkflow,
   getMimeLabel,
 } from './DocumentShared';
+import { fDate, fDateTime } from '../../utils/dateFormat';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -264,7 +265,7 @@ const SharePanel = ({ documentId, hookRef, docStatus }) => {
                 secondary={
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     <Typography variant="caption">
-                      Expires: {new Date(s.expiresAt).toLocaleString()}
+                      Expires: {fDateTime(s.expiresAt)}
                     </Typography>
                     <Typography variant="caption">
                       Downloads: {s.downloadCount}/{s.maxDownloads}
@@ -334,7 +335,7 @@ const VersionPanel = ({ documentId, hookRef, userRole }) => {
                 <Typography variant="caption">{v.snapshotReason}</Typography>
               </Stack>
             }
-            secondary={new Date(v.takenAt).toLocaleString()}
+            secondary={fDateTime(v.takenAt)}
             secondaryTypographyProps={{ component: 'div', variant: 'caption', color: 'text.secondary' }}
           />
           {canRestore && (
@@ -412,7 +413,7 @@ const AuditPanel = ({ documentId, hookRef }) => {
                   </Typography>
                 )}
                 <Typography variant="caption" color="text.disabled">
-                  {new Date(e.performedAt).toLocaleString()}
+                  {fDateTime(e.performedAt)}
                 </Typography>
               </Stack>
             }
@@ -728,11 +729,11 @@ const DocumentDetailDrawer = ({
                   { label: 'Semester',      value: doc.metadata?.semester ?? '—' },
                   {
                     label: 'Created',
-                    value: doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : '—',
+                    value: fDate(doc.createdAt),
                   },
                   {
                     label: 'Published',
-                    value: doc.publishedAt ? new Date(doc.publishedAt).toLocaleDateString() : '—',
+                    value: fDate(doc.publishedAt),
                   },
                   { label: 'Downloads', value: doc.downloadCount ?? 0 },
                   { label: 'Prints',    value: doc.printCount ?? 0 },
@@ -782,7 +783,7 @@ const DocumentDetailDrawer = ({
                       <AuditActionChip action={doc.lastAuditEntry.action} />
                       <Typography variant="caption" color="text.secondary">
                         {doc.lastAuditEntry.userModel} ·{' '}
-                        {new Date(doc.lastAuditEntry.performedAt).toLocaleString()}
+                        {fDateTime(doc.lastAuditEntry.performedAt)}
                       </Typography>
                     </Stack>
                   </Box>

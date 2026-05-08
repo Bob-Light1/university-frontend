@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 
 import { getBatchJobStatus, downloadBatchResult } from '../../../services/academic_print.service';
+import { fTime } from '../../../utils/dateFormat';
 
 const STATUS_COLORS = {
   PENDING:    'default',
@@ -173,8 +174,8 @@ const AcademicBatchDrawer = ({ open, onClose, jobId }) => {
             {/* Timing info */}
             {job.startedAt && (
               <Typography variant="caption" color="text.secondary">
-                Started: {new Date(job.startedAt).toLocaleTimeString()}
-                {job.completedAt && ` · Completed: ${new Date(job.completedAt).toLocaleTimeString()}`}
+                Started: {fTime(job.startedAt)}
+                {job.completedAt && ` · Completed: ${fTime(job.completedAt)}`}
               </Typography>
             )}
 

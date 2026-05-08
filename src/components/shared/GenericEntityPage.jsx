@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useContext } from 'react';
 import {
   Box,
   Container,
@@ -60,6 +60,8 @@ import { BulkClassModal, BulkEmailModal } from './BulkModals';
 import useEntityManager from '../../hooks/useEntityManager';
 import useBulkActions from '../../hooks/useBulkActions';
 import useRelatedData from '../../hooks/useRelatedData';
+import { AuthContext } from '../../context/AuthContext';
+import api from '../../api/axiosInstance';
 
 /**
  * GENERIC ENTITY MANAGEMENT PAGE
@@ -108,6 +110,8 @@ const GenericEntityPage = ({
 }) => {
   const { campusId } = useParams();
   const theme = useTheme();
+  const { hasRole } = useContext(AuthContext);
+  const canArchiveRestore = hasRole(['ADMIN', 'DIRECTOR']);
 
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const isSm = useMediaQuery(theme.breakpoints.down('md'));
@@ -251,6 +255,18 @@ const GenericEntityPage = ({
     );
   }, [entityName, deleteEntity, showSnackbar]);
 
+  const handleRestore = useCallback(async (id) => {
+    if (!window.confirm(`Are you sure you want to restore this ${entityName}?`)) return;
+    try {
+      await api.patch(`/${apiEndpoint}/${id}/restore`);
+      showSnackbar(`${entityName} restored successfully`, 'success');
+      fetchEntities();
+      fetchKPIs();
+    } catch (err) {
+      showSnackbar(err.response?.data?.message || `Failed to restore ${entityName}`, 'error');
+    }
+  }, [entityName, apiEndpoint, fetchEntities, fetchKPIs, showSnackbar]);
+
   const handleFormSuccess = useCallback((message) => {
     setIsFormModalOpen(false);
     fetchEntities();
@@ -353,27 +369,29 @@ const GenericEntityPage = ({
       </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end', px: 2 }}>
-        <IconButton 
-          size="small" 
-          onClick={() => handleOpenDrawer(entity)}    
+        <IconButton
+          size="small"
+          onClick={() => handleOpenDrawer(entity)}
           sx={{ color: 'primary.main' }}
         >
           <Visibility fontSize="small" />
         </IconButton>
-        <IconButton 
-          size="small" 
-          onClick={() => handleOpenFormModal(entity)} 
+        <IconButton
+          size="small"
+          onClick={() => handleOpenFormModal(entity)}
           sx={{ color: 'info.main'    }}
         >
           <Edit fontSize="small" />
         </IconButton>
-        <IconButton 
-          size="small" 
-          onClick={() => handleArchive(entity._id)}   
-          sx={{ color: 'error.main' }}
-        >
-          <Delete fontSize="small" />
-        </IconButton>
+        {canArchiveRestore && (
+          <IconButton
+            size="small"
+            onClick={() => handleArchive(entity._id)}
+            sx={{ color: 'error.main' }}
+          >
+            <Delete fontSize="small" />
+          </IconButton>
+        )}
       </CardActions>
     </Card>
   );
@@ -532,7 +550,8 @@ const GenericEntityPage = ({
                         onSelect:  () => handleSelectOne(entity._id),
                         onView:    () => handleOpenDrawer(entity),
                         onEdit:    () => handleOpenFormModal(entity),
-                        onArchive: () => handleArchive(entity._id),
+                        onArchive: canArchiveRestore ? () => handleArchive(entity._id) : null,
+                        onRestore: canArchiveRestore ? () => handleRestore(entity._id) : null,
                         theme,
                         isMobile,
                       })
@@ -622,7 +641,8 @@ const GenericEntityPage = ({
             open={isDrawerOpen}
             onClose={() => setIsDrawerOpen(false)}
             onEdit={() => { setIsDrawerOpen(false); handleOpenFormModal(viewEntity); }}
-            onArchive={() => { setIsDrawerOpen(false); handleArchive(viewEntity._id); }}
+            onArchive={canArchiveRestore ? () => { setIsDrawerOpen(false); handleArchive(viewEntity._id); } : null}
+            onRestore={canArchiveRestore ? () => { setIsDrawerOpen(false); handleRestore(viewEntity._id); } : null}
           />
         )}
       </Drawer>
@@ -684,7 +704,7 @@ const GenericEntityPage = ({
         {bulkActions.includes('sendEmail') && (
           <MenuItem onClick={() => handleBulkAction('sendEmail')}><Email sx={{ mr: 1 }} /> Send Email</MenuItem>
         )}
-        {bulkActions.includes('archive') && (
+        {canArchiveRestore && bulkActions.includes('archive') && (
           <MenuItem onClick={() => handleBulkAction('archive')}><Block sx={{ mr: 1 }} /> Archive</MenuItem>
         )}
         {bulkActions.includes('export') && (

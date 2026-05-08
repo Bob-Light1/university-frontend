@@ -81,6 +81,7 @@ import {
   DocumentEmptyState,
   getMimeLabel,
 } from '../../../components/documents/DocumentShared';
+import { fDate } from '../../../utils/dateFormat';
 
 // ─── KPI config ───────────────────────────────────────────────────────────────
 
@@ -420,7 +421,7 @@ const DocumentManager = () => {
                   </TableCell>
                   <TableCell>
                     <Typography variant="caption" color="text.secondary" whiteSpace="nowrap">
-                      {doc.updatedAt ? new Date(doc.updatedAt).toLocaleDateString() : '—'}
+                      {fDate(doc.updatedAt)}
                     </Typography>
                   </TableCell>
                   <TableCell align="right" onClick={(e) => e.stopPropagation()}>

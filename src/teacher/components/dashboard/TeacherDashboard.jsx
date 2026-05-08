@@ -29,6 +29,7 @@ import { useTheme } from '@mui/material/styles';
 import { getTeacherDashboard } from '../../../services/teacher.service';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import TeacherDashboardSkeleton from './TeacherDashboardSkeleton';
+import { fTime, fDateWeekday } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -39,11 +40,8 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const fmtTime = (d) =>
-  d ? new Date(d).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '—';
-
-const fmtDate = (d) =>
-  d ? new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '—';
+const fmtTime = (d) => fTime(d);
+const fmtDate = (d) => fDateWeekday(d);
 
 const employmentColors = {
   'full-time': 'success',

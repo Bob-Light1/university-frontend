@@ -7,6 +7,7 @@ import {
   Videocam, CalendarMonth, MoreVert,
 } from '@mui/icons-material';
 import ScheduleStatusChip from './ScheduleStatusChip';
+import { fTime, fDateWeekday } from '../../utils/dateFormat';
 
 const SESSION_TYPE_COLOR = {
   LECTURE: '#1976d2', TUTORIAL: '#7b1fa2', LAB: '#388e3c',
@@ -29,8 +30,8 @@ const ScheduleCard = ({ session, onEdit, onDelete, onView, compact = false, show
   const color     = SESSION_TYPE_COLOR[session.sessionType] ?? theme.palette.primary.main;
   const startTime = new Date(session.startTime);
   const endTime   = new Date(session.endTime);
-  const formatTime = (d) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const formatDate = (d) => d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
+  const formatTime = (d) => fTime(d);
+  const formatDate = (d) => fDateWeekday(d);
 
   if (compact) {
     return (

@@ -32,17 +32,10 @@ import {
   ContactEmergency,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDate } from '../../../utils/dateFormat';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year:  'numeric',
-    month: 'long',
-    day:   'numeric',
-  });
-};
 
 const calculateAge = (dateOfBirth) => {
   if (!dateOfBirth) return null;
@@ -197,7 +190,7 @@ const StudentDetailDrawer = ({ entity: student, onClose, onEdit, onArchive }) =>
                 label="Date of Birth"
                 secondary={
                   student.dateOfBirth
-                    ? `${formatDate(student.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
+                    ? `${fDate(student.dateOfBirth)}${age ? ` (${age} years old)` : ''}`
                     : undefined
                 }
               />
@@ -271,11 +264,11 @@ const StudentDetailDrawer = ({ entity: student, onClose, onEdit, onArchive }) =>
             <Grid container spacing={1}>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Created</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(student.createdAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(student.createdAt)}</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Last Updated</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(student.updatedAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(student.updatedAt)}</Typography>
               </Grid>
             </Grid>
           </Box>

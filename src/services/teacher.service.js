@@ -20,6 +20,12 @@ export const createTeacher = (data) => api.post('/teachers', data);
 
 export const updateTeacher = (id, data) => api.put(`/teachers/${id}`, data);
 
+export const archiveTeacher = (id) => api.delete(`/teachers/${id}`);
+
+export const restoreTeacher = (id) => api.patch(`/teachers/${id}/restore`);
+
+export const deleteTeacherPermanently = (id) => api.delete(`/teachers/${id}/permanent`);
+
 // ─── FORM DATA ────────────────────────────────────────────────────────────────
 
 /**

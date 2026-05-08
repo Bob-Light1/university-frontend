@@ -20,6 +20,7 @@ import api                            from '../../../api/axiosInstance';
 
 import AcademicPrintPreviewDialog     from './AcademicPrintPreviewDialog';
 import AcademicBatchDrawer            from './AcademicBatchDrawer';
+import { fDateTime } from '../../../utils/dateFormat';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -482,7 +483,7 @@ const AcademicPrintPanel = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="caption">
-                        {j.startedAt ? new Date(j.startedAt).toLocaleString() : '—'}
+                        {fDateTime(j.startedAt)}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">

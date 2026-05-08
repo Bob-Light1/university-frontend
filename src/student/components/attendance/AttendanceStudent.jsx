@@ -35,6 +35,7 @@ import {
   JustificationDialog,
 } from '../../../components/attendance/AttendanceShared';
 import { getMyStudentAttendanceStats } from '../../../services/attendance.service';
+import { fDateWeekday } from '../../../utils/dateFormat';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -239,9 +240,7 @@ const AttendanceStudent = () => {
                   <TableCell>
                     <Typography variant="body2" fontWeight={600}>
                       {record.attendanceDate
-                        ? new Date(record.attendanceDate).toLocaleDateString('en-GB', {
-                            weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-                          })
+                        ? fDateWeekday(record.attendanceDate)
                         : '—'}
                     </Typography>
                   </TableCell>

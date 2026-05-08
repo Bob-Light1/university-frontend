@@ -9,6 +9,7 @@ import {
   ChildCare, Language, NotificationsActive,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDate } from '../../../utils/dateFormat';
 
 /**
  * PARENT DETAIL DRAWER
@@ -24,13 +25,6 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
   if (!parent) return null;
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric',
-    });
-  };
 
   const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
@@ -182,7 +176,7 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
                 <DetailItem
                   icon={<Cake color="action" />}
                   primary="Date of Birth"
-                  secondary={`${formatDate(parent.dateOfBirth)}${age ? ` (${age} years old)` : ''}`}
+                  secondary={`${fDate(parent.dateOfBirth)}${age ? ` (${age} years old)` : ''}`}
                 />
               )}
               {parent.nationalId && (
@@ -355,16 +349,16 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
             <Grid container spacing={1}>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Created</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(parent.createdAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(parent.createdAt)}</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary">Last Updated</Typography>
-                <Typography variant="body2" fontWeight={500}>{formatDate(parent.updatedAt)}</Typography>
+                <Typography variant="body2" fontWeight={500}>{fDate(parent.updatedAt)}</Typography>
               </Grid>
               {parent.lastLogin && (
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="caption" color="text.secondary">Last Login</Typography>
-                  <Typography variant="body2" fontWeight={500}>{formatDate(parent.lastLogin)}</Typography>
+                  <Typography variant="body2" fontWeight={500}>{fDate(parent.lastLogin)}</Typography>
                 </Grid>
               )}
             </Grid>
