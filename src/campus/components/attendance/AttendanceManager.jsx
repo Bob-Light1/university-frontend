@@ -20,13 +20,15 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   IconButton, Tooltip, TablePagination, TextField,
   FormControl, InputLabel, Select, MenuItem,
-  DialogActions, Autocomplete,
+  DialogActions, Autocomplete, Skeleton,
 } from '@mui/material';
 import {
   People, School, Refresh,
   CheckCircle, Cancel, HelpOutline, AttachMoney,
-  SwapHoriz, ThumbUp, ThumbDown, Add,
+  SwapHoriz, ThumbUp, ThumbDown, Add, FilterList,
 } from '@mui/icons-material';
+import { useParams } from 'react-router-dom';
+import api from '../../../api/axiosInstance';
 
 import KPICards             from '../../../components/shared/KpiCard';
 import useAttendance        from '../../../hooks/useAttendance';
@@ -93,23 +95,104 @@ const AttendanceManager = () => {
 
 const StudentAttendanceTab = () => {
   const theme = useTheme();
+  const { campusId } = useParams();
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
-  const [justifyTarget,  setJustifyTarget]  = useState(null);
-  const [dateFrom,       setDateFrom]       = useState('');
-  const [dateTo,         setDateTo]         = useState('');
-  const [statusFilter,   setStatusFilter]   = useState('');
+  // ── Class selector ──────────────────────────────────────────────────────────
+  const [classes,          setClasses]          = useState([]);
+  const [classesLoading,   setClassesLoading]   = useState(true);
+  const [selectedClassId,  setSelectedClassId]  = useState(null); // null = show all
+
+  // ── Student selector (within selected class) ────────────────────────────────
+  const [classStudents,    setClassStudents]    = useState([]);
+  const [studentsLoading,  setStudentsLoading]  = useState(false);
+  const [selectedStudentId,setSelectedStudentId]= useState('');
+
+  // ── Date / status filters ───────────────────────────────────────────────────
+  const [justifyTarget, setJustifyTarget] = useState(null);
+  const [dateFrom,      setDateFrom]      = useState('');
+  const [dateTo,        setDateTo]        = useState('');
+  const [statusFilter,  setStatusFilter]  = useState('');
 
   const {
-    records, summary, loading, error, pagination,
-    handleFilterChange, fetch, toggleStudent, justifyStudent, setPage,
+    records, summary, backendSummary, loading, error, pagination,
+    handleFilterChange, handleReset, fetch, toggleStudent, justifyStudent,
+    setPage, setLimit,
   } = useAttendance('manager-student');
 
-  // Apply filters
+  // KPI source: prefer server-aggregated summary (whole dataset, not just current page)
+  const displaySummary = backendSummary || summary;
+
+  // ── Load classes alphabetically ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!campusId) return;
+    setClassesLoading(true);
+    api.get(`/class/campus/${campusId}`)
+      .then((res) => {
+        const list = (res.data?.data || [])
+          .slice()
+          .sort((a, b) => (a.className || '').localeCompare(b.className || ''));
+        setClasses(list);
+        // Auto-select first class
+        if (list.length > 0) {
+          const firstId = list[0]._id;
+          setSelectedClassId(firstId);
+          handleFilterChange('classId', firstId);
+        }
+      })
+      .catch(() => setClasses([]))
+      .finally(() => setClassesLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campusId]);
+
+  // ── Load students when class changes ────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedClassId) {
+      setClassStudents([]);
+      setSelectedStudentId('');
+      return;
+    }
+    setStudentsLoading(true);
+    api.get('/student', { params: { studentClass: selectedClassId, status: 'active', limit: 200 } })
+      .then((res) => {
+        const list = (res.data?.data || [])
+          .slice()
+          .sort((a, b) => `${a.lastName}${a.firstName}`.localeCompare(`${b.lastName}${b.firstName}`));
+        setClassStudents(list);
+      })
+      .catch(() => setClassStudents([]))
+      .finally(() => setStudentsLoading(false));
+  }, [selectedClassId]);
+
+  // ── Class chip selection ────────────────────────────────────────────────────
+  const selectClass = useCallback((classId) => {
+    setSelectedClassId(classId);
+    setSelectedStudentId('');
+    handleFilterChange('studentId', '');
+    handleFilterChange('classId', classId || '');
+  }, [handleFilterChange]);
+
+  // ── Student filter ──────────────────────────────────────────────────────────
+  const handleStudentChange = (studentId) => {
+    setSelectedStudentId(studentId);
+    handleFilterChange('studentId', studentId);
+  };
+
+  // ── Apply / Reset date+status filters ──────────────────────────────────────
   const handleSearch = () => {
     handleFilterChange('from', dateFrom);
     handleFilterChange('to', dateTo);
     handleFilterChange('status', statusFilter);
+  };
+
+  const handleFullReset = () => {
+    setDateFrom('');
+    setDateTo('');
+    setStatusFilter('');
+    setSelectedStudentId('');
+    handleReset();
+    // Re-apply class filter if one is selected
+    if (selectedClassId) handleFilterChange('classId', selectedClassId);
   };
 
   const handleJustify = async (payload) => {
@@ -135,40 +218,100 @@ const StudentAttendanceTab = () => {
   };
 
   const kpis = [
-    { key: 'total',     label: 'Total Records', value: summary.total,     icon: <People />,      color: theme.palette.grey[700] },
-    { key: 'present',   label: 'Present',       value: summary.present,   icon: <CheckCircle />, color: theme.palette.success.main },
-    { key: 'absent',    label: 'Absent',        value: summary.absent,    icon: <Cancel />,      color: theme.palette.error.main },
-    { key: 'rate',      label: 'Attendance Rate', value: `${summary.rate}%`, icon: <HelpOutline />, color: theme.palette.primary.main },
+    { key: 'total',   label: 'Total Records',   value: displaySummary.total,              icon: <People />,      color: theme.palette.grey[700] },
+    { key: 'present', label: 'Present',          value: displaySummary.present,            icon: <CheckCircle />, color: theme.palette.success.main },
+    { key: 'absent',  label: 'Absent',           value: displaySummary.absent,             icon: <Cancel />,      color: theme.palette.error.main },
+    { key: 'rate',    label: 'Attendance Rate',  value: `${displaySummary.rate ?? 0}%`,   icon: <HelpOutline />, color: theme.palette.primary.main },
   ];
 
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Box>
+      {/* KPI Cards */}
       <Box mb={3}>
         <KPICards metrics={kpis} loading={loading} />
       </Box>
 
-      {/* Filters */}
+      {/* ── CLASS SELECTOR ──────────────────────────────────────────────────── */}
+      <Paper variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1} mb={1.5}>
+          <FilterList fontSize="small" color="action" />
+          <Typography variant="caption" fontWeight={700} color="text.secondary" textTransform="uppercase" letterSpacing={0.5}>
+            Class
+          </Typography>
+        </Stack>
+
+        {classesLoading ? (
+          <Stack direction="row" spacing={1}>
+            {[1, 2, 3].map((i) => <Skeleton key={i} variant="rounded" width={90} height={32} />)}
+          </Stack>
+        ) : (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {/* "All campus" chip */}
+            <Chip
+              label="All Campus"
+              size="small"
+              onClick={() => selectClass(null)}
+              color={selectedClassId === null ? 'primary' : 'default'}
+              variant={selectedClassId === null ? 'filled' : 'outlined'}
+              sx={{ fontWeight: 600 }}
+            />
+            {classes.map((cls) => (
+              <Chip
+                key={cls._id}
+                label={cls.className}
+                size="small"
+                onClick={() => selectClass(cls._id)}
+                color={selectedClassId === cls._id ? 'secondary' : 'default'}
+                variant={selectedClassId === cls._id ? 'filled' : 'outlined'}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* Student selector — only when a class is selected */}
+        {selectedClassId && (
+          <Box mt={2}>
+            <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+              <Typography variant="caption" fontWeight={700} color="text.secondary" textTransform="uppercase" letterSpacing={0.5}>
+                Student
+              </Typography>
+            </Stack>
+            <FormControl size="small" sx={{ minWidth: 260 }} disabled={studentsLoading}>
+              <InputLabel>
+                {studentsLoading ? 'Loading…' : 'All students'}
+              </InputLabel>
+              <Select
+                label={studentsLoading ? 'Loading…' : 'All students'}
+                value={selectedStudentId}
+                onChange={(e) => handleStudentChange(e.target.value)}
+              >
+                <MenuItem value=""><em>All students</em></MenuItem>
+                {classStudents.map((s) => (
+                  <MenuItem key={s._id} value={s._id}>
+                    {s.lastName} {s.firstName}
+                    {s.matricule ? ` — ${s.matricule}` : ''}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        )}
+      </Paper>
+
+      {/* ── DATE / STATUS FILTERS ───────────────────────────────────────────── */}
       <Paper variant="outlined" sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="flex-end" flexWrap="wrap">
           <TextField
-            label="From"
-            type="date"
-            size="small"
-            value={dateFrom}
+            label="From" type="date" size="small" value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            sx={{ minWidth: 160 }}
+            InputLabelProps={{ shrink: true }} sx={{ minWidth: 160 }}
           />
           <TextField
-            label="To"
-            type="date"
-            size="small"
-            value={dateTo}
+            label="To" type="date" size="small" value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            sx={{ minWidth: 160 }}
+            InputLabelProps={{ shrink: true }} sx={{ minWidth: 160 }}
           />
           <FormControl size="small" sx={{ minWidth: 130 }}>
             <InputLabel>Status</InputLabel>
@@ -179,19 +322,17 @@ const StudentAttendanceTab = () => {
             </Select>
           </FormControl>
           <Button variant="contained" onClick={handleSearch}>Apply</Button>
-          <Button onClick={() => { setDateFrom(''); setDateTo(''); setStatusFilter(''); handleFilterChange('from', ''); handleFilterChange('to', ''); handleFilterChange('status', ''); }}>
-            Reset
-          </Button>
+          <Button onClick={handleFullReset}>Reset</Button>
           <IconButton onClick={fetch} title="Refresh"><Refresh /></IconButton>
         </Stack>
       </Paper>
 
       {/* Summary bar */}
       <Box mb={2}>
-        <AttendanceSummaryBar summary={summary} />
+        <AttendanceSummaryBar summary={displaySummary} />
       </Box>
 
-      {/* Table */}
+      {/* ── TABLE ───────────────────────────────────────────────────────────── */}
       {loading ? (
         <Box display="flex" justifyContent="center" py={8}><CircularProgress /></Box>
       ) : records.length === 0 ? (
@@ -199,96 +340,96 @@ const StudentAttendanceTab = () => {
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
           <Box sx={{ overflowX: 'auto' }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
-                <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Session</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Justification</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {records.map((record) => (
-                <TableRow key={record._id} hover>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={600}>
-                      {record.student?.lastName} {record.student?.firstName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {record.student?.matricule}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">{record.class?.className || '—'}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {record.attendanceDate
-                        ? fDate(record.attendanceDate)
-                        : '—'}
-                    </Typography>
-                    {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="caption" color="text.secondary">
-                      {record.sessionStartTime} – {record.sessionEndTime}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <AttendanceStatusChip
-                      status={record.status}
-                      isJustified={record.isJustified}
-                      isLate={record.isLate}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {record.isJustified ? (
-                      <Tooltip title={record.justification || ''}>
-                        <Chip label="Justified" size="small" color="info" />
-                      </Tooltip>
-                    ) : '—'}
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={0.5}>
-                      <Tooltip title={record.status ? 'Mark absent' : 'Mark present'}>
-                        <span>
-                          <IconButton
-                            size="small"
-                            color={record.status ? 'error' : 'success'}
-                            onClick={() => handleToggle(record)}
-                            disabled={record.isLocked}
-                          >
-                            {record.status
-                              ? <Cancel fontSize="small" />
-                              : <CheckCircle fontSize="small" />}
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                      {!record.status && (
-                        <Tooltip title="Add / view justification">
-                          <IconButton size="small" color="info" onClick={() => setJustifyTarget(record)}>
-                            <HelpOutline fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </Stack>
-                  </TableCell>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06) }}>
+                  <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Session</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Justification</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {records.map((record) => (
+                  <TableRow key={record._id} hover>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight={600}>
+                        {record.student?.lastName} {record.student?.firstName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {record.student?.matricule}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{record.class?.className || '—'}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {record.attendanceDate ? fDate(record.attendanceDate) : '—'}
+                      </Typography>
+                      {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="caption" color="text.secondary">
+                        {record.sessionStartTime} – {record.sessionEndTime}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <AttendanceStatusChip
+                        status={record.status}
+                        isJustified={record.isJustified}
+                        isLate={record.isLate}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {record.isJustified ? (
+                        <Tooltip title={record.justification || ''}>
+                          <Chip label="Justified" size="small" color="info" />
+                        </Tooltip>
+                      ) : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={0.5}>
+                        <Tooltip title={record.status ? 'Mark absent' : 'Mark present'}>
+                          <span>
+                            <IconButton
+                              size="small"
+                              color={record.status ? 'error' : 'success'}
+                              onClick={() => handleToggle(record)}
+                              disabled={record.isLocked}
+                            >
+                              {record.status
+                                ? <Cancel fontSize="small" />
+                                : <CheckCircle fontSize="small" />}
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                        {!record.status && (
+                          <Tooltip title="Add / view justification">
+                            <IconButton size="small" color="info" onClick={() => setJustifyTarget(record)}>
+                              <HelpOutline fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Box>
           <TablePagination
             component="div"
             count={pagination.total || records.length}
             page={(pagination.page || 1) - 1}
             rowsPerPage={pagination.limit || 50}
-            onPageChange={(_, page) => setPage(page + 1)}
-            rowsPerPageOptions={[50]}
+            onPageChange={(_, p) => setPage(p + 1)}
+            onRowsPerPageChange={(e) => setLimit(Number(e.target.value))}
+            rowsPerPageOptions={[25, 50, 100]}
+            labelRowsPerPage="Rows:"
           />
         </TableContainer>
       )}
@@ -332,10 +473,12 @@ const TeacherAttendanceTab = () => {
   const [initOpen,     setInitOpen]     = useState(false);
 
   const {
-    records, summary, loading, error, pagination,
-    fetch, toggleTeacher, justifyTeacher, markPaid, setPage,
+    records, summary, backendSummary, loading, error, pagination,
+    fetch, toggleTeacher, justifyTeacher, markPaid, setPage, setLimit,
     handleFilterChange, handleReset,
   } = useAttendance('manager-teacher');
+
+  const displaySummary = backendSummary || summary;
 
   const handleSearch = () => {
     handleFilterChange('from', dateFrom);
@@ -384,10 +527,10 @@ const TeacherAttendanceTab = () => {
   };
 
   const kpis = [
-    { key: 'total',   label: 'Total Sessions', value: summary.total,     icon: <School />,      color: theme.palette.grey[700] },
-    { key: 'present', label: 'Present',        value: summary.present,   icon: <CheckCircle />, color: theme.palette.success.main },
-    { key: 'absent',  label: 'Absent',         value: summary.absent,    icon: <Cancel />,      color: theme.palette.error.main },
-    { key: 'rate',    label: 'Attendance Rate', value: `${summary.rate}%`, icon: <HelpOutline />, color: theme.palette.primary.main },
+    { key: 'total',   label: 'Total Sessions',  value: displaySummary.total,            icon: <School />,      color: theme.palette.grey[700] },
+    { key: 'present', label: 'Present',         value: displaySummary.present,          icon: <CheckCircle />, color: theme.palette.success.main },
+    { key: 'absent',  label: 'Absent',          value: displaySummary.absent,           icon: <Cancel />,      color: theme.palette.error.main },
+    { key: 'rate',    label: 'Attendance Rate', value: `${displaySummary.rate ?? 0}%`, icon: <HelpOutline />, color: theme.palette.primary.main },
   ];
 
   if (error) return <Alert severity="error">{error}</Alert>;
@@ -558,8 +701,10 @@ const TeacherAttendanceTab = () => {
             count={pagination.total || records.length}
             page={(pagination.page || 1) - 1}
             rowsPerPage={pagination.limit || 50}
-            onPageChange={(_, page) => setPage(page + 1)}
-            rowsPerPageOptions={[50]}
+            onPageChange={(_, p) => setPage(p + 1)}
+            onRowsPerPageChange={(e) => setLimit(Number(e.target.value))}
+            rowsPerPageOptions={[25, 50, 100]}
+            labelRowsPerPage="Rows:"
           />
         </TableContainer>
       )}

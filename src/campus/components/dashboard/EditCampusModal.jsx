@@ -8,7 +8,8 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { IMAGE_BASE_URL, API_BASE_URL } from '../../../config/env';
+import { IMAGE_BASE_URL } from '../../../config/env';
+import api from '../../../api/axiosInstance';
 import { useAuth } from '../../../hooks/useAuth';
 
 const style = {
@@ -51,10 +52,7 @@ export default function EditCampusModal({ open, handleClose, campusData, onUpdat
     setImageUploading(true);
     setImageError('');
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/campus/upload-signature`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        timeout: 10000,
-      });
+      const { data } = await api.get('/campus/upload-signature');
       const { signature, timestamp, folder, cloudName, apiKey } = data.data;
 
       const form = new FormData();
@@ -122,17 +120,7 @@ export default function EditCampusModal({ open, handleClose, campusData, onUpdat
           ...(cloudinaryUrl && { campus_image: cloudinaryUrl }),
         };
 
-        const res = await axios.put(
-          `${API_BASE_URL}/campus/${campusData._id}`,
-          payload,
-          {
-            headers: {
-              'Content-Type':  'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            timeout: 15000,
-          },
-        );
+        const res = await api.put(`/campus/${campusData._id}`, payload);
 
         if (res.data.success) {
           const updated = res.data.data ?? res.data.updatedCampus ?? res.data;

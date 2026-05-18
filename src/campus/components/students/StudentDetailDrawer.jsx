@@ -29,6 +29,7 @@ import {
   Male,
   Female,
   Archive,
+  Restore,
   ContactEmergency,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
@@ -92,7 +93,7 @@ const InfoItem = ({ icon: Icon, label, secondary, onClick }) => (
  *  onEdit    {Function} - Open the edit form for this student
  *  onArchive {Function} - Archive this student
  */
-const StudentDetailDrawer = ({ entity: student, onClose, onEdit, onArchive }) => {
+const StudentDetailDrawer = ({ entity: student, onClose, onEdit, onArchive, onRestore }) => {
   if (!student) return null;
 
   const age = calculateAge(student.dateOfBirth);
@@ -156,10 +157,17 @@ const StudentDetailDrawer = ({ entity: student, onClose, onEdit, onArchive }) =>
                     <Edit fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                {onArchive && (
+                {onArchive && student.status !== 'archived' && (
                   <Tooltip title="Archive Student">
                     <IconButton size="small" color="error" onClick={onArchive}>
                       <Archive fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {onRestore && student.status === 'archived' && (
+                  <Tooltip title="Restore Student">
+                    <IconButton size="small" color="success" onClick={onRestore}>
+                      <Restore fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 )}

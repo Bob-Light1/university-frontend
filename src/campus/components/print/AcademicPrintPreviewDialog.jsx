@@ -34,7 +34,7 @@ const TYPE_LABELS = {
  *   label      {string?}  — display name for the target (student name / class)
  */
 const AcademicPrintPreviewDialog = ({
-  open, onClose, type, studentId, classId, params = {}, label = '',
+  open, onClose, type, studentId, classId, campusId, params = {}, label = '',
 }) => {
   const [blobUrl,  setBlobUrl]  = useState(null);
   const [loading,  setLoading]  = useState(false);
@@ -54,7 +54,7 @@ const AcademicPrintPreviewDialog = ({
     revokePreviousBlob();
 
     try {
-      const res = await previewAcademicPdf({ type, studentId, classId, params });
+      const res = await previewAcademicPdf({ type, studentId, classId, campusId, params });
       const url = URL.createObjectURL(res.data);
       blobRef.current = url;
       setBlobUrl(url);
@@ -76,7 +76,7 @@ const AcademicPrintPreviewDialog = ({
     } finally {
       setLoading(false);
     }
-  }, [type, studentId, classId, JSON.stringify(params)]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [type, studentId, classId, campusId, JSON.stringify(params)]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (open) loadPreview();

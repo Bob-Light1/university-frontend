@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Button,
@@ -30,6 +30,9 @@ import {
   CardContent,
   FormControlLabel,
   Switch,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 import {
@@ -45,12 +48,12 @@ import {
   Error as ErrorIcon,
   Warning as WarningIcon,
   Restore as RestoreIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 
 import { Formik, Form } from 'formik';
 import { createClassSchema } from '../../../yupSchema/createClassSchema';
-import { API_BASE_URL } from '../../../config/env';
-import axios from 'axios';
+import api from '../../../api/axiosInstance';
 import ManageLevel from '../levels/ManageLevel';
 import MobileClassCard from './MobileClassCard';
 import { useParams } from 'react-router-dom';
@@ -62,16 +65,18 @@ const Classes = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
   const [classes, setClasses] = useState([]);
-  const [campus, setCampus] = useState(null); // Single campus object
+  const [campus, setCampus] = useState(null);
   const [levels, setLevels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openLevels, setOpenLevels] = useState(false);
   const [includeArchived, setIncludeArchived] = useState(false);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [levelFilter, setLevelFilter] = useState('');
 
   const [open, setOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
 
-  // Enhanced notification system
   const [notification, setNotification] = useState({
     open: false,
     message: '',
@@ -80,14 +85,6 @@ const Classes = () => {
 
   const isEditMode = Boolean(selectedClass);
 
-  // Get authentication header
-  const getAuthHeader = () => ({
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    },
-  });
-
-  // Show notification helper
   const showNotification = (message, severity = 'success') => {
     setNotification({ open: true, message, severity });
   };
@@ -97,11 +94,15 @@ const Classes = () => {
     setNotification({ ...notification, open: false });
   };
 
-  const fetchData = async () => {
-    // Validate campusId before fetching
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fetchData = useCallback(async () => {
     const isMongoId = /^[0-9a-fA-F]{24}$/.test(campusId);
     if (!campusId || !isMongoId) {
-      console.warn('Invalid campusId:', campusId);
       setLoading(false);
       return;
     }
@@ -109,46 +110,42 @@ const Classes = () => {
     setLoading(true);
 
     try {
-      //Fetch classes for specific campus instead of all classes
-      const classUrl = `${API_BASE_URL}/class/campus/${campusId}?includeArchived=${includeArchived}`;
+      const params = new URLSearchParams({ includeArchived });
+      if (debouncedSearch.trim()) params.append('search', debouncedSearch.trim());
+      if (levelFilter) params.append('level', levelFilter);
 
       const [clsRes, campRes, lvlRes] = await Promise.all([
-        axios.get(classUrl, getAuthHeader()),
-        axios.get(`${API_BASE_URL}/campus/${campusId}`, getAuthHeader()),
-        axios.get(`${API_BASE_URL}/level`, getAuthHeader()),
+        api.get(`/class/campus/${campusId}?${params.toString()}`),
+        api.get(`/campus/${campusId}`),
+        api.get('/level'),
       ]);
 
       setClasses(clsRes.data?.data || []);
       setCampus(campRes.data?.data || null);
       setLevels(lvlRes.data?.data || []);
-      
+
     } catch (err) {
-      console.error('Error loading data:', err);
       showNotification(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Unable to load data. Please check your connection or permissions.',
         'error'
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [campusId, includeArchived, debouncedSearch, levelFilter]);
 
   useEffect(() => {
     fetchData();
-  }, [campusId, includeArchived]);
+  }, [fetchData]);
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
       if (isEditMode) {
-        await axios.put(
-          `${API_BASE_URL}/class/${selectedClass._id}`,
-          values,
-          getAuthHeader()
-        );
+        await api.put(`/class/${selectedClass._id}`, values);
         showNotification('Class updated successfully!', 'success');
       } else {
-        await axios.post(`${API_BASE_URL}/class`, values, getAuthHeader());
+        await api.post('/class', values);
         showNotification('Class created successfully!', 'success');
       }
 
@@ -161,7 +158,6 @@ const Classes = () => {
         error.response?.data?.message ||
         (isEditMode ? 'Failed to update class' : 'Failed to create class');
       showNotification(msg, 'error');
-      console.error('Submit error:', error);
     } finally {
       setSubmitting(false);
     }
@@ -170,30 +166,23 @@ const Classes = () => {
   /* ----------------SOFT DELETE / RESTORE ---------------- */
   const handleArchive = async (id) => {
     if (!window.confirm('Do you really want to archive this class?')) return;
-
     try {
-      await axios.delete(`${API_BASE_URL}/class/${id}`, getAuthHeader());
+      await api.delete(`/class/${id}`);
       showNotification('Class archived successfully', 'success');
       await fetchData();
     } catch (error) {
-      showNotification('Unable to archive the class', 'error');
-      console.error(error);
+      showNotification(error.response?.data?.message || 'Unable to archive the class', 'error');
     }
   };
 
   const handleRestore = async (id) => {
-    if (!window.confirm('This class will be restored !')) return;
+    if (!window.confirm('This class will be restored!')) return;
     try {
-      await axios.patch(
-        `${API_BASE_URL}/class/${id}/restore`,
-        {},
-        getAuthHeader()
-      );
+      await api.patch(`/class/${id}/restore`, {});
       showNotification('Class restored successfully', 'success');
       await fetchData();
     } catch (e) {
-      showNotification('Failed to restore class', 'error');
-      console.error(e);
+      showNotification(e.response?.data?.message || 'Failed to restore class', 'error');
     }
   };
 
@@ -289,6 +278,39 @@ const Classes = () => {
           </Button>
         </Stack>
       </Box>
+
+      {/* FILTER BAR */}
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3}>
+        <TextField
+          placeholder="Search classes..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="small"
+          sx={{ flexGrow: 1 }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" color="action" />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel>Level</InputLabel>
+          <Select
+            value={levelFilter}
+            label="Level"
+            onChange={(e) => setLevelFilter(e.target.value)}
+          >
+            <MenuItem value="">All Levels</MenuItem>
+            {levels.map((l) => (
+              <MenuItem key={l._id} value={l._id}>{l.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Stack>
 
       {/* Mobile View - Cards */}
       {isMobile ? (

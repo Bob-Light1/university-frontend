@@ -41,6 +41,7 @@ const DEFAULT_FILTERS = {
   to:         '',
   status:     '',
   classId:    '',
+  studentId:  '',
   teacherId:  '',
   isPaid:     '',
   page:       1,
@@ -79,12 +80,13 @@ const useAttendance = (mode = 'manager-student', contextParams = {}) => {
   const isSelf     = mode === 'student-self' || mode === 'teacher-self';
   const isRollCall = mode === 'teacher-rollcall';
 
-  const [records,    setRecords]    = useState([]);
-  const [stats,      setStats]      = useState(null);
-  const [loading,    setLoading]    = useState(false);
-  const [error,      setError]      = useState(null);
-  const [pagination, setPagination] = useState({ page: 1, limit: 50, total: 0 });
-  const [filters,    setFilters]    = useState(isSelf ? DEFAULT_SELF_PARAMS : DEFAULT_FILTERS);
+  const [records,       setRecords]       = useState([]);
+  const [stats,         setStats]         = useState(null);
+  const [backendSummary,setBackendSummary]= useState(null);
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState(null);
+  const [pagination,    setPagination]    = useState({ page: 1, limit: 50, total: 0 });
+  const [filters,       setFilters]       = useState(isSelf ? DEFAULT_SELF_PARAMS : DEFAULT_FILTERS);
 
   // Stable ref avoids stale closures on contextParams from parent
   const ctxRef = useRef(contextParams);
@@ -124,10 +126,16 @@ const useAttendance = (mode = 'manager-student', contextParams = {}) => {
 
       if (raw?.pagination) {
         setPagination((p) => ({ ...p, ...raw.pagination }));
+        if (raw.pagination.summary) {
+          setBackendSummary(raw.pagination.summary);
+        } else {
+          setBackendSummary(null);
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load attendance data.');
       setRecords([]);
+      setBackendSummary(null);
     } finally {
       setLoading(false);
     }
@@ -218,6 +226,7 @@ const useAttendance = (mode = 'manager-student', contextParams = {}) => {
     records,
     stats,
     summary,
+    backendSummary,
     loading,
     error,
     pagination,
@@ -229,7 +238,8 @@ const useAttendance = (mode = 'manager-student', contextParams = {}) => {
     // Filter actions
     handleFilterChange,
     handleReset,
-    setPage: (page) => setPagination((p) => ({ ...p, page })),
+    setPage:  (page)  => setPagination((p) => ({ ...p, page })),
+    setLimit: (limit) => setFilters((f) => ({ ...f, limit, page: 1 })),
 
     // Student mutations
     toggleStudent,

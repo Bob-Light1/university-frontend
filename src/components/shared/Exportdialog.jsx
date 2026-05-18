@@ -49,6 +49,7 @@ const ExportDialog = ({
   entityNamePlural = 'Entities',
   selectedIds = [],
   filters = {},
+  search = '',
 }) => {
   const [format, setFormat] = useState('csv');
   const [exporting, setExporting] = useState(false);
@@ -70,6 +71,11 @@ const ExportDialog = ({
           params.append(key, filters[key]);
         }
       });
+
+      // Include active search term so export matches what the user sees
+      if (search && search.trim()) {
+        params.append('search', search.trim());
+      }
 
       // Add selected IDs if any
       if (selectedIds.length > 0) {
@@ -168,7 +174,9 @@ const ExportDialog = ({
               label={
                 selectedIds.length > 0
                   ? `Exporting ${selectedIds.length} selected ${entityName.toLowerCase()}(s)`
-                  : `Exporting all ${entityNamePlural.toLowerCase()} (with current filters)`
+                  : search && search.trim()
+                    ? `Exporting results for "${search.trim()}"${Object.values(filters).some(Boolean) ? ' + filters' : ''}`
+                    : `Exporting all ${entityNamePlural.toLowerCase()} (with current filters)`
               }
               color="primary"
               variant="outlined"

@@ -111,7 +111,7 @@ const GenericEntityPage = ({
   const { campusId } = useParams();
   const theme = useTheme();
   const { hasRole } = useContext(AuthContext);
-  const canArchiveRestore = hasRole(['ADMIN', 'DIRECTOR']);
+  const canArchiveRestore = hasRole(['ADMIN', 'DIRECTOR', 'CAMPUS_MANAGER']);
 
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const isSm = useMediaQuery(theme.breakpoints.down('md'));
@@ -657,6 +657,7 @@ const GenericEntityPage = ({
           entityNamePlural={entityNamePlural}
           selectedIds={selectedIds}
           filters={filters}
+          search={search}
         />
       )}
       {enableImport && (

@@ -17,6 +17,7 @@ import {
   Warning,
   Edit,
   Delete,
+  Restore,
   Visibility,
   Phone,
   Badge as BadgeIcon,
@@ -123,7 +124,7 @@ export const getFilterConfig = (relatedData = {}) => {
 // ─── Table Row Renderer ───────────────────────────────────────────────────────
 
 export const renderTableRow = (student, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, theme, isMobile } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile } = helpers;
 
   const profileImageUrl = student.profileImage
     ? (student.profileImage.startsWith('http')
@@ -208,11 +209,20 @@ export const renderTableRow = (student, helpers) => {
               <Edit fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Archive">
-            <IconButton size="small" color="error" onClick={onArchive}>
-              <Delete fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {onArchive && student.status !== 'archived' && (
+            <Tooltip title="Archive">
+              <IconButton size="small" color="error" onClick={onArchive}>
+                <Delete fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onRestore && student.status === 'archived' && (
+            <Tooltip title="Restore">
+              <IconButton size="small" color="success" onClick={onRestore}>
+                <Restore fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
       </TableCell>
     </TableRow>

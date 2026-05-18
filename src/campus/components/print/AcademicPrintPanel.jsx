@@ -184,8 +184,9 @@ const AcademicPrintPanel = () => {
     setBatchLoading(true);
     try {
       const res = await startBatchPrintJob({
-        type:   tab,
+        type:    tab,
         classId,
+        campusId: resolvedCampusId || undefined,
         params: {
           academicYear,
           semester,
@@ -205,6 +206,13 @@ const AcademicPrintPanel = () => {
   };
 
   const selectedClass = classes.find((c) => c._id === classId);
+
+  // Derive campusId from the selected class so ADMIN/DIRECTOR preview & batch work correctly.
+  // schoolCampus may be a populated object or a plain ObjectId string.
+  const resolvedCampusId =
+    selectedClass?.schoolCampus?._id ||
+    selectedClass?.schoolCampus ||
+    null;
 
   const previewLabel = CLASS_ONLY_TABS.includes(tab)
     ? (selectedClass?.className || classId)
@@ -510,6 +518,7 @@ const AcademicPrintPanel = () => {
         type={tab}
         studentId={!CLASS_ONLY_TABS.includes(tab) ? previewStudent?._id : undefined}
         classId={CLASS_ONLY_TABS.includes(tab) ? classId : undefined}
+        campusId={resolvedCampusId || undefined}
         params={previewParams}
         label={previewLabel}
       />

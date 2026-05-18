@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Box, Button, Container, Typography, Paper, Table,
   TableBody, TableCell, TableContainer, TableHead,
@@ -20,12 +20,12 @@ import {
   CheckCircle as SuccessIcon,
   Error as ErrorIcon,
   Warning as WarningIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 
 import { Formik, Form } from 'formik';
-import axios from 'axios';
+import api from '../../../api/axiosInstance';
 
-import { API_BASE_URL } from '../../../config/env';
 import { createSubjectSchema } from '../../../yupSchema/createSubjectSchema';
 import MobileSubjectCard from './MobileSubjectCard';
 import { useParams } from 'react-router-dom';
@@ -42,8 +42,9 @@ const Subject = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [includeArchived, setIncludeArchived] = useState(false);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Enhanced notification system
   const [notification, setNotification] = useState({
     open: false,
     message: '',
@@ -52,14 +53,6 @@ const Subject = () => {
 
   const isEditMode = Boolean(selectedSubject);
 
-  // Get authentication header
-  const getAuthHeader = () => ({
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    },
-  });
-
-  // Show notification helper
   const showNotification = (message, severity = 'success') => {
     setNotification({ open: true, message, severity });
   };
@@ -69,56 +62,52 @@ const Subject = () => {
     setNotification({ ...notification, open: false });
   };
 
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   /* ---------------- FETCH ---------------- */
-  const fetchData = async () => {
-    // Validate campusId before fetching
+  const fetchData = useCallback(async () => {
     const isMongoId = /^[0-9a-fA-F]{24}$/.test(campusId);
     if (!campusId || !isMongoId) {
-      console.warn('Invalid campusId:', campusId);
       setLoading(false);
       return;
     }
 
     setLoading(true);
     try {
-      //Fetch subjects for specific campus with proper query param
-      const subjectUrl = `${API_BASE_URL}/subject?campusId=${campusId}&includeArchived=${includeArchived}`;
+      const params = new URLSearchParams({ campusId, includeArchived });
+      if (debouncedSearch.trim()) params.append('search', debouncedSearch.trim());
 
       const [subjectRes, campusRes] = await Promise.all([
-        axios.get(subjectUrl, getAuthHeader()),
-        axios.get(`${API_BASE_URL}/campus/${campusId}`, getAuthHeader()),
+        api.get(`/subject?${params.toString()}`),
+        api.get(`/campus/${campusId}`),
       ]);
-      
+
       setSubjects(subjectRes.data?.data || []);
       setCampus(campusRes.data?.data || null);
 
-      console.log();
-      
-
     } catch (e) {
-      console.error('Error loading subjects:', e);
-      showNotification('Failed to load subjects', 'error');
+      showNotification(e.response?.data?.message || 'Failed to load subjects', 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [campusId, includeArchived, debouncedSearch]);
 
   useEffect(() => {
     fetchData();
-  }, [campusId, includeArchived]);
+  }, [fetchData]);
 
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       if (isEditMode) {
-        await axios.put(
-          `${API_BASE_URL}/subject/${selectedSubject._id}`,
-          values,
-          getAuthHeader()
-        );
+        await api.put(`/subject/${selectedSubject._id}`, values);
         showNotification('Subject updated successfully!', 'success');
       } else {
-        await axios.post(`${API_BASE_URL}/subject`, values, getAuthHeader());
+        await api.post('/subject', values);
         showNotification('Subject created successfully!', 'success');
       }
 
@@ -127,10 +116,9 @@ const Subject = () => {
       setSelectedSubject(null);
       await fetchData();
     } catch (e) {
-      const msg = e.response?.data?.message || 
+      const msg = e.response?.data?.message ||
         (isEditMode ? 'Failed to update subject' : 'Failed to create subject');
       showNotification(msg, 'error');
-      console.error('Submit error:', e);
     } finally {
       setSubmitting(false);
     }
@@ -139,31 +127,23 @@ const Subject = () => {
   /* ---------------- DELETE / RESTORE ---------------- */
   const handleArchive = async (id) => {
     if (!window.confirm('Do you really want to archive this subject?')) return;
-    
     try {
-      await axios.delete(`${API_BASE_URL}/subject/${id}`, getAuthHeader());
+      await api.delete(`/subject/${id}`);
       showNotification('Subject archived successfully', 'success');
       await fetchData();
     } catch (e) {
-      showNotification('Failed to archive subject', 'error');
-      console.error(e);
+      showNotification(e.response?.data?.message || 'Failed to archive subject', 'error');
     }
   };
 
   const handleRestore = async (id) => {
-      if (!window.confirm('This subject will be restored !')) return;
-
+    if (!window.confirm('This subject will be restored!')) return;
     try {
-      await axios.patch(
-        `${API_BASE_URL}/subject/${id}/restore`,
-        {},
-        getAuthHeader()
-      );
+      await api.patch(`/subject/${id}/restore`, {});
       showNotification('Subject restored successfully', 'success');
       await fetchData();
     } catch (e) {
-      showNotification('Failed to restore subject', 'error');
-      console.error(e);
+      showNotification(e.response?.data?.message || 'Failed to restore subject', 'error');
     }
   };
 
@@ -245,6 +225,26 @@ const Subject = () => {
         </Stack>
 
       </Box>
+
+      {/* FILTER BAR */}
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3}>
+        <TextField
+          placeholder="Search subjects..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="small"
+          sx={{ flexGrow: 1 }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" color="action" />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </Stack>
 
       {/* Mobile View - Cards */}
       {isMobile ? (
