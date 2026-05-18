@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import {
   Close, Edit, Email, Phone, Domain, Badge, Cake,
-  Person, Male, Female, Archive, FamilyRestroom,
+  Person, Male, Female, Archive, Restore, FamilyRestroom,
   ChildCare, Language, NotificationsActive,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
@@ -20,8 +20,9 @@ import { fDate } from '../../../utils/dateFormat';
  * @param {Function} props.onClose
  * @param {Function} props.onEdit
  * @param {Function} props.onArchive
+ * @param {Function} props.onRestore
  */
-const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
+const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive, onRestore }) => {
   if (!parent) return null;
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -44,9 +45,14 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
       : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${parent.profileImage.replace(/^\//, '')}`
     : null;
 
+  const isArchived = parent.isArchived === true;
+
   const statusColor =
+    isArchived                    ? 'default' :
     parent.status === 'active'    ? 'success' :
     parent.status === 'suspended' ? 'error'   : 'warning';
+
+  const statusLabel = isArchived ? 'Archived' : (parent.status || 'active');
 
   const relationshipLabel = {
     father:   'Father',
@@ -140,19 +146,29 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
           <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Chip
-                label={parent.status || 'active'}
+                label={statusLabel}
                 color={statusColor}
                 size="small"
                 sx={{ fontWeight: 600, textTransform: 'capitalize' }}
               />
               <Stack direction="row" spacing={0.5}>
-                <IconButton size="small" color="primary" onClick={onEdit} title="Edit Parent">
-                  <Edit fontSize="small" />
-                </IconButton>
-                {onArchive && (
-                  <IconButton size="small" color="error" onClick={onArchive} title="Archive Parent">
-                    <Archive fontSize="small" />
+                {!isArchived && (
+                  <IconButton size="small" color="primary" onClick={onEdit} title="Edit Parent">
+                    <Edit fontSize="small" />
                   </IconButton>
+                )}
+                {isArchived ? (
+                  onRestore && (
+                    <IconButton size="small" color="success" onClick={onRestore} title="Restore Parent">
+                      <Restore fontSize="small" />
+                    </IconButton>
+                  )
+                ) : (
+                  onArchive && (
+                    <IconButton size="small" color="error" onClick={onArchive} title="Archive Parent">
+                      <Archive fontSize="small" />
+                    </IconButton>
+                  )
                 )}
               </Stack>
             </Stack>
@@ -373,15 +389,30 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive }) => {
           <Button variant="outlined" fullWidth onClick={onClose} sx={{ borderRadius: 2 }}>
             Close
           </Button>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<Edit />}
-            onClick={onEdit}
-            sx={{ borderRadius: 2 }}
-          >
-            Edit Parent
-          </Button>
+          {isArchived ? (
+            onRestore && (
+              <Button
+                variant="contained"
+                fullWidth
+                color="success"
+                startIcon={<Restore />}
+                onClick={onRestore}
+                sx={{ borderRadius: 2 }}
+              >
+                Restore Parent
+              </Button>
+            )
+          ) : (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<Edit />}
+              onClick={onEdit}
+              sx={{ borderRadius: 2 }}
+            >
+              Edit Parent
+            </Button>
+          )}
         </Stack>
       </Box>
 

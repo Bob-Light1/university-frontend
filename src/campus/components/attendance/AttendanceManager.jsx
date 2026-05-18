@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import api from '../../../api/axiosInstance';
+import { useAuth } from '../../../hooks/useAuth';
 
 import KPICards             from '../../../components/shared/KpiCard';
 import useAttendance        from '../../../hooks/useAttendance';
@@ -43,11 +44,11 @@ import {
 import {
   getTeacherPayrollReport,
   initTeacherAttendance,
+  getTeacherPendingSessions,
 } from '../../../services/attendance.service';
 import {
   getAdminPostponements,
   reviewPostponement,
-  getTeacherSessionsAdmin,
 } from '../../../services/schedule.service';
 import { getTeachers } from '../../../services/teacher.service';
 import { fDate, fTime, fDateTime } from '../../../utils/dateFormat';
@@ -153,7 +154,7 @@ const StudentAttendanceTab = () => {
       return;
     }
     setStudentsLoading(true);
-    api.get('/student', { params: { studentClass: selectedClassId, status: 'active', limit: 200 } })
+    api.get('/students', { params: { studentClass: selectedClassId, status: 'active', limit: 200 } })
       .then((res) => {
         const list = (res.data?.data || [])
           .slice()
@@ -458,6 +459,9 @@ const StudentAttendanceTab = () => {
 
 const TeacherAttendanceTab = () => {
   const theme = useTheme();
+  const { campusId } = useParams();
+  const { getUserRole } = useAuth();
+  const isCampusManager = getUserRole() === 'CAMPUS_MANAGER';
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [justifyTarget,  setJustifyTarget]  = useState(null);
@@ -472,6 +476,11 @@ const TeacherAttendanceTab = () => {
   const [payRef,       setPayRef]       = useState('');
   const [initOpen,     setInitOpen]     = useState(false);
 
+  // ── Class selector ──────────────────────────────────────────────────────────
+  const [classes,        setClasses]        = useState([]);
+  const [classesLoading, setClassesLoading] = useState(true);
+  const [selectedClassId,setSelectedClassId]= useState(null);
+
   const {
     records, summary, backendSummary, loading, error, pagination,
     fetch, toggleTeacher, justifyTeacher, markPaid, setPage, setLimit,
@@ -480,11 +489,38 @@ const TeacherAttendanceTab = () => {
 
   const displaySummary = backendSummary || summary;
 
+  // ── Load classes ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!campusId) return;
+    setClassesLoading(true);
+    api.get(`/class/campus/${campusId}`)
+      .then((res) => {
+        const list = (res.data?.data || [])
+          .slice()
+          .sort((a, b) => (a.className || '').localeCompare(b.className || ''));
+        setClasses(list);
+      })
+      .catch(() => setClasses([]))
+      .finally(() => setClassesLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campusId]);
+
+  const selectClass = useCallback((classId) => {
+    setSelectedClassId(classId);
+    handleFilterChange('classId', classId || '');
+  }, [handleFilterChange]);
+
   const handleSearch = () => {
     handleFilterChange('from', dateFrom);
     handleFilterChange('to', dateTo);
     handleFilterChange('status', statusFilter);
     handleFilterChange('isPaid', isPaidFilter);
+  };
+
+  const handleFullReset = () => {
+    setDateFrom(''); setDateTo(''); setStatusFilter(''); setIsPaidFilter('');
+    handleReset();
+    if (selectedClassId) handleFilterChange('classId', selectedClassId);
   };
 
   const handleJustify = async (payload) => {
@@ -497,10 +533,7 @@ const TeacherAttendanceTab = () => {
   };
 
   const handleToggleTeacher = async (record) => {
-    if (record.isLocked) {
-      showSnackbar('Cannot modify a locked record.', 'warning');
-      return;
-    }
+    if (record.isLocked) { showSnackbar('Cannot modify a locked record.', 'warning'); return; }
     try {
       await toggleTeacher(record._id, !record.status);
       showSnackbar('Attendance updated.', 'success');
@@ -509,11 +542,7 @@ const TeacherAttendanceTab = () => {
     }
   };
 
-  const handleMarkPaid = (record) => {
-    setPayRefTarget(record);
-    setPayRef('');
-    setPayRefOpen(true);
-  };
+  const handleMarkPaid = (record) => { setPayRefTarget(record); setPayRef(''); setPayRefOpen(true); };
 
   const handlePayRefConfirm = async () => {
     if (!payRef.trim()) return;
@@ -541,7 +570,43 @@ const TeacherAttendanceTab = () => {
         <KPICards metrics={kpis} loading={loading} />
       </Box>
 
-      {/* Filters */}
+      {/* ── CLASS SELECTOR ──────────────────────────────────────────────────── */}
+      <Paper variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1} mb={1.5}>
+          <FilterList fontSize="small" color="action" />
+          <Typography variant="caption" fontWeight={700} color="text.secondary" textTransform="uppercase" letterSpacing={0.5}>
+            Class
+          </Typography>
+        </Stack>
+        {classesLoading ? (
+          <Stack direction="row" spacing={1}>
+            {[1, 2, 3].map((i) => <Skeleton key={i} variant="rounded" width={90} height={32} />)}
+          </Stack>
+        ) : (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Chip
+              label="All Campus"
+              size="small"
+              onClick={() => selectClass(null)}
+              color={selectedClassId === null ? 'primary' : 'default'}
+              variant={selectedClassId === null ? 'filled' : 'outlined'}
+              sx={{ fontWeight: 600 }}
+            />
+            {classes.map((cls) => (
+              <Chip
+                key={cls._id}
+                label={cls.className}
+                size="small"
+                onClick={() => selectClass(cls._id)}
+                color={selectedClassId === cls._id ? 'secondary' : 'default'}
+                variant={selectedClassId === cls._id ? 'filled' : 'outlined'}
+              />
+            ))}
+          </Box>
+        )}
+      </Paper>
+
+      {/* ── DATE / STATUS / PAYMENT FILTERS ─────────────────────────────────── */}
       <Paper variant="outlined" sx={{ p: 2, mb: 3, borderRadius: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="flex-end" flexWrap="wrap">
           <TextField
@@ -571,19 +636,13 @@ const TeacherAttendanceTab = () => {
             </Select>
           </FormControl>
           <Button variant="contained" onClick={handleSearch}>Apply</Button>
-          <Button onClick={() => { setDateFrom(''); setDateTo(''); setStatusFilter(''); setIsPaidFilter(''); handleReset(); }}>Reset</Button>
-          <Button
-            variant="outlined"
-            startIcon={<Add />}
-            onClick={() => setInitOpen(true)}
-          >
-            Init Attendance
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<AttachMoney />}
-            onClick={() => setPayrollOpen(true)}
-          >
+          <Button onClick={handleFullReset}>Reset</Button>
+          {isCampusManager && (
+            <Button variant="outlined" startIcon={<Add />} onClick={() => setInitOpen(true)}>
+              Roll Call
+            </Button>
+          )}
+          <Button variant="outlined" startIcon={<AttachMoney />} onClick={() => setPayrollOpen(true)}>
             Payroll Report
           </Button>
           <IconButton onClick={fetch} title="Refresh"><Refresh /></IconButton>
@@ -591,10 +650,10 @@ const TeacherAttendanceTab = () => {
       </Paper>
 
       <Box mb={2}>
-        <AttendanceSummaryBar summary={summary} />
+        <AttendanceSummaryBar summary={displaySummary} />
       </Box>
 
-      {/* Table */}
+      {/* ── TABLE ───────────────────────────────────────────────────────────── */}
       {loading ? (
         <Box display="flex" justifyContent="center" py={8}><CircularProgress /></Box>
       ) : records.length === 0 ? (
@@ -602,99 +661,107 @@ const TeacherAttendanceTab = () => {
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
           <Box sx={{ overflowX: 'auto' }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: alpha(theme.palette.secondary.main, 0.06) }}>
-                <TableCell sx={{ fontWeight: 700 }}>Teacher</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Session</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Duration</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Payment</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {records.map((record) => (
-                <TableRow key={record._id} hover>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={600}>
-                      {record.teacher?.lastName} {record.teacher?.firstName}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {record.teacher?.employmentType}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">{record.class?.className || '—'}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {record.attendanceDate
-                        ? fDate(record.attendanceDate)
-                        : '—'}
-                    </Typography>
-                    {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="caption" color="text.secondary">
-                      {record.sessionStartTime} – {record.sessionEndTime}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <AttendanceStatusChip status={record.status} isJustified={record.isJustified} />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {record.sessionDuration != null
-                        ? `${Math.floor(record.sessionDuration / 60)}h${String(record.sessionDuration % 60).padStart(2, '0')}`
-                        : '—'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {record.status ? (
-                      record.isPaid
-                        ? <Chip label="Paid" size="small" color="success" />
-                        : <Chip label="Unpaid" size="small" color="warning" />
-                    ) : '—'}
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={0.5}>
-                      <Tooltip title={record.status ? 'Mark absent' : 'Mark present'}>
-                        <span>
-                          <IconButton
-                            size="small"
-                            color={record.status ? 'error' : 'success'}
-                            onClick={() => handleToggleTeacher(record)}
-                            disabled={record.isLocked}
-                          >
-                            {record.status
-                              ? <Cancel fontSize="small" />
-                              : <CheckCircle fontSize="small" />}
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                      {!record.status && (
-                        <Tooltip title="Add justification">
-                          <IconButton size="small" color="info" onClick={() => setJustifyTarget(record)}>
-                            <HelpOutline fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                      {record.status && !record.isPaid && (
-                        <Tooltip title="Mark as paid">
-                          <IconButton size="small" color="success" onClick={() => handleMarkPaid(record)}>
-                            <AttachMoney fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </Stack>
-                  </TableCell>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ bgcolor: alpha(theme.palette.secondary.main, 0.06) }}>
+                  <TableCell sx={{ fontWeight: 700 }}>Teacher</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Session</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Duration</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Payment</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {records.map((record) => (
+                  <TableRow key={record._id} hover>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight={600}>
+                        {record.teacher?.lastName} {record.teacher?.firstName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {record.teacher?.employmentType}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{record.class?.className || '—'}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {record.attendanceDate ? fDate(record.attendanceDate) : '—'}
+                      </Typography>
+                      {record.isLocked && <LockedBadge lockedAt={record.lockedAt} />}
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="caption" color="text.secondary">
+                        {record.sessionStartTime} – {record.sessionEndTime}
+                      </Typography>
+                      {record.isLate && (
+                        <Chip
+                          label={record.arrivalTime ? `Late ${record.arrivalTime}` : 'Late'}
+                          size="small"
+                          color="warning"
+                          sx={{ ml: 0.5, height: 18, fontSize: '0.6rem' }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <AttendanceStatusChip status={record.status} isJustified={record.isJustified} isLate={record.isLate} />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {record.sessionDuration != null
+                          ? `${Math.floor(record.sessionDuration / 60)}h${String(record.sessionDuration % 60).padStart(2, '0')}`
+                          : '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {record.status ? (
+                        record.isPaid
+                          ? <Chip label="Paid" size="small" color="success" />
+                          : <Chip label="Unpaid" size="small" color="warning" />
+                      ) : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={0.5}>
+                        {isCampusManager && (
+                          <>
+                            <Tooltip title={record.status ? 'Mark absent' : 'Mark present'}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  color={record.status ? 'error' : 'success'}
+                                  onClick={() => handleToggleTeacher(record)}
+                                  disabled={record.isLocked}
+                                >
+                                  {record.status ? <Cancel fontSize="small" /> : <CheckCircle fontSize="small" />}
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                            {!record.status && (
+                              <Tooltip title="Add justification">
+                                <IconButton size="small" color="info" onClick={() => setJustifyTarget(record)}>
+                                  <HelpOutline fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </>
+                        )}
+                        {record.status && !record.isPaid && (
+                          <Tooltip title="Mark as paid">
+                            <IconButton size="small" color="success" onClick={() => handleMarkPaid(record)}>
+                              <AttachMoney fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Box>
           <TablePagination
             component="div"
@@ -710,47 +777,32 @@ const TeacherAttendanceTab = () => {
       )}
 
       {/* Payment reference dialog */}
-      <Dialog
-        open={payRefOpen}
-        onClose={() => setPayRefOpen(false)}
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{ sx: { borderRadius: 3 } }}
-      >
+      <Dialog open={payRefOpen} onClose={() => setPayRefOpen(false)} maxWidth="xs" fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}>
         <DialogTitle fontWeight={700}>Mark Session as Paid</DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <TextField
-            autoFocus
-            fullWidth
-            label="Payment reference"
-            value={payRef}
+            autoFocus fullWidth label="Payment reference" value={payRef} size="small"
             onChange={(e) => setPayRef(e.target.value)}
-            size="small"
             onKeyDown={(e) => e.key === 'Enter' && handlePayRefConfirm()}
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setPayRefOpen(false)}>Cancel</Button>
-          <Button
-            variant="contained"
-            onClick={handlePayRefConfirm}
-            disabled={!payRef.trim()}
-          >
-            Confirm
-          </Button>
+          <Button variant="contained" onClick={handlePayRefConfirm} disabled={!payRef.trim()}>Confirm</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Init attendance dialog */}
-      {initOpen && (
+      {/* Roll call dialog — CAMPUS_MANAGER only */}
+      {initOpen && isCampusManager && (
         <InitAttendanceDialog
           open={initOpen}
           onClose={() => setInitOpen(false)}
           onSuccess={() => { setInitOpen(false); fetch(); }}
+          campusId={campusId}
         />
       )}
 
-      {/* Payroll report dialog */}
       {payrollOpen && (
         <PayrollDialog open={payrollOpen} onClose={() => setPayrollOpen(false)} />
       )}
@@ -1032,42 +1084,52 @@ const PostponementTab = () => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// INIT ATTENDANCE DIALOG
+// ROLL CALL DIALOG (CAMPUS_MANAGER only)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SEMESTERS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
+const LATE_MINUTES_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
 
-const InitAttendanceDialog = ({ open, onClose, onSuccess }) => {
+const InitAttendanceDialog = ({ open, onClose, onSuccess, campusId }) => {
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
-  // Step 1 — teacher + date
+  const [campusClasses,  setCampusClasses]  = useState([]);
+  const [classesLoading, setClassesLoading] = useState(false);
+  const [selectedClassId,setSelectedClassId]= useState('');
+
   const [teacherOptions, setTeacherOptions] = useState([]);
   const [teacherInput,   setTeacherInput]   = useState('');
   const [teacher,        setTeacher]        = useState(null);
-  const [date,           setDate]           = useState(() =>
-    new Date().toISOString().slice(0, 10)
-  );
 
-  // Step 2 — session list
-  const [sessions,       setSessions]       = useState([]);
-  const [sessionsLoading,setSessionsLoading]= useState(false);
-  const [session,        setSession]        = useState(null);
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
 
-  // Step 3 — derived / editable fields
-  const [classId,        setClassId]        = useState('');
-  const [academicYear,   setAcademicYear]   = useState('');
-  const [semester,       setSemester]       = useState('S1');
+  // { [sessionId]: { status: 'present'|'absent'|'late'|'', lateMinutes: 15, remarks: '' } }
+  const [attendance,      setAttendance]      = useState({});
+  const [pendingSessions, setPendingSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
-  const [submitting,     setSubmitting]     = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Search teachers (debounced by typing)
+  // Load campus classes on dialog open
+  useEffect(() => {
+    if (!campusId || !open) return;
+    setClassesLoading(true);
+    api.get(`/class/campus/${campusId}`)
+      .then((res) => {
+        const list = (res.data?.data || [])
+          .slice()
+          .sort((a, b) => (a.className || '').localeCompare(b.className || ''));
+        setCampusClasses(list);
+      })
+      .catch(() => setCampusClasses([]))
+      .finally(() => setClassesLoading(false));
+  }, [campusId, open]);
+
+  // Search teachers (debounced)
   useEffect(() => {
     const t = setTimeout(async () => {
       try {
-        const res = await getTeachers({ search: teacherInput, limit: 20 });
-        const raw = res.data;
-        const list = Array.isArray(raw?.data) ? raw.data : [];
-        setTeacherOptions(list);
+        const res = await getTeachers({ search: teacherInput, limit: 30, status: 'active' });
+        setTeacherOptions(Array.isArray(res.data?.data) ? res.data.data : []);
       } catch {
         setTeacherOptions([]);
       }
@@ -1075,162 +1137,269 @@ const InitAttendanceDialog = ({ open, onClose, onSuccess }) => {
     return () => clearTimeout(t);
   }, [teacherInput]);
 
-  // Load sessions when teacher + date are set
+  // Load pending sessions when teacher or date changes
   useEffect(() => {
-    if (!teacher || !date) { setSessions([]); setSession(null); return; }
+    if (!teacher || !date) { setPendingSessions([]); setAttendance({}); return; }
     setSessionsLoading(true);
-    setSession(null);
-    getTeacherSessionsAdmin(teacher._id, { from: date, to: date, includeAllStatuses: 'true' })
+    getTeacherPendingSessions(String(teacher._id), date)
       .then((res) => {
-        const raw = res.data;
-        const list = Array.isArray(raw?.data) ? raw.data : [];
-        setSessions(list);
+        setPendingSessions(Array.isArray(res.data?.data) ? res.data.data : []);
+        setAttendance({});
       })
-      .catch(() => setSessions([]))
+      .catch(() => setPendingSessions([]))
       .finally(() => setSessionsLoading(false));
   }, [teacher, date]);
 
-  // Auto-fill fields when session is selected
-  useEffect(() => {
-    if (!session) return;
-    // Use first class if available
-    const firstClass = Array.isArray(session.classes) && session.classes.length > 0
-      ? session.classes[0]
-      : null;
-    setClassId(firstClass?.classId ? String(firstClass.classId) : '');
-    setAcademicYear(session.academicYear || '');
-    setSemester(session.semester || 'S1');
-  }, [session]);
+  const updateAtt = (sessionId, field, value) => {
+    setAttendance((prev) => ({
+      ...prev,
+      [String(sessionId)]: { ...(prev[String(sessionId)] || {}), [field]: value },
+    }));
+  };
 
-  const canSubmit = teacher && session && classId && academicYear && semester;
+  const markedCount = Object.values(attendance).filter((a) => a.status).length;
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    const toSubmit = pendingSessions.filter((s) => attendance[String(s._id)]?.status);
+    if (!toSubmit.length) { showSnackbar('Mark at least one session.', 'warning'); return; }
+
     setSubmitting(true);
-    try {
+    let ok = 0;
+    const errors = [];
+    const pad       = (n) => String(n).padStart(2, '0');
+    const toTimeStr = (dt) => `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+
+    for (const session of toSubmit) {
+      const att      = attendance[String(session._id)] || {};
+      const isPresent = att.status === 'present' || att.status === 'late';
+      const isLate    = att.status === 'late';
+      const firstClass = Array.isArray(session.classes) && session.classes.length > 0
+        ? session.classes[0] : null;
+      const classId   = firstClass?.classId   ? String(firstClass.classId)   : '';
+      const subjectId = session.subject?.subjectId
+        ? String(session.subject.subjectId)
+        : (session.subject?._id ? String(session.subject._id) : '');
+
+      if (!classId || !subjectId) {
+        errors.push(`Session ${session.reference || ''}: missing class or subject — skipped.`);
+        continue;
+      }
+
       const startDt = new Date(session.startTime);
       const endDt   = new Date(session.endTime);
-      const pad = (n) => String(n).padStart(2, '0');
-      const toTimeStr = (dt) => `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
 
-      await initTeacherAttendance(session._id, {
-        teacherId:        String(teacher._id),
-        classId,
-        subjectId:        String(session.subject?.subjectId ?? session.subject?._id ?? ''),
-        attendanceDate:   date,
-        academicYear,
-        semester,
-        sessionStartTime: toTimeStr(startDt),
-        sessionEndTime:   toTimeStr(endDt),
-      });
-      showSnackbar('Attendance record initialised.', 'success');
+      try {
+        await initTeacherAttendance(String(session._id), {
+          teacherId:        String(teacher._id),
+          classId,
+          subjectId,
+          attendanceDate:   date,
+          academicYear:     session.academicYear || '',
+          semester:         session.semester || 'S1',
+          sessionStartTime: toTimeStr(startDt),
+          sessionEndTime:   toTimeStr(endDt),
+          status:           isPresent,
+          isLate,
+          lateMinutes:      isLate ? (att.lateMinutes || 15) : undefined,
+          remarks:          att.remarks || undefined,
+        });
+        ok++;
+      } catch (err) {
+        errors.push(err.response?.data?.message || `Failed: ${session.reference || String(session._id)}`);
+      }
+    }
+
+    setSubmitting(false);
+    if (ok > 0) {
+      showSnackbar(`${ok} record(s) saved successfully.`, 'success');
       setTimeout(onSuccess, 800);
-    } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to initialise attendance.', 'error');
-    } finally {
-      setSubmitting(false);
+    } else if (errors.length) {
+      showSnackbar(errors[0], 'error');
     }
   };
 
+  // Sessions optionally filtered by selected class
+  const visibleSessions = selectedClassId
+    ? pendingSessions.filter((s) =>
+        Array.isArray(s.classes) &&
+        s.classes.some((c) => String(c.classId) === selectedClassId)
+      )
+    : pendingSessions;
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
-      <DialogTitle fontWeight={700}>Init Teacher Attendance</DialogTitle>
-      <DialogContent dividers>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
+      PaperProps={{ sx: { borderRadius: 3, height: '90vh', display: 'flex', flexDirection: 'column' } }}>
+      <DialogTitle fontWeight={700}>Teacher Roll Call</DialogTitle>
+
+      <DialogContent dividers sx={{ flex: 1, overflow: 'auto' }}>
         <Stack spacing={2} mt={1}>
-          {/* Teacher search */}
+
+          {/* ── Date + Class filter ────────────────────────────────────────── */}
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <TextField
+              label="Session date"
+              type="date"
+              size="small"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
+              sx={{ flex: 1 }}
+            />
+            <FormControl size="small" sx={{ flex: 2 }} disabled={classesLoading}>
+              <InputLabel>Class (optional)</InputLabel>
+              <Select
+                label="Class (optional)"
+                value={selectedClassId}
+                onChange={(e) => setSelectedClassId(e.target.value)}
+              >
+                <MenuItem value=""><em>All classes</em></MenuItem>
+                {campusClasses.map((c) => (
+                  <MenuItem key={c._id} value={c._id}>{c.className}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+
+          {/* ── Teacher autocomplete ───────────────────────────────────────── */}
           <Autocomplete
             options={teacherOptions}
-            getOptionLabel={(o) => `${o.lastName || ''} ${o.firstName || ''}`.trim() || o.email || String(o._id)}
+            getOptionLabel={(o) => `${o.lastName || ''} ${o.firstName || ''}`.trim() || o.email || ''}
             value={teacher}
             onChange={(_, v) => setTeacher(v)}
             inputValue={teacherInput}
             onInputChange={(_, v) => setTeacherInput(v)}
             filterOptions={(x) => x}
-            noOptionsText="No teachers found"
+            noOptionsText="Type to search teachers…"
             renderInput={(params) => (
               <TextField {...params} label="Teacher" size="small" />
             )}
           />
 
-          {/* Date */}
-          <TextField
-            label="Session date"
-            type="date"
-            size="small"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
+          {/* ── Pending sessions ───────────────────────────────────────────── */}
+          {teacher && date && (
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1} mb={1.5}>
+                <Typography variant="subtitle2" fontWeight={700}>
+                  Pending Sessions
+                </Typography>
+                {sessionsLoading && <CircularProgress size={14} />}
+                {!sessionsLoading && (
+                  <Typography variant="caption" color="text.secondary">
+                    {visibleSessions.length} session{visibleSessions.length !== 1 ? 's' : ''} without record
+                  </Typography>
+                )}
+              </Stack>
 
-          {/* Session selector */}
-          <FormControl size="small" disabled={!teacher || sessionsLoading}>
-            <InputLabel>Session</InputLabel>
-            <Select
-              label="Session"
-              value={session?._id || ''}
-              onChange={(e) => {
-                const s = sessions.find((x) => String(x._id) === e.target.value);
-                setSession(s || null);
-              }}
-            >
-              {sessions.length === 0 && (
-                <MenuItem disabled value="">
-                  {sessionsLoading ? 'Loading…' : 'No sessions on this date'}
-                </MenuItem>
+              {!sessionsLoading && pendingSessions.length === 0 && (
+                <Alert severity="info" sx={{ borderRadius: 2 }}>
+                  All sessions for this teacher on this date already have attendance records.
+                </Alert>
               )}
-              {sessions.map((s) => {
-                const start = fTime(s.startTime);
-                const end   = fTime(s.endTime);
+
+              {!sessionsLoading && pendingSessions.length > 0 && visibleSessions.length === 0 && (
+                <Alert severity="info" sx={{ borderRadius: 2 }}>
+                  No sessions for the selected class on this date. Try "All classes".
+                </Alert>
+              )}
+
+              {visibleSessions.map((session) => {
+                const sid     = String(session._id);
+                const att     = attendance[sid] || {};
+                const start   = fTime(session.startTime);
+                const end     = fTime(session.endTime);
+                const subject = session.subject?.subject_name || '—';
+                const clsName = session.classes?.[0]?.className || '—';
+
+                const borderColor =
+                  att.status === 'present' ? 'success.main' :
+                  att.status === 'late'    ? 'warning.main' :
+                  att.status === 'absent'  ? 'error.main'   : 'divider';
+
                 return (
-                  <MenuItem key={String(s._id)} value={String(s._id)}>
-                    {start}–{end} · {s.subject?.subject_name || s.reference || String(s._id)}
-                  </MenuItem>
+                  <Paper
+                    key={sid}
+                    variant="outlined"
+                    sx={{ p: 2, mb: 1.5, borderRadius: 2, borderColor, transition: 'border-color 0.2s' }}
+                  >
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'flex-start' }}>
+
+                      {/* Session info */}
+                      <Box sx={{ minWidth: 170 }}>
+                        <Typography variant="body2" fontWeight={700}>
+                          {start} – {end}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">{subject}</Typography>
+                        <Box mt={0.5}>
+                          <Chip label={clsName} size="small" variant="outlined" sx={{ fontSize: '0.65rem', height: 20 }} />
+                        </Box>
+                      </Box>
+
+                      {/* Controls */}
+                      <Box flex={1}>
+                        {/* Status toggle chips */}
+                        <Stack direction="row" spacing={1} flexWrap="wrap" mb={att.status ? 1 : 0}>
+                          {[
+                            { key: 'present', label: 'Present', color: 'success' },
+                            { key: 'absent',  label: 'Absent',  color: 'error' },
+                            { key: 'late',    label: 'Late',    color: 'warning' },
+                          ].map(({ key, label, color }) => (
+                            <Chip
+                              key={key}
+                              label={label}
+                              size="small"
+                              color={color}
+                              variant={att.status === key ? 'filled' : 'outlined'}
+                              onClick={() => updateAtt(sid, 'status', att.status === key ? '' : key)}
+                              sx={{ fontWeight: 600, cursor: 'pointer' }}
+                            />
+                          ))}
+                        </Stack>
+
+                        {/* Late minutes */}
+                        {att.status === 'late' && (
+                          <FormControl size="small" sx={{ minWidth: 130, mb: 1 }}>
+                            <InputLabel>Delay</InputLabel>
+                            <Select
+                              label="Delay"
+                              value={att.lateMinutes || 15}
+                              onChange={(e) => updateAtt(sid, 'lateMinutes', e.target.value)}
+                            >
+                              {LATE_MINUTES_OPTIONS.map((m) => (
+                                <MenuItem key={m} value={m}>{m} min</MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+
+                        {/* Observation */}
+                        {att.status && (
+                          <TextField
+                            placeholder="Observation (optional)"
+                            size="small"
+                            fullWidth
+                            value={att.remarks || ''}
+                            onChange={(e) => updateAtt(sid, 'remarks', e.target.value)}
+                          />
+                        )}
+                      </Box>
+                    </Stack>
+                  </Paper>
                 );
               })}
-            </Select>
-          </FormControl>
-
-          {/* Class ID — auto-filled, editable override */}
-          <TextField
-            label="Class ID"
-            size="small"
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-            helperText="Auto-filled from session. Override if needed."
-          />
-
-          {/* Academic year + semester */}
-          <Stack direction="row" spacing={2}>
-            <TextField
-              label="Academic year"
-              size="small"
-              value={academicYear}
-              onChange={(e) => setAcademicYear(e.target.value)}
-              placeholder="2024-2025"
-              sx={{ flex: 1 }}
-            />
-            <FormControl size="small" sx={{ minWidth: 100 }}>
-              <InputLabel>Semester</InputLabel>
-              <Select
-                label="Semester"
-                value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-              >
-                {SEMESTERS.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-              </Select>
-            </FormControl>
-          </Stack>
+            </Box>
+          )}
         </Stack>
       </DialogContent>
+
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={!canSubmit || submitting}
+          disabled={submitting || markedCount === 0}
           startIcon={submitting ? <CircularProgress size={14} color="inherit" /> : null}
         >
-          Create Record
+          {submitting ? 'Saving…' : `Save${markedCount > 0 ? ` (${markedCount})` : ''}`}
         </Button>
       </DialogActions>
 

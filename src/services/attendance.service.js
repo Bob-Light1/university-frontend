@@ -131,6 +131,15 @@ export const initTeacherAttendance = (scheduleId, data) =>
   api.post(`/attendance/teacher/sessions/${scheduleId}/init`, data);
 
 /**
+ * GET /attendance/teacher/sessions/pending
+ * Sessions for a teacher on a date that do not yet have an attendance record.
+ * @param {string} teacherId
+ * @param {string} date — YYYY-MM-DD
+ */
+export const getTeacherPendingSessions = (teacherId, date) =>
+  api.get('/attendance/teacher/sessions/pending', { params: { teacherId, date } });
+
+/**
  * GET /attendance/teacher/sessions/:scheduleId
  * Attendance record(s) for a teacher session.
  * @param {string} scheduleId

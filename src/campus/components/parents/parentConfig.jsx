@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Edit,
   Delete,
+  Restore,
   Visibility,
   Phone,
   Badge as BadgeIcon,
@@ -105,7 +106,7 @@ export const getFilterConfig = () => [
 // ─── Table Row Renderer ───────────────────────────────────────────────────────
 
 export const renderTableRow = (parent, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, theme, isMobile } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile } = helpers;
 
   const profileImageUrl = parent.profileImage
     ? parent.profileImage.startsWith('http')
@@ -113,9 +114,14 @@ export const renderTableRow = (parent, helpers) => {
       : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${parent.profileImage.replace(/^\//, '')}`
     : null;
 
+  const isArchived = parent.isArchived === true;
+
   const statusColor =
+    isArchived                    ? 'default' :
     parent.status === 'active'    ? 'success' :
     parent.status === 'suspended' ? 'error'   : 'warning';
+
+  const statusLabel = isArchived ? 'Archived' : (parent.status || 'active');
 
   const relationshipLabel = {
     father:   'Father',
@@ -198,7 +204,7 @@ export const renderTableRow = (parent, helpers) => {
       {!isMobile && (
         <TableCell>
           <Chip
-            label={parent.status || 'active'}
+            label={statusLabel}
             size="small"
             color={statusColor}
             sx={{ fontWeight: 600, textTransform: 'capitalize' }}
@@ -214,16 +220,26 @@ export const renderTableRow = (parent, helpers) => {
               <Visibility fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Edit">
-            <IconButton size="small" color="info" onClick={onEdit}>
-              <Edit fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Archive">
-            <IconButton size="small" color="error" onClick={onArchive}>
-              <Delete fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {!isArchived && (
+            <Tooltip title="Edit">
+              <IconButton size="small" color="info" onClick={onEdit}>
+                <Edit fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {isArchived ? (
+            <Tooltip title="Restore">
+              <IconButton size="small" color="success" onClick={onRestore}>
+                <Restore fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Archive">
+              <IconButton size="small" color="error" onClick={onArchive}>
+                <Delete fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
       </TableCell>
 
