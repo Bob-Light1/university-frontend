@@ -6,6 +6,7 @@
 
 import { useParams } from 'react-router-dom';
 
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HomeIcon               from '@mui/icons-material/Home';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import GroupIcon              from '@mui/icons-material/Group';
@@ -22,12 +23,26 @@ import DescriptionIcon        from '@mui/icons-material/Description';
 import PrintIcon              from '@mui/icons-material/Print';
 import HandshakeIcon          from '@mui/icons-material/Handshake';
 
-import AppShell from '../components/AppShell';
+import AppShell   from '../components/AppShell';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Campus() {
   const { campusId } = useParams();
+  const { user }     = useAuth();
+
+  const isAdminOrDirector = user?.role === 'ADMIN' || user?.role === 'DIRECTOR';
 
   const navItems = [
+    // Back-link visible only for ADMIN / DIRECTOR — not for CAMPUS_MANAGER
+    ...(isAdminOrDirector ? [
+      {
+        link:   '/admin/dashboard',
+        label:  'Admin Portal',
+        icon:   AdminPanelSettingsIcon,
+        accent: '#003285',
+      },
+      { type: 'divider', label: 'divider-admin-campus' },
+    ] : []),
     { link: '/',                                      label: 'Home',        icon: HomeIcon },
     { link: `/campus/${campusId}/dashboard`,          label: 'Dashboard',   icon: DashboardCustomizeIcon },
     { link: `/campus/${campusId}/students`,           label: 'Students',    icon: GroupIcon },

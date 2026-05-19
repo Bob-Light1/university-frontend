@@ -148,6 +148,11 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
 
       <List>
         {navItems.map((item) => {
+          // Support divider items: { type: 'divider', label: '<unique-key>' }
+          if (item.type === 'divider') {
+            return <Divider key={item.label} sx={{ my: 0.5 }} />;
+          }
+
           // Use label as key — it is always unique and stable across state changes,
           // unlike item.link which can be null/duplicate for async-driven navItems
           // (e.g. Parent portal before firstChildId resolves).
@@ -178,6 +183,11 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
                       borderRight: '3px solid',
                       borderColor: 'primary.main',
                     },
+                    item.accent && {
+                      color:   item.accent,
+                      bgcolor: `${item.accent}10`,
+                      '&:hover': { bgcolor: `${item.accent}1a` },
+                    },
                   ]}
                 >
                   <ListItemIcon
@@ -185,7 +195,9 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
                       {
                         minWidth:       0,
                         justifyContent: 'center',
-                        color:          isActive ? 'primary.main' : 'inherit',
+                        color: item.accent
+                          ? item.accent
+                          : isActive ? 'primary.main' : 'inherit',
                       },
                       showText ? { mr: 3 } : { mr: 'auto' },
                     ]}
