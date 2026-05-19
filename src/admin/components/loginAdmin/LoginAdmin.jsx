@@ -96,7 +96,7 @@ export default function LoginAdmin() {
         );
 
         setSnackbar({ open: true, message: 'Welcome back!', severity: 'success' });
-        setTimeout(() => navigate('/'), 1000);
+        setTimeout(() => navigate('/admin/dashboard'), 1000);
 
       } catch (error) {
         setSnackbar({

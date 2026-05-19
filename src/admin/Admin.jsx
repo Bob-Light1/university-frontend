@@ -1,23 +1,31 @@
-import { Outlet } from 'react-router-dom'
-import Navbar from './utility-components/navbar/Navbar'
-import { Box } from '@mui/material'
+/**
+ * @file Admin.jsx
+ * @description Admin / Director portal layout — thin wrapper around AppShell.
+ * Accessible only to authenticated ADMIN and DIRECTOR roles.
+ */
 
-const Admin = () => {
+import DashboardIcon       from '@mui/icons-material/Dashboard';
+import BusinessIcon        from '@mui/icons-material/Business';
+import AddBusinessIcon     from '@mui/icons-material/AddBusiness';
+import ManageAccountsIcon  from '@mui/icons-material/ManageAccounts';
+import PersonIcon          from '@mui/icons-material/Person';
+
+import AppShell from '../components/AppShell';
+
+const navItems = [
+  { link: '/admin/dashboard',  label: 'Dashboard',      icon: DashboardIcon      },
+  { link: '/admin/campuses',   label: 'Campuses',        icon: BusinessIcon       },
+  { link: '/admin/new-campus', label: 'New Campus',      icon: AddBusinessIcon    },
+  { link: '/admin/accounts',   label: 'Admin Accounts',  icon: ManageAccountsIcon },
+  { link: '/admin/profile',    label: 'My Profile',      icon: PersonIcon         },
+];
+
+export default function Admin() {
   return (
-    <>
-      <Navbar />
-      <Box 
-        sx={
-          {
-            minHeight:'100vh', 
-            paddingTop: "70px", 
-          }
-        } 
-        component={'div'}>
-        <Outlet/>
-      </Box>
-    </>
-  )
+    <AppShell
+      navItems={navItems}
+      drawerLabel="Admin Portal"
+      pageTitle="Admin Portal"
+    />
+  );
 }
-
-export default Admin

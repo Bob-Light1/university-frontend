@@ -1,64 +1,36 @@
 import { Route } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-import Loader from '../components/Loader';
+import { lazy }  from 'react';
 
-// Lazy layouts & pages
-const Home = lazy(() => import('../client/components/home/Home'));
+import ProtectedRoute from './ProtectedRoute';
+
+// ─── Public pages (no auth required) ─────────────────────────────────────────
 const LoginAdmin = lazy(() => import('../admin/components/loginAdmin/LoginAdmin'));
-const CreateAdmin = lazy(() => import('../admin/components/createAdmin/CreateAdmin'));
-const NewCampus = lazy(() => import('../admin/components/newCampus/NewCampus'));
-const  Admin = lazy(() => import('../admin/Admin'));
+
+// ─── Protected layout + pages ─────────────────────────────────────────────────
+const Admin           = lazy(() => import('../admin/Admin'));
+const AdminDashboard  = lazy(() => import('../admin/components/dashboard/AdminDashboard'));
+const CampusList      = lazy(() => import('../admin/components/campuses/CampusList'));
+const NewCampus       = lazy(() => import('../admin/components/newCampus/NewCampus'));
+const AdminAccounts   = lazy(() => import('../admin/components/accounts/AdminAccounts'));
+const AdminProfile    = lazy(() => import('../admin/components/profile/AdminProfile'));
 
 export const adminRoutes = (
-  
-    <Route
-      path="/admin"
-      element={
-        <Suspense fallback={<Loader />}>
-          <Admin />
-        </Suspense>
-      }
-    >
-      <Route
-        index
-        element={
-          <Suspense fallback={<Loader />}>
-            <LoginAdmin />
-          </Suspense>
-        }
-      />
-      <Route
-        path="create"
-        element={
-          <Suspense fallback={<Loader />}>
-            <CreateAdmin />
-          </Suspense>
-        }
-      />
-       <Route
-        path="login"
-        element={
-          <Suspense fallback={<Loader />}>
-            <LoginAdmin />
-          </Suspense>
-        }
-      />
-       <Route
-        path="newcampus"
-        element={
-          <Suspense fallback={<Loader />}>
-            <NewCampus />
-          </Suspense>
-        }
-      />
+  <Route path="/admin">
 
-       <Route
-        path="home"
-        element={
-          <Suspense fallback={<Loader />}>
-            <Home />
-          </Suspense>
-        }
-      />
+    {/* ── Public: login ──────────────────────────────────────────────────── */}
+    <Route index   element={<LoginAdmin />} />
+    <Route path="login" element={<LoginAdmin />} />
+
+    {/* ── Protected: Admin / Director portal ─────────────────────────────── */}
+    <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'DIRECTOR']} redirectTo="/admin/login" />}>
+      <Route element={<Admin />}>
+        <Route path="dashboard"  element={<AdminDashboard />} />
+        <Route path="campuses"   element={<CampusList />}     />
+        <Route path="new-campus" element={<NewCampus />}      />
+        <Route path="accounts"   element={<AdminAccounts />}  />
+        <Route path="profile"    element={<AdminProfile />}   />
+      </Route>
     </Route>
-); 
+
+  </Route>
+);
