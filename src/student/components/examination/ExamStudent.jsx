@@ -24,7 +24,7 @@ import {
   Gavel, Timer, Warning,
 } from '@mui/icons-material';
 
-import * as examService from '../../../services/examination.service';
+import * as examService from '../../../services/examinationService';
 import { fDate, fDateTime, fTime } from '../../../utils/dateFormat';
 
 // ─── Status helpers ───────────────────────────────────────────────────────────

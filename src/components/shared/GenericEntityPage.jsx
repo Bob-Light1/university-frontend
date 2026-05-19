@@ -54,8 +54,8 @@ import { useParams } from 'react-router-dom';
 
 import KPICards from './KpiCard';
 import FilterBar from './FilterBar';
-import ExportDialog from './Exportdialog';
-import ImportDialog from './Importdialog';
+import ExportDialog from './ExportDialog';
+import ImportDialog from './ImportDialog';
 import { BulkClassModal, BulkEmailModal } from './BulkModals';
 import useEntityManager from '../../hooks/useEntityManager';
 import useBulkActions from '../../hooks/useBulkActions';

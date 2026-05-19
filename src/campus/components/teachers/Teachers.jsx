@@ -5,7 +5,7 @@ import GenericEntityPage from '../../../components/shared/GenericEntityPage';
 import TeacherForm from './TeacherForm';
 import TeacherDetailDrawer from './TeacherDetailDrawer';
 import ManageDepartment from '../department/ManageDepartment';
-import { teacherConfig } from './teacherConfig';
+import { teacherConfig } from './TeacherConfig';
 
 /**
  * TEACHERS PAGE

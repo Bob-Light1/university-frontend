@@ -1,5 +1,5 @@
 import GenericEntityPage from '../../../components/shared/GenericEntityPage';
-import { parentConfig }  from './parentConfig';
+import { parentConfig }  from './ParentConfig';
 import ParentForm         from './ParentForm';
 import ParentDetailDrawer from './ParentDetailDrawer';
 

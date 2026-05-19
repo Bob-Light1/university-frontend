@@ -66,7 +66,7 @@ import {
 import { AuthContext } from '../../../context/AuthContext';
 import KPICards from '../../../components/shared/KpiCard';
 import useCourse from '../../../hooks/useCourse';
-import { getCourseVersions } from '../../../services/course.service';
+import { getCourseVersions } from '../../../services/courseService';
 import api from '../../../api/axiosInstance';
 
 import CourseFilters       from '../../../components/courses/CourseFilters';

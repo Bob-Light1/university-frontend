@@ -19,7 +19,7 @@ import { useFormik } from 'formik';
 import { useParams } from 'react-router-dom';
 
 import { createTeacherSchema }   from '../../../yupSchema/createTeacherSchema';
-import { createTeacher, updateTeacher } from '../../../services/teacher.service';
+import { createTeacher, updateTeacher } from '../../../services/teacherService';
 import useRelatedData             from '../../../hooks/useRelatedData';
 import useFormSnackbar            from '../../../hooks/useFormSnackBar';
 import useImagePreview            from '../../../hooks/useImagePreview';

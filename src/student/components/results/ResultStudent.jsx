@@ -29,7 +29,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import KPICards from '../../../components/shared/KpiCard';
 
 import useResult from '../../../hooks/useResult';
-import { getResultById, getTranscript } from '../../../services/result.service';
+import { getResultById, getTranscript } from '../../../services/resultService';
 
 import ResultDetailDrawer from '../../../components/results/ResultDetailDrawer';
 import {

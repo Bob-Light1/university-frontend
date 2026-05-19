@@ -15,7 +15,7 @@ import {
 } from '@mui/icons-material';
 
 import { AuthContext }                from '../../../context/AuthContext';
-import { startBatchPrintJob, listPrintJobs } from '../../../services/academic_print.service';
+import { startBatchPrintJob, listPrintJobs } from '../../../services/academicPrintService';
 import api                            from '../../../api/axiosInstance';
 
 import AcademicPrintPreviewDialog     from './AcademicPrintPreviewDialog';

@@ -11,7 +11,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getMyChildren, getChildResults } from '../../../services/parent.service';
+import { getMyChildren, getChildResults } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fDate } from '../../../utils/dateFormat';
 

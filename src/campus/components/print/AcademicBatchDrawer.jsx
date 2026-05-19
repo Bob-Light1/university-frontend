@@ -9,7 +9,7 @@ import {
   HourglassEmpty, Refresh,
 } from '@mui/icons-material';
 
-import { getBatchJobStatus, downloadBatchResult } from '../../../services/academic_print.service';
+import { getBatchJobStatus, downloadBatchResult } from '../../../services/academicPrintService';
 import { fTime } from '../../../utils/dateFormat';
 
 const STATUS_COLORS = {

@@ -33,7 +33,7 @@ import { getSubmitErrorMessage } from '../../../utils/handleSubmitError';
 import { AuthContext } from '../../../context/AuthContext';
 import api from '../../../api/axiosInstance';
 
-import * as examService from '../../../services/examination.service';
+import * as examService from '../../../services/examinationService';
 import { fDate, fDateTime } from '../../../utils/dateFormat';
 
 // ─── Status meta ──────────────────────────────────────────────────────────────

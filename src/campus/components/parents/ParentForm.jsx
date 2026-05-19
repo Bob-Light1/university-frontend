@@ -14,7 +14,7 @@ import { useFormik } from 'formik';
 import { useParams } from 'react-router-dom';
 
 import { createParentSchema }         from '../../../yupSchema/createParentSchema';
-import { createParent, updateParent } from '../../../services/parent.service';
+import { createParent, updateParent } from '../../../services/parentService';
 import useRelatedData                  from '../../../hooks/useRelatedData';
 import useFormSnackbar                 from '../../../hooks/useFormSnackBar';
 import useImagePreview                 from '../../../hooks/useImagePreview';

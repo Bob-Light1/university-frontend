@@ -35,7 +35,7 @@ import {
   getCampusAudit,
   listDocumentVersions,
   restoreDocumentVersion,
-} from '../services/document.service';
+} from '../services/documentService';
 
 // ─── Binary download helper ────────────────────────────────────────────────────
 

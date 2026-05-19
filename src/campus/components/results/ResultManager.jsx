@@ -36,7 +36,7 @@ import {
   getResultById,
   uploadResultsCSV,
   listGradingScales,
-} from '../../../services/result.service';
+} from '../../../services/resultService';
 import api from '../../../api/axiosInstance';
 
 import ResultFilters     from '../../../components/results/ResultFilters';

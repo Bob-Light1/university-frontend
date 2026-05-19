@@ -24,7 +24,7 @@ import {
   createNewVersion,
   addCourseResource,
   removeCourseResource,
-} from '../services/course.service';
+} from '../services/courseService';
 
 // ─── Default filter state ─────────────────────────────────────────────────────
 

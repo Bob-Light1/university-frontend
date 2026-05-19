@@ -45,12 +45,12 @@ import {
   getTeacherPayrollReport,
   initTeacherAttendance,
   getTeacherPendingSessions,
-} from '../../../services/attendance.service';
+} from '../../../services/attendanceService';
 import {
   getAdminPostponements,
   reviewPostponement,
-} from '../../../services/schedule.service';
-import { getTeachers } from '../../../services/teacher.service';
+} from '../../../services/scheduleService';
+import { getTeachers } from '../../../services/teacherService';
 import { fDate, fTime, fDateTime } from '../../../utils/dateFormat';
 
 // ─────────────────────────────────────────────────────────────────────────────

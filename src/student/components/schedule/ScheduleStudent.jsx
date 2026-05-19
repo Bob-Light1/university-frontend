@@ -12,7 +12,7 @@ import ScheduleCard         from '../../../components/schedule/ScheduleCard';
 import ScheduleDetailDrawer from '../../../components/schedule/ScheduleDetailDrawer';
 // FIX: useSchedule mode 'student' does not exist — student self-service uses
 //      getMyStudentCalendar directly (identity comes from JWT, not props)
-import { getMyStudentCalendar } from '../../../services/schedule.service';
+import { getMyStudentCalendar } from '../../../services/scheduleService';
 
 const DEFAULT_FILTERS = {
   search: '', sessionType: '', dateFrom: '', dateTo: '',

@@ -18,7 +18,7 @@ import useFormSnackbar      from '../../../hooks/useFormSnackBar';
 import useRelatedData       from '../../../hooks/useRelatedData';
 // FIX: replaced createStudentSchedule / updateStudentSchedule (deleted)
 //      with createSession / updateSession from the corrected service
-import { createSession, updateSession } from '../../../services/schedule.service';
+import { createSession, updateSession } from '../../../services/scheduleService';
 
 const FORM_ENDPOINTS = {
   teachers: (id) => `/campus/${id}/teachers`,

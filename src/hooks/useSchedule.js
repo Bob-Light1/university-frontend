@@ -17,7 +17,7 @@ import {
   softDeleteSession,
   cancelSession,
   publishSession,
-} from '../services/schedule.service';
+} from '../services/scheduleService';
 
 const DEFAULT_FILTERS = {
   search: '', status: '', semester: '',

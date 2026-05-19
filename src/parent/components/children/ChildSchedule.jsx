@@ -9,7 +9,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getMyChildren, getChildSchedule } from '../../../services/parent.service';
+import { getMyChildren, getChildSchedule } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fDateWeekdayLong, fTime } from '../../../utils/dateFormat';
 

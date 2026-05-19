@@ -50,11 +50,11 @@ import {
   submitStudentAttendance,
   getMyTeacherAttendance,
   getMyTeacherAttendanceStats,
-} from '../../../services/attendance.service';
+} from '../../../services/attendanceService';
 import {
   openRollCall  as openRollCallAPI,
   submitRollCall as submitRollCallAPI,
-} from '../../../services/schedule.service';
+} from '../../../services/scheduleService';
 import { useLocation } from 'react-router-dom';
 import { fDateWeekday, fTime } from '../../../utils/dateFormat';
 

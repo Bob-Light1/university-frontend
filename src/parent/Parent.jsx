@@ -15,7 +15,7 @@ import DescriptionIcon        from '@mui/icons-material/Description';
 
 import AppShell          from '../components/AppShell';
 import { useAuth }       from '../hooks/useAuth';
-import { getMyChildren } from '../services/parent.service';
+import { getMyChildren } from '../services/parentService';
 
 export default function Parent() {
   const { user } = useAuth();

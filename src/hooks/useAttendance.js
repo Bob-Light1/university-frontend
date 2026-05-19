@@ -32,7 +32,7 @@ import {
   initStudentAttendance,
   assignReplacementTeacher,
   markTeacherSessionPaid,
-} from '../services/attendance.service';
+} from '../services/attendanceService';
 
 // ─── Default filter state per mode ───────────────────────────────────────────
 

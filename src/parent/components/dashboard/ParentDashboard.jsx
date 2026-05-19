@@ -12,7 +12,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getMyDashboard } from '../../../services/parent.service';
+import { getMyDashboard } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fTime, fDateWeekday } from '../../../utils/dateFormat';
 

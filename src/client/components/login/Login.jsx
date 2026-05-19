@@ -54,7 +54,7 @@ import {
 
 import { loginSchema }  from '../../../yupSchema/loginSchema';
 import { useAuth }       from '../../../hooks/useAuth';
-import '../../styles/animatedBackground.css';
+import '../../styles/animated-background.css';
 
 // ─── User type configuration ──────────────────────────────────────────────────
 // Admin and Director are excluded: they authenticate via /admin (hidden route).

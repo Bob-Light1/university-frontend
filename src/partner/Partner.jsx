@@ -1,20 +1,26 @@
 /**
  * @file Partner.jsx
  * @description Partner layout — thin wrapper around AppShell.
- *   Replaced the outdated standalone MuiAppBar with the shared AppNavBar
- *   (via AppShell) for consistent look-and-feel and responsive behaviour.
  */
 
 import HomeIcon               from '@mui/icons-material/Home';
-import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import DashboardIcon          from '@mui/icons-material/Dashboard';
+import PersonIcon             from '@mui/icons-material/Person';
+import QrCode2Icon            from '@mui/icons-material/QrCode2';
+import PeopleIcon             from '@mui/icons-material/People';
+import AttachMoneyIcon        from '@mui/icons-material/AttachMoney';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 import AppShell from '../components/AppShell';
 
 const navItems = [
-  { link: '/',                    label: 'Home',         icon: HomeIcon },
-  { link: '/partner',             label: 'Your Details', icon: DashboardCustomizeIcon },
-  { link: '/partner/notification',label: 'Notifications',icon: NotificationsActiveIcon },
+  { link: '/',                     label: 'Home',          icon: HomeIcon },
+  { link: '/partner',              label: 'Dashboard',     icon: DashboardIcon },
+  { link: '/partner/profile',      label: 'My Profile',    icon: PersonIcon },
+  { link: '/partner/kit',          label: 'Affiliate Kit', icon: QrCode2Icon },
+  { link: '/partner/leads',        label: 'My Leads',      icon: PeopleIcon },
+  { link: '/partner/commissions',  label: 'Commissions',   icon: AttachMoneyIcon },
+  { link: '/partner/notification', label: 'Notifications', icon: NotificationsActiveIcon },
 ];
 
 export default function Partner() {
@@ -22,7 +28,7 @@ export default function Partner() {
     <AppShell
       navItems={navItems}
       drawerLabel="Partner Portal"
-      pageTitle="Partner Page"
+      pageTitle="Partner Portal"
     />
   );
 }

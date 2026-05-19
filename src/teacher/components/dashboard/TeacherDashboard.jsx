@@ -26,7 +26,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getTeacherDashboard } from '../../../services/teacher.service';
+import { getTeacherDashboard } from '../../../services/teacherService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import TeacherDashboardSkeleton from './TeacherDashboardSkeleton';
 import { fTime, fDateWeekday } from '../../../utils/dateFormat';

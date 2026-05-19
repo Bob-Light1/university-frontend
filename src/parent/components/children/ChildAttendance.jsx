@@ -11,7 +11,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getMyChildren, getChildAttendance } from '../../../services/parent.service';
+import { getMyChildren, getChildAttendance } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fDateWeekday } from '../../../utils/dateFormat';
 

@@ -30,7 +30,7 @@ import {
   getClassStatistics,
   getRetakeList,
   getCampusOverview,
-} from '../services/result.service';
+} from '../services/resultService';
 
 // ─── Default filter state per mode ────────────────────────────────────────────
 

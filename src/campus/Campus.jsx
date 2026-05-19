@@ -20,6 +20,7 @@ import ChecklistRtlIcon       from '@mui/icons-material/ChecklistRtl';
 import MenuBookIcon           from '@mui/icons-material/MenuBook';
 import DescriptionIcon        from '@mui/icons-material/Description';
 import PrintIcon              from '@mui/icons-material/Print';
+import HandshakeIcon          from '@mui/icons-material/Handshake';
 
 import AppShell from '../components/AppShell';
 
@@ -41,6 +42,7 @@ export default function Campus() {
     { link: `/campus/${campusId}/courses`,            label: 'Courses',     icon: MenuBookIcon },
     { link: `/campus/${campusId}/documents`,          label: 'Documents',   icon: DescriptionIcon },
     { link: `/campus/${campusId}/print`,              label: 'Print',       icon: PrintIcon },
+    { link: `/campus/${campusId}/partners`,           label: 'Partners',    icon: HandshakeIcon },
   ];
 
   return (

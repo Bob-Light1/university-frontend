@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { getMe, updateMyProfile, changeMyPassword } from '../../../services/parent.service';
+import { getMe, updateMyProfile, changeMyPassword } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

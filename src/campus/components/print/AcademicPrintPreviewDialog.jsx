@@ -7,7 +7,7 @@ import {
   Close, Download, Refresh, PictureAsPdf,
 } from '@mui/icons-material';
 
-import { previewAcademicPdf } from '../../../services/academic_print.service';
+import { previewAcademicPdf } from '../../../services/academicPrintService';
 
 const TYPE_LABELS = {
   STUDENT_CARD:  'Student ID Card',

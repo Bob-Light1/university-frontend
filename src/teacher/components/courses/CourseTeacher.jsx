@@ -46,7 +46,7 @@ import {
 } from '@mui/icons-material';
 
 import useCourse from '../../../hooks/useCourse';
-import { addCourseResource } from '../../../services/course.service';
+import { addCourseResource } from '../../../services/courseService';
 import api from '../../../api/axiosInstance';
 
 import CourseDetailDrawer from '../../../components/courses/CourseDetailDrawer';

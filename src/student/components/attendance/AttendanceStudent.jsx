@@ -34,7 +34,7 @@ import {
   AttendanceLinearBar,
   JustificationDialog,
 } from '../../../components/attendance/AttendanceShared';
-import { getMyStudentAttendanceStats } from '../../../services/attendance.service';
+import { getMyStudentAttendanceStats } from '../../../services/attendanceService';
 import { fDateWeekday } from '../../../utils/dateFormat';
 
 // ─────────────────────────────────────────────────────────────────────────────

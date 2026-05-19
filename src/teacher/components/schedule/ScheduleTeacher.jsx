@@ -35,7 +35,7 @@ import ScheduleCard         from '../../../components/schedule/ScheduleCard';
 import ScheduleDetailDrawer from '../../../components/schedule/ScheduleDetailDrawer';
 import useSchedule          from '../../../hooks/useSchedule';
 import useFormSnackbar      from '../../../hooks/useFormSnackBar';
-import { requestPostponement } from '../../../services/schedule.service';
+import { requestPostponement } from '../../../services/scheduleService';
 import PostponementForm from './PostponementForm';
 
 // ─── Eligibility helpers ──────────────────────────────────────────────────────

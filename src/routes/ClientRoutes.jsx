@@ -5,9 +5,10 @@ import AllCampus from '../client/components/allCampus/AllCampus';
 import Contact from '../client/components/contact/Contact';
 
 // Lazy layouts & pages
-const Client = lazy(() => import('../client/Client'));
-const Home = lazy(() => import('../client/components/home/Home'));
-const Login = lazy(() => import('../client/components/login/Login'));
+const Client          = lazy(() => import('../client/Client'));
+const Home            = lazy(() => import('../client/components/home/Home'));
+const Login           = lazy(() => import('../client/components/login/Login'));
+const PreRegistration = lazy(() => import('../client/components/preRegistration/PreRegistration'));
 
 export const clientRoutes = (
   
@@ -50,6 +51,16 @@ export const clientRoutes = (
         element={
           <Suspense fallback={<Loader />}>
             <Contact />
+          </Suspense>
+        }
+      />
+
+      {/* Public partner pre-registration — /register?ref=PARTNER_CODE */}
+      <Route
+        path="register"
+        element={
+          <Suspense fallback={<Loader />}>
+            <PreRegistration />
           </Suspense>
         }
       />

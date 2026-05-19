@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { Refresh, Grade, Gavel, Visibility, BarChart } from '@mui/icons-material';
 
-import * as examService from '../../../services/examination.service';
+import * as examService from '../../../services/examinationService';
 import { fDateTime } from '../../../utils/dateFormat';
 
 // ─── Status meta ──────────────────────────────────────────────────────────────

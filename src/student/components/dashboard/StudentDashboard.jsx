@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getStudentDashboard } from '../../../services/student.service';
+import { getStudentDashboard } from '../../../services/studentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import StudentDashboardSkeleton from './StudentDashboardSkeleton';
 import { fTime, fDateWeekday, fDateWeekdayLong } from '../../../utils/dateFormat';

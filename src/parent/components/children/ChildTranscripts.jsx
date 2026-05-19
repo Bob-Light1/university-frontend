@@ -10,7 +10,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { getMyChildren, getChildTranscripts, signTranscript } from '../../../services/parent.service';
+import { getMyChildren, getChildTranscripts, signTranscript } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fDateLong } from '../../../utils/dateFormat';
 
