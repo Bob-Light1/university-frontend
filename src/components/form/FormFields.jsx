@@ -49,6 +49,7 @@ export const FormTextField = ({
         ),
         ...slotPropsExtra,
       },
+      ...(type === 'date' && { inputLabel: { shrink: true } }),
     }}
     {...rest}
   />

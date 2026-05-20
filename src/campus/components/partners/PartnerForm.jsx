@@ -11,12 +11,12 @@
 import { useEffect, useMemo } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Stack, Typography, CircularProgress,
-  Divider, ToggleButtonGroup, ToggleButton,
+  Button, Grid, Stack, Typography, CircularProgress,
+  ToggleButtonGroup, ToggleButton,
   Snackbar, Alert,
 } from '@mui/material';
 import {
-  Business, Person, School, Handshake, Lock,
+  Business, Person, School, Handshake,
   EmojiEvents, AccountTree,
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
@@ -156,19 +156,13 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
       try {
         const payload = { ...values };
         if (isEdit && !payload.password) delete payload.password;
-        // Clean convention if empty
         const conv = payload.convention;
         if (!conv.startDate && !conv.endDate && !conv.commissionType) {
           delete payload.convention;
         }
-
-        let res;
-        if (isEdit) {
-          res = await updatePartner(partner._id, payload);
-        } else {
-          res = await registerPartner(payload);
-        }
-
+        const res = isEdit
+          ? await updatePartner(partner._id, payload)
+          : await registerPartner(payload);
         showSnackbar(
           isEdit ? 'Partner updated successfully.' : 'Partner created successfully.',
           'success',
@@ -190,14 +184,29 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
 
   const pt = formik.values.partnerType;
 
+  // Proxy for convention nested fields — keeps handleChange/handleBlur on the
+  // real formik so dot-notation paths (e.g. "convention.startDate") are resolved.
+  const convFormik = {
+    values:       formik.values.convention,
+    errors:       formik.errors.convention  ?? {},
+    touched:      formik.touched.convention ?? {},
+    handleChange: (e) => formik.setFieldValue(`convention.${e.target.name}`, e.target.value),
+    handleBlur:   (e) => formik.setFieldTouched(`convention.${e.target.name}`, true),
+  };
+
   return (
     <>
+      {/*
+        disableRestoreFocus prevents MUI from moving focus back to the trigger
+        element (which is inside #root, still aria-hidden during close animation).
+      */}
       <Dialog
         open={open}
         onClose={handleClose}
         maxWidth="md"
         fullWidth
         scroll="paper"
+        disableRestoreFocus
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
@@ -211,85 +220,88 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
 
         <DialogContent sx={{ py: 3 }}>
           <form id="partner-form" onSubmit={formik.handleSubmit} noValidate>
-            <Stack spacing={3}>
+            <Grid container spacing={3}>
 
-              {/* ── Identity ──────────────────────────────────────────────── */}
+              {/* ── Identity ────────────────────────────────────────────────── */}
               <FormSection title="Identity" icon={<Person color="action" />}>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <FormTextField formik={formik} name="firstName" label="First Name" />
-                  <FormTextField formik={formik} name="lastName"  label="Last Name"  />
+                <Stack spacing={2}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormTextField formik={formik} name="firstName" label="First Name" />
+                    <FormTextField formik={formik} name="lastName"  label="Last Name"  />
+                  </Stack>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormTextField formik={formik} name="email" label="Email Address" type="email" />
+                    <FormTextField formik={formik} name="phone" label="Phone (optional)" />
+                  </Stack>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormTextField   formik={formik} name="organization" label="Organization (optional)" />
+                    <FormSelectField formik={formik} name="gender"       label="Gender (optional)"       options={GENDER_OPTIONS} />
+                  </Stack>
+                  <FormTextField
+                    formik={formik}
+                    name="bio"
+                    label="Bio (optional)"
+                    multiline
+                    rows={3}
+                    placeholder="Short description, max 500 characters…"
+                  />
                 </Stack>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <FormTextField formik={formik} name="email"        label="Email Address" type="email" />
-                  <FormTextField formik={formik} name="phone"        label="Phone (optional)" />
-                </Stack>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <FormTextField   formik={formik} name="organization" label="Organization (optional)" />
-                  <FormSelectField formik={formik} name="gender" label="Gender (optional)" options={GENDER_OPTIONS} />
-                </Stack>
-                <FormTextField
-                  formik={formik}
-                  name="bio"
-                  label="Bio (optional)"
-                  multiline
-                  rows={3}
-                  placeholder="Short description, max 500 characters…"
-                />
               </FormSection>
 
-              {/* ── Partner Type ───────────────────────────────────────────── */}
+              {/* ── Partner Type ─────────────────────────────────────────────── */}
               <FormSection title="Partner Type" icon={<AccountTree color="action" />}>
-                <Stack spacing={0.5}>
-                  <Typography variant="caption" color="text.secondary" fontWeight={600}>
-                    Select type *
-                  </Typography>
-                  <ToggleButtonGroup
-                    exclusive
-                    value={formik.values.partnerType}
-                    onChange={(_, v) => {
-                      if (v) {
-                        formik.setFieldValue('partnerType', v);
-                        formik.setFieldValue('institutionType', '');
-                        formik.setFieldValue('commercialType', '');
-                      }
-                    }}
-                    size="small"
-                    sx={{ mb: 1 }}
-                  >
-                    <ToggleButton value="institutional" sx={{ textTransform: 'none', px: 2.5 }}>
-                      <School sx={{ mr: 1, fontSize: 18 }} /> Institutional
-                    </ToggleButton>
-                    <ToggleButton value="commercial" sx={{ textTransform: 'none', px: 2.5 }}>
-                      <Business sx={{ mr: 1, fontSize: 18 }} /> Commercial
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                  {formik.touched.partnerType && formik.errors.partnerType && (
-                    <Typography variant="caption" color="error">{formik.errors.partnerType}</Typography>
-                  )}
-                </Stack>
+                <Stack spacing={2}>
+                  <Stack spacing={0.5}>
+                    <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                      Select type *
+                    </Typography>
+                    <ToggleButtonGroup
+                      exclusive
+                      value={formik.values.partnerType}
+                      onChange={(_, v) => {
+                        if (v) {
+                          formik.setFieldValue('partnerType', v);
+                          formik.setFieldValue('institutionType', '');
+                          formik.setFieldValue('commercialType', '');
+                        }
+                      }}
+                      size="small"
+                    >
+                      <ToggleButton value="institutional" sx={{ textTransform: 'none', px: 2.5 }}>
+                        <School sx={{ mr: 1, fontSize: 18 }} /> Institutional
+                      </ToggleButton>
+                      <ToggleButton value="commercial" sx={{ textTransform: 'none', px: 2.5 }}>
+                        <Business sx={{ mr: 1, fontSize: 18 }} /> Commercial
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                    {formik.touched.partnerType && formik.errors.partnerType && (
+                      <Typography variant="caption" color="error">{formik.errors.partnerType}</Typography>
+                    )}
+                  </Stack>
 
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  {pt === 'institutional' && (
-                    <FormSelectField
-                      formik={formik}
-                      name="institutionType"
-                      label="Institution Type *"
-                      options={INSTITUTION_TYPES}
-                    />
-                  )}
-                  {pt === 'commercial' && (
-                    <FormSelectField
-                      formik={formik}
-                      name="commercialType"
-                      label="Commercial Type *"
-                      options={COMMERCIAL_TYPES}
-                    />
-                  )}
-                  <FormSelectField formik={formik} name="channelType" label="Channel" options={CHANNEL_TYPES} />
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    {pt === 'institutional' && (
+                      <FormSelectField
+                        formik={formik}
+                        name="institutionType"
+                        label="Institution Type *"
+                        options={INSTITUTION_TYPES}
+                      />
+                    )}
+                    {pt === 'commercial' && (
+                      <FormSelectField
+                        formik={formik}
+                        name="commercialType"
+                        label="Commercial Type *"
+                        options={COMMERCIAL_TYPES}
+                      />
+                    )}
+                    <FormSelectField formik={formik} name="channelType" label="Channel" options={CHANNEL_TYPES} />
+                  </Stack>
                 </Stack>
               </FormSection>
 
-              {/* ── Tier & Access ──────────────────────────────────────────── */}
+              {/* ── Tier & Access ────────────────────────────────────────────── */}
               <FormSection title="Tier & Access" icon={<EmojiEvents color="action" />}>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <FormSelectField formik={formik} name="tier" label="Tier" options={TIER_OPTIONS} />
@@ -299,90 +311,23 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
                 </Stack>
               </FormSection>
 
-              {/* ── Convention (optional) ──────────────────────────────────── */}
+              {/* ── Convention (optional) ────────────────────────────────────── */}
               <FormSection title="Convention (optional)" icon={<Handshake color="action" />} collapsible>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <FormTextField
-                    formik={{ ...formik, values: formik.values.convention, handleChange: formik.handleChange, handleBlur: formik.handleBlur, errors: {}, touched: {} }}
-                    name="convention.startDate"
-                    label="Start Date"
-                    type="date"
-                    slotPropsExtra={{ inputLabel: { shrink: true } }}
-                    value={formik.values.convention.startDate}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <FormTextField
-                    formik={{ ...formik, values: formik.values.convention, handleChange: formik.handleChange, handleBlur: formik.handleBlur, errors: {}, touched: {} }}
-                    name="convention.endDate"
-                    label="End Date"
-                    type="date"
-                    slotPropsExtra={{ inputLabel: { shrink: true } }}
-                    value={formik.values.convention.endDate}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
+                <Stack spacing={2}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormTextField formik={convFormik} name="startDate" label="Start Date" type="date" />
+                    <FormTextField formik={convFormik} name="endDate"   label="End Date"   type="date" />
+                  </Stack>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormSelectField formik={convFormik} name="commissionType"  label="Commission Type"    options={COMMISSION_TYPE_OPTIONS} />
+                    <FormTextField   formik={convFormik} name="commissionValue" label="Value (amount or %)" type="number" />
+                    <FormSelectField formik={convFormik} name="currency"        label="Currency"            options={CURRENCY_OPTIONS} />
+                  </Stack>
+                  <FormTextField formik={convFormik} name="notes" label="Notes" multiline rows={2} />
                 </Stack>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <FormSelectField
-                    formik={{
-                      values: formik.values.convention,
-                      handleChange: formik.handleChange,
-                      handleBlur: formik.handleBlur,
-                      errors: {},
-                      touched: {},
-                    }}
-                    name="convention.commissionType"
-                    label="Commission Type"
-                    options={COMMISSION_TYPE_OPTIONS}
-                  />
-                  <FormTextField
-                    formik={{
-                      values: formik.values.convention,
-                      handleChange: formik.handleChange,
-                      handleBlur: formik.handleBlur,
-                      errors: {},
-                      touched: {},
-                    }}
-                    name="convention.commissionValue"
-                    label="Value (amount or %)"
-                    type="number"
-                    value={formik.values.convention.commissionValue}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <FormSelectField
-                    formik={{
-                      values: formik.values.convention,
-                      handleChange: formik.handleChange,
-                      handleBlur: formik.handleBlur,
-                      errors: {},
-                      touched: {},
-                    }}
-                    name="convention.currency"
-                    label="Currency"
-                    options={CURRENCY_OPTIONS}
-                  />
-                </Stack>
-                <FormTextField
-                  formik={{
-                    values: formik.values.convention,
-                    handleChange: formik.handleChange,
-                    handleBlur: formik.handleBlur,
-                    errors: {},
-                    touched: {},
-                  }}
-                  name="convention.notes"
-                  label="Notes"
-                  multiline
-                  rows={2}
-                  value={formik.values.convention.notes}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
               </FormSection>
 
-            </Stack>
+            </Grid>
           </form>
         </DialogContent>
 
