@@ -50,6 +50,11 @@ const schema = Yup.object({
 const CommissionPayModal = ({ open, commission, onClose, onSuccess }) => {
   const { showSnackbar } = useFormSnackbar();
 
+  const handleClose = () => {
+    document.activeElement?.blur();
+    onClose();
+  };
+
   const formik = useFormik({
     initialValues: { paymentChannel: '', paymentRef: '', notes: '' },
     validationSchema: schema,
@@ -58,7 +63,7 @@ const CommissionPayModal = ({ open, commission, onClose, onSuccess }) => {
       try {
         await onSuccess(commission._id, values);
         resetForm();
-        onClose();
+        handleClose();
       } catch (err) {
         showSnackbar(err.response?.data?.message || 'Failed to mark commission as paid.', 'error');
       } finally {
@@ -80,7 +85,7 @@ const CommissionPayModal = ({ open, commission, onClose, onSuccess }) => {
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="sm"
       fullWidth
       PaperProps={{ sx: { borderRadius: 3 } }}
@@ -169,7 +174,7 @@ const CommissionPayModal = ({ open, commission, onClose, onSuccess }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
         <Button
           variant="contained"
           color="success"

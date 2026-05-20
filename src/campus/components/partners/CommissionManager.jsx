@@ -72,6 +72,8 @@ const configSchema = Yup.object({
 // ─── Commission Config Dialog ─────────────────────────────────────────────────
 
 const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
+  const handleClose = () => { document.activeElement?.blur(); onClose(); };
+
   const formik = useFormik({
     initialValues: {
       ruleType:    config?.ruleType    ?? 'FIXED',
@@ -95,7 +97,7 @@ const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
   const isFixed = formik.values.ruleType === 'FIXED';
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Settings sx={{ color: 'text.secondary' }} />
@@ -168,7 +170,7 @@ const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
         <Button
           variant="contained"
           disabled={formik.isSubmitting}

@@ -33,6 +33,12 @@ import { createLevelSchema } from '../../../yupSchema/createLevelSchema';
 const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
   const [levels, setLevels] = useState([]);
   const [editingLevel, setEditingLevel] = useState(null);
+
+  const handleClose = () => {
+    document.activeElement?.blur();
+    setEditingLevel(null);
+    onClose();
+  };
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -110,10 +116,7 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        setEditingLevel(null);
-        onClose();
-      }}
+      onClose={handleClose}
       maxWidth="sm"
       fullWidth
       disableEnforceFocus
@@ -124,7 +127,7 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
         <Typography variant="h6" fontWeight={700}>
           Gestion des niveaux
         </Typography>
-        <IconButton onClick={onClose}>
+        <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </Box>

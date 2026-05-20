@@ -1090,6 +1090,7 @@ const PostponementTab = () => {
 const LATE_MINUTES_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
 
 const InitAttendanceDialog = ({ open, onClose, onSuccess, campusId }) => {
+  const handleClose = () => { document.activeElement?.blur(); onClose(); };
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [campusClasses,  setCampusClasses]  = useState([]);
@@ -1227,7 +1228,7 @@ const InitAttendanceDialog = ({ open, onClose, onSuccess, campusId }) => {
     : pendingSessions;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth
       PaperProps={{ sx: { borderRadius: 3, height: '90vh', display: 'flex', flexDirection: 'column' } }}>
       <DialogTitle fontWeight={700}>Teacher Roll Call</DialogTitle>
 
@@ -1392,7 +1393,7 @@ const InitAttendanceDialog = ({ open, onClose, onSuccess, campusId }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button
           variant="contained"
           onClick={handleSubmit}
@@ -1418,6 +1419,7 @@ const InitAttendanceDialog = ({ open, onClose, onSuccess, campusId }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PayrollDialog = ({ open, onClose }) => {
+  const handleClose = () => { document.activeElement?.blur(); onClose(); };
   const theme = useTheme();
   const currentDate = new Date();
 
@@ -1446,7 +1448,7 @@ const PayrollDialog = ({ open, onClose }) => {
   ];
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
       <DialogTitle fontWeight={800}>Payroll Report</DialogTitle>
       <DialogContent dividers>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={3} alignItems="flex-end">
@@ -1542,7 +1544,7 @@ const PayrollDialog = ({ open, onClose }) => {
         )}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={handleClose}>Close</Button>
       </DialogActions>
     </Dialog>
   );

@@ -140,6 +140,11 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
   const isEdit = Boolean(partner?._id);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
+  const handleClose = () => {
+    document.activeElement?.blur();
+    onClose();
+  };
+
   const schema = useMemo(() => buildSchema(isEdit), [isEdit]);
 
   const formik = useFormik({
@@ -170,7 +175,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
         );
         resetForm();
         onSuccess?.(res.data?.data ?? res.data);
-        onClose();
+        handleClose();
       } catch (err) {
         showSnackbar(err.response?.data?.message || 'Failed to save partner.', 'error');
       } finally {
@@ -189,7 +194,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
     <>
       <Dialog
         open={open}
-        onClose={onClose}
+        onClose={handleClose}
         maxWidth="md"
         fullWidth
         scroll="paper"
@@ -382,7 +387,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
         </DialogContent>
 
         <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-          <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+          <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
           <Button
             form="partner-form"
             type="submit"

@@ -43,6 +43,14 @@ import api from '../../../api/axiosInstance';
 const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
   const { campusId } = useParams();
 
+  const handleClose = () => {
+    document.activeElement?.blur();
+    setEditingDept(null);
+    setFormOpen(false);
+    setErrorMsg(null);
+    onClose();
+  };
+
   const [departments, setDepartments]     = useState([]);
   const [editingDept,  setEditingDept]    = useState(null);
   const [loading,      setLoading]        = useState(false);
@@ -167,12 +175,7 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        setEditingDept(null);
-        setFormOpen(false);
-        setErrorMsg(null);
-        onClose();
-      }}
+      onClose={handleClose}
       maxWidth="sm"
       fullWidth
       disableEnforceFocus
@@ -195,7 +198,7 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
             Manage Departments
           </Typography>
         </Stack>
-        <IconButton onClick={onClose} sx={{ color: 'white' }}>
+        <IconButton onClick={handleClose} sx={{ color: 'white' }}>
           <CloseIcon />
         </IconButton>
       </Box>

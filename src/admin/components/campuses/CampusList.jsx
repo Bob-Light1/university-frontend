@@ -33,8 +33,10 @@ const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 
 
 // ─── Delete confirm dialog ────────────────────────────────────────────────────
 
-const ConfirmDeleteDialog = ({ campus, onClose, onConfirm, busy }) => (
-  <Dialog open={!!campus} onClose={onClose} maxWidth="xs" fullWidth>
+const ConfirmDeleteDialog = ({ campus, onClose, onConfirm, busy }) => {
+  const handleClose = () => { document.activeElement?.blur(); onClose(); };
+  return (
+  <Dialog open={!!campus} onClose={handleClose} maxWidth="xs" fullWidth>
     <DialogTitle fontWeight={700}>Archive Campus</DialogTitle>
     <DialogContent>
       <Typography variant="body2">
@@ -43,7 +45,7 @@ const ConfirmDeleteDialog = ({ campus, onClose, onConfirm, busy }) => (
       </Typography>
     </DialogContent>
     <DialogActions sx={{ p: 2, pt: 0 }}>
-      <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+      <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
       <Button
         variant="contained"
         color="error"
@@ -56,7 +58,8 @@ const ConfirmDeleteDialog = ({ campus, onClose, onConfirm, busy }) => (
       </Button>
     </DialogActions>
   </Dialog>
-);
+  );
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 

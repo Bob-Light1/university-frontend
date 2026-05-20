@@ -439,6 +439,11 @@ const CourseForm = ({
   const [tab,        setTab]        = useState(0);
   const [submitError, setSubmitError] = useState('');
 
+  const handleClose = () => {
+    document.activeElement?.blur();
+    onClose();
+  };
+
   // Build initial values — merging defaults with existing data
   const formInitials = useMemo(() => {
     if (!initialValues) return EMPTY_VALUES;
@@ -493,7 +498,7 @@ const CourseForm = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="md"
       fullWidth
       disableEnforceFocus
@@ -510,7 +515,7 @@ const CourseForm = ({
           <Form>
             <DialogTitle id="course-form-title" sx={{ borderBottom: 1, borderColor: 'divider', pr: 6 }}>
               {mode === 'edit' ? `Edit Course — ${initialValues?.courseCode}` : 'New Course'}
-              <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
+              <IconButton onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
                 <Close />
               </IconButton>
             </DialogTitle>
@@ -823,7 +828,7 @@ const CourseForm = ({
             </DialogContent>
 
             <DialogActions sx={{ borderTop: 1, borderColor: 'divider', px: 3, py: 1.5 }}>
-              <Button onClick={onClose} disabled={isSubmitting} color="inherit">
+              <Button onClick={handleClose} disabled={isSubmitting} color="inherit">
                 Cancel
               </Button>
               <Button

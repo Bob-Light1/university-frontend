@@ -204,6 +204,11 @@ const ResultForm = ({
   const isEdit       = mode === 'edit';
   const isCreateMode = !isEdit;
 
+  const handleClose = () => {
+    document.activeElement?.blur();
+    onClose();
+  };
+
   /**
    * Build normalized Formik initial values.
    *
@@ -252,7 +257,7 @@ const ResultForm = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="md"
       fullWidth
       disableEnforceFocus
@@ -600,7 +605,7 @@ const ResultForm = ({
             </DialogContent>
 
             <DialogActions sx={{ px: 3, py: 2 }}>
-              <Button onClick={onClose} disabled={formik.isSubmitting}>
+              <Button onClick={handleClose} disabled={formik.isSubmitting}>
                 Cancel
               </Button>
               {/*
