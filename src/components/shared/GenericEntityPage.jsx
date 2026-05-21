@@ -202,17 +202,16 @@ const GenericEntityPage = ({
   //   - a function(classes)     → filter array   (legacy style – only classes)
   //   - a static array
   const computedFilters = useMemo(() => {
-     if (relatedDataLoading) return [];
+    if (relatedDataLoading) return [];
 
     if (typeof filterConfig === 'function') {
-      // Detect legacy signature: function expects a plain array (classes only)
-      // We call it with the full relatedData object; configs that only use
-      // getFilterConfig(classes) will still work because relatedData.classes is an array.
-      return filterConfig(relatedData);
+      // Pass relatedData as first arg (legacy: configs that ignore it still work).
+      // Pass { includeArchived } as second arg so configs can show/hide 'archived' option.
+      return filterConfig(relatedData, { includeArchived });
     }
     if (Array.isArray(filterConfig)) return filterConfig;
     return [];
-  }, [filterConfig, relatedData, relatedDataLoading]);
+  }, [filterConfig, relatedData, relatedDataLoading, includeArchived]);
 
   const metrics = useMemo(
     () => getKPIMetrics(kpis, theme),
@@ -230,7 +229,12 @@ const GenericEntityPage = ({
   const handleFilterChange = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPage(0);
-  }, [setFilters, setPage]);
+    // Selecting 'archived' from the status dropdown auto-enables the archive toggle
+    // so the backend receives includeArchived=true and the filter makes sense.
+    if (key === 'status' && value === 'archived' && !includeArchived) {
+      setIncludeArchived(true);
+    }
+  }, [setFilters, setPage, includeArchived, setIncludeArchived]);
 
   const handleResetFilters = useCallback(() => {
     setFilters({});
