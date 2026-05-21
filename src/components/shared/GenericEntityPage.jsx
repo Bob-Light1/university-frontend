@@ -49,7 +49,9 @@ import {
   MoreVert,
   FileDownload,
   FileUpload,
+  Unarchive,
 } from '@mui/icons-material';
+import ConfirmActionDialog from './ConfirmActionDialog';
 import { useParams } from 'react-router-dom';
 
 import KPICards from './KpiCard';
@@ -188,6 +190,8 @@ const GenericEntityPage = ({
   const [bulkClassId,          setBulkClassId]          = useState('');
   const [bulkEmail,            setBulkEmail]            = useState({ subject: '', message: '' });
   const [snackbar,             setSnackbar]             = useState({ open: false, message: '', severity: 'success' });
+  const [confirmDialog,        setConfirmDialog]        = useState({ open: false, action: 'archive', id: null, label: '', busy: false });
+  const [bulkConfirmOpen,      setBulkConfirmOpen]      = useState(false);
 
   // ============================================================
   // COMPUTED
@@ -244,28 +248,46 @@ const GenericEntityPage = ({
       setIsDrawerOpen(true); 
     }, []);
 
-  const handleArchive = useCallback(async (id) => {
-    if (!window.confirm(`Are you sure you want to archive this ${entityName}?`)) return;
-    const result = await deleteEntity(id);
-    showSnackbar(
-      result.success
-        ? `${entityName} archived successfully`
-        : result.error || `Failed to archive ${entityName}`,
-      result.success ? 'success' : 'error'
-    );
-  }, [entityName, deleteEntity, showSnackbar]);
+  const getEntityLabel = useCallback((id) => {
+    const e = entities.find((ent) => ent._id === id);
+    if (!e) return '';
+    return e.firstName
+      ? `${e.firstName} ${e.lastName || ''}`.trim()
+      : e.name || e.email || '';
+  }, [entities]);
 
-  const handleRestore = useCallback(async (id) => {
-    if (!window.confirm(`Are you sure you want to restore this ${entityName}?`)) return;
+  const handleArchive = useCallback((id) => {
+    setConfirmDialog({ open: true, action: 'archive', id, label: getEntityLabel(id), busy: false });
+  }, [getEntityLabel]);
+
+  const handleRestore = useCallback((id) => {
+    setConfirmDialog({ open: true, action: 'restore', id, label: getEntityLabel(id), busy: false });
+  }, [getEntityLabel]);
+
+  const handleConfirmAction = useCallback(async () => {
+    const { action, id } = confirmDialog;
+    setConfirmDialog((prev) => ({ ...prev, busy: true }));
     try {
-      await api.patch(`/${apiEndpoint}/${id}/restore`);
-      showSnackbar(`${entityName} restored successfully`, 'success');
-      fetchEntities();
-      fetchKPIs();
+      if (action === 'archive') {
+        const result = await deleteEntity(id);
+        showSnackbar(
+          result.success
+            ? `${entityName} archived successfully`
+            : result.error || `Failed to archive ${entityName}`,
+          result.success ? 'success' : 'error',
+        );
+      } else {
+        await api.patch(`/${apiEndpoint}/${id}/restore`);
+        showSnackbar(`${entityName} restored successfully`, 'success');
+        fetchEntities();
+        fetchKPIs();
+      }
     } catch (err) {
-      showSnackbar(err.response?.data?.message || `Failed to restore ${entityName}`, 'error');
+      showSnackbar(err.response?.data?.message || `Failed to ${action} ${entityName}`, 'error');
+    } finally {
+      setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
-  }, [entityName, apiEndpoint, fetchEntities, fetchKPIs, showSnackbar]);
+  }, [confirmDialog, entityName, apiEndpoint, deleteEntity, fetchEntities, fetchKPIs, showSnackbar]);
 
   const handleFormSuccess = useCallback((message) => {
     setIsFormModalOpen(false);
@@ -303,11 +325,15 @@ const GenericEntityPage = ({
     else showSnackbar(result.error, 'error');
   }, [bulkEmail, bulkSendEmail, showSnackbar]);
 
-  const handleBulkArchiveSubmit = useCallback(async () => {
-    if (!window.confirm(`Archive ${selectedCount} ${entityName}(s)?`)) return;
+  const handleBulkArchiveSubmit = useCallback(() => {
+    setBulkConfirmOpen(true);
+  }, []);
+
+  const handleBulkConfirmAction = useCallback(async () => {
     const result = await bulkArchive();
     showSnackbar(result.success ? result.message : result.error, result.success ? 'success' : 'error');
-  }, [selectedCount, entityName, bulkArchive, showSnackbar]);
+    setBulkConfirmOpen(false);
+  }, [bulkArchive, showSnackbar]);
 
   const handleBulkAction = useCallback((action) => {
     setBulkMenuAnchor(null);
@@ -384,13 +410,15 @@ const GenericEntityPage = ({
           <Edit fontSize="small" />
         </IconButton>
         {canArchiveRestore && (
-          <IconButton
-            size="small"
-            onClick={() => handleArchive(entity._id)}
-            sx={{ color: 'error.main' }}
-          >
-            <Delete fontSize="small" />
-          </IconButton>
+          entity.status === 'archived' ? (
+            <IconButton size="small" onClick={() => handleRestore(entity._id)} sx={{ color: 'success.main' }}>
+              <Unarchive fontSize="small" />
+            </IconButton>
+          ) : (
+            <IconButton size="small" onClick={() => handleArchive(entity._id)} sx={{ color: 'error.main' }}>
+              <Delete fontSize="small" />
+            </IconButton>
+          )
         )}
       </CardActions>
     </Card>
@@ -712,6 +740,27 @@ const GenericEntityPage = ({
           <MenuItem onClick={() => handleBulkAction('export')}><Download sx={{ mr: 1 }} /> Export</MenuItem>
         )}
       </Menu>
+
+      {/* ── Archive / Restore confirm dialog ── */}
+      <ConfirmActionDialog
+        open={confirmDialog.open}
+        action={confirmDialog.action}
+        entityLabel={confirmDialog.label}
+        entityType={entityName}
+        busy={confirmDialog.busy}
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+        onConfirm={handleConfirmAction}
+      />
+
+      {/* ── Bulk archive confirm dialog ── */}
+      <ConfirmActionDialog
+        open={bulkConfirmOpen}
+        action="archive"
+        entityLabel={`${selectedCount} ${entityName.toLowerCase()}(s)`}
+        busy={processing}
+        onClose={() => setBulkConfirmOpen(false)}
+        onConfirm={handleBulkConfirmAction}
+      />
 
       {/* ── Snackbar ── */}
       <Snackbar

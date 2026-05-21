@@ -62,6 +62,14 @@ export const archiveCampus = (id) =>
   api.delete(`/campus/${id}`);
 
 /**
+ * PATCH /campus/:id/restore
+ * Restore an archived campus back to active status.
+ * @param {string} id
+ */
+export const restoreCampus = (id) =>
+  api.patch(`/campus/${id}/restore`);
+
+/**
  * GET /campus/:id/dashboard-stats
  * Dashboard KPIs for a specific campus.
  * @param {string} id

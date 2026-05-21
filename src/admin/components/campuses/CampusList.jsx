@@ -3,7 +3,9 @@
  * @description Admin portal — full campus list with search, filter, and actions.
  *
  * Data: GET /campus/all (public endpoint, no campus isolation)
- * Actions: DELETE /campus/:id (archive — ADMIN/DIRECTOR only)
+ * Actions:
+ *   DELETE /campus/:id         (archive — ADMIN/DIRECTOR only)
+ *   PATCH  /campus/:id/restore (restore — ADMIN/DIRECTOR only)
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -13,17 +15,17 @@ import {
   Table, TableBody, TableCell, TableHead, TableRow,
   TableContainer, TablePagination, TextField, FormControl,
   InputLabel, Select, MenuItem, Button, IconButton,
-  InputAdornment, Avatar, CircularProgress, Alert,
-  Skeleton, Tooltip, Dialog, DialogTitle,
-  DialogContent, DialogActions,
+  InputAdornment, Avatar, Alert,
+  Skeleton, Tooltip,
 } from '@mui/material';
 import {
-  Search, FilterListOff, AddBusiness, Delete,
-  Visibility, Business,
+  Search, FilterListOff, AddBusiness,
+  Visibility, Business, Inventory2, Unarchive,
 } from '@mui/icons-material';
 
-import { getAllCampuses, archiveCampus } from '../../../services/admin_service';
+import { getAllCampuses, archiveCampus, restoreCampus } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -31,49 +33,18 @@ const STATUS_COLOR = { active: 'success', inactive: 'default', archived: 'error'
 const DEFAULT_FILTERS = { search: '', status: '', page: 1, limit: 20 };
 const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
-// ─── Delete confirm dialog ────────────────────────────────────────────────────
-
-const ConfirmDeleteDialog = ({ campus, onClose, onConfirm, busy }) => {
-  const handleClose = () => { document.activeElement?.blur(); onClose(); };
-  return (
-  <Dialog open={!!campus} onClose={handleClose} maxWidth="xs" fullWidth>
-    <DialogTitle fontWeight={700}>Archive Campus</DialogTitle>
-    <DialogContent>
-      <Typography variant="body2">
-        Archive <strong>{campus?.campus_name}</strong>? This action cannot be undone.
-        All associated data will be retained but the campus will be inaccessible.
-      </Typography>
-    </DialogContent>
-    <DialogActions sx={{ p: 2, pt: 0 }}>
-      <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
-      <Button
-        variant="contained"
-        color="error"
-        disabled={busy}
-        startIcon={busy ? <CircularProgress size={14} color="inherit" /> : <Delete />}
-        onClick={onConfirm}
-        sx={{ textTransform: 'none', borderRadius: 2 }}
-      >
-        {busy ? 'Archiving…' : 'Archive'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-  );
-};
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CampusList() {
   const navigate = useNavigate();
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
-  const [campuses,    setCampuses]    = useState([]);
-  const [pagination,  setPagination]  = useState({ page: 1, limit: 20, total: 0 });
-  const [filters,     setFilters]     = useState(DEFAULT_FILTERS);
-  const [loading,     setLoading]     = useState(true);
-  const [error,       setError]       = useState('');
-  const [toDelete,    setToDelete]    = useState(null);
-  const [deleteBusy,  setDeleteBusy]  = useState(false);
+  const [campuses,      setCampuses]      = useState([]);
+  const [pagination,    setPagination]    = useState({ page: 1, limit: 20, total: 0 });
+  const [filters,       setFilters]       = useState(DEFAULT_FILTERS);
+  const [loading,       setLoading]       = useState(true);
+  const [error,         setError]         = useState('');
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, action: 'archive', campus: null, busy: false });
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -99,18 +70,28 @@ export default function CampusList() {
 
   const handleReset = () => setFilters(DEFAULT_FILTERS);
 
-  const handleDelete = async () => {
-    if (!toDelete) return;
-    setDeleteBusy(true);
+  const handleAskArchive = (campus) =>
+    setConfirmDialog({ open: true, action: 'archive', campus, busy: false });
+
+  const handleAskRestore = (campus) =>
+    setConfirmDialog({ open: true, action: 'restore', campus, busy: false });
+
+  const handleConfirmAction = async () => {
+    const { action, campus } = confirmDialog;
+    setConfirmDialog((prev) => ({ ...prev, busy: true }));
     try {
-      await archiveCampus(toDelete._id);
-      showSnackbar(`${toDelete.campus_name} archived.`, 'success');
-      setToDelete(null);
+      if (action === 'archive') {
+        await archiveCampus(campus._id);
+        showSnackbar(`${campus.campus_name} archived.`, 'success');
+      } else {
+        await restoreCampus(campus._id);
+        showSnackbar(`${campus.campus_name} restored.`, 'success');
+      }
       fetch();
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to archive campus.', 'error');
+      showSnackbar(err.response?.data?.message || `Failed to ${action} campus.`, 'error');
     } finally {
-      setDeleteBusy(false);
+      setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
   };
 
@@ -137,7 +118,7 @@ export default function CampusList() {
         </Button>
       </Stack>
 
-      {/* ── Filters ────────────────────────────────────────────────────────────── */}
+      {/* ── Filters ─────────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" sx={{ mb: 2 }}>
         <TextField
           size="small"
@@ -175,7 +156,7 @@ export default function CampusList() {
 
       {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
 
-      {/* ── Table ──────────────────────────────────────────────────────────────── */}
+      {/* ── Table ───────────────────────────────────────────────────────────────── */}
       <Paper variant="outlined" sx={{ borderRadius: 3 }}>
         <TableContainer>
           <Table size="small">
@@ -270,21 +251,20 @@ export default function CampusList() {
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5} justifyContent="flex-end">
                         <Tooltip title="View campus portal">
-                          <IconButton
-                            size="small"
-                            onClick={() => navigate(`/campus/${c._id}`)}
-                          >
+                          <IconButton size="small" onClick={() => navigate(`/campus/${c._id}`)}>
                             <Visibility fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        {c.status !== 'archived' && (
+                        {c.status === 'archived' ? (
+                          <Tooltip title="Restore campus">
+                            <IconButton size="small" color="success" onClick={() => handleAskRestore(c)}>
+                              <Unarchive fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
                           <Tooltip title="Archive campus">
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => setToDelete(c)}
-                            >
-                              <Delete fontSize="small" />
+                            <IconButton size="small" color="error" onClick={() => handleAskArchive(c)}>
+                              <Inventory2 fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         )}
@@ -310,15 +290,18 @@ export default function CampusList() {
         />
       </Paper>
 
-      {/* ── Archive confirm dialog ──────────────────────────────────────────────── */}
-      <ConfirmDeleteDialog
-        campus={toDelete}
-        busy={deleteBusy}
-        onClose={() => setToDelete(null)}
-        onConfirm={handleDelete}
+      {/* ── Archive / Restore confirm dialog ────────────────────────────────────── */}
+      <ConfirmActionDialog
+        open={confirmDialog.open}
+        action={confirmDialog.action}
+        entityLabel={confirmDialog.campus?.campus_name ?? ''}
+        entityType="campus"
+        busy={confirmDialog.busy}
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+        onConfirm={handleConfirmAction}
       />
 
-      {/* ── Snackbar ───────────────────────────────────────────────────────────── */}
+      {/* ── Snackbar ────────────────────────────────────────────────────────────── */}
       {snackbar.open && (
         <Alert
           severity={snackbar.severity}

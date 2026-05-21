@@ -12,6 +12,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Add, FileDownload, Handshake, People, TrendingUp, EmojiEvents } from '@mui/icons-material';
+import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
 
 import usePartner from '../../../hooks/usePartner';
 import KPICards   from '../../../components/shared/KpiCard';
@@ -30,15 +31,16 @@ const PartnerManager = () => {
   const {
     partners, pagination, filters, loading, error,
     fetch, handleFilterChange, handleReset, setPage,
-    changeStatus, removePartner, refreshQR, downloadCSV,
+    changeStatus, removePartner, unarchivePartner, refreshQR, downloadCSV,
   } = usePartner();
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
-  const [formOpen,    setFormOpen]    = useState(false);
-  const [editTarget,  setEditTarget]  = useState(null);
-  const [drawerOpen,  setDrawerOpen]  = useState(false);
-  const [viewTarget,  setViewTarget]  = useState(null);
+  const [formOpen,       setFormOpen]       = useState(false);
+  const [editTarget,     setEditTarget]     = useState(null);
+  const [drawerOpen,     setDrawerOpen]     = useState(false);
+  const [viewTarget,     setViewTarget]     = useState(null);
+  const [confirmDialog,  setConfirmDialog]  = useState({ open: false, action: 'archive', partner: null, busy: false });
 
   // ─── Derived KPIs ──────────────────────────────────────────────────────────
 
@@ -120,13 +122,31 @@ const PartnerManager = () => {
     }
   };
 
-  const handleArchive = async (id) => {
+  const handleAskArchive = (partner) => {
+    setConfirmDialog({ open: true, action: 'archive', partner, busy: false });
+    setDrawerOpen(false);
+  };
+
+  const handleAskRestore = (partner) => {
+    setConfirmDialog({ open: true, action: 'restore', partner, busy: false });
+    setDrawerOpen(false);
+  };
+
+  const handleConfirmAction = async () => {
+    const { action, partner } = confirmDialog;
+    setConfirmDialog((prev) => ({ ...prev, busy: true }));
     try {
-      await removePartner(id);
-      showSnackbar('Partner archived.', 'success');
-      if (viewTarget?._id === id) handleCloseDrawer();
+      if (action === 'archive') {
+        await removePartner(partner._id);
+        showSnackbar('Partner archived.', 'success');
+      } else {
+        await unarchivePartner(partner._id);
+        showSnackbar('Partner restored.', 'success');
+      }
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Cannot archive — pending commissions exist.', 'error');
+      showSnackbar(err.response?.data?.message || `Failed to ${action} partner.`, 'error');
+    } finally {
+      setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
   };
 
@@ -217,7 +237,8 @@ const PartnerManager = () => {
         onView={handleOpenView}
         onEdit={handleOpenEdit}
         onToggleStatus={handleToggleStatus}
-        onArchive={handleArchive}
+        onArchive={(partner) => handleAskArchive(partner)}
+        onRestore={(partner) => handleAskRestore(partner)}
       />
 
       {/* ── Create / Edit Dialog ──────────────────────────────────────────────── */}
@@ -240,10 +261,26 @@ const PartnerManager = () => {
           onClose={handleCloseDrawer}
           onEdit={handleOpenEdit}
           onToggleStatus={handleToggleStatus}
-          onArchive={handleArchive}
+          onArchive={(p) => handleAskArchive(p)}
+          onRestore={(p) => handleAskRestore(p)}
           onRegenerateQR={handleRegenerateQR}
         />
       </Drawer>
+
+      {/* ── Archive / Restore confirm ─────────────────────────────────────────── */}
+      <ConfirmActionDialog
+        open={confirmDialog.open}
+        action={confirmDialog.action}
+        entityLabel={
+          confirmDialog.partner
+            ? `${confirmDialog.partner.firstName} ${confirmDialog.partner.lastName}`
+            : ''
+        }
+        entityType="partner"
+        busy={confirmDialog.busy}
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+        onConfirm={handleConfirmAction}
+      />
 
       {/* ── Snackbar ──────────────────────────────────────────────────────────── */}
       <Snackbar

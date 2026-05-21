@@ -18,7 +18,7 @@ import {
   IconButton, Tooltip, Skeleton, Paper,
 } from '@mui/material';
 import {
-  Visibility, Edit, Block, CheckCircle, Delete,
+  Visibility, Edit, Block, CheckCircle, Delete, Unarchive,
   EmojiEvents,
 } from '@mui/icons-material';
 
@@ -61,6 +61,7 @@ const PartnerList = ({
   onEdit,
   onToggleStatus,
   onArchive,
+  onRestore,
 }) => {
   const { page, limit, total } = pagination;
 
@@ -186,25 +187,35 @@ const PartnerList = ({
                             <Edit fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title={partner.status === 'active' ? 'Suspend' : 'Activate'}>
-                          <IconButton
-                            size="small"
-                            color={partner.status === 'active' ? 'warning' : 'success'}
-                            onClick={() => onToggleStatus(
-                              partner._id,
-                              partner.status === 'active' ? 'suspended' : 'active',
-                            )}
-                          >
-                            {partner.status === 'active'
-                              ? <Block fontSize="small" />
-                              : <CheckCircle fontSize="small" />}
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Archive">
-                          <IconButton size="small" color="error" onClick={() => onArchive(partner._id)}>
-                            <Delete fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        {partner.status !== 'archived' && (
+                          <Tooltip title={partner.status === 'active' ? 'Suspend' : 'Activate'}>
+                            <IconButton
+                              size="small"
+                              color={partner.status === 'active' ? 'warning' : 'success'}
+                              onClick={() => onToggleStatus(
+                                partner._id,
+                                partner.status === 'active' ? 'suspended' : 'active',
+                              )}
+                            >
+                              {partner.status === 'active'
+                                ? <Block fontSize="small" />
+                                : <CheckCircle fontSize="small" />}
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        {partner.status === 'archived' ? (
+                          <Tooltip title="Restore">
+                            <IconButton size="small" color="success" onClick={() => onRestore(partner)}>
+                              <Unarchive fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Archive">
+                            <IconButton size="small" color="error" onClick={() => onArchive(partner)}>
+                              <Delete fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>

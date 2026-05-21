@@ -177,11 +177,19 @@ export const togglePartnerStatus = (id, status) =>
 
 /**
  * DELETE /partners/:id
- * Soft-archive a partner (ADMIN only). Blocked if pending commissions exist.
+ * Soft-archive a partner. Blocked if pending commissions exist.
  * @param {string} id
  */
 export const archivePartner = (id) =>
   api.delete(`/partners/${id}`);
+
+/**
+ * PATCH /partners/:id/restore
+ * Restore an archived partner back to active status.
+ * @param {string} id
+ */
+export const restorePartner = (id) =>
+  api.patch(`/partners/${id}/restore`);
 
 /**
  * POST /partners/:id/qr-code

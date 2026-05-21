@@ -15,6 +15,7 @@ import {
   updatePartner,
   togglePartnerStatus,
   archivePartner,
+  restorePartner,
   regenerateQR,
   exportPartners,
 } from '../services/partnerService';
@@ -101,6 +102,12 @@ const usePartner = () => {
     return res.data;
   }, [fetch]);
 
+  const unarchivePartner = useCallback(async (id) => {
+    const res = await restorePartner(id);
+    await fetch();
+    return res.data;
+  }, [fetch]);
+
   const refreshQR = useCallback(async (id) => {
     const res = await regenerateQR(id);
     await fetch();
@@ -138,6 +145,7 @@ const usePartner = () => {
     editPartner,
     changeStatus,
     removePartner,
+    unarchivePartner,
     refreshQR,
     downloadCSV,
   };
