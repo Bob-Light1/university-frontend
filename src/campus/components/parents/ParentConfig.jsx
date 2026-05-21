@@ -114,7 +114,7 @@ export const renderTableRow = (parent, helpers) => {
       : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${parent.profileImage.replace(/^\//, '')}`
     : null;
 
-  const isArchived = parent.isArchived === true;
+  const isArchived = parent.status === 'archived';
 
   const statusColor =
     isArchived                    ? 'default' :
