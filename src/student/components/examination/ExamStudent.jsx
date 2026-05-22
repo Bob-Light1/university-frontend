@@ -131,7 +131,7 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
         questionsRef.current = qs;
         const saved = {};
         (data.savedAnswers || []).forEach((a) => {
-          saved[a.questionId] = a.selectedOption ?? a.answerText ?? '';
+          saved[a.questionId] = a.selectedOption ?? a.openText ?? '';
         });
         setAnswers(saved);
       })
@@ -201,7 +201,7 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
     try {
       await examService.saveAnswer(attempt.submissionId, {
         questionId,
-        answerText: answers[questionId] || '',
+        openText: answers[questionId] || '',
       });
     } catch {
       // silent

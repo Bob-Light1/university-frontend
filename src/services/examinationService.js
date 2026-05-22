@@ -32,12 +32,11 @@ export const getSession      = (id)          => api.get(`${BASE}/sessions/${id}`
 export const updateSession   = (id, data)    => api.patch(`${BASE}/sessions/${id}`, data);
 export const deleteSession   = (id)          => api.delete(`${BASE}/sessions/${id}`);
 export const submitSession   = (id)          => api.patch(`${BASE}/sessions/${id}/submit`);
-export const approveSession  = (id)          => api.patch(`${BASE}/sessions/${id}/approve`);
-export const publishSession  = (id)          => api.patch(`${BASE}/sessions/${id}/publish`);
-export const startSession    = (id)          => api.patch(`${BASE}/sessions/${id}/start`);
-export const completeSession = (id)          => api.patch(`${BASE}/sessions/${id}/complete`);
-export const cancelSession   = (id, data)    => api.patch(`${BASE}/sessions/${id}/cancel`, data);
-export const postponeSession = (id, data)    => api.patch(`${BASE}/sessions/${id}/postpone`, data);
+export const startSession      = (id)       => api.patch(`${BASE}/sessions/${id}/start`);
+export const completeSession   = (id)       => api.patch(`${BASE}/sessions/${id}/complete`);
+export const cancelSession     = (id, data) => api.patch(`${BASE}/sessions/${id}/cancel`, data);
+export const postponeSession   = (id, data) => api.patch(`${BASE}/sessions/${id}/postpone`, data);
+export const rescheduleSession = (id, data) => api.patch(`${BASE}/sessions/${id}/reschedule`, data);
 export const getSessionHallTickets = (id)    => api.get(`${BASE}/sessions/${id}/hall-tickets`);
 
 // ─── Enrollments ──────────────────────────────────────────────────────────────

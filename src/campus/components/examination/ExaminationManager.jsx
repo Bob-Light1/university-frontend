@@ -24,7 +24,7 @@ import {
   Add, Refresh, Delete, Edit, Visibility,
   PlayArrow, Schedule, CheckCircle, Cancel, PostAdd,
   Publish, Assignment, BarChart, Warning, FileDownload,
-  Grade, Gavel, HowToReg,
+  Grade, Gavel, HowToReg, Autorenew,
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -93,12 +93,11 @@ const getAcademicYears = () => {
 
 // ─── SessionForm dialog ───────────────────────────────────────────────────────
 
-const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, campusId, campuses }) => {
-  const isEdit      = Boolean(session?._id);
-  const needsCampus = !campusId;
-  const subjects    = relatedData.subjects || [];
-  const teachers    = relatedData.teachers || [];
-  const classes     = relatedData.classes  || [];
+const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, campusId }) => {
+  const isEdit   = Boolean(session?._id);
+  const subjects = relatedData.subjects || [];
+  const teachers = relatedData.teachers || [];
+  const classes  = relatedData.classes  || [];
 
   const defaultAcademicYear = (() => {
     const y = new Date().getFullYear();
@@ -109,7 +108,6 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
 
   const formik = useFormik({
     initialValues: {
-      schoolCampus: session?.schoolCampus?._id ?? session?.schoolCampus ?? '',
       title:        session?.title        ?? '',
       subject:      session?.subject?._id ?? session?.subject ?? '',
       teacher:      session?.teacher?._id ?? session?.teacher ?? '',
@@ -128,13 +126,7 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
-        const resolvedCampus = campusId || values.schoolCampus;
-        if (!resolvedCampus) {
-          setErrors({ submit: 'Please select a campus.' });
-          setSubmitting(false);
-          return;
-        }
-        const payload = { ...values, schoolCampus: resolvedCampus };
+        const payload = { ...values, schoolCampus: campusId };
         if (isEdit) {
           await examService.updateSession(session._id, payload);
         } else {
@@ -168,30 +160,6 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
       <DialogContent dividers>
         <Box component="form" noValidate>
           <Grid container spacing={2}>
-
-            {/* Campus picker — shown only for ADMIN/DIRECTOR (no assigned campus) */}
-            {needsCampus && (
-              <Grid size={{ xs: 12 }}>
-                <FormControl fullWidth error={Boolean(touched.schoolCampus && errors.schoolCampus)}>
-                  <InputLabel id="campus-label">Campus</InputLabel>
-                  <Select
-                    labelId="campus-label"
-                    name="schoolCampus"
-                    value={values.schoolCampus}
-                    label="Campus"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    {campuses.map((c) => (
-                      <MenuItem key={c._id} value={c._id}>{c.campus_name}</MenuItem>
-                    ))}
-                  </Select>
-                  {touched.schoolCampus && errors.schoolCampus && (
-                    <FormHelperText>{errors.schoolCampus}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-            )}
 
             {/* Title */}
             <Grid size={{ xs: 12 }}>
@@ -499,12 +467,13 @@ const CancelDialog = ({ open, onClose, onConfirm, loading }) => {
 
 // ─── PostponeDialog ───────────────────────────────────────────────────────────
 
-const PostponeDialog = ({ open, onClose, onConfirm, loading }) => {
+const PostponeDialog = ({ open, onClose, onConfirm, loading, mode = 'postpone' }) => {
   const [form, setForm] = useState({ startTime: '', endTime: '', reason: '' });
   const handle = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const isReschedule = mode === 'reschedule';
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth disableEnforceFocus closeAfterTransition={false}>
-      <DialogTitle>Postpone Session</DialogTitle>
+      <DialogTitle>{isReschedule ? 'Reschedule Session' : 'Postpone Session'}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
@@ -525,11 +494,12 @@ const PostponeDialog = ({ open, onClose, onConfirm, loading }) => {
         <Button onClick={onClose} disabled={loading}>Back</Button>
         <Button
           variant="contained"
+          color={isReschedule ? 'success' : 'primary'}
           disabled={!form.startTime || !form.endTime || !form.reason.trim() || loading}
-          startIcon={loading ? <CircularProgress size={16} /> : <PostAdd />}
+          startIcon={loading ? <CircularProgress size={16} /> : isReschedule ? <Autorenew /> : <PostAdd />}
           onClick={() => onConfirm(form)}
         >
-          Postpone
+          {isReschedule ? 'Reschedule' : 'Postpone'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -769,13 +739,14 @@ const ExaminationManager = () => {
   });
 
   // related data for the form
-  const [relatedData, setRelatedData] = useState({ subjects: [], teachers: [], classes: [], campuses: [] });
+  const [relatedData, setRelatedData] = useState({ subjects: [], teachers: [], classes: [] });
 
   // dialogs
   const [sessionFormOpen, setSessionFormOpen]   = useState(false);
   const [editSession, setEditSession]           = useState(null);
   const [cancelDialog, setCancelDialog]         = useState({ open: false, session: null });
   const [postponeDialog, setPostponeDialog]     = useState({ open: false, session: null });
+  const [rescheduleDialog, setRescheduleDialog] = useState({ open: false, session: null });
   const [enrollDialog, setEnrollDialog]         = useState({ open: false, session: null });
   const [actionLoading, setActionLoading]       = useState(false);
 
@@ -803,17 +774,12 @@ const ExaminationManager = () => {
   const loadRelatedData = useCallback(async () => {
     try {
       const params = campusId ? { campusId } : {};
-      const requests = [
-        api.get('/subject',   { params }).catch(() => ({ data: {} })),
-        api.get('/teachers',  { params }).catch(() => ({ data: {} })),
-        api.get('/class',     { params }).catch(() => ({ data: {} })),
-      ];
-      if (!campusId) {
-        requests.push(api.get('/campus/all').catch(() => ({ data: {} })));
-      }
-      const [subRes, teachRes, classRes, campusRes] = await Promise.all(requests);
+      const [subRes, teachRes, classRes] = await Promise.all([
+        api.get('/subject',  { params }).catch(() => ({ data: {} })),
+        api.get('/teachers', { params }).catch(() => ({ data: {} })),
+        api.get('/class',    { params }).catch(() => ({ data: {} })),
+      ]);
       const pick = (res) => {
-        if (!res) return [];
         const d = res.data?.data;
         return Array.isArray(d) ? d : (d ? [d] : []);
       };
@@ -821,7 +787,6 @@ const ExaminationManager = () => {
         subjects: pick(subRes),
         teachers: pick(teachRes),
         classes:  pick(classRes),
-        campuses: pick(campusRes),
       });
     } catch {
       // silent
@@ -1111,12 +1076,21 @@ const ExaminationManager = () => {
                       <Refresh />
                     </IconButton>
                   </Tooltip>
-                  <Button
-                    variant="contained" startIcon={<Add />}
-                    onClick={() => { setEditSession(null); setSessionFormOpen(true); }}
+                  <Tooltip
+                    title={user?.role === 'ADMIN' || user?.role === 'DIRECTOR'
+                      ? 'Only Campus Managers can create exam sessions'
+                      : ''}
                   >
-                    New Session
-                  </Button>
+                    <span>
+                      <Button
+                        variant="contained" startIcon={<Add />}
+                        disabled={user?.role === 'ADMIN' || user?.role === 'DIRECTOR'}
+                        onClick={() => { setEditSession(null); setSessionFormOpen(true); }}
+                      >
+                        New Session
+                      </Button>
+                    </span>
+                  </Tooltip>
                 </Stack>
               </Grid>
             </Grid>
@@ -1210,8 +1184,8 @@ const ExaminationManager = () => {
                                 </IconButton>
                               </Tooltip>
                             )}
-                            {/* Postpone */}
-                            {['DRAFT', 'SCHEDULED'].includes(s.status) && (
+                            {/* Postpone — SCHEDULED only */}
+                            {s.status === 'SCHEDULED' && (
                               <Tooltip title="Postpone">
                                 <IconButton size="small"
                                   onClick={() => setPostponeDialog({ open: true, session: s })}>
@@ -1219,8 +1193,17 @@ const ExaminationManager = () => {
                                 </IconButton>
                               </Tooltip>
                             )}
-                            {/* Cancel */}
-                            {!['COMPLETED', 'CANCELLED'].includes(s.status) && (
+                            {/* Reschedule — POSTPONED only */}
+                            {s.status === 'POSTPONED' && (
+                              <Tooltip title="Reschedule">
+                                <IconButton size="small" color="success"
+                                  onClick={() => setRescheduleDialog({ open: true, session: s })}>
+                                  <Autorenew fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                            {/* Cancel — SCHEDULED or ONGOING only */}
+                            {['SCHEDULED', 'ONGOING'].includes(s.status) && (
                               <Tooltip title="Cancel">
                                 <IconButton size="small" color="error"
                                   onClick={() => setCancelDialog({ open: true, session: s })}>
@@ -1583,7 +1566,6 @@ const ExaminationManager = () => {
         session={editSession}
         relatedData={relatedData}
         campusId={campusId}
-        campuses={relatedData.campuses}
         onSuccess={(msg) => {
           showSnack(msg);
           setSessionFormOpen(false);
@@ -1612,6 +1594,19 @@ const ExaminationManager = () => {
             () => examService.postponeSession(postponeDialog.session._id, data),
             'Session postponed.',
           ).then(() => setPostponeDialog({ open: false, session: null }))
+        }
+      />
+
+      <PostponeDialog
+        mode="reschedule"
+        open={rescheduleDialog.open}
+        onClose={() => setRescheduleDialog({ open: false, session: null })}
+        loading={actionLoading}
+        onConfirm={(data) =>
+          lifecycleAction(
+            () => examService.rescheduleSession(rescheduleDialog.session._id, data),
+            'Session rescheduled.',
+          ).then(() => setRescheduleDialog({ open: false, session: null }))
         }
       />
 
