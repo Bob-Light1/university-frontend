@@ -42,8 +42,8 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
           </Typography>
         </Stack>
         <Chip
-          label={subject.status === 'active' ? 'Active' : 'Archived'}
-          color={subject.status === 'active' ? 'success' : 'default'}
+          label={subject.status !== 'archived' ? 'Active' : 'Archived'}
+          color={subject.status !== 'archived' ? 'success' : 'default'}
           size="small"
         />
       </Box>
@@ -112,7 +112,7 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
             variant="outlined"
             color="error"
             startIcon={<DeleteIcon />}
-            onClick={() => archive(subject._id)}
+            onClick={() => archive(subject._id, subject.subject_name)}
           >
             Archive
           </Button>
@@ -122,7 +122,7 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
             variant="outlined"
             color="success"
             startIcon={<RestoreIcon />}
-            onClick={() => restore(subject._id)}
+            onClick={() => restore(subject._id, subject.subject_name)}
           >
             Restore
           </Button>

@@ -28,6 +28,7 @@ import api from '../../../api/axiosInstance';
 
 import { createSubjectSchema } from '../../../yupSchema/createSubjectSchema';
 import MobileSubjectCard from './MobileSubjectCard';
+import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
 import { useParams } from 'react-router-dom';
 
 const Subject = () => {
@@ -49,6 +50,14 @@ const Subject = () => {
     open: false,
     message: '',
     severity: 'success',
+  });
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    open:   false,
+    action: 'archive',
+    id:     null,
+    label:  '',
+    busy:   false,
   });
 
   const isEditMode = Boolean(selectedSubject);
@@ -125,25 +134,33 @@ const Subject = () => {
   };
 
   /* ---------------- DELETE / RESTORE ---------------- */
-  const handleArchive = async (id) => {
-    if (!window.confirm('Do you really want to archive this subject?')) return;
-    try {
-      await api.delete(`/subject/${id}`);
-      showNotification('Subject archived successfully', 'success');
-      await fetchData();
-    } catch (e) {
-      showNotification(e.response?.data?.message || 'Failed to archive subject', 'error');
-    }
+  const handleArchive = (id, label) => {
+    setConfirmDialog({ open: true, action: 'archive', id, label, busy: false });
   };
 
-  const handleRestore = async (id) => {
-    if (!window.confirm('This subject will be restored!')) return;
+  const handleRestore = (id, label) => {
+    setConfirmDialog({ open: true, action: 'restore', id, label, busy: false });
+  };
+
+  const handleConfirmAction = async () => {
+    const { action, id } = confirmDialog;
+    setConfirmDialog((prev) => ({ ...prev, busy: true }));
     try {
-      await api.patch(`/subject/${id}/restore`, {});
-      showNotification('Subject restored successfully', 'success');
+      if (action === 'archive') {
+        await api.delete(`/subject/${id}`);
+        showNotification('Subject archived successfully', 'success');
+      } else {
+        await api.patch(`/subject/${id}/restore`, {});
+        showNotification('Subject restored successfully', 'success');
+      }
       await fetchData();
     } catch (e) {
-      showNotification(e.response?.data?.message || 'Failed to restore subject', 'error');
+      showNotification(
+        e.response?.data?.message || `Failed to ${action} subject`,
+        'error',
+      );
+    } finally {
+      setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
   };
 
@@ -366,8 +383,8 @@ const Subject = () => {
 
                     <TableCell>
                       <Chip
-                        label={subj.status === 'active' ? 'Active' : 'Archived'}
-                        color={subj.status === 'active' ? 'success' : 'default'}
+                        label={subj.status !== 'archived' ? 'Active' : 'Archived'}
+                        color={subj.status !== 'archived' ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
@@ -388,7 +405,7 @@ const Subject = () => {
                           <IconButton
                             color="error"
                             size="small"
-                            onClick={() => handleArchive(subj._id)}
+                            onClick={() => handleArchive(subj._id, subj.subject_name)}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
@@ -398,7 +415,7 @@ const Subject = () => {
                           <IconButton
                             color="success"
                             size="small"
-                            onClick={() => handleRestore(subj._id)}
+                            onClick={() => handleRestore(subj._id, subj.subject_name)}
                           >
                             <RestoreIcon fontSize="small" />
                           </IconButton>
@@ -625,6 +642,17 @@ const Subject = () => {
           </Formik>
         </DialogContent>
       </Dialog>
+
+      {/* Confirm archive / restore dialog */}
+      <ConfirmActionDialog
+        open={confirmDialog.open}
+        action={confirmDialog.action}
+        entityLabel={confirmDialog.label}
+        entityType="Subject"
+        busy={confirmDialog.busy}
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+        onConfirm={handleConfirmAction}
+      />
 
       {/* Enhanced Snackbar Notifications */}
       <Snackbar
