@@ -366,8 +366,8 @@ const Subject = () => {
 
                     <TableCell>
                       <Chip
-                        label={subj.isActive ? 'Active' : 'Archived'}
-                        color={subj.isActive ? 'success' : 'default'}
+                        label={subj.status === 'active' ? 'Active' : 'Archived'}
+                        color={subj.status === 'active' ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
@@ -383,7 +383,7 @@ const Subject = () => {
                         </IconButton>
                       </Tooltip>
 
-                      {subj.isActive ? (
+                      {subj.status !== 'archived' ? (
                         <Tooltip title="Archive">
                           <IconButton
                             color="error"

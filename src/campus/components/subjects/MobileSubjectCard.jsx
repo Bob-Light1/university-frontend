@@ -42,8 +42,8 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
           </Typography>
         </Stack>
         <Chip
-          label={subject.isActive ? 'Active' : 'Archived'}
-          color={subject.isActive ? 'success' : 'default'}
+          label={subject.status === 'active' ? 'Active' : 'Archived'}
+          color={subject.status === 'active' ? 'success' : 'default'}
           size="small"
         />
       </Box>
@@ -106,7 +106,7 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
         >
           Edit
         </Button>
-        {subject.isActive ? (
+        {subject.status !== 'archived' ? (
           <Button
             size="small"
             variant="outlined"
