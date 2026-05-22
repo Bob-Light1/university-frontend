@@ -93,11 +93,18 @@ const getAcademicYears = () => {
 
 // ─── SessionForm dialog ───────────────────────────────────────────────────────
 
-const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData }) => {
+const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, campusId }) => {
   const isEdit   = Boolean(session?._id);
   const subjects = relatedData.subjects || [];
   const teachers = relatedData.teachers || [];
   const classes  = relatedData.classes  || [];
+
+  const defaultAcademicYear = (() => {
+    const y = new Date().getFullYear();
+    const m = new Date().getMonth();
+    const start = m < 8 ? y - 1 : y;
+    return `${start}-${start + 1}`;
+  })();
 
   const formik = useFormik({
     initialValues: {
@@ -105,7 +112,7 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData }) =
       subject:      session?.subject?._id ?? session?.subject ?? '',
       teacher:      session?.teacher?._id ?? session?.teacher ?? '',
       classes:      (session?.classes || []).map((c) => c._id ?? c),
-      academicYear: session?.academicYear ?? '',
+      academicYear: session?.academicYear ?? defaultAcademicYear,
       semester:     session?.semester     ?? 'S1',
       examPeriod:   session?.examPeriod   ?? 'MIDTERM',
       mode:         session?.mode         ?? 'PHYSICAL',
@@ -122,7 +129,7 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData }) =
         if (isEdit) {
           await examService.updateSession(session._id, values);
         } else {
-          await examService.createSession(values);
+          await examService.createSession({ ...values, schoolCampus: campusId });
         }
         onSuccess(isEdit ? 'Session updated.' : 'Session created.');
       } catch (err) {
@@ -1536,6 +1543,7 @@ const ExaminationManager = () => {
         onClose={() => setSessionFormOpen(false)}
         session={editSession}
         relatedData={relatedData}
+        campusId={campusId}
         onSuccess={(msg) => {
           showSnack(msg);
           setSessionFormOpen(false);
