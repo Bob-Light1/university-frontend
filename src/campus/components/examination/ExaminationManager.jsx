@@ -93,11 +93,12 @@ const getAcademicYears = () => {
 
 // ─── SessionForm dialog ───────────────────────────────────────────────────────
 
-const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, campusId }) => {
-  const isEdit   = Boolean(session?._id);
-  const subjects = relatedData.subjects || [];
-  const teachers = relatedData.teachers || [];
-  const classes  = relatedData.classes  || [];
+const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, campusId, campuses }) => {
+  const isEdit      = Boolean(session?._id);
+  const needsCampus = !campusId;
+  const subjects    = relatedData.subjects || [];
+  const teachers    = relatedData.teachers || [];
+  const classes     = relatedData.classes  || [];
 
   const defaultAcademicYear = (() => {
     const y = new Date().getFullYear();
@@ -108,6 +109,7 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
 
   const formik = useFormik({
     initialValues: {
+      schoolCampus: session?.schoolCampus?._id ?? session?.schoolCampus ?? '',
       title:        session?.title        ?? '',
       subject:      session?.subject?._id ?? session?.subject ?? '',
       teacher:      session?.teacher?._id ?? session?.teacher ?? '',
@@ -126,10 +128,17 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
+        const resolvedCampus = campusId || values.schoolCampus;
+        if (!resolvedCampus) {
+          setErrors({ submit: 'Please select a campus.' });
+          setSubmitting(false);
+          return;
+        }
+        const payload = { ...values, schoolCampus: resolvedCampus };
         if (isEdit) {
-          await examService.updateSession(session._id, values);
+          await examService.updateSession(session._id, payload);
         } else {
-          await examService.createSession({ ...values, schoolCampus: campusId });
+          await examService.createSession(payload);
         }
         onSuccess(isEdit ? 'Session updated.' : 'Session created.');
       } catch (err) {
@@ -159,6 +168,30 @@ const SessionFormDialog = ({ open, onClose, onSuccess, session, relatedData, cam
       <DialogContent dividers>
         <Box component="form" noValidate>
           <Grid container spacing={2}>
+
+            {/* Campus picker — shown only for ADMIN/DIRECTOR (no assigned campus) */}
+            {needsCampus && (
+              <Grid size={{ xs: 12 }}>
+                <FormControl fullWidth error={Boolean(touched.schoolCampus && errors.schoolCampus)}>
+                  <InputLabel id="campus-label">Campus</InputLabel>
+                  <Select
+                    labelId="campus-label"
+                    name="schoolCampus"
+                    value={values.schoolCampus}
+                    label="Campus"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    {campuses.map((c) => (
+                      <MenuItem key={c._id} value={c._id}>{c.campus_name}</MenuItem>
+                    ))}
+                  </Select>
+                  {touched.schoolCampus && errors.schoolCampus && (
+                    <FormHelperText>{errors.schoolCampus}</FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+            )}
 
             {/* Title */}
             <Grid size={{ xs: 12 }}>
@@ -736,7 +769,7 @@ const ExaminationManager = () => {
   });
 
   // related data for the form
-  const [relatedData, setRelatedData] = useState({ subjects: [], teachers: [], classes: [] });
+  const [relatedData, setRelatedData] = useState({ subjects: [], teachers: [], classes: [], campuses: [] });
 
   // dialogs
   const [sessionFormOpen, setSessionFormOpen]   = useState(false);
@@ -770,12 +803,17 @@ const ExaminationManager = () => {
   const loadRelatedData = useCallback(async () => {
     try {
       const params = campusId ? { campusId } : {};
-      const [subRes, teachRes, classRes] = await Promise.all([
+      const requests = [
         api.get('/subject',   { params }).catch(() => ({ data: {} })),
         api.get('/teachers',  { params }).catch(() => ({ data: {} })),
         api.get('/class',     { params }).catch(() => ({ data: {} })),
-      ]);
+      ];
+      if (!campusId) {
+        requests.push(api.get('/campus/all').catch(() => ({ data: {} })));
+      }
+      const [subRes, teachRes, classRes, campusRes] = await Promise.all(requests);
       const pick = (res) => {
+        if (!res) return [];
         const d = res.data?.data;
         return Array.isArray(d) ? d : (d ? [d] : []);
       };
@@ -783,6 +821,7 @@ const ExaminationManager = () => {
         subjects: pick(subRes),
         teachers: pick(teachRes),
         classes:  pick(classRes),
+        campuses: pick(campusRes),
       });
     } catch {
       // silent
@@ -1544,6 +1583,7 @@ const ExaminationManager = () => {
         session={editSession}
         relatedData={relatedData}
         campusId={campusId}
+        campuses={relatedData.campuses}
         onSuccess={(msg) => {
           showSnack(msg);
           setSessionFormOpen(false);
