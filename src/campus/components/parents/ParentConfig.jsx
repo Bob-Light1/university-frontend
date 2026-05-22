@@ -77,7 +77,7 @@ export const tableColumns = [
 
 // ─── Filter Configuration ─────────────────────────────────────────────────────
 
-export const getFilterConfig = (_relatedData, { includeArchived } = {}) => [
+export const getFilterConfig = () => [
   {
     key:     'status',
     label:   'Status',
@@ -87,7 +87,7 @@ export const getFilterConfig = (_relatedData, { includeArchived } = {}) => [
       { value: 'active',    label: 'Active'       },
       { value: 'inactive',  label: 'Inactive'     },
       { value: 'suspended', label: 'Suspended'    },
-      ...(includeArchived ? [{ value: 'archived', label: 'Archived' }] : []),
+      { value: 'archived',  label: 'Archived'     },
     ],
   },
   {

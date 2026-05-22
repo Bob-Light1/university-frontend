@@ -202,16 +202,15 @@ const GenericEntityPage = ({
   //   - a function(classes)     → filter array   (legacy style – only classes)
   //   - a static array
   const computedFilters = useMemo(() => {
-    if (relatedDataLoading) return [];
-
     if (typeof filterConfig === 'function') {
-      // Pass relatedData as first arg (legacy: configs that ignore it still work).
-      // Pass { includeArchived } as second arg so configs can show/hide 'archived' option.
+      // Always call filterConfig — static filters (status, relationship…) must remain
+      // visible even while relatedData is still loading. Dynamic options (classes,
+      // departments…) will simply be empty arrays during loading and fill in after.
       return filterConfig(relatedData, { includeArchived });
     }
     if (Array.isArray(filterConfig)) return filterConfig;
     return [];
-  }, [filterConfig, relatedData, relatedDataLoading, includeArchived]);
+  }, [filterConfig, relatedData, includeArchived]);
 
   const metrics = useMemo(
     () => getKPIMetrics(kpis, theme),
