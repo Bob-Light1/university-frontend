@@ -85,6 +85,13 @@ const Schedule = () => {
     setDetailOpen(false);
   }, []);
 
+  const handleCloseForm = useCallback(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    setFormOpen(false);
+  }, []);
+
   const handleOpenCreate = () => {
     setEditTarget(null);
     setFormOpen(true);
@@ -247,7 +254,7 @@ const Schedule = () => {
 
       <Dialog
         open={formOpen}
-        onClose={() => setFormOpen(false)}
+        onClose={handleCloseForm}
         maxWidth="md"
         fullWidth
         aria-labelledby="create-schedule-session"
@@ -266,7 +273,7 @@ const Schedule = () => {
             classOptions={classOptions} 
             subjectOptions={subjectOptions}
             onSubmit={handleFormSubmit} 
-            onCancel={() => setFormOpen(false)}
+            onCancel={handleCloseForm}
           />
         </DialogContent>
       </Dialog>

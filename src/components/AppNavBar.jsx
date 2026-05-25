@@ -17,7 +17,7 @@
  *  @prop {string}   pageTitle    – Title shown in the AppBar center/left
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
@@ -269,6 +269,13 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
 
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [aiDialogOpen,  setAiDialogOpen]  = useState(false);
+
+  const handleCloseAiDialog = useCallback(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    setAiDialogOpen(false);
+  }, []);
 
   const navigate     = useNavigate();
   const breadcrumbs  = useBreadcrumbs();
@@ -541,7 +548,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
       {/* ── AI Chat Dialog ── */}
       <AiChatDialog
         open={aiDialogOpen}
-        onClose={() => setAiDialogOpen(false)}
+        onClose={handleCloseAiDialog}
       />
     </>
   );
