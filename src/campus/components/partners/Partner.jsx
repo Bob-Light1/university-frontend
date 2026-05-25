@@ -19,6 +19,7 @@ import { Handshake, People, AttachMoney } from '@mui/icons-material';
 import PartnerManager    from './PartnerManager';
 import LeadPipeline      from './LeadPipeline';
 import CommissionManager from './CommissionManager';
+import { BRAND_ORANGE } from '../../../theme/partnerTokens';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -27,7 +28,7 @@ export default function Partner() {
   const [tab, setTab] = useState(0);
 
   const TABS = [
-    { label: 'Partners',    icon: <Handshake   sx={{ fontSize: 18 }} />, activeColor: '#ff7f3e' },
+    { label: 'Partners',    icon: <Handshake   sx={{ fontSize: 18 }} />, activeColor: BRAND_ORANGE },
     { label: 'Leads',       icon: <People      sx={{ fontSize: 18 }} />, activeColor: theme.palette.info.main    },
     { label: 'Commissions', icon: <AttachMoney sx={{ fontSize: 18 }} />, activeColor: theme.palette.success.main },
   ];
@@ -43,8 +44,8 @@ export default function Partner() {
         }}
       >
         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 0.5 }}>
-          <Handshake sx={{ color: '#ff7f3e', fontSize: 22 }} />
-          <Typography variant="h6" fontWeight={800} sx={{ color: '#ff7f3e' }}>
+          <Handshake sx={{ color: BRAND_ORANGE, fontSize: 22 }} />
+          <Typography variant="h6" fontWeight={700} sx={{ color: BRAND_ORANGE }}>
             Partner Module
           </Typography>
         </Stack>
@@ -52,6 +53,8 @@ export default function Partner() {
         <Tabs
           value={tab}
           onChange={(_, v) => setTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
           TabIndicatorProps={{ sx: { bgcolor: TABS[tab]?.activeColor } }}
         >
           {TABS.map(({ label, icon, activeColor }) => (

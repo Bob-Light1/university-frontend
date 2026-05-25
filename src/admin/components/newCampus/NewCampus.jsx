@@ -34,6 +34,7 @@ import axios                     from 'axios';
 import { createCampusSchema }    from '../../../yupSchema/createCampusSchema';
 import UploadCampusImage         from '../../../client/utility-components/uploadImage/UploadCampusImage';
 import { API_BASE_URL }          from '../../../config/env';
+import { ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
 
 // ─── Step labels ──────────────────────────────────────────────────────────────
 
@@ -446,8 +447,8 @@ export default function NewCampus() {
           >
             {/* ── Card header ── */}
             <Box sx={{
-              background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
-              color: 'white', p: 4, textAlign: 'center',
+              background: ADMIN_GRADIENT,
+              color: 'white', p: { xs: 2.5, sm: 4 }, textAlign: 'center',
             }}>
               <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                 <Box sx={{
@@ -458,7 +459,7 @@ export default function NewCampus() {
                   <Shield sx={{ fontSize: 38 }} />
                 </Box>
               </Box>
-              <Typography variant="h4" fontWeight="900" sx={{ mb: 0.5 }}>
+              <Typography variant="h4" fontWeight={700} sx={{ mb: 0.5 }}>
                 Create New Campus
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.85 }}>
@@ -466,7 +467,7 @@ export default function NewCampus() {
               </Typography>
             </Box>
 
-            <CardContent sx={{ p: 4 }}>
+            <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
               {/* Stepper */}
               <Stepper
                 activeStep={activeStep}
@@ -518,8 +519,8 @@ export default function NewCampus() {
                       sx={{
                         borderRadius: 2, px: 4, py: 1.5,
                         fontWeight: 'bold', textTransform: 'none',
-                        background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
-                        boxShadow: '0 6px 20px rgba(0,50,133,0.35)',
+                        background: ADMIN_GRADIENT,
+                        boxShadow: ADMIN_SHADOW,
                         '&:hover': { boxShadow: '0 8px 28px rgba(0,50,133,0.45)' },
                       }}
                     >
@@ -532,7 +533,7 @@ export default function NewCampus() {
                       sx={{
                         borderRadius: 2, px: 4, py: 1.5,
                         fontWeight: 'bold', textTransform: 'none',
-                        background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+                        background: ADMIN_GRADIENT,
                       }}
                     >
                       Next
@@ -573,7 +574,7 @@ function SectionTitle({ children }) {
       variant="h6"
       fontWeight="bold"
       sx={{
-        background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+        background: ADMIN_GRADIENT,
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',

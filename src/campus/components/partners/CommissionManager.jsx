@@ -19,13 +19,14 @@ import {
   TextField, FormControl, InputLabel, Select, MenuItem,
   InputAdornment, IconButton, Tooltip, Skeleton, Paper,
   Alert, Snackbar, Dialog, DialogTitle, DialogContent,
-  DialogActions, CircularProgress,
+  DialogActions, CircularProgress, Divider,
 } from '@mui/material';
 import {
   FilterListOff, FileDownload, CheckCircle, AttachMoney,
-  Block, Cancel, Settings, TrendingUp, HourglassEmpty,
+  Cancel, Settings, TrendingUp, HourglassEmpty,
   Paid, ReportProblem, WarningAmber,
 } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -33,24 +34,9 @@ import useCommission  from '../../../hooks/useCommission';
 import KPICards       from '../../../components/shared/KpiCard';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import CommissionPayModal from './CommissionPayModal';
-
-// ─── Status config ────────────────────────────────────────────────────────────
-
-const STATUS_COLOR = {
-  pending:   'warning',
-  validated: 'info',
-  paid:      'success',
-  disputed:  'error',
-  cancelled: 'default',
-};
-
-const STATUS_LABEL = {
-  pending:   'Pending',
-  validated: 'Validated',
-  paid:      'Paid',
-  disputed:  'Disputed',
-  cancelled: 'Cancelled',
-};
+import {
+  COMMISSION_STATUS_COLOR, COMMISSION_STATUS_LABEL,
+} from '../../../theme/partnerTokens';
 
 // ─── Config dialog schema ─────────────────────────────────────────────────────
 
@@ -195,7 +181,7 @@ const Filters = ({ filters, onChange, onReset }) => (
       <InputLabel>Status</InputLabel>
       <Select label="Status" value={filters.status} onChange={(e) => onChange('status', e.target.value)}>
         <MenuItem value="">All Statuses</MenuItem>
-        {Object.entries(STATUS_LABEL).map(([v, l]) => (
+        {Object.entries(COMMISSION_STATUS_LABEL).map(([v, l]) => (
           <MenuItem key={v} value={v}>{l}</MenuItem>
         ))}
       </Select>
@@ -221,7 +207,7 @@ const Filters = ({ filters, onChange, onReset }) => (
   </Stack>
 );
 
-// ─── Skeleton row ─────────────────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 const SkeletonRow = () => (
   <TableRow>
@@ -231,9 +217,130 @@ const SkeletonRow = () => (
   </TableRow>
 );
 
+const SkeletonCard = () => (
+  <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+    <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1.5 }}>
+      <Box sx={{ flex: 1 }}>
+        <Skeleton variant="text" width="60%" />
+        <Skeleton variant="text" width="40%" />
+      </Box>
+      <Skeleton variant="rounded" width={70} height={22} />
+    </Stack>
+    <Skeleton variant="text" width="80%" />
+    <Skeleton variant="text" width="50%" />
+  </Paper>
+);
+
+// ─── Mobile commission card ───────────────────────────────────────────────────
+
+const CommissionCard = ({ comm, actionBusy, onValidate, onPay, onDispute, onCancel }) => {
+  const busy = actionBusy === comm._id;
+  return (
+    <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+      <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="subtitle2" fontWeight={700} noWrap>
+            {comm.partner ? `${comm.partner.firstName} ${comm.partner.lastName}` : '—'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
+            {comm.lead ? `${comm.lead.firstName} ${comm.lead.lastName}` : 'No lead'}
+          </Typography>
+        </Box>
+        <Stack alignItems="flex-end" spacing={0.5}>
+          <Chip
+            label={COMMISSION_STATUS_LABEL[comm.status] ?? comm.status}
+            color={COMMISSION_STATUS_COLOR[comm.status] ?? 'default'}
+            size="small"
+            sx={{ fontWeight: 600, flexShrink: 0 }}
+          />
+          {comm.fraudFlags?.length > 0 && (
+            <Tooltip title={comm.fraudFlags.join(', ')}>
+              <Chip
+                icon={<WarningAmber sx={{ fontSize: '0.75rem !important' }} />}
+                label="Fraud"
+                color="error"
+                size="small"
+                variant="outlined"
+                sx={{ fontSize: '0.65rem', fontWeight: 600 }}
+              />
+            </Tooltip>
+          )}
+        </Stack>
+      </Stack>
+
+      <Divider sx={{ my: 1 }} />
+
+      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1.5 }} flexWrap="wrap">
+        <Typography variant="body2" fontWeight={700} color="success.main">
+          {comm.amount?.toLocaleString()} {comm.currency ?? 'XAF'}
+        </Typography>
+        <Chip
+          label={comm.ruleSnapshot?.ruleType ?? '—'}
+          size="small"
+          variant="outlined"
+          sx={{ fontSize: '0.7rem' }}
+        />
+        <Typography variant="caption" color="text.secondary">
+          {new Date(comm.createdAt).toLocaleDateString()}
+        </Typography>
+      </Stack>
+
+      <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+        {comm.status === 'pending' && (
+          <Tooltip title="Validate">
+            <span>
+              <IconButton size="medium" color="info" disabled={busy} onClick={() => onValidate(comm._id)}>
+                {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {comm.status === 'validated' && (
+          <Tooltip title="Mark Paid">
+            <span>
+              <IconButton size="medium" color="success" disabled={busy} onClick={() => onPay(comm)}>
+                <AttachMoney fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {(comm.status === 'pending' || comm.status === 'validated') && (
+          <Tooltip title="Dispute">
+            <span>
+              <IconButton size="medium" color="warning" disabled={busy} onClick={() => onDispute(comm._id)}>
+                <ReportProblem fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {comm.status === 'disputed' && (
+          <Tooltip title="Re-validate">
+            <span>
+              <IconButton size="medium" color="info" disabled={busy} onClick={() => onValidate(comm._id)}>
+                {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {comm.status !== 'paid' && comm.status !== 'cancelled' && (
+          <Tooltip title="Cancel">
+            <span>
+              <IconButton size="medium" color="error" disabled={busy} onClick={() => onCancel(comm._id)}>
+                <Cancel fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+      </Stack>
+    </Paper>
+  );
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const CommissionManager = () => {
+  const theme = useTheme();
+
   const {
     commissions, kpis, commissionConfig, pagination, filters,
     loading, configLoading, error,
@@ -245,7 +352,7 @@ const CommissionManager = () => {
 
   const [payModal,   setPayModal]   = useState({ open: false, commission: null });
   const [configOpen, setConfigOpen] = useState(false);
-  const [actionBusy, setActionBusy] = useState(null); // commissionId being acted on
+  const [actionBusy, setActionBusy] = useState(null);
 
   // ─── Mutation wrappers ────────────────────────────────────────────────────────
 
@@ -296,30 +403,28 @@ const CommissionManager = () => {
       label:    'Pending',
       value:    kpis?.pending ?? 0,
       icon:     <HourglassEmpty sx={{ fontSize: 28 }} />,
-      color:    '#ed6c02',
+      color:    theme.palette.warning.main,
       subtitle: 'Awaiting validation',
     },
     {
       label:    'Validated',
       value:    kpis?.validated ?? 0,
       icon:     <CheckCircle sx={{ fontSize: 28 }} />,
-      color:    '#0288d1',
+      color:    theme.palette.info.main,
       subtitle: 'Ready to pay',
     },
     {
       label:    'Paid',
       value:    kpis?.paid ?? 0,
       icon:     <Paid sx={{ fontSize: 28 }} />,
-      color:    '#2e7d32',
+      color:    theme.palette.success.dark,
       subtitle: 'Settled',
     },
     {
       label:    'Total Paid (XAF)',
-      value:    kpis?.totalPaid != null
-        ? kpis.totalPaid.toLocaleString()
-        : '—',
+      value:    kpis?.totalPaid != null ? kpis.totalPaid.toLocaleString() : '—',
       icon:     <TrendingUp sx={{ fontSize: 28 }} />,
-      color:    '#7b1fa2',
+      color:    theme.palette.secondary.dark,
       subtitle: 'All-time paid out',
     },
   ];
@@ -327,17 +432,23 @@ const CommissionManager = () => {
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
 
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={1}
+        sx={{ mb: 2.5 }}
+      >
         <Box>
-          <Typography variant="h5" fontWeight={800}>Commission Manager</Typography>
+          <Typography variant="h5" fontWeight={700}>Commission Manager</Typography>
           <Typography variant="body2" color="text.secondary">
             Validate, pay and track all partner commissions.
           </Typography>
         </Box>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: 'flex-end', sm: 'auto' } }}>
           <Tooltip title={commissionConfig
             ? `Config: ${commissionConfig.ruleType} — ${commissionConfig.ruleType === 'FIXED' ? `${commissionConfig.fixedAmount} ${commissionConfig.currency}` : `${commissionConfig.percentage}%`}`
             : 'No commission config set'}>
@@ -388,192 +499,199 @@ const CommissionManager = () => {
       {/* Filters */}
       <Filters filters={filters} onChange={handleFilterChange} onReset={handleReset} />
 
-      {/* Table */}
-      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Partner</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Lead</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Amount</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Rule</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
-            ) : commissions.length === 0 ? (
+      {/* ── Desktop table (md+) ──────────────────────────────────────────────── */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Table size="small" stickyHeader>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 5, color: 'text.secondary' }}>
-                  No commissions yet. They are generated automatically when a lead is enrolled.
-                </TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Partner</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Lead</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Amount</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Rule</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
               </TableRow>
-            ) : (
-              commissions.map((comm) => {
-                const busy = actionBusy === comm._id;
-                return (
-                  <TableRow key={comm._id} hover>
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
+              ) : commissions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 5, color: 'text.secondary' }}>
+                    No commissions yet. They are generated automatically when a lead is enrolled.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                commissions.map((comm) => {
+                  const busy = actionBusy === comm._id;
+                  return (
+                    <TableRow key={comm._id} hover>
 
-                    {/* Partner */}
-                    <TableCell>
-                      {comm.partner ? (
-                        <Box>
-                          <Typography variant="body2" fontWeight={500}>
-                            {comm.partner.firstName} {comm.partner.lastName}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                            {comm.partner.partnerCode}
-                          </Typography>
-                        </Box>
-                      ) : <Typography variant="caption" color="text.disabled">—</Typography>}
-                    </TableCell>
+                      {/* Partner */}
+                      <TableCell>
+                        {comm.partner ? (
+                          <Box>
+                            <Typography variant="body2" fontWeight={500}>
+                              {comm.partner.firstName} {comm.partner.lastName}
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                              {comm.partner.partnerCode}
+                            </Typography>
+                          </Box>
+                        ) : <Typography variant="caption" color="text.disabled">—</Typography>}
+                      </TableCell>
 
-                    {/* Lead */}
-                    <TableCell>
-                      {comm.lead ? (
-                        <Typography variant="body2">
-                          {comm.lead.firstName} {comm.lead.lastName}
+                      {/* Lead */}
+                      <TableCell>
+                        {comm.lead ? (
+                          <Typography variant="body2">
+                            {comm.lead.firstName} {comm.lead.lastName}
+                          </Typography>
+                        ) : <Typography variant="caption" color="text.disabled">—</Typography>}
+                      </TableCell>
+
+                      {/* Amount */}
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={700} color="success.main">
+                          {comm.amount?.toLocaleString()} {comm.currency ?? 'XAF'}
                         </Typography>
-                      ) : <Typography variant="caption" color="text.disabled">—</Typography>}
-                    </TableCell>
+                        {comm.ruleSnapshot && (
+                          <Typography variant="caption" color="text.secondary">
+                            {comm.ruleSnapshot.ruleType === 'PERCENTAGE'
+                              ? `${comm.ruleSnapshot.percentage}%`
+                              : 'Fixed'}
+                          </Typography>
+                        )}
+                      </TableCell>
 
-                    {/* Amount */}
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={700} color="success.main">
-                        {comm.amount?.toLocaleString()} {comm.currency ?? 'XAF'}
-                      </Typography>
-                      {comm.ruleSnapshot && (
+                      {/* Rule type */}
+                      <TableCell>
+                        <Chip
+                          label={comm.ruleSnapshot?.ruleType ?? '—'}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell>
+                        <Chip
+                          label={COMMISSION_STATUS_LABEL[comm.status] ?? comm.status}
+                          color={COMMISSION_STATUS_COLOR[comm.status] ?? 'default'}
+                          size="small"
+                          sx={{ fontWeight: 600 }}
+                        />
+                        {comm.fraudFlags?.length > 0 && (
+                          <Tooltip title={comm.fraudFlags.join(', ')}>
+                            <Chip
+                              icon={<WarningAmber sx={{ fontSize: '0.75rem !important' }} />}
+                              label="Fraud flag"
+                              color="error"
+                              size="small"
+                              variant="outlined"
+                              sx={{ ml: 0.5, fontSize: '0.65rem', fontWeight: 600 }}
+                            />
+                          </Tooltip>
+                        )}
+                      </TableCell>
+
+                      {/* Date */}
+                      <TableCell>
                         <Typography variant="caption" color="text.secondary">
-                          {comm.ruleSnapshot.ruleType === 'PERCENTAGE'
-                            ? `${comm.ruleSnapshot.percentage}%`
-                            : 'Fixed'}
+                          {new Date(comm.createdAt).toLocaleDateString()}
                         </Typography>
-                      )}
-                    </TableCell>
+                      </TableCell>
 
-                    {/* Rule type */}
-                    <TableCell>
-                      <Chip
-                        label={comm.ruleSnapshot?.ruleType ?? '—'}
-                        size="small"
-                        variant="outlined"
-                        sx={{ fontSize: '0.7rem' }}
-                      />
-                    </TableCell>
+                      {/* Actions */}
+                      <TableCell align="right">
+                        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                          {comm.status === 'pending' && (
+                            <Tooltip title="Validate">
+                              <span>
+                                <IconButton size="small" color="info" disabled={busy} onClick={() => handleValidate(comm._id)}>
+                                  {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {comm.status === 'validated' && (
+                            <Tooltip title="Mark Paid">
+                              <span>
+                                <IconButton size="small" color="success" disabled={busy} onClick={() => setPayModal({ open: true, commission: comm })}>
+                                  <AttachMoney fontSize="small" />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {(comm.status === 'pending' || comm.status === 'validated') && (
+                            <Tooltip title="Dispute">
+                              <span>
+                                <IconButton size="small" color="warning" disabled={busy} onClick={() => handleDispute(comm._id)}>
+                                  <ReportProblem fontSize="small" />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {comm.status === 'disputed' && (
+                            <Tooltip title="Re-validate">
+                              <span>
+                                <IconButton size="small" color="info" disabled={busy} onClick={() => handleValidate(comm._id)}>
+                                  {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {comm.status !== 'paid' && comm.status !== 'cancelled' && (
+                            <Tooltip title="Cancel">
+                              <span>
+                                <IconButton size="small" color="error" disabled={busy} onClick={() => handleCancel(comm._id)}>
+                                  <Cancel fontSize="small" />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
-                    {/* Status */}
-                    <TableCell>
-                      <Chip
-                        label={STATUS_LABEL[comm.status] ?? comm.status}
-                        color={STATUS_COLOR[comm.status] ?? 'default'}
-                        size="small"
-                        sx={{ fontWeight: 600 }}
-                      />
-                      {comm.fraudFlags?.length > 0 && (
-                        <Tooltip title={comm.fraudFlags.join(', ')}>
-                          <Chip
-                            icon={<WarningAmber sx={{ fontSize: '0.75rem !important' }} />}
-                            label="Fraud flag"
-                            color="error"
-                            size="small"
-                            variant="outlined"
-                            sx={{ ml: 0.5, fontSize: '0.65rem', fontWeight: 600 }}
-                          />
-                        </Tooltip>
-                      )}
-                    </TableCell>
-
-                    {/* Date */}
-                    <TableCell>
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(comm.createdAt).toLocaleDateString()}
-                      </Typography>
-                    </TableCell>
-
-                    {/* Actions */}
-                    <TableCell align="right">
-                      <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                        {comm.status === 'pending' && (
-                          <Tooltip title="Validate">
-                            <span>
-                              <IconButton
-                                size="small" color="info"
-                                disabled={busy}
-                                onClick={() => handleValidate(comm._id)}
-                              >
-                                {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-
-                        {comm.status === 'validated' && (
-                          <Tooltip title="Mark Paid">
-                            <span>
-                              <IconButton
-                                size="small" color="success"
-                                disabled={busy}
-                                onClick={() => setPayModal({ open: true, commission: comm })}
-                              >
-                                <AttachMoney fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-
-                        {(comm.status === 'pending' || comm.status === 'validated') && (
-                          <Tooltip title="Dispute">
-                            <span>
-                              <IconButton
-                                size="small" color="warning"
-                                disabled={busy}
-                                onClick={() => handleDispute(comm._id)}
-                              >
-                                <ReportProblem fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-
-                        {comm.status === 'disputed' && (
-                          <Tooltip title="Re-validate">
-                            <span>
-                              <IconButton
-                                size="small" color="info"
-                                disabled={busy}
-                                onClick={() => handleValidate(comm._id)}
-                              >
-                                {busy ? <CircularProgress size={14} /> : <CheckCircle fontSize="small" />}
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-
-                        {comm.status !== 'paid' && comm.status !== 'cancelled' && (
-                          <Tooltip title="Cancel">
-                            <span>
-                              <IconButton
-                                size="small" color="error"
-                                disabled={busy}
-                                onClick={() => handleCancel(comm._id)}
-                              >
-                                <Cancel fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* ── Mobile cards (xs/sm) ─────────────────────────────────────────────── */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {loading ? (
+          <Stack spacing={1.5}>
+            {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
+          </Stack>
+        ) : commissions.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 5, borderRadius: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              No commissions yet. They are generated automatically when a lead is enrolled.
+            </Typography>
+          </Paper>
+        ) : (
+          <Stack spacing={1.5}>
+            {commissions.map((comm) => (
+              <CommissionCard
+                key={comm._id}
+                comm={comm}
+                actionBusy={actionBusy}
+                onValidate={handleValidate}
+                onPay={(c) => setPayModal({ open: true, commission: c })}
+                onDispute={handleDispute}
+                onCancel={handleCancel}
+              />
+            ))}
+          </Stack>
+        )}
+      </Box>
 
       <TablePagination
         component="div"

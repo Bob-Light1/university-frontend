@@ -11,12 +11,13 @@ import {
   Box, Typography, Paper, Stack, Divider, Alert,
   FormControl, InputLabel, OutlinedInput, Select,
   MenuItem, Button, IconButton, InputAdornment,
-  FormHelperText, CircularProgress, Chip,
+  FormHelperText, CircularProgress, Chip, Snackbar,
 } from '@mui/material';
 import {
   PersonAdd, Visibility, VisibilityOff,
   ManageAccounts, InfoOutlined,
 } from '@mui/icons-material';
+import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -113,7 +114,7 @@ export default function AdminAccounts() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
 
-      <Typography variant="h5" fontWeight={800} sx={{ mb: 0.5 }}>Admin Accounts</Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>Admin Accounts</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Create platform-level Admin and Director accounts.
       </Typography>
@@ -150,7 +151,7 @@ export default function AdminAccounts() {
         {/* ── Create form ──────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <PersonAdd sx={{ color: '#003285' }} />
+            <PersonAdd sx={{ color: ADMIN_PRIMARY }} />
             <Typography variant="subtitle1" fontWeight={700}>Create New Account</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -229,7 +230,7 @@ export default function AdminAccounts() {
                 startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <PersonAdd />}
                 sx={{
                   textTransform: 'none', fontWeight: 700, borderRadius: 2, py: 1.2,
-                  background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+                  background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW,
                 }}
               >
                 {busy ? 'Creating…' : 'Create Account'}
@@ -242,7 +243,7 @@ export default function AdminAccounts() {
         {/* ── Account list placeholder ─────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <ManageAccounts sx={{ color: '#003285' }} />
+            <ManageAccounts sx={{ color: ADMIN_PRIMARY }} />
             <Typography variant="subtitle1" fontWeight={700}>Existing Accounts</Typography>
           </Stack>
           <Divider sx={{ mb: 2 }} />
@@ -255,20 +256,16 @@ export default function AdminAccounts() {
       </Stack>
 
       {/* ── Snackbar ─────────────────────────────────────────────────────────── */}
-      {snackbar.open && (
-        <Alert
-          severity={snackbar.severity}
-          variant="filled"
-          onClose={closeSnackbar}
-          sx={{
-            position: 'fixed', bottom: 24, left: '50%',
-            transform: 'translateX(-50%)',
-            borderRadius: 2, zIndex: 9999,
-          }}
-        >
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled" onClose={closeSnackbar} sx={{ borderRadius: 2 }}>
           {snackbar.message}
         </Alert>
-      )}
+      </Snackbar>
 
     </Box>
   );

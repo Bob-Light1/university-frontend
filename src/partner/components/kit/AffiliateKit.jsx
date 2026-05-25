@@ -16,17 +16,24 @@ import {
   QrCode2, ContentCopy, Download, WhatsApp, Share,
   LinkOutlined, Badge, Sms,
 } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 import { getMe, downloadMyKit } from '../../../services/partnerService';
 import { IMAGE_BASE_URL }       from '../../../config/env';
 import useFormSnackbar           from '../../../hooks/useFormSnackBar';
+import {
+  BRAND_ORANGE, BRAND_GRADIENT_BTN,
+  WHATSAPP_GREEN, WHATSAPP_GREEN_HOVER, WHATSAPP_BG, WHATSAPP_BORDER,
+  SMS_BG, SMS_BORDER,
+} from '../../../theme/partnerTokens';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AffiliateKit() {
-  const [profile,  setProfile]  = useState(null);
-  const [loading,  setLoading]  = useState(true);
-  const [copied,   setCopied]   = useState(null); // 'link' | 'msg' | null
+  const theme = useTheme();
+  const [profile,     setProfile]     = useState(null);
+  const [loading,     setLoading]     = useState(true);
+  const [copied,      setCopied]      = useState(null); // 'link' | 'msg' | 'sms' | null
   const [downloading, setDownloading] = useState(false);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
@@ -40,7 +47,7 @@ export default function AffiliateKit() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-        <CircularProgress sx={{ color: '#ff7f3e' }} />
+        <CircularProgress sx={{ color: BRAND_ORANGE }} />
       </Box>
     );
   }
@@ -59,6 +66,7 @@ export default function AffiliateKit() {
     ? `Inscrivez-vous via mon lien : ${profile.referralLink} Code: ${profile.partnerCode ?? ''}`
     : '';
   const smsCharCount = smsMsg.length;
+  const smsSplits    = Math.ceil(smsCharCount / 160);
 
   const handleCopy = (text, key) => {
     navigator.clipboard.writeText(text);
@@ -86,7 +94,7 @@ export default function AffiliateKit() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
 
-      <Typography variant="h5" fontWeight={800} sx={{ mb: 0.5 }}>Affiliate Kit</Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>Affiliate Kit</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Use these tools to share your referral link and track incoming leads.
       </Typography>
@@ -96,7 +104,7 @@ export default function AffiliateKit() {
         {/* ── QR Code ─────────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <QrCode2 sx={{ color: '#ff7f3e' }} />
+            <QrCode2 sx={{ color: BRAND_ORANGE }} />
             <Typography variant="subtitle1" fontWeight={700}>QR Code</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -108,17 +116,18 @@ export default function AffiliateKit() {
                 src={qrUrl}
                 alt="Partner QR Code"
                 sx={{
-                  width: 180, height: 180,
+                  width: '100%', maxWidth: 180, aspectRatio: '1 / 1',
                   border: '1px solid',
                   borderColor: 'divider',
                   borderRadius: 2,
                   p: 1, flexShrink: 0,
+                  objectFit: 'contain',
                 }}
               />
             ) : (
               <Box
                 sx={{
-                  width: 180, height: 180,
+                  width: '100%', maxWidth: 180, aspectRatio: '1 / 1',
                   border: '2px dashed',
                   borderColor: 'divider',
                   borderRadius: 2,
@@ -158,7 +167,7 @@ export default function AffiliateKit() {
                 disabled={!qrUrl || downloading}
                 sx={{
                   textTransform: 'none', fontWeight: 700, borderRadius: 2, alignSelf: 'flex-start',
-                  background: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
+                  background: BRAND_GRADIENT_BTN,
                 }}
               >
                 {downloading ? 'Downloading…' : 'Download QR Code'}
@@ -170,7 +179,7 @@ export default function AffiliateKit() {
         {/* ── Referral Link ────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <LinkOutlined sx={{ color: '#ff7f3e' }} />
+            <LinkOutlined sx={{ color: BRAND_ORANGE }} />
             <Typography variant="subtitle1" fontWeight={700}>Referral Link</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -220,7 +229,7 @@ export default function AffiliateKit() {
         {/* ── SMS Template ─────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <Sms sx={{ color: '#1976d2' }} />
+            <Sms sx={{ color: theme.palette.info.main }} />
             <Typography variant="subtitle1" fontWeight={700}>SMS Template</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -229,12 +238,19 @@ export default function AffiliateKit() {
             <>
               <Paper
                 variant="outlined"
-                sx={{ p: 2, borderRadius: 2, bgcolor: '#eff6ff', borderColor: '#bfdbfe' }}
+                sx={{ p: 2, borderRadius: 2, bgcolor: SMS_BG, borderColor: SMS_BORDER }}
               >
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
                   {smsMsg}
                 </Typography>
               </Paper>
+
+              {smsCharCount > 160 && (
+                <Alert severity="warning" sx={{ mt: 1.5, borderRadius: 2 }}>
+                  {smsCharCount} characters — will be split into {smsSplits} SMS messages.
+                </Alert>
+              )}
+
               <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5 }}>
                 <Tooltip title={copied === 'sms' ? 'Copied!' : 'Copy SMS'}>
                   <Button
@@ -248,8 +264,8 @@ export default function AffiliateKit() {
                     {copied === 'sms' ? 'Copied!' : 'Copy SMS'}
                   </Button>
                 </Tooltip>
-                <Typography variant="caption" color={smsCharCount > 160 ? 'error' : 'text.secondary'}>
-                  {smsCharCount}/160 chars{smsCharCount > 160 ? ' — will split into 2 SMS' : ''}
+                <Typography variant="caption" color="text.secondary">
+                  {smsCharCount}/160 chars
                 </Typography>
               </Stack>
             </>
@@ -263,14 +279,14 @@ export default function AffiliateKit() {
         {/* ── WhatsApp Template ────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <WhatsApp sx={{ color: '#25d366' }} />
+            <WhatsApp sx={{ color: WHATSAPP_GREEN }} />
             <Typography variant="subtitle1" fontWeight={700}>WhatsApp Message Template</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
 
           <Paper
             variant="outlined"
-            sx={{ p: 2, borderRadius: 2, bgcolor: '#f0fdf4', borderColor: '#bbf7d0' }}
+            sx={{ p: 2, borderRadius: 2, bgcolor: WHATSAPP_BG, borderColor: WHATSAPP_BORDER }}
           >
             <Typography
               variant="body2"
@@ -305,7 +321,8 @@ export default function AffiliateKit() {
                 rel="noopener noreferrer"
                 sx={{
                   textTransform: 'none', borderRadius: 2,
-                  bgcolor: '#25d366', '&:hover': { bgcolor: '#1ebe5e' },
+                  bgcolor: WHATSAPP_GREEN,
+                  '&:hover': { bgcolor: WHATSAPP_GREEN_HOVER },
                 }}
               >
                 Open WhatsApp

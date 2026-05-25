@@ -12,8 +12,9 @@ import {
   Chip, FormControl, InputLabel, OutlinedInput,
   Button, IconButton, InputAdornment, FormHelperText,
   CircularProgress, Alert, List, ListItem, ListItemIcon,
-  ListItemText, Skeleton,
+  ListItemText, Skeleton, Snackbar,
 } from '@mui/material';
+import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
 import {
   Person, Email, Shield, Lock, Visibility, VisibilityOff,
   CheckCircle, Schedule,
@@ -61,6 +62,7 @@ export default function AdminProfile() {
   const [profileLoad,  setProfileLoad]  = useState(true);
   const [showCurrent,  setShowCurrent]  = useState(false);
   const [showNew,      setShowNew]      = useState(false);
+  const [showConfirm,  setShowConfirm]  = useState(false);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   useEffect(() => {
@@ -125,7 +127,7 @@ export default function AdminProfile() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
 
-      <Typography variant="h5" fontWeight={800} sx={{ mb: 0.5 }}>My Profile</Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>My Profile</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Your platform account details and security settings.
       </Typography>
@@ -135,13 +137,7 @@ export default function AdminProfile() {
         {/* ── Profile card ──────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
           {/* Header */}
-          <Box
-            sx={{
-              p: 3,
-              background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
-              color: 'white',
-            }}
-          >
+          <Box sx={{ p: 3, background: ADMIN_GRADIENT, color: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Avatar
                 sx={{
@@ -222,16 +218,16 @@ export default function AdminProfile() {
         {/* ── Change password ───────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <Lock sx={{ color: '#003285' }} />
+            <Lock sx={{ color: ADMIN_PRIMARY }} />
             <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
 
           <Box component="form" onSubmit={formik.handleSubmit} noValidate>
             <Stack spacing={2}>
-              {pwField('currentPassword', 'Current Password', showCurrent, () => setShowCurrent((p) => !p))}
-              {pwField('newPassword',     'New Password',     showNew,     () => setShowNew((p) => !p))}
-              {pwField('confirmPassword', 'Confirm New Password', showNew, () => setShowNew((p) => !p))}
+              {pwField('currentPassword', 'Current Password',     showCurrent, () => setShowCurrent((p) => !p))}
+              {pwField('newPassword',     'New Password',         showNew,     () => setShowNew((p) => !p))}
+              {pwField('confirmPassword', 'Confirm New Password', showConfirm, () => setShowConfirm((p) => !p))}
 
               <Alert severity="info" sx={{ borderRadius: 2, py: 0.5 }}>
                 Password must be at least 8 characters, contain one uppercase letter and one number.
@@ -244,7 +240,7 @@ export default function AdminProfile() {
                 startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <Lock />}
                 sx={{
                   textTransform: 'none', fontWeight: 700, borderRadius: 2, py: 1.2,
-                  background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+                  background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW,
                   alignSelf: 'flex-start',
                 }}
               >
@@ -257,20 +253,16 @@ export default function AdminProfile() {
       </Stack>
 
       {/* ── Snackbar ─────────────────────────────────────────────────────────── */}
-      {snackbar.open && (
-        <Alert
-          severity={snackbar.severity}
-          variant="filled"
-          onClose={closeSnackbar}
-          sx={{
-            position: 'fixed', bottom: 24, left: '50%',
-            transform: 'translateX(-50%)',
-            borderRadius: 2, zIndex: 9999,
-          }}
-        >
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled" onClose={closeSnackbar} sx={{ borderRadius: 2 }}>
           {snackbar.message}
         </Alert>
-      )}
+      </Snackbar>
 
     </Box>
   );

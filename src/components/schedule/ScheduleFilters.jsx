@@ -1,4 +1,5 @@
 import FilterBar from '../shared/FilterBar';
+import { SESSION_TYPE_OPTIONS } from '../../theme/scheduleTokens';
 
 const STATUS_OPTIONS = [
   { value: 'DRAFT',     label: 'Draft'     },
@@ -11,14 +12,6 @@ const SEMESTER_OPTIONS = [
   { value: 'S1',     label: 'Semester 1' },
   { value: 'S2',     label: 'Semester 2' },
   { value: 'Annual', label: 'Annual'     },
-];
-
-const SESSION_TYPE_OPTIONS = [
-  { value: 'LECTURE',  label: 'Lecture'   },
-  { value: 'TUTORIAL', label: 'Tutorial'  },
-  { value: 'PRACTICAL',      label: 'Practical'       },
-  { value: 'EXAM',     label: 'Exam'      },
-  { value: 'WORKSHOP',    label: 'Workshop'     },
 ];
 
 /**

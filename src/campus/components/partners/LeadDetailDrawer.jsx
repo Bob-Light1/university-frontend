@@ -198,7 +198,7 @@ const LeadDetailDrawer = ({ lead, onClose, onStatusChange, onDelete }) => {
 
           {/* Contact info */}
           <Box>
-            <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.72rem' }}>
+            <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.75rem' }}>
               Contact
             </Typography>
             <Divider sx={{ mb: 1, mt: 0.3 }} />
@@ -217,7 +217,7 @@ const LeadDetailDrawer = ({ lead, onClose, onStatusChange, onDelete }) => {
           {/* Partner */}
           {lead.partner && (
             <Box>
-              <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.72rem' }}>
+              <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.75rem' }}>
                 Referred By
               </Typography>
               <Divider sx={{ mb: 1, mt: 0.3 }} />
@@ -231,7 +231,7 @@ const LeadDetailDrawer = ({ lead, onClose, onStatusChange, onDelete }) => {
           {/* Status history */}
           {lead.statusHistory?.length > 0 && (
             <Box>
-              <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.72rem' }}>
+              <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.75rem' }}>
                 Status History
               </Typography>
               <Divider sx={{ mb: 1.5, mt: 0.3 }} />

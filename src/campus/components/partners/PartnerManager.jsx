@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { Add, FileDownload, Handshake, People, TrendingUp, EmojiEvents } from '@mui/icons-material';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
+import { BRAND_ORANGE, BRAND_GRADIENT_BTN, BRAND_SHADOW } from '../../../theme/partnerTokens';
 
 import usePartner from '../../../hooks/usePartner';
 import KPICards   from '../../../components/shared/KpiCard';
@@ -55,7 +56,7 @@ const PartnerManager = () => {
         label:    'Total Partners',
         value:    pagination.total,
         icon:     <Handshake sx={{ fontSize: 28 }} />,
-        color:    '#ff7f3e',
+        color:    BRAND_ORANGE,
         subtitle: 'Registered on this campus',
       },
       {
@@ -170,19 +171,25 @@ const PartnerManager = () => {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
 
       {/* ── Header ────────────────────────────────────────────────────────────── */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={1}
+        sx={{ mb: 2.5 }}
+      >
         <Box>
-          <Typography variant="h5" fontWeight={800}>
+          <Typography variant="h5" fontWeight={700}>
             Partner Management
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Manage referral partners, track leads and commissions.
           </Typography>
         </Box>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: 'flex-end', sm: 'auto' } }}>
           <Button
             size="small"
             variant="outlined"
@@ -198,8 +205,8 @@ const PartnerManager = () => {
             onClick={handleOpenCreate}
             sx={{
               textTransform: 'none', fontWeight: 700, borderRadius: 2,
-              background: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
-              boxShadow: '0 4px 12px rgba(255,127,62,0.3)',
+              background: BRAND_GRADIENT_BTN,
+              boxShadow: BRAND_SHADOW,
             }}
           >
             Add Partner
@@ -239,6 +246,7 @@ const PartnerManager = () => {
         onToggleStatus={handleToggleStatus}
         onArchive={(partner) => handleAskArchive(partner)}
         onRestore={(partner) => handleAskRestore(partner)}
+        onOpenCreate={handleOpenCreate}
       />
 
       {/* ── Create / Edit Dialog ──────────────────────────────────────────────── */}
@@ -254,7 +262,7 @@ const PartnerManager = () => {
         anchor="right"
         open={drawerOpen}
         onClose={handleCloseDrawer}
-        PaperProps={{ sx: { width: 480, borderRadius: '16px 0 0 16px' } }}
+        PaperProps={{ sx: { width: { xs: '100vw', sm: 480 }, borderRadius: { sm: '16px 0 0 16px' } } }}
       >
         <PartnerDetailDrawer
           entity={viewTarget}

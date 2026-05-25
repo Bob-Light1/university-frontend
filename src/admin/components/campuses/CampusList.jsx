@@ -2,41 +2,126 @@
  * @file CampusList.jsx
  * @description Admin portal — full campus list with search, filter, and actions.
  *
- * Data: GET /campus/all (public endpoint, no campus isolation)
- * Actions:
- *   DELETE /campus/:id         (archive — ADMIN/DIRECTOR only)
- *   PATCH  /campus/:id/restore (restore — ADMIN/DIRECTOR only)
+ * Data: GET /campus/all
+ * Actions: DELETE /campus/:id (archive) · PATCH /campus/:id/restore
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate }                       from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Paper, Stack, Chip, Divider,
   Table, TableBody, TableCell, TableHead, TableRow,
   TableContainer, TablePagination, TextField, FormControl,
   InputLabel, Select, MenuItem, Button, IconButton,
-  InputAdornment, Avatar, Alert,
-  Skeleton, Tooltip,
+  InputAdornment, Avatar, Alert, Skeleton, Tooltip,
+  Snackbar, useTheme, useMediaQuery,
 } from '@mui/material';
 import {
   Search, FilterListOff, AddBusiness,
   Visibility, Business, Inventory2, Unarchive,
+  LocationOn, Person, CalendarToday,
 } from '@mui/icons-material';
 
 import { getAllCampuses, archiveCampus, restoreCampus } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
+import {
+  ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, CAMPUS_STATUS_COLOR,
+} from '../../../theme/adminTokens';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const STATUS_COLOR = { active: 'success', inactive: 'default', archived: 'error' };
 const DEFAULT_FILTERS = { search: '', status: '', page: 1, limit: 20 };
 const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 } };
+
+// ─── Mobile campus card ───────────────────────────────────────────────────────
+
+const CampusCard = ({ campus: c, onView, onArchive, onRestore }) => (
+  <Paper
+    variant="outlined"
+    sx={{ p: 2, borderRadius: 2, '&:hover': { boxShadow: 2 } }}
+  >
+    <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 1.5 }}>
+      <Avatar
+        src={c.campus_image}
+        sx={{ width: 40, height: 40, bgcolor: ADMIN_PRIMARY, fontSize: '0.85rem', fontWeight: 700, flexShrink: 0 }}
+      >
+        <Business sx={{ fontSize: 18 }} />
+      </Avatar>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+          <Typography variant="subtitle2" fontWeight={700} noWrap sx={{ flex: 1, mr: 1 }}>
+            {c.campus_name}
+          </Typography>
+          <Chip
+            label={c.status}
+            color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
+            size="small"
+            sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+          />
+        </Stack>
+        {c.campus_number && (
+          <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+            {c.campus_number}
+          </Typography>
+        )}
+      </Box>
+    </Stack>
+
+    <Divider sx={{ my: 1 }} />
+
+    <Stack spacing={0.5} sx={{ mb: 1.5 }}>
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Person sx={{ fontSize: 14, color: 'text.disabled' }} />
+        <Typography variant="caption" color="text.secondary" noWrap>
+          {c.manager_name}{c.email ? ` — ${c.email}` : ''}
+        </Typography>
+      </Stack>
+      {(c.location?.city || c.location?.country) && (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <LocationOn sx={{ fontSize: 14, color: 'text.disabled' }} />
+          <Typography variant="caption" color="text.secondary">
+            {[c.location?.city, c.location?.country].filter(Boolean).join(', ')}
+          </Typography>
+        </Stack>
+      )}
+      <Stack direction="row" spacing={1} alignItems="center">
+        <CalendarToday sx={{ fontSize: 14, color: 'text.disabled' }} />
+        <Typography variant="caption" color="text.secondary">
+          {new Date(c.createdAt).toLocaleDateString()}
+        </Typography>
+      </Stack>
+    </Stack>
+
+    <Stack direction="row" spacing={1} justifyContent="flex-end">
+      <Tooltip title="View campus portal">
+        <IconButton size="medium" onClick={() => onView(c._id)}>
+          <Visibility fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      {c.status === 'archived' ? (
+        <Tooltip title="Restore campus">
+          <IconButton size="medium" color="success" onClick={() => onRestore(c)}>
+            <Unarchive fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Archive campus">
+          <IconButton size="medium" color="error" onClick={() => onArchive(c)}>
+            <Inventory2 fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
+    </Stack>
+  </Paper>
+);
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CampusList() {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const theme     = useTheme();
+  const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [campuses,      setCampuses]      = useState([]);
@@ -95,12 +180,31 @@ export default function CampusList() {
     }
   };
 
+  const paginationEl = (
+    <TablePagination
+      component="div"
+      count={pagination.total}
+      page={pagination.page - 1}
+      rowsPerPage={pagination.limit}
+      rowsPerPageOptions={[10, 20, 50]}
+      onPageChange={(_, p) => handleFilterChange('page', p + 1)}
+      onRowsPerPageChange={(e) => handleFilterChange('limit', parseInt(e.target.value, 10))}
+    />
+  );
+
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
 
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2.5 }}>
+      {/* ── Header ─────────────────────────────────────────────────────────────── */}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={1}
+        sx={{ mb: 2.5 }}
+      >
         <Box>
-          <Typography variant="h5" fontWeight={800}>Campuses</Typography>
+          <Typography variant="h5" fontWeight={700}>Campuses</Typography>
           <Typography variant="body2" color="text.secondary">
             All campuses registered on the platform.
           </Typography>
@@ -111,21 +215,22 @@ export default function CampusList() {
           onClick={() => navigate('/admin/new-campus')}
           sx={{
             textTransform: 'none', fontWeight: 700, borderRadius: 2,
-            background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+            background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW,
+            alignSelf: { xs: 'flex-end', sm: 'auto' },
           }}
         >
           New Campus
         </Button>
       </Stack>
 
-      {/* ── Filters ─────────────────────────────────────────────────────────────── */}
+      {/* ── Filters ────────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" sx={{ mb: 2 }}>
         <TextField
           size="small"
           placeholder="Search name, manager, email…"
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
-          sx={{ minWidth: 240, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+          sx={{ flex: 1, minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
           slotProps={{
             input: {
               startAdornment: (
@@ -148,7 +253,7 @@ export default function CampusList() {
         <Button
           size="small" variant="outlined" startIcon={<FilterListOff />}
           onClick={handleReset}
-          sx={{ borderRadius: 2, textTransform: 'none', alignSelf: 'center' }}
+          sx={{ borderRadius: 2, textTransform: 'none', alignSelf: { xs: 'flex-start', sm: 'center' } }}
         >
           Reset
         </Button>
@@ -156,8 +261,8 @@ export default function CampusList() {
 
       {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
 
-      {/* ── Table ───────────────────────────────────────────────────────────────── */}
-      <Paper variant="outlined" sx={{ borderRadius: 3 }}>
+      {/* ── Desktop table ───────────────────────────────────────────────────────── */}
+      <Paper variant="outlined" sx={{ borderRadius: 3, display: { xs: 'none', md: 'block' } }}>
         <TableContainer>
           <Table size="small">
             <TableHead>
@@ -188,16 +293,11 @@ export default function CampusList() {
               ) : (
                 campuses.map((c) => (
                   <TableRow key={c._id} hover>
-
-                    {/* Campus name + number */}
                     <TableCell>
                       <Stack direction="row" spacing={1.5} alignItems="center">
                         <Avatar
                           src={c.campus_image}
-                          sx={{
-                            width: 36, height: 36,
-                            bgcolor: '#003285', fontSize: '0.85rem', fontWeight: 700,
-                          }}
+                          sx={{ width: 36, height: 36, bgcolor: ADMIN_PRIMARY, fontSize: '0.85rem', fontWeight: 700 }}
                         >
                           <Business sx={{ fontSize: 18 }} />
                         </Avatar>
@@ -211,8 +311,6 @@ export default function CampusList() {
                         </Box>
                       </Stack>
                     </TableCell>
-
-                    {/* Manager */}
                     <TableCell>
                       <Typography variant="body2">{c.manager_name}</Typography>
                       <Typography variant="caption" color="text.secondary">{c.email}</Typography>
@@ -222,32 +320,24 @@ export default function CampusList() {
                         </Typography>
                       )}
                     </TableCell>
-
-                    {/* Location */}
                     <TableCell>
                       <Typography variant="body2" color="text.secondary">
                         {[c.location?.city, c.location?.country].filter(Boolean).join(', ') || '—'}
                       </Typography>
                     </TableCell>
-
-                    {/* Status */}
                     <TableCell>
                       <Chip
                         label={c.status}
-                        color={STATUS_COLOR[c.status] ?? 'default'}
+                        color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
                         sx={{ fontWeight: 600, textTransform: 'capitalize' }}
                       />
                     </TableCell>
-
-                    {/* Date */}
                     <TableCell>
                       <Typography variant="caption" color="text.secondary">
                         {new Date(c.createdAt).toLocaleDateString()}
                       </Typography>
                     </TableCell>
-
-                    {/* Actions */}
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5} justifyContent="flex-end">
                         <Tooltip title="View campus portal">
@@ -270,27 +360,43 @@ export default function CampusList() {
                         )}
                       </Stack>
                     </TableCell>
-
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
         </TableContainer>
-
         <Divider />
-        <TablePagination
-          component="div"
-          count={pagination.total}
-          page={pagination.page - 1}
-          rowsPerPage={pagination.limit}
-          rowsPerPageOptions={[10, 20, 50]}
-          onPageChange={(_, p) => handleFilterChange('page', p + 1)}
-          onRowsPerPageChange={(e) => handleFilterChange('limit', parseInt(e.target.value, 10))}
-        />
+        {paginationEl}
       </Paper>
 
-      {/* ── Archive / Restore confirm dialog ────────────────────────────────────── */}
+      {/* ── Mobile cards ────────────────────────────────────────────────────────── */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {loading ? (
+          <Stack spacing={1.5}>
+            {[1, 2, 3, 4].map((k) => <Skeleton key={k} variant="rounded" height={150} />)}
+          </Stack>
+        ) : campuses.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
+            <Typography color="text.secondary">No campuses found.</Typography>
+          </Paper>
+        ) : (
+          <Stack spacing={1.5}>
+            {campuses.map((c) => (
+              <CampusCard
+                key={c._id}
+                campus={c}
+                onView={(id) => navigate(`/campus/${id}`)}
+                onArchive={handleAskArchive}
+                onRestore={handleAskRestore}
+              />
+            ))}
+          </Stack>
+        )}
+        {paginationEl}
+      </Box>
+
+      {/* ── Confirm dialog ──────────────────────────────────────────────────────── */}
       <ConfirmActionDialog
         open={confirmDialog.open}
         action={confirmDialog.action}
@@ -302,20 +408,16 @@ export default function CampusList() {
       />
 
       {/* ── Snackbar ────────────────────────────────────────────────────────────── */}
-      {snackbar.open && (
-        <Alert
-          severity={snackbar.severity}
-          variant="filled"
-          onClose={closeSnackbar}
-          sx={{
-            position: 'fixed', bottom: 24, left: '50%',
-            transform: 'translateX(-50%)',
-            borderRadius: 2, zIndex: 9999,
-          }}
-        >
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled" onClose={closeSnackbar} sx={{ borderRadius: 2 }}>
           {snackbar.message}
         </Alert>
-      )}
+      </Snackbar>
 
     </Box>
   );

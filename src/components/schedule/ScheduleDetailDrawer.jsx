@@ -9,15 +9,7 @@ import {
 } from '@mui/icons-material';
 import ScheduleStatusChip from './ScheduleStatusChip';
 import { fTime, fDateWeekdayLong } from '../../utils/dateFormat';
-
-const SESSION_TYPE_COLOR = {
-  LECTURE:   '#1976d2',
-  TUTORIAL:  '#7b1fa2',
-  PRACTICAL: '#388e3c',
-  SEMINAR:   '#f57c00',
-  EXAM:      '#d32f2f',
-  OTHER:     '#455a64',
-};
+import { SESSION_TYPE_COLOR } from '../../theme/scheduleTokens';
 
 /**
  * Side drawer showing full session details.

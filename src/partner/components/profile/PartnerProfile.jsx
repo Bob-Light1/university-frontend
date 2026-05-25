@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 
 import { getMe, updateMyProfile, changeMyPassword } from '../../../services/partnerService';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import { TIER_COLOR, BRAND_GRADIENT, BRAND_GRADIENT_BTN, BRAND_ORANGE } from '../../../theme/partnerTokens';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -40,10 +41,6 @@ const passwordSchema = Yup.object({
     .oneOf([Yup.ref('newPassword')], 'Passwords do not match')
     .required('Please confirm your new password'),
 });
-
-// ─── Tier color ───────────────────────────────────────────────────────────────
-
-const TIER_COLOR = { bronze: '#cd7f32', silver: '#9e9e9e', gold: '#f9a825', platinum: '#78909c' };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -107,12 +104,12 @@ export default function PartnerProfile() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-        <CircularProgress sx={{ color: '#ff7f3e' }} />
+        <CircularProgress sx={{ color: BRAND_ORANGE }} />
       </Box>
     );
   }
 
-  const tierColor = TIER_COLOR[profile?.tier] ?? '#9e9e9e';
+  const tierColor = TIER_COLOR[profile?.tier] ?? TIER_COLOR.silver;
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
@@ -121,7 +118,7 @@ export default function PartnerProfile() {
       <Paper
         sx={{
           p: 3, mb: 3, borderRadius: 3,
-          background: 'linear-gradient(135deg, #d4530a 0%, #ff7f3e 100%)',
+          background: BRAND_GRADIENT,
           color: 'white',
         }}
       >
@@ -130,7 +127,7 @@ export default function PartnerProfile() {
             {profile?.firstName?.[0]}{profile?.lastName?.[0]}
           </Avatar>
           <Box>
-            <Typography variant="h6" fontWeight={800}>
+            <Typography variant="h6" fontWeight={700}>
               {profile?.firstName} {profile?.lastName}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.85 }}>{profile?.email}</Typography>
@@ -231,7 +228,7 @@ export default function PartnerProfile() {
                 }
                 sx={{
                   textTransform: 'none', fontWeight: 700, borderRadius: 2,
-                  background: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
+                  background: BRAND_GRADIENT_BTN,
                 }}
               >
                 {profileFormik.isSubmitting ? 'Saving…' : 'Save Profile'}

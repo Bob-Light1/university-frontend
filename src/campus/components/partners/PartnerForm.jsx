@@ -23,6 +23,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import { registerPartner, updatePartner } from '../../../services/partnerService';
+import { BRAND_ORANGE, BRAND_GRADIENT_BTN } from '../../../theme/partnerTokens';
 import FormSection    from '../../../components/form/FormSection';
 import {
   FormTextField, FormSelectField, FormPasswordField,
@@ -211,7 +212,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
       >
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Handshake sx={{ color: '#ff7f3e' }} />
+            <Handshake sx={{ color: BRAND_ORANGE }} />
             <Typography variant="h6" fontWeight={700}>
               {isEdit ? 'Edit Partner' : 'Create New Partner'}
             </Typography>
@@ -341,7 +342,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
             startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
             sx={{
               textTransform: 'none', fontWeight: 700, borderRadius: 2,
-              background: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
+              background: BRAND_GRADIENT_BTN,
             }}
           >
             {formik.isSubmitting ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Partner'}

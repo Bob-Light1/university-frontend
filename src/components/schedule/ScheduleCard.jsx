@@ -8,11 +8,7 @@ import {
 } from '@mui/icons-material';
 import ScheduleStatusChip from './ScheduleStatusChip';
 import { fTime, fDateWeekday } from '../../utils/dateFormat';
-
-const SESSION_TYPE_COLOR = {
-  LECTURE: '#1976d2', TUTORIAL: '#7b1fa2', LAB: '#388e3c',
-  SEMINAR: '#f57c00', EXAM: '#d32f2f',    OTHER: '#455a64',
-};
+import { SESSION_TYPE_COLOR } from '../../theme/scheduleTokens';
 
 /**
  * Safely resolves a display label from a class sub-document.

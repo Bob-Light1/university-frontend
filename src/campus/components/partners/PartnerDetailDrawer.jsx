@@ -34,38 +34,16 @@ import {
 import { getCommissionSummary, downloadKit, getPartnerLeads } from '../../../services/partnerService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import {
+  BRAND_GRADIENT, BRAND_GRADIENT_BTN,
+  BRAND_ORANGE, WHATSAPP_BG,
+  TIER_COLOR, LEAD_STATUS_COLOR, LEAD_STATUS_LABEL,
+  partnerStatusColor,
+} from '../../../theme/partnerTokens';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const LEAD_STATUS_COLOR = {
-  new:               'default',
-  contacted:         'info',
-  dossier_submitted: 'warning',
-  admitted:          'secondary',
-  enrolled:          'success',
-  rejected:          'error',
-  abandoned:         'default',
-};
-
-const LEAD_STATUS_LABEL = {
-  new:               'New',
-  contacted:         'Contacted',
-  dossier_submitted: 'Dossier',
-  admitted:          'Admitted',
-  enrolled:          'Enrolled',
-  rejected:          'Rejected',
-  abandoned:         'Abandoned',
-};
-
-const TIER_COLOR = {
-  bronze:   '#cd7f32',
-  silver:   '#9e9e9e',
-  gold:     '#f9a825',
-  platinum: '#78909c',
-};
-
-const statusChipColor = (status) =>
-  status === 'active' ? 'success' : status === 'suspended' ? 'error' : 'default';
+const statusChipColor = partnerStatusColor;
 
 const DetailItem = ({ icon, primary, secondary }) => (
   <ListItem disablePadding sx={{ py: 0.75 }}>
@@ -146,7 +124,7 @@ const PartnerDetailDrawer = ({
 
   if (!partner) return null;
 
-  const tierColor    = TIER_COLOR[partner.tier] ?? '#9e9e9e';
+  const tierColor    = TIER_COLOR[partner.tier] ?? TIER_COLOR.silver;
   const totalLeads   = partner.totalLeads   ?? 0;
   const totalConverted = partner.totalConverted ?? 0;
   const conversion   = totalLeads > 0 ? Math.round((totalConverted / totalLeads) * 100) : 0;
@@ -192,13 +170,13 @@ const PartnerDetailDrawer = ({
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ width: 480, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: { xs: '100vw', sm: 480 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Header ────────────────────────────────────────────────────────────── */}
       <Box
         sx={{
-          p: 3,
-          background: 'linear-gradient(135deg, #d4530a 0%, #ff7f3e 100%)',
+          p: { xs: 2, sm: 3 },
+          background: BRAND_GRADIENT,
           color: 'white',
           position: 'relative',
         }}
@@ -267,7 +245,7 @@ const PartnerDetailDrawer = ({
         variant="scrollable"
         scrollButtons="auto"
         sx={{ borderBottom: 1, borderColor: 'divider', minHeight: 44 }}
-        TabIndicatorProps={{ sx: { bgcolor: '#ff7f3e' } }}
+        TabIndicatorProps={{ sx: { bgcolor: BRAND_ORANGE } }}
       >
         {['Profile', 'Leads', 'Commissions', 'Kit', 'Settings'].map((label) => (
           <Tab key={label} label={label} sx={{ minHeight: 44, textTransform: 'none', fontSize: '0.82rem' }} />
@@ -384,7 +362,7 @@ const PartnerDetailDrawer = ({
               <KpiBox label="Enrolled"       value={totalConverted}   color="success.main"  />
               <KpiBox label="Conversion"     value={`${conversion}%`} color={conversion >= 50 ? 'success.main' : 'warning.main'} />
             </Stack>
-            <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.72rem' }}>
+            <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.75rem' }}>
               Last 10 Leads
             </Typography>
             <Paper variant="outlined" sx={{ borderRadius: 2 }}>
@@ -484,17 +462,18 @@ const PartnerDetailDrawer = ({
                 src={qrUrl}
                 alt="Partner QR Code"
                 sx={{
-                  width: 200, height: 200,
+                  width: '100%', maxWidth: 200, aspectRatio: '1 / 1',
                   border: '1px solid',
                   borderColor: 'divider',
                   borderRadius: 2,
                   p: 1,
+                  objectFit: 'contain',
                 }}
               />
             ) : (
               <Box
                 sx={{
-                  width: 200, height: 200,
+                  width: '100%', maxWidth: 200, aspectRatio: '1 / 1',
                   border: '2px dashed',
                   borderColor: 'divider',
                   borderRadius: 2,
@@ -530,7 +509,7 @@ const PartnerDetailDrawer = ({
             )}
 
             {/* WhatsApp message preview */}
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, width: '100%', bgcolor: '#f0faf0' }}>
+            <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, width: '100%', bgcolor: WHATSAPP_BG }}>
               <Typography variant="caption" color="text.secondary" fontWeight={600} sx={{ display: 'block', mb: 0.5 }}>
                 WhatsApp Message Template
               </Typography>
@@ -546,7 +525,7 @@ const PartnerDetailDrawer = ({
               fullWidth
               sx={{
                 textTransform: 'none', fontWeight: 700, borderRadius: 2,
-                background: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
+                background: BRAND_GRADIENT_BTN,
               }}
             >
               Download QR Code

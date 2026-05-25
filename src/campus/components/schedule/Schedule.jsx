@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import {
   Box, Grid, Typography, Button, Tab, Tabs, Dialog,
   DialogTitle, DialogContent, Snackbar, Alert, Stack,
-  Avatar, alpha, useTheme,
+  Avatar, alpha, useTheme, useMediaQuery,
 } from '@mui/material';
 import { Add, CalendarMonth, List, School, TrendingUp } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
@@ -36,6 +36,7 @@ const buildKpis = (stats, theme) => [
 const Schedule = () => {
   const { campusId } = useParams();
   const theme        = useTheme();
+  const isMobile     = useMediaQuery(theme.breakpoints.down('md'));
 
   const [view,          setView]          = useState('calendar');
   const [formOpen,      setFormOpen]      = useState(false);
@@ -153,9 +154,15 @@ const Schedule = () => {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={1}
+        mb={3}
+      >
         <Box>
-          <Typography variant="h4" fontWeight={800}>Schedule Management</Typography>
+          <Typography variant="h4" fontWeight={700}>Schedule Management</Typography>
           <Typography variant="body2" color="text.secondary">
             Create and manage all class sessions for your campus
           </Typography>
@@ -179,15 +186,31 @@ const Schedule = () => {
         />
       </Box>
 
-      <Box mb={2}>
-        <Tabs value={view} onChange={(_, v) => setView(v)}
-          sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600 } }}>
+      {/* View toggle — desktop only */}
+      <Box mb={2} sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Tabs
+          value={view}
+          onChange={(_, v) => setView(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600 } }}
+        >
           <Tab value="calendar" label="Calendar" icon={<CalendarMonth />} iconPosition="start" />
           <Tab value="list"     label="List"     icon={<List />}          iconPosition="start" />
         </Tabs>
       </Box>
 
-      {view === 'calendar' ? (
+      {/* Mobile: agenda view grouped by day */}
+      {isMobile ? (
+        <MobileAgendaView
+          sessions={sessions}
+          loading={loading}
+          onView={handleViewSession}
+          onEdit={handleOpenEdit}
+          onDelete={handleDeleteWithFeedback}
+          onAction={handleOpenCreate}
+        />
+      ) : view === 'calendar' ? (
         <ScheduleCalendar sessions={sessions} onView={handleViewSession}
           onEdit={handleOpenEdit} onDelete={handleDeleteWithFeedback} />
       ) : (
@@ -232,7 +255,7 @@ const Schedule = () => {
           paper: { sx: { borderRadius: 3 } },
         }}
       >
-        <DialogTitle sx={{ fontWeight: 800 }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>
           {editTarget ? 'Edit Session' : 'Create New Session'}
         </DialogTitle>
         <DialogContent dividers sx={{ pt: 2 }}>
@@ -264,6 +287,69 @@ const Schedule = () => {
         </Alert>
       </Snackbar>
     </Box>
+  );
+};
+
+const formatDayHeader = (date) =>
+  new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(date);
+
+const MobileAgendaView = ({ sessions, loading, onView, onEdit, onDelete, onAction }) => {
+  const theme = useTheme();
+
+  if (loading) {
+    return (
+      <Stack spacing={1.5}>
+        {[1, 2, 3, 4].map((k) => (
+          <Box key={k} sx={{ height: 120, bgcolor: 'action.hover', borderRadius: 2 }} />
+        ))}
+      </Stack>
+    );
+  }
+
+  if (sessions.length === 0) return <EmptyState onAction={onAction} />;
+
+  const grouped = sessions.reduce((acc, session) => {
+    const d   = new Date(session.startTime);
+    const key = d.toDateString();
+    if (!acc[key]) acc[key] = { date: d, sessions: [] };
+    acc[key].sessions.push(session);
+    return acc;
+  }, {});
+
+  const groups = Object.values(grouped).sort((a, b) => a.date - b.date);
+
+  return (
+    <Stack spacing={2.5}>
+      {groups.map(({ date, sessions: daySessions }) => (
+        <Box key={date.toDateString()}>
+          <Typography
+            variant="overline"
+            fontWeight={700}
+            sx={{
+              color: theme.palette.primary.main,
+              display: 'block',
+              mb: 1,
+              px: 0.5,
+              textTransform: 'capitalize',
+              letterSpacing: '0.06em',
+            }}
+          >
+            {formatDayHeader(date)}
+          </Typography>
+          <Stack spacing={1.5}>
+            {daySessions.map((s) => (
+              <ScheduleCard
+                key={s._id}
+                session={s}
+                onView={onView}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+          </Stack>
+        </Box>
+      ))}
+    </Stack>
   );
 };
 

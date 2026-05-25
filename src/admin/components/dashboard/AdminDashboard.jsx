@@ -7,36 +7,42 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate }         from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Paper, Stack, Chip, Divider,
   Table, TableBody, TableCell, TableHead, TableRow,
   TableContainer, Button, Avatar, CircularProgress,
-  Alert, Skeleton,
+  Alert, Skeleton, useTheme, useMediaQuery,
 } from '@mui/material';
 import {
   Business, CheckCircle, Block, AddBusiness,
-  ManageAccounts, TrendingUp, Schedule,
+  ManageAccounts, TrendingUp, Schedule, Visibility,
+  LocationOn,
 } from '@mui/icons-material';
 
 import { getAllCampuses, getAdminMe } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
+import {
+  ADMIN_PRIMARY, ADMIN_GRADIENT, CAMPUS_STATUS_COLOR,
+} from '../../../theme/adminTokens';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const STATUS_COLOR = { active: 'success', inactive: 'default', archived: 'error' };
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
 
 const KpiCard = ({ label, value, icon, color, loading }) => (
   <Paper
     variant="outlined"
-    sx={{ p: 2.5, flex: 1, borderRadius: 2, borderLeft: `4px solid ${color}` }}
+    sx={{
+      p: 2.5, flex: 1, borderRadius: 2, borderLeft: `4px solid ${color}`,
+      transition: 'box-shadow 0.2s',
+      '&:hover': { boxShadow: 3 },
+    }}
   >
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Box>
-        <Typography variant="caption" color="text.secondary">{label}</Typography>
+        <Typography variant="caption" color="text.secondary" fontWeight={600}>{label}</Typography>
         {loading
           ? <Skeleton width={40} height={36} />
-          : <Typography variant="h5" fontWeight={800} sx={{ color }}>{value}</Typography>
+          : <Typography variant="h5" fontWeight={700} sx={{ color, lineHeight: 1.2, mt: 0.25 }}>{value}</Typography>
         }
       </Box>
       <Box sx={{ color, opacity: 0.55 }}>{icon}</Box>
@@ -47,8 +53,10 @@ const KpiCard = ({ label, value, icon, color, loading }) => (
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
-  const navigate      = useNavigate();
-  const { user }      = useAuth();
+  const navigate  = useNavigate();
+  const { user }  = useAuth();
+  const theme     = useTheme();
+  const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
 
   const [campuses, setCampuses] = useState([]);
   const [profile,  setProfile]  = useState(null);
@@ -74,8 +82,6 @@ export default function AdminDashboard() {
     load();
   }, []);
 
-  // ─── Computed stats ──────────────────────────────────────────────────────────
-
   const total    = campuses.length;
   const active   = campuses.filter((c) => c.status === 'active').length;
   const inactive = campuses.filter((c) => c.status === 'inactive').length;
@@ -88,18 +94,23 @@ export default function AdminDashboard() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
 
       {/* ── Greeting ──────────────────────────────────────────────────────────── */}
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        sx={{ mb: 3 }}
+      >
         <Avatar
           sx={{
             width: 52, height: 52,
-            background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+            background: ADMIN_GRADIENT,
             fontWeight: 700, fontSize: '1.2rem',
           }}
         >
           {adminName[0]?.toUpperCase()}
         </Avatar>
         <Box>
-          <Typography variant="h5" fontWeight={800}>
+          <Typography variant="h5" fontWeight={700}>
             Welcome back, {adminName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -112,10 +123,10 @@ export default function AdminDashboard() {
 
       {/* ── KPI cards ─────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 3 }}>
-        <KpiCard label="Total Campuses"  value={total}   icon={<Business />}     color="#003285" loading={loading} />
-        <KpiCard label="Active"          value={active}  icon={<CheckCircle />}  color="#2e7d32" loading={loading} />
-        <KpiCard label="Inactive"        value={inactive} icon={<Block />}       color="#ed6c02" loading={loading} />
-        <KpiCard label="Platform Growth" value={`${total} sites`} icon={<TrendingUp />} color="#7b1fa2" loading={loading} />
+        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={ADMIN_PRIMARY}                    loading={loading} />
+        <KpiCard label="Active"          value={active}           icon={<CheckCircle />} color={theme.palette.success.dark}       loading={loading} />
+        <KpiCard label="Inactive"        value={inactive}         icon={<Block />}       color={theme.palette.warning.main}       loading={loading} />
+        <KpiCard label="Platform Growth" value={`${total} sites`} icon={<TrendingUp />}  color={theme.palette.secondary.dark}     loading={loading} />
       </Stack>
 
       {/* ── Quick actions ─────────────────────────────────────────────────────── */}
@@ -126,7 +137,7 @@ export default function AdminDashboard() {
           onClick={() => navigate('/admin/new-campus')}
           sx={{
             textTransform: 'none', fontWeight: 700, borderRadius: 2,
-            background: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)',
+            background: ADMIN_GRADIENT,
           }}
         >
           New Campus
@@ -153,19 +164,21 @@ export default function AdminDashboard() {
       <Paper variant="outlined" sx={{ borderRadius: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2, pb: 1.5 }}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Schedule sx={{ color: '#003285', fontSize: 20 }} />
+            <Schedule sx={{ color: ADMIN_PRIMARY, fontSize: 20 }} />
             <Typography variant="subtitle1" fontWeight={700}>Recent Campuses</Typography>
           </Stack>
           <Button
             size="small"
             onClick={() => navigate('/admin/campuses')}
-            sx={{ textTransform: 'none', color: '#003285' }}
+            sx={{ textTransform: 'none', color: ADMIN_PRIMARY }}
           >
             View all
           </Button>
         </Stack>
         <Divider />
-        <TableContainer>
+
+        {/* Desktop table */}
+        <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -214,7 +227,7 @@ export default function AdminDashboard() {
                     <TableCell>
                       <Chip
                         label={c.status}
-                        color={STATUS_COLOR[c.status] ?? 'default'}
+                        color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
                         sx={{ fontWeight: 600, textTransform: 'capitalize' }}
                       />
@@ -230,6 +243,58 @@ export default function AdminDashboard() {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Mobile list */}
+        <Box sx={{ display: { xs: 'block', md: 'none' }, p: 1.5 }}>
+          {loading ? (
+            <Stack spacing={1}>
+              {[1, 2, 3].map((k) => <Skeleton key={k} variant="rounded" height={72} />)}
+            </Stack>
+          ) : recent.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+              No campuses yet.
+            </Typography>
+          ) : (
+            <Stack spacing={1}>
+              {recent.map((c) => (
+                <Stack
+                  key={c._id}
+                  direction="row"
+                  alignItems="center"
+                  spacing={1.5}
+                  sx={{
+                    p: 1.5, borderRadius: 2,
+                    border: '1px solid', borderColor: 'divider',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
+                  onClick={() => navigate(`/campus/${c._id}`)}
+                >
+                  <Avatar sx={{ width: 36, height: 36, bgcolor: ADMIN_PRIMARY, fontSize: '0.85rem' }}>
+                    <Business sx={{ fontSize: 18 }} />
+                  </Avatar>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="body2" fontWeight={600} noWrap sx={{ flex: 1, mr: 1 }}>
+                        {c.campus_name}
+                      </Typography>
+                      <Chip
+                        label={c.status}
+                        color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
+                        size="small"
+                        sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+                      />
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary" noWrap>
+                      {c.manager_name}
+                      {c.location?.city ? ` · ${c.location.city}` : ''}
+                    </Typography>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+          )}
+        </Box>
       </Paper>
 
     </Box>

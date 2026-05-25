@@ -20,35 +20,13 @@ import {
   ArrowForwardIos,
 } from '@mui/icons-material';
 
+import { useTheme } from '@mui/material/styles';
 import { getMe, getMyDashboard } from '../../../services/partnerService';
 import { IMAGE_BASE_URL } from '../../../config/env';
-
-// ─── Tier config ──────────────────────────────────────────────────────────────
-
-const TIER_COLOR = {
-  bronze:   '#cd7f32',
-  silver:   '#9e9e9e',
-  gold:     '#f9a825',
-  platinum: '#78909c',
-};
-
-const STATUS_COLOR = {
-  new:               'default',
-  contacted:         'info',
-  dossier_submitted: 'warning',
-  admitted:          'secondary',
-  enrolled:          'success',
-  rejected:          'error',
-  abandoned:         'default',
-};
-
-const COMM_STATUS_COLOR = {
-  pending:   'warning',
-  validated: 'info',
-  paid:      'success',
-  disputed:  'error',
-  cancelled: 'default',
-};
+import {
+  TIER_COLOR, LEAD_STATUS_COLOR, COMMISSION_STATUS_COLOR,
+  BRAND_ORANGE, BRAND_GRADIENT,
+} from '../../../theme/partnerTokens';
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
 
@@ -89,7 +67,8 @@ const KpiCard = ({ label, value, icon, color, subtitle }) => (
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PartnerDashboard() {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const theme     = useTheme();
 
   const [profile,          setProfile]          = useState(null);
   const [dashboard,        setDashboard]        = useState(null);
@@ -120,7 +99,7 @@ export default function PartnerDashboard() {
     }
   };
 
-  const tierColor = TIER_COLOR[profile?.tier] ?? '#9e9e9e';
+  const tierColor = TIER_COLOR[profile?.tier] ?? TIER_COLOR.silver;
 
   const conversionRate = dashboard?.conversionRate != null
     ? `${Math.round(dashboard.conversionRate)}%`
@@ -131,7 +110,7 @@ export default function PartnerDashboard() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-        <CircularProgress sx={{ color: '#ff7f3e' }} />
+        <CircularProgress sx={{ color: BRAND_ORANGE }} />
       </Box>
     );
   }
@@ -145,7 +124,7 @@ export default function PartnerDashboard() {
       <Paper
         sx={{
           p: 3, mb: 3, borderRadius: 3,
-          background: 'linear-gradient(135deg, #d4530a 0%, #ff7f3e 100%)',
+          background: BRAND_GRADIENT,
           color: 'white',
         }}
       >
@@ -159,7 +138,7 @@ export default function PartnerDashboard() {
           </Avatar>
 
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" fontWeight={900}>
+            <Typography variant="h5" fontWeight={700}>
               {profile?.firstName} {profile?.lastName}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.85 }}>{profile?.email}</Typography>
@@ -225,12 +204,12 @@ export default function PartnerDashboard() {
       {/* ── KPI Cards ──────────────────────────────────────────────────────────── */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {[
-          { label: 'Total Leads',    value: dashboard?.totalLeads ?? 0,    icon: <People sx={{ fontSize: 24 }} />,       color: '#1976d2', subtitle: 'Prospects referred' },
-          { label: 'Enrolled',       value: dashboard?.convertedLeads ?? 0, icon: <CheckCircle sx={{ fontSize: 24 }} />, color: '#2e7d32', subtitle: 'Converted leads' },
-          { label: 'Conversion',     value: conversionRate,                 icon: <TrendingUp sx={{ fontSize: 24 }} />,  color: '#ff7f3e', subtitle: 'Leads → enrolled' },
-          { label: 'Pending Comm.',  value: dashboard?.pendingCommissions ?? 0, icon: <HourglassEmpty sx={{ fontSize: 24 }} />, color: '#ed6c02', subtitle: 'Awaiting payment' },
-          { label: 'Paid Comm.',     value: dashboard?.paidCommissions ?? 0, icon: <Paid sx={{ fontSize: 24 }} />,        color: '#7b1fa2', subtitle: 'Settled' },
-          { label: 'Validated',      value: dashboard?.validatedCommissions ?? 0, icon: <AttachMoney sx={{ fontSize: 24 }} />, color: '#0288d1', subtitle: 'Ready to pay' },
+          { label: 'Total Leads',    value: dashboard?.totalLeads ?? 0,         icon: <People sx={{ fontSize: 24 }} />,        color: theme.palette.info.main,       subtitle: 'Prospects referred' },
+          { label: 'Enrolled',       value: dashboard?.convertedLeads ?? 0,     icon: <CheckCircle sx={{ fontSize: 24 }} />,   color: theme.palette.success.dark,    subtitle: 'Converted leads' },
+          { label: 'Conversion',     value: conversionRate,                      icon: <TrendingUp sx={{ fontSize: 24 }} />,    color: BRAND_ORANGE,                  subtitle: 'Leads → enrolled' },
+          { label: 'Pending Comm.',  value: dashboard?.pendingCommissions ?? 0,  icon: <HourglassEmpty sx={{ fontSize: 24 }} />, color: theme.palette.warning.main,   subtitle: 'Awaiting payment' },
+          { label: 'Paid Comm.',     value: dashboard?.paidCommissions ?? 0,     icon: <Paid sx={{ fontSize: 24 }} />,          color: theme.palette.secondary.dark,  subtitle: 'Settled' },
+          { label: 'Validated',      value: dashboard?.validatedCommissions ?? 0, icon: <AttachMoney sx={{ fontSize: 24 }} />,  color: theme.palette.info.light,      subtitle: 'Ready to pay' },
         ].map((m) => (
           <Grid item xs={12} sm={6} md={4} key={m.label}>
             <KpiCard {...m} />
@@ -271,7 +250,7 @@ export default function PartnerDashboard() {
                     <TableCell>
                       <Chip
                         label={lead.status}
-                        color={STATUS_COLOR[lead.status] ?? 'default'}
+                        color={LEAD_STATUS_COLOR[lead.status] ?? 'default'}
                         size="small"
                         sx={{ fontWeight: 600, textTransform: 'capitalize', fontSize: '0.7rem' }}
                       />
@@ -321,7 +300,7 @@ export default function PartnerDashboard() {
                     <TableCell>
                       <Chip
                         label={comm.status}
-                        color={COMM_STATUS_COLOR[comm.status] ?? 'default'}
+                        color={COMMISSION_STATUS_COLOR[comm.status] ?? 'default'}
                         size="small"
                         sx={{ fontWeight: 600, textTransform: 'capitalize', fontSize: '0.7rem' }}
                       />

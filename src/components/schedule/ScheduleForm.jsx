@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { studentScheduleSchema } from '../../yupSchema/studentScheduleSchema';
 import { FormTextField, FormSelectField } from '../form/FormFields';
 import FormSection from '../form/FormSection';
+import { SESSION_TYPE_OPTIONS } from '../../theme/scheduleTokens';
 
 // ─── STATIC OPTIONS ───────────────────────────────────────────────────────────
 
@@ -14,14 +15,6 @@ const SEMESTER_OPTIONS = [
   { value: 'S1',     label: 'Semester 1' },
   { value: 'S2',     label: 'Semester 2' },
   { value: 'Annual', label: 'Annual'     },
-];
-
-const SESSION_TYPE_OPTIONS = [
-  { value: 'LECTURE',  label: 'Lecture'  },
-  { value: 'TUTORIAL', label: 'Tutorial' },
-  { value: 'PRACTICAL',      label: 'Practical'},
-  { value: 'EXAM',     label: 'Exam'     },
-  { value: 'WORKSHOP',    label: 'Workshop'    },
 ];
 
 const STATUS_OPTIONS = [
