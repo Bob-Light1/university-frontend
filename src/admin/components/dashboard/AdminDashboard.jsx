@@ -130,15 +130,17 @@ export default function AdminDashboard() {
       </Stack>
 
       {/* ── Quick actions ─────────────────────────────────────────────────────── */}
-      <Stack direction="row" spacing={1.5} flexWrap="wrap" sx={{ mb: 3 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1.5}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        sx={{ mb: 3 }}
+      >
         <Button
           variant="contained"
           startIcon={<AddBusiness />}
           onClick={() => navigate('/admin/new-campus')}
-          sx={{
-            textTransform: 'none', fontWeight: 700, borderRadius: 2,
-            background: ADMIN_GRADIENT,
-          }}
+          sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: ADMIN_GRADIENT }}
         >
           New Campus
         </Button>

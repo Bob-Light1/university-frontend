@@ -127,24 +127,34 @@ export default function AdminAccounts() {
           icon={<InfoOutlined />}
           sx={{ borderRadius: 2 }}
         >
-          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>
             Role differences
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap">
-            <Chip
-              label="ADMIN — Full platform access, can create campuses and other admins"
-              size="small"
-              color="primary"
-              variant="outlined"
-              sx={{ fontSize: '0.72rem' }}
-            />
-            <Chip
-              label="DIRECTOR — Campus oversight, reporting, no account creation"
-              size="small"
-              color="warning"
-              variant="outlined"
-              sx={{ fontSize: '0.72rem' }}
-            />
+          <Stack spacing={1}>
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              <Chip
+                label="ADMIN"
+                size="small"
+                color="primary"
+                variant="outlined"
+                sx={{ fontWeight: 700, flexShrink: 0 }}
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                Full platform access — can create campuses and other admin accounts.
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              <Chip
+                label="DIRECTOR"
+                size="small"
+                color="warning"
+                variant="outlined"
+                sx={{ fontWeight: 700, flexShrink: 0 }}
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                Campus oversight and reporting — no account creation rights.
+              </Typography>
+            </Stack>
           </Stack>
         </Alert>
 
