@@ -86,9 +86,6 @@ const Schedule = () => {
   }, []);
 
   const handleCloseForm = useCallback(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
     setFormOpen(false);
   }, []);
 
@@ -258,6 +255,8 @@ const Schedule = () => {
         maxWidth="md"
         fullWidth
         aria-labelledby="create-schedule-session"
+        disableEnforceFocus
+        closeAfterTransition={false}
         slotProps={{
           paper: { sx: { borderRadius: 3 } },
         }}

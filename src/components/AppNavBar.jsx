@@ -92,13 +92,17 @@ const AiChatDialog = ({ open, onClose }) => (
     onClose={onClose}
     maxWidth="sm"
     fullWidth
-    PaperProps={{
-      sx: {
-        borderRadius: 3,
-        overflow: 'hidden',
-        height: 520,
-        display: 'flex',
-        flexDirection: 'column',
+    disableEnforceFocus
+    closeAfterTransition={false}
+    slotProps={{
+      paper: {
+        sx: {
+          borderRadius: 3,
+          overflow: 'hidden',
+          height: 520,
+          display: 'flex',
+          flexDirection: 'column',
+        },
       },
     }}
   >
@@ -271,9 +275,6 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   const [aiDialogOpen,  setAiDialogOpen]  = useState(false);
 
   const handleCloseAiDialog = useCallback(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
     setAiDialogOpen(false);
   }, []);
 
@@ -482,24 +483,26 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
             onClose={handleProfileClose}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            PaperProps={{
-              elevation: 4,
-              sx: {
-                mt: 1,
-                minWidth: 200,
-                borderRadius: 2,
-                overflow: 'visible',
-                '&::before': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  top: 0,
-                  right: 18,
-                  width: 10,
-                  height: 10,
-                  bgcolor: 'background.paper',
-                  transform: 'translateY(-50%) rotate(45deg)',
-                  zIndex: 0,
+            slotProps={{
+              paper: {
+                elevation: 4,
+                sx: {
+                  mt: 1,
+                  minWidth: 200,
+                  borderRadius: 2,
+                  overflow: 'visible',
+                  '&::before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 18,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
                 },
               },
             }}
