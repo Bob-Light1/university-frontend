@@ -179,6 +179,7 @@ const PartnerDetailDrawer = ({
           background: BRAND_GRADIENT,
           color: 'white',
           position: 'relative',
+          marginTop:10,
         }}
       >
         <IconButton
