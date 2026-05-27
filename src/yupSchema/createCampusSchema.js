@@ -1,84 +1,43 @@
-import * as yup from 'yup';
+import * as Yup from 'yup';
+import { yupEmail, yupPassword, yupConfirmPassword, yupPhone } from '../utils/validationRules';
 
-export const createCampusSchema = yup.object({
-  campus_name: yup
-    .string()
+export const createCampusSchema = Yup.object({
+  campus_name: Yup.string()
     .trim()
     .min(4, 'Campus name must contain at least 4 characters.')
     .required('Campus name is required.'),
 
-  campus_number: yup
-    .string()
-    .trim()
-    .nullable(),
+  campus_number: Yup.string().trim().nullable(),
 
-  manager_name: yup
-    .string()
+  manager_name: Yup.string()
     .trim()
     .min(6, 'Manager name must be at least 6 characters long.')
     .required('Manager name is required.'),
 
-  manager_phone: yup
-    .string()
-    .trim()
-    .matches(
-      /^\+?[0-9\s]{6,20}$/,
-      'Invalid phone number format.'
-    )
-    .required('Manager phone number is required.'),
+  manager_phone: yupPhone(true),
 
-  email: yup
-    .string()
-    .trim()
-    .lowercase()
-    .email('Please enter a valid email.')
-    .required('Manager email is required.'),
+  email: yupEmail(),
 
-  campus_image: yup
-    .string()
-    .nullable(),
+  campus_image: Yup.string().nullable(),
 
-  password: yup
-    .string()
-    .min(8, 'Password must contain at least 8 characters.')
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one number, one uppercase and one lowercase letter.'
-    )
-    .required('Password is required.'),
+  password:         yupPassword(),
+  confirm_password: yupConfirmPassword('password'),
 
-  confirm_password: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Confirm password must match password.')
-    .required('Confirm password is required.'),
+  location: Yup.object({
+    address: Yup.string().trim().nullable(),
 
-  location: yup.object({
-    address: yup
-      .string()
-      .trim()
-      .nullable(),
+    city: Yup.string().trim().nullable(),
 
-    city: yup
-      .string()
-      .trim()
-      .nullable(),
+    country: Yup.string().trim().default('Cameroun'),
 
-    country: yup
-      .string()
-      .trim()
-      .default('Cameroun'),
-
-    coordinates: yup.object({
-      lat: yup
-        .number()
-        .min(-90, 'Latitude must be between -90 and 90')
-        .max(90, 'Latitude must be between -90 and 90')
+    coordinates: Yup.object({
+      lat: Yup.number()
+        .min(-90,  'Latitude must be between -90 and 90')
+        .max(90,   'Latitude must be between -90 and 90')
         .nullable(),
-
-      lng: yup
-        .number()
+      lng: Yup.number()
         .min(-180, 'Longitude must be between -180 and 180')
-        .max(180, 'Longitude must be between -180 and 180')
+        .max(180,  'Longitude must be between -180 and 180')
         .nullable(),
     }).nullable(),
   }).nullable(),

@@ -5,7 +5,7 @@ import {
   useTheme, useMediaQuery, Box, Chip, Typography,
 } from '@mui/material';
 import {
-  Person, Email, Phone, Domain,
+  Person, Email, Domain,
   FamilyRestroom, Badge, Work, Language, Cancel, Check,
   Add, Remove,
 } from '@mui/icons-material';
@@ -29,6 +29,7 @@ import {
   FormPasswordField,
   CampusField,
 } from '../../../components/form/FormFields';
+import PhoneInput from '../../../components/shared/PhoneInput';
 
 // ─── Static option lists ──────────────────────────────────────────────────────
 
@@ -320,7 +321,16 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
             <FormTextField formik={formik} name="email" label="Email Address" type="email" icon={Email} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <FormTextField formik={formik} name="phone" label="Phone Number"  icon={Phone} />
+            <PhoneInput
+              name="phone"
+              label="Phone Number"
+              value={formik.values.phone}
+              onChange={(v) => formik.setFieldValue('phone', v)}
+              onBlur={formik.handleBlur}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={formik.touched.phone && formik.errors.phone}
+              required
+            />
           </Grid>
 
           <Collapse in={!isEdit} sx={{ width: '100%' }}>

@@ -1,84 +1,34 @@
-import * as yup from 'yup';
+import * as Yup from 'yup';
+import { yupEmail, yupUsername, yupPasswordLogin } from '../utils/validationRules';
 
 /**
- * Universal login schema
- * Accepts either email or username as identifier
+ * Schema de connexion universel — accepte email OU username comme identifiant.
+ * Note : le password n'est pas validé pour son format au login (cela bloquerait
+ * les anciens comptes qui ne respectent pas encore la politique actuelle).
  */
-export const loginSchema = yup.object({
-  identifier: yup
-    .string()
+export const loginSchema = Yup.object({
+  identifier: Yup.string()
     .trim()
     .required('Email or username is required')
-    .test(
-      'valid-identifier',
-      'Please enter a valid email or username',
-      (value) => {
-        if (!value) return false;
-        
-        // Check if it's an email (contains @)
-        if (value.includes('@')) {
-          // Validate as email
-          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          return emailRegex.test(value);
-        } else {
-          // Validate as username
-          // Username: 3-30 chars, alphanumeric + dots, hyphens, underscores
-          const usernameRegex = /^[a-z0-9_.-]{3,30}$/;
-          return usernameRegex.test(value.toLowerCase());
-        }
+    .test('valid-identifier', 'Please enter a valid email or username', (value) => {
+      if (!value) return false;
+      if (value.includes('@')) {
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
       }
-    ),
+      return /^[a-z0-9_.-]{3,30}$/.test(value.toLowerCase());
+    }),
 
-    password: yup.string()
-    .min(8, "Password must contain at least 8 characters.")
-    .required("Password is required.")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one number, one uppercase and lowercase letter.'
-    ),
+  password: yupPasswordLogin(),
 });
 
-/**
- * Separate schemas if you need them for specific forms
- */
+// ── Schemas spécialisés (si nécessaire par type de formulaire) ────────────────
 
-// Email-only login
-export const emailLoginSchema = yup.object({
-  email: yup
-    .string()
-    .trim()
-    .lowercase()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
-
-    password: yup.string()
-    .min(8, "Password must contain at least 8 characters.")
-    .required("Password is required.")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one number, one uppercase and lowercase letter.'
-    ),
+export const emailLoginSchema = Yup.object({
+  email:    yupEmail(),
+  password: yupPasswordLogin(),
 });
 
-// Username-only login
-export const usernameLoginSchema = yup.object({
-  username: yup
-    .string()
-    .trim()
-    .lowercase()
-    .min(3, 'Username must be at least 3 characters')
-    .max(30, 'Username must not exceed 30 characters')
-    .matches(
-      /^[a-z0-9_.-]+$/,
-      'Username can only contain lowercase letters, numbers, dots, hyphens and underscores'
-    )
-    .required('Username is required'),
-
-    password: yup.string()
-    .min(8, "Password must contain at least 8 characters.")
-    .required("Password is required.")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one number, one uppercase and lowercase letter.'
-    ),
+export const usernameLoginSchema = Yup.object({
+  username: yupUsername(true),
+  password: yupPasswordLogin(),
 });

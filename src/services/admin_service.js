@@ -86,3 +86,20 @@ export const getCampusStats = (id) =>
  */
 export const createAdminAccount = (data) =>
   api.post('/admin/create', data);
+
+/**
+ * GET /admin/all
+ * Paginated list of all Admin / Director accounts (ADMIN only).
+ * @param {{ role?, status?, search?, page?, limit? }} params
+ */
+export const listAdminAccounts = (params = {}) =>
+  api.get('/admin/all', { params });
+
+/**
+ * PATCH /admin/:id/status
+ * Change the status of an admin account (ADMIN only).
+ * @param {string} id
+ * @param {'active'|'inactive'|'suspended'} status
+ */
+export const updateAdminStatus = (id, status) =>
+  api.patch(`/admin/${id}/status`, { status });

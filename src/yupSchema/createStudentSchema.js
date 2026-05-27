@@ -1,226 +1,59 @@
-import * as yup from 'yup';
+import * as Yup from 'yup';
+import {
+  yupEmail, yupPassword, yupPhone, yupName, yupUsername, yupDateOfBirth,
+} from '../utils/validationRules';
 
-export const createStudentSchema = (isEdit = false) => {
-  return yup.object().shape({
-    // Academic Assignment - Required Fields
-    schoolCampus: yup
-      .string()
-      .required('Campus selection is required'),
+/**
+ * @param {boolean} isEdit - true lors de l'édition d'un étudiant existant
+ */
+export const createStudentSchema = (isEdit = false) =>
+  Yup.object().shape({
+    // ── Affectation académique ────────────────────────────────────────────────
 
-    studentClass: yup
-      .string()
-      .required('Class selection is required'),
+    schoolCampus:  Yup.string().required('Campus selection is required'),
+    studentClass:  Yup.string().required('Class selection is required'),
 
-    // Personal Information - Required Fields
-    firstName: yup
-      .string()
-      .trim()
-      .min(2, 'First name must be at least 2 characters')
-      .max(50, 'First name must not exceed 50 characters')
-      .matches(
-        /^[a-zA-ZÀ-ÿ\s'-]+$/,
-        'First name can only contain letters, spaces, hyphens and apostrophes'
-      )
-      .required('First name is required'),
+    // ── Informations personnelles ─────────────────────────────────────────────
 
-    lastName: yup
-      .string()
-      .trim()
-      .min(2, 'Last name must be at least 2 characters')
-      .max(50, 'Last name must not exceed 50 characters')
-      .matches(
-        /^[a-zA-ZÀ-ÿ\s'-]+$/,
-        'Last name can only contain letters, spaces, hyphens and apostrophes'
-      )
-      .required('Last name is required'),
+    firstName: yupName({ label: 'First name' }),
+    lastName:  yupName({ label: 'Last name'  }),
 
-    username: yup
-      .string()
-      .trim()
-      .lowercase()
-      .min(3, 'Username must be at least 3 characters')
-      .max(30, 'Username must not exceed 30 characters')
-      .matches(
-        /^[a-z0-9_.-]+$/,
-        'Username can only contain lowercase letters, numbers, dots, hyphens and underscores'
-      )
-      .test(
-        'no-spaces',
-        'Username cannot contain spaces',
-        value => !value || !value.includes(' ')
-      )
-      .nullable(),
+    username: yupUsername(false), // optionnel pour les étudiants
 
-    gender: yup
-      .string()
+    gender: Yup.string()
       .oneOf(['male', 'female'], 'Please select a valid gender')
       .required('Gender is required'),
 
-    // Contact Information
-    email: yup
-      .string()
-      .trim()
-      .lowercase()
-      .email('Please enter a valid email address')
-      .max(100, 'Email must not exceed 100 characters')
-      .matches(
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        'Please enter a valid email format'
-      )
-      .nullable(),
+    // ── Contact ───────────────────────────────────────────────────────────────
 
-    phone: yup
-      .string()
-      .trim()
-      .matches(
-        /^\+?[0-9\s()-]{6,20}$/,
-        'Phone number must be between 6 and 20 characters and can contain digits, spaces, parentheses, hyphens and plus sign'
-      )
-      .test(
-        'valid-phone',
-        'Please enter a valid phone number',
-        value => {
-          if (!value) return true;
-          const digitsOnly = value.replace(/\D/g, '');
-          return digitsOnly.length >= 6 && digitsOnly.length <= 15;
-        }
-      )
-      .required('Phone number is required'),
+    email: yupEmail({ required: false }),
+    phone: yupPhone(true),
 
-    // Optional Fields
-    mentor: yup
-      .string()
-      .nullable(),
+    // ── Champs optionnels ─────────────────────────────────────────────────────
 
-    dateOfBirth: yup
-      .date()
-      .max(new Date(), 'Date of birth cannot be in the future')
-      .test(
-        'min-age',
-        'Student must be at least 3 years old',
-        value => {
-          if (!value) return true;
-          const today = new Date();
-          const birthDate = new Date(value);
-          const age = today.getFullYear() - birthDate.getFullYear();
-          return age >= 10;
-        }
-      )
-      .test(
-        'max-age',
-        'Student age cannot exceed 100 years',
-        value => {
-          if (!value) return true;
-          const today = new Date();
-          const birthDate = new Date(value);
-          const age = today.getFullYear() - birthDate.getFullYear();
-          return age <= 80;
-        }
-      )
-      .nullable(),
+    mentor: Yup.string().nullable(),
 
-    // Password - Required only for creation
-    password: isEdit
-      ? yup.string().nullable()
-      : yup
-          .string()
-          .min(8, 'Password must be at least 8 characters')
-          .max(128, 'Password must not exceed 128 characters')
-          .matches(
-            /^(?=.*[a-z])/,
-            'Password must contain at least one lowercase letter'
-          )
-          .matches(
-            /^(?=.*[A-Z])/,
-            'Password must contain at least one uppercase letter'
-          )
-          .matches(
-            /^(?=.*[0-9])/,
-            'Password must contain at least one number'
-          )
-          .matches(
-            /^(?=.*[!@#$%^&*(),.?":{}|<>])/,
-            'Password must contain at least one special character'
-          )
-          .test(
-            'no-spaces',
-            'Password cannot contain spaces',
-            value => !value || !value.includes(' ')
-          )
-          .required('Password is required'),
+    dateOfBirth: yupDateOfBirth({ minAge: 10, maxAge: 80 }),
 
-    // Matricule — optional; auto-generated by the backend when omitted
-    matricule: yup
-      .string()
-      .trim()
-      .uppercase()
-      .notRequired(),
+    // ── Mot de passe ──────────────────────────────────────────────────────────
 
-    // ── Emergency Contact (all optional) ─────────────────────────────────────
-    // Flat keys are collapsed into a nested emergencyContact object by
-    // buildFormData (StudentForm) before being sent to the backend.
+    password: yupPassword({ isEdit }),
 
-    emergencyContactName: yup
-      .string()
+    // ── Matricule (auto-généré si omis) ───────────────────────────────────────
+
+    matricule: Yup.string().trim().uppercase().notRequired(),
+
+    // ── Contact d'urgence (optionnel) ─────────────────────────────────────────
+
+    emergencyContactName: Yup.string()
       .trim()
       .max(100, 'Contact name must not exceed 100 characters')
       .notRequired(),
 
-    emergencyContactPhone: yup
-      .string()
-      .trim()
-      .matches(
-        /^\+?[0-9\s()-]{6,20}$/,
-        'Emergency contact phone must be between 6 and 20 characters'
-      )
-      .notRequired(),
+    emergencyContactPhone: yupPhone(false),
 
-    emergencyContactRelation: yup
-      .string()
+    emergencyContactRelation: Yup.string()
       .trim()
       .max(50, 'Relationship must not exceed 50 characters')
       .notRequired(),
   });
-};
-
-// Optional: Export individual field schemas for reuse
-export const fieldSchemas = {
-  firstName: yup
-    .string()
-    .trim()
-    .min(2, 'First name must be at least 2 characters')
-    .max(50, 'First name must not exceed 50 characters')
-    .matches(
-      /^[a-zA-ZÀ-ÿ\s'-]+$/,
-      'First name can only contain letters, spaces, hyphens and apostrophes'
-    )
-    .required('First name is required'),
-
-  lastName: yup
-    .string()
-    .trim()
-    .min(2, 'Last name must be at least 2 characters')
-    .max(50, 'Last name must not exceed 50 characters')
-    .matches(
-      /^[a-zA-ZÀ-ÿ\s'-]+$/,
-      'Last name can only contain letters, spaces, hyphens and apostrophes'
-    )
-    .required('Last name is required'),
-
-  email: yup
-    .string()
-    .trim()
-    .lowercase()
-    .email('Please enter a valid email address')
-    .max(100, 'Email must not exceed 100 characters')
-    .nullable(),
-
-  phone: yup
-    .string()
-    .trim()
-    .matches(
-      /^\+?[0-9\s()-]{6,20}$/,
-      'Phone number must be valid'
-    )
-    .required('Phone number is required'),
-};

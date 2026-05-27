@@ -28,7 +28,9 @@ import FormSection    from '../../../components/form/FormSection';
 import {
   FormTextField, FormSelectField, FormPasswordField,
 } from '../../../components/form/FormFields';
+import PhoneInput from '../../../components/shared/PhoneInput';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import { yupEmail, yupPassword, yupPhone, yupName } from '../../../utils/validationRules';
 
 // ─── Option lists ─────────────────────────────────────────────────────────────
 
@@ -81,12 +83,10 @@ const CURRENCY_OPTIONS = [
 // ─── Yup schema ───────────────────────────────────────────────────────────────
 
 const buildSchema = (isEdit) => Yup.object({
-  firstName:       Yup.string().trim().min(2).max(50).required('First name is required'),
-  lastName:        Yup.string().trim().min(2).max(50).required('Last name is required'),
-  email:           Yup.string().email('Invalid email').required('Email is required'),
-  password:        isEdit
-    ? Yup.string().notRequired()
-    : Yup.string().min(8, 'At least 8 characters').required('Password is required'),
+  firstName:       yupName({ label: 'First name' }),
+  lastName:        yupName({ label: 'Last name'  }),
+  email:           yupEmail(),
+  password:        yupPassword({ isEdit }),
   partnerType:     Yup.string().oneOf(['institutional', 'commercial']).required('Partner type is required'),
   institutionType: Yup.string().when('partnerType', {
     is:        'institutional',
@@ -99,10 +99,7 @@ const buildSchema = (isEdit) => Yup.object({
     otherwise: (s) => s.notRequired(),
   }),
   channelType:    Yup.string().notRequired(),
-  phone:          Yup.string()
-    .matches(/^[+\d\s\-()/]{7,20}$/, 'Invalid phone number')
-    .notRequired()
-    .nullable(),
+  phone:          yupPhone(false),
   bio:            Yup.string().max(500).notRequired(),
   tier:           Yup.string().oneOf(['bronze', 'silver', 'gold', 'platinum']).notRequired(),
   organization:   Yup.string().max(100).notRequired(),
@@ -249,7 +246,15 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
                   </Stack>
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                     <FormTextField formik={formik} name="email" label="Email Address" type="email" />
-                    <FormTextField formik={formik} name="phone" label="Phone (optional)" />
+                    <PhoneInput
+                      name="phone"
+                      label="Phone (optional)"
+                      value={formik.values.phone}
+                      onChange={(v) => formik.setFieldValue('phone', v)}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.phone && Boolean(formik.errors.phone)}
+                      helperText={formik.touched.phone && formik.errors.phone}
+                    />
                   </Stack>
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                     <FormTextField   formik={formik} name="organization" label="Organization (optional)" />

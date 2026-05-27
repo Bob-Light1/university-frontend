@@ -22,24 +22,22 @@ import * as Yup from 'yup';
 import { getMe, updateMyProfile, changeMyPassword } from '../../../services/partnerService';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { TIER_COLOR, BRAND_GRADIENT, BRAND_GRADIENT_BTN, BRAND_ORANGE } from '../../../theme/partnerTokens';
+import PhoneInput from '../../../components/shared/PhoneInput';
+import { yupPhone, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const profileSchema = Yup.object({
   bio:          Yup.string().max(500, 'Max 500 characters').notRequired(),
-  phone:        Yup.string()
-    .matches(/^[+\d\s\-()/]{7,20}$/, 'Invalid phone number')
-    .notRequired().nullable(),
+  phone:        yupPhone(false),
   organization: Yup.string().max(100).notRequired(),
   gender:       Yup.string().oneOf(['male', 'female', '']).notRequired(),
 });
 
 const passwordSchema = Yup.object({
   currentPassword: Yup.string().required('Current password is required'),
-  newPassword:     Yup.string().min(8, 'At least 8 characters').required('New password is required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword')], 'Passwords do not match')
-    .required('Please confirm your new password'),
+  newPassword:     yupPassword(),
+  confirmPassword: yupConfirmPassword('newPassword'),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -162,16 +160,14 @@ export default function PartnerProfile() {
         <form onSubmit={profileFormik.handleSubmit} noValidate>
           <Stack spacing={2.5}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField
-                fullWidth
+              <PhoneInput
                 name="phone"
                 label="Phone"
                 value={profileFormik.values.phone}
-                onChange={profileFormik.handleChange}
+                onChange={(v) => profileFormik.setFieldValue('phone', v)}
                 onBlur={profileFormik.handleBlur}
                 error={profileFormik.touched.phone && Boolean(profileFormik.errors.phone)}
                 helperText={profileFormik.touched.phone && profileFormik.errors.phone}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
               <TextField
                 fullWidth

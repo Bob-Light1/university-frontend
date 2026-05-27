@@ -91,9 +91,10 @@ const PartnerManager = () => {
   };
 
   const handleOpenEdit = (partner) => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    setDrawerOpen(false);
     setEditTarget(partner);
     setFormOpen(true);
-    setDrawerOpen(false);
   };
 
   const handleOpenView = (partner) => {
@@ -102,6 +103,7 @@ const PartnerManager = () => {
   };
 
   const handleCloseDrawer = () => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     setDrawerOpen(false);
     setViewTarget(null);
   };
@@ -262,7 +264,8 @@ const PartnerManager = () => {
         anchor="right"
         open={drawerOpen}
         onClose={handleCloseDrawer}
-        PaperProps={{ sx: { width: { xs: '100vw', sm: 480 }, borderRadius: { sm: '16px 0 0 16px' } } }}
+        disableEnforceFocus
+        slotProps={{ paper: { sx: { width: { xs: '100vw', sm: 480 }, borderRadius: { sm: '16px 0 0 16px' } } } }}
       >
         <PartnerDetailDrawer
           entity={viewTarget}

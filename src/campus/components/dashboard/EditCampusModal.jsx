@@ -8,6 +8,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { yupEmail } from '../../../utils/validationRules';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import api from '../../../api/axiosInstance';
 import { useAuth } from '../../../hooks/useAuth';
@@ -106,7 +107,7 @@ export default function EditCampusModal({ open, handleClose, campusData, onUpdat
     validationSchema: Yup.object({
       campus_name:  Yup.string().required('Required'),
       manager_name: Yup.string().required('Required'),
-      email:        Yup.string().email('Invalid email').required('Required'),
+      email:        yupEmail(),
     }),
 
     onSubmit: async (values) => {

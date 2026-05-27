@@ -1,6 +1,7 @@
 /**
- * @file AdminProfile.jsx
- * @description Admin / Director portal — own profile view and password change.
+ * @file DirectorProfile.jsx
+ * @description Director portal — own profile view and password change.
+ * Reuses the same /admin/me endpoint as the Admin portal.
  *
  * Data: GET /admin/me
  * Action: PUT /admin/me/password — { currentPassword, newPassword }
@@ -14,7 +15,9 @@ import {
   CircularProgress, Alert, List, ListItem, ListItemIcon,
   ListItemText, Skeleton, Snackbar,
 } from '@mui/material';
-import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
+import {
+  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, DIRECTOR_SHADOW,
+} from '../../../theme/directorTokens';
 import {
   Person, Email, Shield, Lock, Visibility, VisibilityOff,
   CheckCircle, Schedule,
@@ -52,12 +55,12 @@ const DetailItem = ({ icon, primary, secondary }) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function AdminProfile() {
-  const [profile,      setProfile]      = useState(null);
-  const [profileLoad,  setProfileLoad]  = useState(true);
-  const [showCurrent,  setShowCurrent]  = useState(false);
-  const [showNew,      setShowNew]      = useState(false);
-  const [showConfirm,  setShowConfirm]  = useState(false);
+export default function DirectorProfile() {
+  const [profile,     setProfile]     = useState(null);
+  const [profileLoad, setProfileLoad] = useState(true);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew,     setShowNew]     = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   useEffect(() => {
@@ -68,11 +71,7 @@ export default function AdminProfile() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formik = useFormik({
-    initialValues: {
-      currentPassword: '',
-      newPassword:     '',
-      confirmPassword: '',
-    },
+    initialValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
     validationSchema: passwordSchema,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       try {
@@ -124,15 +123,14 @@ export default function AdminProfile() {
 
       <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>My Profile</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Your platform account details and security settings.
+        Your director account details and security settings.
       </Typography>
 
       <Stack spacing={3}>
 
         {/* ── Profile card ──────────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
-          {/* Header */}
-          <Box sx={{ p: 3, background: ADMIN_GRADIENT, color: 'white' }}>
+          <Box sx={{ p: 3, background: DIRECTOR_GRADIENT, color: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Avatar
                 sx={{
@@ -142,9 +140,7 @@ export default function AdminProfile() {
                   fontSize: '1.6rem', fontWeight: 700,
                 }}
               >
-                {profileLoad
-                  ? <Person />
-                  : (profile?.admin_name?.[0]?.toUpperCase() ?? 'A')}
+                {profileLoad ? <Person /> : (profile?.admin_name?.[0]?.toUpperCase() ?? 'D')}
               </Avatar>
               <Box>
                 {profileLoad ? (
@@ -156,7 +152,7 @@ export default function AdminProfile() {
                   <>
                     <Typography variant="h6" fontWeight={700}>{profile?.admin_name}</Typography>
                     <Chip
-                      label={profile?.role === 'DIRECTOR' ? 'Director' : 'Platform Admin'}
+                      label="Director"
                       size="small"
                       icon={<Shield sx={{ fontSize: '0.75rem !important', color: 'white !important' }} />}
                       sx={{
@@ -173,7 +169,6 @@ export default function AdminProfile() {
             </Stack>
           </Box>
 
-          {/* Details */}
           <Box sx={{ p: 2.5 }}>
             {profileLoad ? (
               <Stack spacing={1}>
@@ -183,27 +178,13 @@ export default function AdminProfile() {
               </Stack>
             ) : (
               <List disablePadding>
-                <DetailItem
-                  icon={<Email color="action" fontSize="small" />}
-                  primary="Email"
-                  secondary={profile?.email}
-                />
-                <DetailItem
-                  icon={<Shield color="action" fontSize="small" />}
-                  primary="Role"
-                  secondary={profile?.role}
-                />
-                <DetailItem
-                  icon={<CheckCircle color="action" fontSize="small" />}
-                  primary="Status"
-                  secondary={profile?.status}
-                />
+                <DetailItem icon={<Email color="action" fontSize="small" />}    primary="Email"      secondary={profile?.email}  />
+                <DetailItem icon={<Shield color="action" fontSize="small" />}   primary="Role"       secondary={profile?.role}   />
+                <DetailItem icon={<CheckCircle color="action" fontSize="small" />} primary="Status"  secondary={profile?.status} />
                 <DetailItem
                   icon={<Schedule color="action" fontSize="small" />}
                   primary="Last Login"
-                  secondary={profile?.lastLogin
-                    ? new Date(profile.lastLogin).toLocaleString()
-                    : 'Not recorded'}
+                  secondary={profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : 'Not recorded'}
                 />
               </List>
             )}
@@ -213,7 +194,7 @@ export default function AdminProfile() {
         {/* ── Change password ───────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <Lock sx={{ color: ADMIN_PRIMARY }} />
+            <Lock sx={{ color: DIRECTOR_PRIMARY }} />
             <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -235,7 +216,7 @@ export default function AdminProfile() {
                 startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <Lock />}
                 sx={{
                   textTransform: 'none', fontWeight: 700, borderRadius: 2, py: 1.2,
-                  background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW,
+                  background: DIRECTOR_GRADIENT, boxShadow: DIRECTOR_SHADOW,
                   alignSelf: 'flex-start',
                 }}
               >
@@ -247,7 +228,6 @@ export default function AdminProfile() {
 
       </Stack>
 
-      {/* ── Snackbar ─────────────────────────────────────────────────────────── */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

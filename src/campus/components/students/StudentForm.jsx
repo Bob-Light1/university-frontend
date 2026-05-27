@@ -5,7 +5,7 @@ import {
   useTheme, useMediaQuery,
 } from '@mui/material';
 import {
-  Person, Email, Phone, Badge,
+  Person, Email, Badge,
   Domain, School, Check, Cancel, ContactEmergency,
 } from '@mui/icons-material';
 import NumbersIcon from '@mui/icons-material/Numbers';
@@ -26,6 +26,7 @@ import {
   FormTextField, FormDateField,
   FormSelectField, FormPasswordField, CampusField,
 } from '../../../components/form/FormFields';
+import PhoneInput from '../../../components/shared/PhoneInput';
 
 // ─── Static option lists ──────────────────────────────────────────────────────
 
@@ -289,7 +290,16 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
             <FormTextField formik={formik} name="email" label="Email Address" type="email" icon={Email} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <FormTextField formik={formik} name="phone" label="Phone Number"  icon={Phone} />
+            <PhoneInput
+              name="phone"
+              label="Phone Number"
+              value={formik.values.phone}
+              onChange={(v) => formik.setFieldValue('phone', v)}
+              onBlur={formik.handleBlur}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={formik.touched.phone && formik.errors.phone}
+              required
+            />
           </Grid>
 
           <Collapse in={!isEdit} sx={{ width: '100%' }}>
@@ -328,11 +338,14 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <FormTextField
-              formik={formik}
+            <PhoneInput
               name="emergencyContactPhone"
               label="Contact Phone"
-              icon={Phone}
+              value={formik.values.emergencyContactPhone}
+              onChange={(v) => formik.setFieldValue('emergencyContactPhone', v)}
+              onBlur={formik.handleBlur}
+              error={formik.touched.emergencyContactPhone && Boolean(formik.errors.emergencyContactPhone)}
+              helperText={formik.touched.emergencyContactPhone && formik.errors.emergencyContactPhone}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>

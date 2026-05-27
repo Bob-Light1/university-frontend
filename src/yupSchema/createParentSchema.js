@@ -1,49 +1,22 @@
 import * as Yup from 'yup';
+import {
+  yupEmail, yupPassword, yupPhone, yupName, yupDateOfBirth,
+} from '../utils/validationRules';
 
 /**
- * Yup validation schema for Parent creation / update form.
- *
- * @param {boolean} isEdit - true when editing an existing parent record
+ * @param {boolean} isEdit - true lors de l'édition d'un parent existant
  */
 export const createParentSchema = (isEdit = false) =>
   Yup.object().shape({
-    // ── Personal information ──────────────────────────────────────────────────
+    // ── Informations personnelles ─────────────────────────────────────────────
 
-    firstName: Yup.string()
-      .trim()
-      .min(2, 'First name must be at least 2 characters')
-      .max(50, 'First name must not exceed 50 characters')
-      .required('First name is required'),
+    firstName: yupName({ label: 'First name' }),
+    lastName:  yupName({ label: 'Last name'  }),
 
-    lastName: Yup.string()
-      .trim()
-      .min(2, 'Last name must be at least 2 characters')
-      .max(50, 'Last name must not exceed 50 characters')
-      .required('Last name is required'),
+    email: yupEmail(),
+    phone: yupPhone(true),
 
-    email: Yup.string()
-      .trim()
-      .lowercase()
-      .email('Invalid email address')
-      .required('Email is required'),
-
-    phone: Yup.string()
-      .trim()
-      .matches(
-        /^\+?[0-9\s()-]{6,20}$/,
-        'Please enter a valid phone number (6–20 digits)'
-      )
-      .required('Phone number is required'),
-
-    password: isEdit
-      ? Yup.string().notRequired()
-      : Yup.string()
-          .min(8, 'Password must be at least 8 characters')
-          .max(128, 'Password must not exceed 128 characters')
-          .matches(/[A-Z]/, 'Must contain at least one uppercase letter')
-          .matches(/[a-z]/, 'Must contain at least one lowercase letter')
-          .matches(/[0-9]/, 'Must contain at least one number')
-          .required('Password is required'),
+    password: yupPassword({ isEdit }),
 
     gender: Yup.string()
       .oneOf(['male', 'female'], 'Please select a valid gender')
@@ -56,12 +29,9 @@ export const createParentSchema = (isEdit = false) =>
       )
       .required('Relationship is required'),
 
-    // ── Optional fields ───────────────────────────────────────────────────────
+    // ── Champs optionnels ─────────────────────────────────────────────────────
 
-    dateOfBirth: Yup.date()
-      .nullable()
-      .max(new Date(), 'Date of birth cannot be in the future')
-      .typeError('Please enter a valid date'),
+    dateOfBirth: yupDateOfBirth(),
 
     nationalId: Yup.string()
       .trim()

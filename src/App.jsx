@@ -10,7 +10,8 @@ import { studentRoutes } from './routes/StudentRoutes';
 import { clientRoutes } from './routes/ClientRoutes';
 import { teacherRoutes } from './routes/TeacherRoutes';
 import { lazy } from 'react';
-import { adminRoutes } from './routes/AdminRoutes';
+import { adminRoutes }    from './routes/AdminRoutes';
+import { directorRoutes } from './routes/DirectorRoutes';
 
 
 const Campus  = lazy(() => import('../src/campus/Campus'));
@@ -47,6 +48,9 @@ function App() {
 
         {/* Admin routes (public login + admin dashboard) */}
         {adminRoutes}
+
+        {/* Director routes (DIRECTOR role — read-only oversight portal) */}
+        {directorRoutes}
 
         {/*
          * Campus routes — two-layer protection:

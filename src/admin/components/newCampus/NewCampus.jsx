@@ -25,7 +25,7 @@ import {
 } from '@mui/material';
 import {
   Visibility, VisibilityOff,
-  Business, Person, Email, Phone, Lock, LocationOn,
+  Business, Person, Email, Lock, LocationOn,
   PhotoCamera, CheckCircle, ArrowBack, ArrowForward,
   Shield,
 } from '@mui/icons-material';
@@ -35,6 +35,7 @@ import { createCampusSchema }    from '../../../yupSchema/createCampusSchema';
 import UploadCampusImage         from '../../../client/utility-components/uploadImage/UploadCampusImage';
 import { API_BASE_URL }          from '../../../config/env';
 import { ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
+import PhoneInput from '../../../components/shared/PhoneInput';
 
 // ─── Step labels ──────────────────────────────────────────────────────────────
 
@@ -265,20 +266,17 @@ export default function NewCampus() {
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth error={formik.touched.manager_phone && Boolean(formik.errors.manager_phone)}>
-                  <InputLabel htmlFor="manager_phone">Phone Number *</InputLabel>
-                  <OutlinedInput
-                    id="manager_phone" name="manager_phone" label="Phone Number *"
-                    value={formik.values.manager_phone}
-                    onChange={formik.handleChange} onBlur={formik.handleBlur}
-                    disabled={isLoading}
-                    startAdornment={<InputAdornment position="start"><Phone sx={{ color: 'primary.main' }} /></InputAdornment>}
-                    sx={inputSx}
-                  />
-                  {formik.touched.manager_phone && formik.errors.manager_phone && (
-                    <FormHelperText>{formik.errors.manager_phone}</FormHelperText>
-                  )}
-                </FormControl>
+                <PhoneInput
+                  name="manager_phone"
+                  label="Phone Number"
+                  value={formik.values.manager_phone}
+                  onChange={(v) => formik.setFieldValue('manager_phone', v)}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.manager_phone && Boolean(formik.errors.manager_phone)}
+                  helperText={formik.touched.manager_phone && formik.errors.manager_phone}
+                  required
+                  disabled={isLoading}
+                />
               </Grid>
 
               {[
