@@ -16,8 +16,7 @@ import ScheduleForm         from '../../../components/schedule/ScheduleForm';
 import useSchedule          from '../../../hooks/useSchedule';
 import useFormSnackbar      from '../../../hooks/useFormSnackBar';
 import useRelatedData       from '../../../hooks/useRelatedData';
-// FIX: replaced createStudentSchedule / updateStudentSchedule (deleted)
-//      with createSession / updateSession from the corrected service
+import { useAuth }          from '../../../context/AuthContext';
 import { createSession, updateSession } from '../../../services/scheduleService';
 
 const FORM_ENDPOINTS = {
@@ -37,6 +36,11 @@ const Schedule = () => {
   const { campusId } = useParams();
   const theme        = useTheme();
   const isMobile     = useMediaQuery(theme.breakpoints.down('md'));
+  const { user }     = useAuth();
+
+  // Only CAMPUS_MANAGER may create, edit, publish, cancel or delete sessions.
+  // ADMIN and DIRECTOR have read-only access to the schedule overview.
+  const canWrite = user?.role === 'CAMPUS_MANAGER';
 
   const [view,          setView]          = useState('calendar');
   const [formOpen,      setFormOpen]      = useState(false);
@@ -168,13 +172,17 @@ const Schedule = () => {
         <Box>
           <Typography variant="h4" fontWeight={700}>Schedule Management</Typography>
           <Typography variant="body2" color="text.secondary">
-            Create and manage all class sessions for your campus
+            {canWrite
+              ? 'Create and manage all class sessions for your campus'
+              : 'Overview of all class sessions for this campus'}
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<Add />} onClick={handleOpenCreate}
-          sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 600 }}>
-          New Session
-        </Button>
+        {canWrite && (
+          <Button variant="contained" startIcon={<Add />} onClick={handleOpenCreate}
+            sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 600 }}>
+            New Session
+          </Button>
+        )}
       </Stack>
 
       <Box mb={3}><KPICards metrics={buildKpis(stats, theme)} loading={loading} /></Box>
@@ -210,13 +218,14 @@ const Schedule = () => {
           sessions={sessions}
           loading={loading}
           onView={handleViewSession}
-          onEdit={handleOpenEdit}
-          onDelete={handleDeleteWithFeedback}
-          onAction={handleOpenCreate}
+          onEdit={canWrite ? handleOpenEdit : undefined}
+          onDelete={canWrite ? handleDeleteWithFeedback : undefined}
+          onAction={canWrite ? handleOpenCreate : undefined}
         />
       ) : view === 'calendar' ? (
         <ScheduleCalendar sessions={sessions} onView={handleViewSession}
-          onEdit={handleOpenEdit} onDelete={handleDeleteWithFeedback} />
+          onEdit={canWrite ? handleOpenEdit : undefined}
+          onDelete={canWrite ? handleDeleteWithFeedback : undefined} />
       ) : (
         <Grid container spacing={2}>
           {loading
@@ -226,11 +235,12 @@ const Schedule = () => {
                 </Grid>
               ))
             : sessions.length === 0
-              ? <Grid size={{ xs: 12 }}><EmptyState onAction={handleOpenCreate} /></Grid>
+              ? <Grid size={{ xs: 12 }}><EmptyState onAction={canWrite ? handleOpenCreate : undefined} /></Grid>
               : sessions.map((s) => (
                   <Grid key={s._id} size={{ xs: 12, sm: 6, md: 4 }}>
                     <ScheduleCard session={s} onView={handleViewSession}
-                      onEdit={handleOpenEdit} onDelete={handleDeleteWithFeedback} />
+                      onEdit={canWrite ? handleOpenEdit : undefined}
+                      onDelete={canWrite ? handleDeleteWithFeedback : undefined} />
                   </Grid>
                 ))
           }
@@ -244,9 +254,9 @@ const Schedule = () => {
         onEdit={handleOpenEdit}
         onCancel={handleCancelSession}
         onPublish={handlePublishSession}
-        showEdit
-        showCancel
-        showPublish
+        showEdit={canWrite}
+        showCancel={canWrite}
+        showPublish={canWrite}
       />
 
       <Dialog

@@ -33,26 +33,26 @@ import useFormSnackbar from '../../../hooks/useFormSnackBar';
 // ─── Option lists ─────────────────────────────────────────────────────────────
 
 const INSTITUTION_TYPES = [
-  { value: 'university',      label: 'University'      },
-  { value: 'school',          label: 'School'          },
-  { value: 'training_center', label: 'Training Center' },
-  { value: 'ngo',             label: 'NGO'             },
-  { value: 'government',      label: 'Government'      },
-  { value: 'other',           label: 'Other'           },
+  { value: 'university', label: 'University' },
+  { value: 'company',    label: 'Company'    },
+  { value: 'ngo',        label: 'NGO'        },
+  { value: 'public',     label: 'Public'     },
+  { value: 'foundation', label: 'Foundation' },
 ];
 
 const COMMERCIAL_TYPES = [
-  { value: 'individual',  label: 'Individual'  },
-  { value: 'agency',      label: 'Agency'      },
-  { value: 'company',     label: 'Company'     },
-  { value: 'influencer',  label: 'Influencer'  },
-  { value: 'other',       label: 'Other'       },
+  { value: 'influencer',     label: 'Influencer'     },
+  { value: 'church_leader',  label: 'Church Leader'  },
+  { value: 'student_leader', label: 'Student Leader' },
+  { value: 'teacher',        label: 'Teacher'        },
+  { value: 'parent',         label: 'Parent'         },
+  { value: 'other',          label: 'Other'          },
 ];
 
 const CHANNEL_TYPES = [
   { value: 'online',  label: 'Online'  },
   { value: 'offline', label: 'Offline' },
-  { value: 'both',    label: 'Both'    },
+  { value: 'hybrid',  label: 'Hybrid'  },
 ];
 
 const TIER_OPTIONS = [
@@ -107,6 +107,22 @@ const buildSchema = (isEdit) => Yup.object({
   tier:           Yup.string().oneOf(['bronze', 'silver', 'gold', 'platinum']).notRequired(),
   organization:   Yup.string().max(100).notRequired(),
   gender:         Yup.string().oneOf(['male', 'female', '']).notRequired(),
+  convention: Yup.object({
+    startDate: Yup.date()
+      .transform((v, o) => (o === '' || o == null ? null : v))
+      .nullable()
+      .notRequired(),
+    endDate: Yup.date()
+      .transform((v, o) => (o === '' || o == null ? null : v))
+      .nullable()
+      .notRequired()
+      .when('startDate', (startDate, schema) => {
+        const d = Array.isArray(startDate) ? startDate[0] : startDate;
+        return d instanceof Date && !isNaN(d)
+          ? schema.min(d, 'End date must be after start date')
+          : schema;
+      }),
+  }).notRequired(),
 });
 
 // ─── Initial values ───────────────────────────────────────────────────────────
@@ -207,8 +223,9 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
         maxWidth="md"
         fullWidth
         scroll="paper"
-        disableRestoreFocus
-        PaperProps={{ sx: { borderRadius: 3 } }}
+        disableEnforceFocus
+        closeAfterTransition={false}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
           <Stack direction="row" alignItems="center" spacing={1}>
