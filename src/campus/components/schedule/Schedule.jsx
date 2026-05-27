@@ -16,7 +16,7 @@ import ScheduleForm         from '../../../components/schedule/ScheduleForm';
 import useSchedule          from '../../../hooks/useSchedule';
 import useFormSnackbar      from '../../../hooks/useFormSnackBar';
 import useRelatedData       from '../../../hooks/useRelatedData';
-import { useAuth }          from '../../../context/AuthContext';
+import { useAuth }          from '../../../hooks/useAuth';
 import { createSession, updateSession } from '../../../services/scheduleService';
 
 const FORM_ENDPOINTS = {
@@ -53,9 +53,9 @@ const Schedule = () => {
   // FIX: mode was 'student' — corrected to 'admin'
   // 'admin' → GET /schedules/student/admin/overview (paginated, campus-scoped)
   const {
-    sessions, loading, filters, stats, pagination,
+    sessions, loading, filters, stats,
     handleFilterChange, handleReset, handleDelete,
-    handleStatusUpdate, setPage, fetch,
+    handleStatusUpdate, fetch,
   } = useSchedule('admin', { campusId });
 
   const { data: related } = useRelatedData(FORM_ENDPOINTS, campusId);
