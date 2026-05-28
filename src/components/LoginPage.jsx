@@ -55,7 +55,7 @@ const USER_TYPES = [
   },
   {
     value: 'parent', label: 'Parent', icon: FamilyRestroom,
-    gradient: 'linear-gradient(135deg, #4989c8 0%, #ffda78 100%)', color: '#4989c8',
+    gradient: 'linear-gradient(135deg, #311b92 0%, #c2185b 100%)', color: '#7b1fa2',
     description: "Monitor your child's progress in real time",
   },
   {
@@ -65,7 +65,7 @@ const USER_TYPES = [
   },
   {
     value: 'partner', label: 'Partner', icon: Handshake,
-    gradient: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)', color: '#ff7f3e',
+    gradient: 'linear-gradient(135deg, #1a1a2e 0%, #bf360c 100%)', color: '#e65100',
     description: 'Leads, commissions & affiliate kit',
   },
   {
@@ -78,13 +78,13 @@ const USER_TYPES = [
 // ── Adaptive left-panel copy per role ─────────────────────────────────────────
 
 const ROLE_COPY = {
-  manager: { tagline: 'Gérez votre campus',          sub: 'Supervision complète de votre établissement depuis un seul tableau de bord.' },
-  student: { tagline: 'Suivez votre parcours',       sub: 'Résultats, emploi du temps, présences — tout votre cursus en un clin d\'œil.' },
-  teacher: { tagline: 'Gérez vos classes',           sub: 'Cours, présences, évaluations — organisez votre enseignement avec efficacité.' },
-  parent:  { tagline: 'Restez connecté',             sub: 'Suivez les progrès et la présence de votre enfant en temps réel.' },
-  mentor:  { tagline: 'Accompagnez vos étudiants',  sub: 'Accédez aux profils et à l\'avancement de vos mentorés.' },
-  partner: { tagline: 'Gérez vos partenariats',     sub: 'Leads, commissions, kit d\'affiliation — votre espace partenaire.' },
-  staff:   { tagline: 'Accédez à vos outils',       sub: 'Gérez les tâches assignées à votre rôle au sein du campus.' },
+  manager: { tagline: 'Manage your campus',          sub: 'Complete oversight of your institution from a single dashboard.' },
+  student: { tagline: 'Track your journey',          sub: 'Results, schedule, attendance — your entire curriculum at a glance.' },
+  teacher: { tagline: 'Manage your classes',         sub: 'Courses, attendance, evaluations — organise your teaching with efficiency.' },
+  parent:  { tagline: 'Stay connected',              sub: "Follow your child's progress and attendance in real time." },
+  mentor:  { tagline: 'Guide your students',         sub: 'Access profiles and track the progress of your mentees.' },
+  partner: { tagline: 'Manage your partnerships',   sub: 'Leads, commissions, affiliate kit — your dedicated partner space.' },
+  staff:   { tagline: 'Access your tools',           sub: 'Manage the tasks assigned to your role within the campus.' },
 };
 
 // ── Redirect map ──────────────────────────────────────────────────────────────
@@ -103,6 +103,10 @@ const REDIRECT_MAP = {
 
 const ADMIN_GRADIENT = 'linear-gradient(135deg, #003285 0%, #2a629a 100%)';
 const ADMIN_COLOR    = '#003285';
+
+// Fixed neutral gradient for Step 1 — independent of any role selection.
+// This ensures the "back" button always restores the same visual state.
+const STEP1_GRADIENT = 'linear-gradient(135deg, #0d1b3e 0%, #1c3a6e 100%)';
 
 // ── Bubbles (no CSS file) ─────────────────────────────────────────────────────
 
@@ -136,6 +140,7 @@ export default function LoginPage({ variant = 'public' }) {
   const [snackbar,       setSnackbar]       = useState({ open: false, message: '', severity: 'success' });
 
   const currentType = USER_TYPES.find((t) => t.value === userType) ?? USER_TYPES[0];
+  const RoleIcon    = currentType.icon;
   const roleCopy    = ROLE_COPY[userType] ?? ROLE_COPY.manager;
   const activeGrad  = isAdmin ? ADMIN_GRADIENT : currentType.gradient;
   const activeColor = isAdmin ? ADMIN_COLOR    : currentType.color;
@@ -215,7 +220,7 @@ export default function LoginPage({ variant = 'public' }) {
     },
   };
 
-  const Bubbles = () => (
+  const bubblesJsx = (
     <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
       {BUBBLES.map((b, i) => (
         <Box key={i} sx={{
@@ -234,8 +239,18 @@ export default function LoginPage({ variant = 'public' }) {
 
   if (!isAdmin && step === 1) {
     return (
-      <Box sx={bgSx}>
-        <Bubbles />
+      <Box sx={{ ...bgSx, background: STEP1_GRADIENT }}>
+        {/* Bubbles — inlined to avoid inner-component remount flicker */}
+        <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+          {BUBBLES.map((b, i) => (
+            <Box key={i} sx={{
+              position: 'absolute', borderRadius: '50%', opacity: 0.6,
+              width: b.w, height: b.h, bgcolor: b.color,
+              top: b.top, left: b.left, bottom: b.bottom, right: b.right,
+              animation: `floatBubble ${b.dur} linear infinite`,
+            }} />
+          ))}
+        </Box>
         <Fade in timeout={500}>
           <Box sx={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: 960, textAlign: 'center' }}>
 
@@ -303,14 +318,6 @@ export default function LoginPage({ variant = 'public' }) {
             </Typography>
           </Box>
         </Fade>
-
-        <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={closeSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} slots={{ transition: Zoom }}>
-          <Alert severity={snackbar.severity} variant="filled" elevation={6}
-            onClose={closeSnackbar} sx={{ borderRadius: 2, fontWeight: 600 }}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Box>
     );
   }
@@ -321,7 +328,7 @@ export default function LoginPage({ variant = 'public' }) {
 
   return (
     <Box sx={bgSx}>
-      <Bubbles />
+      {bubblesJsx}
 
       {/* Back to site — admin only */}
       {isAdmin && (
@@ -447,7 +454,7 @@ export default function LoginPage({ variant = 'public' }) {
                         flexShrink: 0,
                         transition: 'background-color 0.4s ease',
                       }}>
-                        {(() => { const { icon: Icon } = currentType; return <Icon sx={{ fontSize: 18, color: activeColor }} />; })()}
+                        <RoleIcon sx={{ fontSize: 18, color: activeColor }} />
                       </Box>
                     )}
                     <Typography variant="h4" fontWeight={900} sx={{
