@@ -28,7 +28,7 @@ import {
   Login as LoginIcon, ArrowBack, Shield,
   Business, School, Badge, RecordVoiceOver,
   FamilyRestroom, Psychology, Handshake,
-  LockReset,
+  LockReset, Home as HomeIcon,
 } from '@mui/icons-material';
 
 import { useAuth }                    from '../hooks/useAuth';
@@ -42,36 +42,43 @@ const USER_TYPES = [
     value: 'manager', label: 'Manager', icon: Business,
     gradient: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)', color: '#003285',
     description: 'Campus management & administration',
+    supportsUsername: false,
   },
   {
     value: 'student', label: 'Student', icon: School,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #4989c8 100%)', color: '#2a629a',
     description: 'Access your results, schedule & attendance',
+    supportsUsername: true,
   },
   {
     value: 'teacher', label: 'Teacher', icon: RecordVoiceOver,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #003285 100%)', color: '#2a629a',
     description: 'Courses, evaluations & class management',
+    supportsUsername: true,
   },
   {
     value: 'parent', label: 'Parent', icon: FamilyRestroom,
     gradient: 'linear-gradient(135deg, #311b92 0%, #c2185b 100%)', color: '#7b1fa2',
     description: "Monitor your child's progress in real time",
+    supportsUsername: true,
   },
   {
     value: 'mentor', label: 'Mentor', icon: Psychology,
     gradient: 'linear-gradient(135deg, #003285 0%, #4989c8 100%)', color: '#003285',
     description: 'Guide and track your assigned students',
+    supportsUsername: true,
   },
   {
     value: 'partner', label: 'Partner', icon: Handshake,
     gradient: 'linear-gradient(135deg, #1a1a2e 0%, #bf360c 100%)', color: '#e65100',
     description: 'Leads, commissions & affiliate kit',
+    supportsUsername: false,
   },
   {
     value: 'staff', label: 'Staff', icon: Badge,
     gradient: 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)', color: '#00695C',
     description: 'Access the tools assigned to your role',
+    supportsUsername: true,
   },
 ];
 
@@ -186,7 +193,12 @@ export default function LoginPage({ variant = 'public' }) {
   // ── Handlers ──────────────────────────────────────────────────────────────
 
   const selectRole = (value) => {
-    if (value !== userType) { setUserType(value); formik.resetForm(); }
+    if (value !== userType) {
+      setUserType(value);
+      formik.resetForm();
+      const newType = USER_TYPES.find((t) => t.value === value);
+      if (!newType?.supportsUsername) setIdentifierMode('email');
+    }
     setStep(2);
   };
 
@@ -311,6 +323,46 @@ export default function LoginPage({ variant = 'public' }) {
                   </Box>
                 );
               })}
+
+              {/* 8th card — wewigo home, balances the 4-column grid */}
+              <Box
+                role="button" tabIndex={0}
+                onClick={() => navigate('/')}
+                onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+                aria-label="Back to wewigo home"
+                sx={{
+                  cursor: 'pointer', outline: 'none',
+                  borderRadius: 3,
+                  p: { xs: 2, sm: 3 },
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5,
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+                  border: '2px solid rgba(255,255,255,0.18)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+                  transition: 'all 0.22s ease',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    background: 'rgba(255,255,255,0.18)',
+                    border: '2px solid rgba(255,255,255,0.45)',
+                    boxShadow: '0 14px 40px rgba(0,0,0,0.22)',
+                  },
+                  '&:focus-visible': { boxShadow: '0 0 0 3px white, 0 0 0 5px rgba(255,255,255,0.4)' },
+                }}
+              >
+                <Box sx={{
+                  width: 60, height: 60, borderRadius: '50%',
+                  bgcolor: 'rgba(255,255,255,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <HomeIcon sx={{ fontSize: 30, color: 'white' }} />
+                </Box>
+                <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white' }}>
+                  wewigo
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, textAlign: 'center' }}>
+                  Back to home
+                </Typography>
+              </Box>
             </Box>
 
             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -490,7 +542,7 @@ export default function LoginPage({ variant = 'public' }) {
 
                     {/* Identifier field */}
                     <Box>
-                      {!isAdmin && (
+                      {!isAdmin && currentType.supportsUsername && (
                         <Tabs
                           value={identifierMode}
                           onChange={handleModeChange}
