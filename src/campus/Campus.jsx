@@ -22,6 +22,9 @@ import MenuBookIcon           from '@mui/icons-material/MenuBook';
 import DescriptionIcon        from '@mui/icons-material/Description';
 import PrintIcon              from '@mui/icons-material/Print';
 import HandshakeIcon          from '@mui/icons-material/Handshake';
+import BadgeIcon              from '@mui/icons-material/Badge';
+import PsychologyIcon         from '@mui/icons-material/Psychology';
+import SettingsIcon           from '@mui/icons-material/Settings';
 
 import AppShell   from '../components/AppShell';
 import { useAuth } from '../hooks/useAuth';
@@ -58,6 +61,11 @@ export default function Campus() {
     { link: `/campus/${campusId}/documents`,          label: 'Documents',   icon: DescriptionIcon },
     { link: `/campus/${campusId}/print`,              label: 'Print',       icon: PrintIcon },
     { link: `/campus/${campusId}/partners`,           label: 'Partners',    icon: HandshakeIcon },
+    { type: 'divider', label: 'divider-personnel' },
+    { link: `/campus/${campusId}/staff`,              label: 'Staff',       icon: BadgeIcon },
+    { link: `/campus/${campusId}/mentors`,            label: 'Mentors',     icon: PsychologyIcon },
+    { type: 'divider', label: 'divider-settings' },
+    { link: `/campus/${campusId}/settings`,           label: 'Settings',    icon: SettingsIcon },
   ];
 
   return (

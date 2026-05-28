@@ -12,6 +12,7 @@ const USER_TYPE_ENDPOINTS = {
   student: '/students/login',
   parent: '/parents/login',
   mentor: '/mentors/login',
+  staff: '/staff/login',
   partner: '/partners/login',
 };
 
