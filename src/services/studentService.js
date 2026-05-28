@@ -131,3 +131,12 @@ export const exportStudentsExcel = (params = {}) =>
  */
 export const importStudents = (formData) =>
   api.post('/students/import', formData);
+
+// ─── STUDENT SELF-SERVICE (Phase 2 — Profile) ────────────────────────────────
+
+export const getMyProfile            = ()      => api.get('/students/me');
+export const updateMyProfile         = (data)  => api.patch('/students/me/profile', data);
+export const changeMyPassword        = (data)  => api.patch('/students/me/password', data);
+export const uploadMyProfileImage    = (url)   => api.patch('/students/me/profile-image', { profileImageUrl: url });
+export const updateMyNotifications   = (data)  => api.patch('/students/me/notifications', data);
+export const getProfileUploadSignature = ()    => api.get('/students/me/upload-signature');

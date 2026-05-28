@@ -20,11 +20,16 @@ export const getAdminMe = () =>
   api.get('/admin/me');
 
 /**
- * PUT /admin/me/password
- * @param {{ currentPassword: string, newPassword: string, confirmPassword: string }} data
+ * PATCH /admin/me/password
+ * @param {{ currentPassword: string, newPassword: string }} data
  */
 export const updateAdminPassword = (data) =>
-  api.put('/admin/me/password', data);
+  api.patch('/admin/me/password', data);
+
+export const updateAdminProfile        = (data) => api.patch('/admin/me/profile', data);
+export const uploadAdminProfileImage   = (url)  => api.patch('/admin/me/profile-image', { profileImageUrl: url });
+export const updateAdminNotifications  = (data) => api.patch('/admin/me/notifications', data);
+export const getAdminUploadSignature   = ()     => api.get('/admin/me/upload-signature');
 
 // ─── CAMPUS MANAGEMENT ────────────────────────────────────────────────────────
 

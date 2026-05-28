@@ -25,16 +25,20 @@ const NotifTeacher = lazy(() =>
 const DocumentTeacher = lazy(() =>
   import('../teacher/components/documents/DocumentTeacher')
 );
+const TeacherProfile = lazy(() =>
+  import('../teacher/components/profile/TeacherProfile')
+);
 
 export const teacherRoutes = (
   <>
     <Route index element={<TeacherDashboard />} />
-    <Route path="schedule"   element={<ScheduleTeacher />} />
+    <Route path="schedule"    element={<ScheduleTeacher />} />
     <Route path="examination" element={<ExamTeacher />} />
-    <Route path="results"    element={<ResultTeacher />} />
-    <Route path="courses"    element={<CourseTeacher />} />
-    <Route path="attendance" element={<AttendanceTeacher />} />
+    <Route path="results"     element={<ResultTeacher />} />
+    <Route path="courses"     element={<CourseTeacher />} />
+    <Route path="attendance"  element={<AttendanceTeacher />} />
     <Route path="notification" element={<NotifTeacher />} />
-    <Route path="documents"  element={<DocumentTeacher />} />
+    <Route path="documents"   element={<DocumentTeacher />} />
+    <Route path="profile"     element={<TeacherProfile />} />
   </>
 );

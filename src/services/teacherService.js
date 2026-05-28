@@ -1,5 +1,14 @@
 import api from "../api/axiosInstance";
 
+// ─── TEACHER SELF-SERVICE (Phase 2 — Profile) ────────────────────────────────
+
+export const getMyProfile              = ()     => api.get('/teachers/me');
+export const updateMyProfile           = (data) => api.patch('/teachers/me/profile', data);
+export const changeMyPassword          = (data) => api.patch('/teachers/me/password', data);
+export const uploadMyProfileImage      = (url)  => api.patch('/teachers/me/profile-image', { profileImageUrl: url });
+export const updateMyNotifications     = (data) => api.patch('/teachers/me/notifications', data);
+export const getProfileUploadSignature = ()     => api.get('/teachers/me/upload-signature');
+
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 
 /**
