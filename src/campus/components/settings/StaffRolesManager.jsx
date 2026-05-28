@@ -3,6 +3,7 @@ import {
   Box, Typography, Stack, Button, Chip,
   Card, CardContent, CardActions, IconButton, Tooltip,
   Alert, CircularProgress, Divider, Switch, FormControlLabel,
+  Snackbar,
 } from '@mui/material';
 import {
   Add, Edit, Delete, AdminPanelSettings, Security,
@@ -209,6 +210,17 @@ export default function StaffRolesManager() {
         onSaved={handleSaved}
         role={editTarget}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled" onClose={closeSnackbar} sx={{ borderRadius: 2 }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

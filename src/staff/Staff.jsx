@@ -12,6 +12,7 @@ import PersonIcon      from '@mui/icons-material/Person';
 import GroupIcon       from '@mui/icons-material/Group';
 import ChecklistIcon   from '@mui/icons-material/ChecklistRtl';
 import AssessmentIcon  from '@mui/icons-material/Assessment';
+import QuizIcon        from '@mui/icons-material/Quiz';
 import MenuBookIcon    from '@mui/icons-material/MenuBook';
 import EventNoteIcon   from '@mui/icons-material/EventNote';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -34,7 +35,7 @@ const PERMISSION_NAV = [
   { keys: ['schedule.read',     'schedule.manage'],     link: '/staff/schedule',   label: 'Schedule',     icon: EventNoteIcon     },
   { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',  label: 'Documents',    icon: DescriptionIcon   },
   { keys: ['finance.read',      'finance.manage'],      link: '/staff/finance',    label: 'Finance',      icon: AccountBalanceIcon },
-  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',      label: 'Examinations', icon: AssessmentIcon    },
+  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',      label: 'Examinations', icon: QuizIcon          },
   { keys: ['print'],                                    link: '/staff/print',      label: 'Print',        icon: PrintIcon         },
   { keys: ['announcements'],                            link: '/staff/announcements', label: 'Announcements', icon: CampaignIcon   },
   { keys: ['messages'],                                 link: '/staff/messages',   label: 'Messages',     icon: MessageIcon       },

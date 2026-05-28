@@ -10,6 +10,7 @@ import { studentRoutes } from './routes/StudentRoutes';
 import { clientRoutes } from './routes/ClientRoutes';
 import { teacherRoutes } from './routes/TeacherRoutes';
 import { mentorRoutes }  from './routes/MentorRoutes';
+import { staffRoutes }   from './routes/StaffRoutes';
 import { lazy } from 'react';
 import { adminRoutes }    from './routes/AdminRoutes';
 import { directorRoutes } from './routes/DirectorRoutes';
@@ -21,6 +22,7 @@ const Student = lazy(() => import('../src/student/Student'));
 const Parent  = lazy(() => import('../src/parent/Parent'));
 const Partner = lazy(() => import('../src/partner/Partner'));
 const Mentor  = lazy(() => import('../src/mentor/Mentor'));
+const Staff   = lazy(() => import('../src/staff/Staff'));
 
 
 
@@ -100,6 +102,13 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['MENTOR']} />}>
           <Route path="mentor" element={<Mentor />}>
             {mentorRoutes}
+          </Route>
+        </Route>
+
+        {/* Staff routes */}
+        <Route element={<ProtectedRoute allowedRoles={['STAFF']} />}>
+          <Route path="staff" element={<Staff />}>
+            {staffRoutes}
           </Route>
         </Route>
       </Routes>

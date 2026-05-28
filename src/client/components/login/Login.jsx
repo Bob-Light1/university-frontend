@@ -102,6 +102,13 @@ const USER_TYPES = [
     gradient: 'linear-gradient(135deg, #ff7f3e 0%, #ff9f5a 100%)',
     color:    '#ff7f3e',
   },
+  {
+    value:    'staff',
+    label:    'Staff',
+    icon:     Badge,
+    gradient: 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)',
+    color:    '#00695C',
+  },
 ];
 
 // ─── Redirect map per user type ───────────────────────────────────────────────
@@ -113,6 +120,7 @@ const REDIRECT_MAP = {
   parent:  ()         => '/parent',
   mentor:  ()         => '/mentor',
   partner: ()         => '/partner',
+  staff:   ()         => '/staff',
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
