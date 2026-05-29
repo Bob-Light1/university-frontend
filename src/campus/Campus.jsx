@@ -2,6 +2,10 @@
  * @file Campus.jsx
  * @description Campus Manager layout — thin wrapper around AppShell.
  *   All drawer / responsive logic lives in AppShell.
+ *
+ *   navItems uses the 'group' type to organise the 15 modules into 5
+ *   collapsible sections, reducing visual density from 20 flat items to
+ *   ~8 visible rows at any time.
  */
 
 import { useParams } from 'react-router-dom';
@@ -25,8 +29,9 @@ import HandshakeIcon          from '@mui/icons-material/Handshake';
 import BadgeIcon              from '@mui/icons-material/Badge';
 import PsychologyIcon         from '@mui/icons-material/Psychology';
 import SettingsIcon           from '@mui/icons-material/Settings';
+import WorkspacesIcon         from '@mui/icons-material/Workspaces';
 
-import AppShell   from '../components/AppShell';
+import AppShell  from '../components/AppShell';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Campus() {
@@ -36,36 +41,71 @@ export default function Campus() {
   const isAdminOrDirector = user?.role === 'ADMIN' || user?.role === 'DIRECTOR';
 
   const navItems = [
-    // Back-link visible only for ADMIN / DIRECTOR — not for CAMPUS_MANAGER
+    // Back-link — ADMIN / DIRECTOR only
     ...(isAdminOrDirector ? [
-      {
-        link:   '/admin/dashboard',
-        label:  'Admin Portal',
-        icon:   AdminPanelSettingsIcon,
-        accent: '#003285',
-      },
+      { link: '/admin/dashboard', label: 'Admin Portal', icon: AdminPanelSettingsIcon, accent: '#003285' },
       { type: 'divider', label: 'divider-admin-campus' },
     ] : []),
-    { link: '/',                                      label: 'Home',        icon: HomeIcon },
-    { link: `/campus/${campusId}/dashboard`,          label: 'Dashboard',   icon: DashboardCustomizeIcon },
-    { link: `/campus/${campusId}/students`,           label: 'Students',    icon: GroupIcon },
-    { link: `/campus/${campusId}/teachers`,           label: 'Teachers',    icon: RecordVoiceOverIcon },
-    { link: `/campus/${campusId}/parents`,            label: 'Parents',     icon: FamilyRestroomIcon },
-    { link: `/campus/${campusId}/classes`,            label: 'Classes',     icon: LibraryBooksIcon },
-    { link: `/campus/${campusId}/subjects`,           label: 'Subjects',    icon: SubjectIcon },
-    { link: `/campus/${campusId}/examination`,        label: 'Examination', icon: ExplicitIcon },
-    { link: `/campus/${campusId}/results`,            label: 'Results',     icon: AssessmentIcon },
-    { link: `/campus/${campusId}/schedule`,           label: 'Schedule',    icon: EventNoteIcon },
-    { link: `/campus/${campusId}/attendance`,         label: 'Attendance',  icon: ChecklistRtlIcon },
-    { link: `/campus/${campusId}/courses`,            label: 'Courses',     icon: MenuBookIcon },
-    { link: `/campus/${campusId}/documents`,          label: 'Documents',   icon: DescriptionIcon },
-    { link: `/campus/${campusId}/print`,              label: 'Print',       icon: PrintIcon },
-    { link: `/campus/${campusId}/partners`,           label: 'Partners',    icon: HandshakeIcon },
-    { type: 'divider', label: 'divider-personnel' },
-    { link: `/campus/${campusId}/staff`,              label: 'Staff',       icon: BadgeIcon },
-    { link: `/campus/${campusId}/mentors`,            label: 'Mentors',     icon: PsychologyIcon },
+
+    // ── Always-visible top items ────────────────────────────────────────────
+    { link: '/',                             label: 'Home',      icon: HomeIcon },
+    { link: `/campus/${campusId}/dashboard`, label: 'Dashboard', icon: DashboardCustomizeIcon },
+
+    { type: 'divider', label: 'divider-top' },
+
+    // ── People — Students · Teachers · Parents ──────────────────────────────
+    {
+      type: 'group', label: 'People', icon: GroupIcon,
+      items: [
+        { link: `/campus/${campusId}/students`, label: 'Students', icon: GroupIcon },
+        { link: `/campus/${campusId}/teachers`, label: 'Teachers', icon: RecordVoiceOverIcon },
+        { link: `/campus/${campusId}/parents`,  label: 'Parents',  icon: FamilyRestroomIcon },
+      ],
+    },
+
+    // ── Academic — Classes · Subjects · Schedule · Attendance ───────────────
+    {
+      type: 'group', label: 'Academic', icon: LibraryBooksIcon,
+      items: [
+        { link: `/campus/${campusId}/classes`,    label: 'Classes',    icon: LibraryBooksIcon },
+        { link: `/campus/${campusId}/subjects`,   label: 'Subjects',   icon: SubjectIcon },
+        { link: `/campus/${campusId}/schedule`,   label: 'Schedule',   icon: EventNoteIcon },
+        { link: `/campus/${campusId}/attendance`, label: 'Attendance', icon: ChecklistRtlIcon },
+      ],
+    },
+
+    // ── Evaluation — Examination · Results ─────────────────────────────────
+    {
+      type: 'group', label: 'Evaluation', icon: AssessmentIcon,
+      items: [
+        { link: `/campus/${campusId}/examination`, label: 'Examination', icon: ExplicitIcon },
+        { link: `/campus/${campusId}/results`,     label: 'Results',     icon: AssessmentIcon },
+      ],
+    },
+
+    // ── Resources — Courses · Documents · Print ─────────────────────────────
+    {
+      type: 'group', label: 'Resources', icon: MenuBookIcon,
+      items: [
+        { link: `/campus/${campusId}/courses`,   label: 'Courses',   icon: MenuBookIcon },
+        { link: `/campus/${campusId}/documents`, label: 'Documents', icon: DescriptionIcon },
+        { link: `/campus/${campusId}/print`,     label: 'Print',     icon: PrintIcon },
+      ],
+    },
+
+    // ── Operations — Partners · Staff · Mentors ─────────────────────────────
+    {
+      type: 'group', label: 'Operations', icon: WorkspacesIcon,
+      items: [
+        { link: `/campus/${campusId}/partners`, label: 'Partners', icon: HandshakeIcon },
+        { link: `/campus/${campusId}/staff`,    label: 'Staff',    icon: BadgeIcon },
+        { link: `/campus/${campusId}/mentors`,  label: 'Mentors',  icon: PsychologyIcon },
+      ],
+    },
+
+    // ── Always-visible bottom item ──────────────────────────────────────────
     { type: 'divider', label: 'divider-settings' },
-    { link: `/campus/${campusId}/settings`,           label: 'Settings',    icon: SettingsIcon },
+    { link: `/campus/${campusId}/settings`, label: 'Settings', icon: SettingsIcon },
   ];
 
   return (
