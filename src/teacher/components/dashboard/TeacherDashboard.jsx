@@ -312,8 +312,17 @@ export default function TeacherDashboard() {
           icon={<Warning />}
           sx={{ mb: 3, borderRadius: 2 }}
           action={
-            <Button color="inherit" size="small" onClick={() => navigate('/teacher/schedule')}>
-              View Schedule
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => {
+                // Pass the date of the most recent pending session so the
+                // Schedule page can centre its window on it automatically.
+                const jumpToDate = pendingRollCalls?.[0]?.startTime ?? null;
+                navigate('/teacher/schedule', { state: { jumpToDate } });
+              }}
+            >
+              Go to session{stats.pendingRollCallCount > 1 ? 's' : ''}
             </Button>
           }
         >

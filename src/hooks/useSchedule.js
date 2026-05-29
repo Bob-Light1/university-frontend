@@ -58,12 +58,12 @@ const normaliseSessionsResponse = (raw) => {
   return [];
 };
 
-const useSchedule = (mode = 'admin', internalParams = {}) => {
+const useSchedule = (mode = 'admin', internalParams = {}, initialFilters = {}) => {
   const [sessions,   setSessions]   = useState([]);
   const [loading,    setLoading]    = useState(false);
   const [error,      setError]      = useState(null);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
-  const [filters,    setFilters]    = useState(DEFAULT_FILTERS);
+  const [filters,    setFilters]    = useState({ ...DEFAULT_FILTERS, ...initialFilters });
 
   // Stable ref prevents spurious re-fetches on parent re-renders with inline objects
   const internalRef = useRef(internalParams);

@@ -16,7 +16,7 @@
  * mode='teacher' → GET /schedules/teacher/me
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Box, Grid, Typography, Tab, Tabs, Stack, Paper, Avatar,
   Button, Dialog, DialogTitle, DialogContent,
@@ -26,7 +26,7 @@ import {
   CalendarMonth, List, CheckCircle, RateReview, PlayCircle,
   HowToReg, Cancel as CancelIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import KPICards             from '../../../components/shared/KpiCard';
 import ScheduleFilters      from '../../../components/schedule/ScheduleFilters';
@@ -72,6 +72,7 @@ const canRequestPostponement = (session) => {
 const ScheduleTeacher = () => {
   const theme    = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [view,           setView]           = useState('calendar');
   const [detailSession,  setDetailSession]  = useState(null);
@@ -81,10 +82,23 @@ const ScheduleTeacher = () => {
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
+  // When navigating from the dashboard pending-roll-call alert, centre the
+  // schedule window on the target session date so the teacher sees it immediately.
+  const initialFilters = useMemo(() => {
+    const jumpTo = location.state?.jumpToDate;
+    if (!jumpTo) return {};
+    const d   = new Date(jumpTo);
+    const fmt = (dt) => dt.toISOString().split('T')[0];
+    return {
+      dateFrom: fmt(new Date(d.getTime() - 7 * 24 * 60 * 60 * 1000)),
+      dateTo:   fmt(new Date(d.getTime() + 7 * 24 * 60 * 60 * 1000)),
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const {
     sessions, loading, error, filters, stats,
     handleFilterChange, handleReset,
-  } = useSchedule('teacher');
+  } = useSchedule('teacher', {}, initialFilters);
 
   // ── KPI cards ───────────────────────────────────────────────────────────────
 
@@ -361,9 +375,10 @@ const TeacherEmptyState = ({ theme }) => (
     }}>
       <CalendarMonth sx={{ fontSize: 32, color: 'secondary.main' }} />
     </Avatar>
-    <Typography variant="h6" fontWeight={700} mb={1}>No sessions assigned</Typography>
+    <Typography variant="h6" fontWeight={700} mb={1}>No sessions found for this period</Typography>
     <Typography variant="body2" color="text.secondary">
-      Sessions assigned to you by the campus manager will appear here.
+      No sessions match the current date range. Adjust the date filters to browse other weeks,
+      or contact your campus manager if you expect sessions to be assigned.
     </Typography>
   </Paper>
 );
