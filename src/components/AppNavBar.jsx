@@ -308,7 +308,29 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
     teacher:  'Teacher',
     student:  'Student',
     parent:   'Parent',
+    partner:  'Partner',
+    mentor:   'Mentor',
+    staff:    'Staff',
   }[user?.userType] ?? user?.userType ?? '';
+
+  // Profile route keyed on user.role (JWT field) — more reliable than userType
+  // since Admin and Director share the same userType ('admin') but have different
+  // profile pages.  null = no profile page exists for this role.
+  const profileRoute = {
+    TEACHER:  '/teacher/profile',
+    STUDENT:  '/student/profile',
+    PARENT:   '/parent/profile',
+    PARTNER:  '/partner/profile',
+    MENTOR:   '/mentor/profile',
+    STAFF:    '/staff/profile',
+    ADMIN:    '/admin/profile',
+    DIRECTOR: '/director/profile',
+  }[user?.role] ?? null;
+
+  // Settings route — only Campus Manager has a portal-level settings page.
+  const settingsRoute = user?.role === 'CAMPUS_MANAGER'
+    ? `/campus/${user?.id}/settings`
+    : null;
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -322,16 +344,12 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
 
   const handleGoProfile = () => {
     handleProfileClose();
-    // Navigate to the role's own profile / details page
-    const base = {
-      manager:  `#`,
-      teacher:  '/teacher',
-      student:  '/student',
-      parent:   '/parent',
-      admin:    '#',
-      director: '#',
-    }[user?.userType] ?? '/';
-    navigate(base);
+    if (profileRoute) navigate(profileRoute);
+  };
+
+  const handleGoSettings = () => {
+    handleProfileClose();
+    if (settingsRoute) navigate(settingsRoute);
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -519,19 +537,23 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
               )}
             </Box>
 
-            <MenuItem onClick={handleGoProfile} sx={{ gap: 1.5, py: 1.2 }}>
-              <ListItemIcon sx={{ minWidth: 'unset' }}>
-                <PersonIcon fontSize="small" />
-              </ListItemIcon>
-              My Profile
-            </MenuItem>
+            {profileRoute && (
+              <MenuItem onClick={handleGoProfile} sx={{ gap: 1.5, py: 1.2 }}>
+                <ListItemIcon sx={{ minWidth: 'unset' }}>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                My Profile
+              </MenuItem>
+            )}
 
-            <MenuItem onClick={handleProfileClose} sx={{ gap: 1.5, py: 1.2 }}>
-              <ListItemIcon sx={{ minWidth: 'unset' }}>
-                <SettingsIcon fontSize="small" />
-              </ListItemIcon>
-              Settings
-            </MenuItem>
+            {settingsRoute && (
+              <MenuItem onClick={handleGoSettings} sx={{ gap: 1.5, py: 1.2 }}>
+                <ListItemIcon sx={{ minWidth: 'unset' }}>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                Settings
+              </MenuItem>
+            )}
 
             <Divider />
 

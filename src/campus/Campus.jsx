@@ -29,8 +29,6 @@ import HandshakeIcon          from '@mui/icons-material/Handshake';
 import BadgeIcon              from '@mui/icons-material/Badge';
 import PsychologyIcon         from '@mui/icons-material/Psychology';
 import SettingsIcon           from '@mui/icons-material/Settings';
-import WorkspacesIcon         from '@mui/icons-material/Workspaces';
-
 import AppShell  from '../components/AppShell';
 import { useAuth } from '../hooks/useAuth';
 
@@ -93,13 +91,20 @@ export default function Campus() {
       ],
     },
 
-    // ── Operations — Partners · Staff · Mentors ─────────────────────────────
+    // ── Business — Partners ─────────────────────────────────────────────────
     {
-      type: 'group', label: 'Operations', icon: WorkspacesIcon,
+      type: 'group', label: 'Business', icon: HandshakeIcon,
       items: [
         { link: `/campus/${campusId}/partners`, label: 'Partners', icon: HandshakeIcon },
-        { link: `/campus/${campusId}/staff`,    label: 'Staff',    icon: BadgeIcon },
-        { link: `/campus/${campusId}/mentors`,  label: 'Mentors',  icon: PsychologyIcon },
+      ],
+    },
+
+    // ── Personnel — Staff · Mentors ─────────────────────────────────────────
+    {
+      type: 'group', label: 'Personnel', icon: BadgeIcon,
+      items: [
+        { link: `/campus/${campusId}/staff`,   label: 'Staff',   icon: BadgeIcon },
+        { link: `/campus/${campusId}/mentors`, label: 'Mentors', icon: PsychologyIcon },
       ],
     },
 

@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 
 import HomeIcon               from '@mui/icons-material/Home';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
-import AccountCircleIcon      from '@mui/icons-material/AccountCircle';
 import TrendingUpIcon         from '@mui/icons-material/TrendingUp';
 import AccessTimeIcon         from '@mui/icons-material/AccessTime';
 import EventNoteIcon          from '@mui/icons-material/EventNote';
@@ -47,7 +46,6 @@ export default function Parent() {
   const navItems = [
     { link: '/',                     label: 'Home',       icon: HomeIcon,               disabled: false },
     { link: '/parent',               label: 'Dashboard',  icon: DashboardCustomizeIcon, disabled: false },
-    { link: '/parent/profile',       label: 'My Profile', icon: AccountCircleIcon,      disabled: false },
     { link: childLink('results'),    label: 'Results',    icon: TrendingUpIcon,         disabled: !firstChildId },
     { link: childLink('attendance'), label: 'Attendance', icon: AccessTimeIcon,         disabled: !firstChildId },
     { link: childLink('schedule'),   label: 'Schedule',   icon: EventNoteIcon,          disabled: !firstChildId },

@@ -8,7 +8,6 @@
 
 import HomeIcon        from '@mui/icons-material/Home';
 import DashboardIcon   from '@mui/icons-material/DashboardCustomize';
-import PersonIcon      from '@mui/icons-material/Person';
 import GroupIcon       from '@mui/icons-material/Group';
 import ChecklistIcon   from '@mui/icons-material/ChecklistRtl';
 import AssessmentIcon  from '@mui/icons-material/Assessment';
@@ -50,11 +49,9 @@ export default function Staff() {
     .map(({ link, label, icon }) => ({ link, label, icon }));
 
   const navItems = [
-    { link: '/',             label: 'Home',       icon: HomeIcon      },
-    { link: '/staff',        label: 'Dashboard',  icon: DashboardIcon },
+    { link: '/',      label: 'Home',      icon: HomeIcon      },
+    { link: '/staff', label: 'Dashboard', icon: DashboardIcon },
     ...dynamicItems,
-    { type: 'divider', label: 'divider-profile' },
-    { link: '/staff/profile', label: 'My Profile', icon: PersonIcon   },
   ];
 
   return (
