@@ -1,11 +1,5 @@
-import React from 'react'
+import AnnouncementInbox from '../../../components/announcements/AnnouncementInbox';
 
-const NotifPartner = () => {
-  return (
-    <div>
-      Notification Partner
-    </div>
-  )
+export default function NotifPartner() {
+  return <AnnouncementInbox />;
 }
-
-export default NotifPartner

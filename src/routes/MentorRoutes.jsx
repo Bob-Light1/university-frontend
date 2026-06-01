@@ -7,14 +7,16 @@ const MentorResults    = lazy(() => import('../mentor/components/results/MentorR
 const MentorAttendance = lazy(() => import('../mentor/components/attendance/MentorAttendance'));
 const MentorCourses    = lazy(() => import('../mentor/components/courses/MentorCourses'));
 const MentorProfile    = lazy(() => import('../mentor/components/profile/MentorProfile'));
+const NotifMentor      = lazy(() => import('../mentor/components/notification/NotifMentor'));
 
 export const mentorRoutes = (
   <>
-    <Route index              element={<MentorDashboard />} />
-    <Route path="students"   element={<MentorStudents />} />
-    <Route path="results"    element={<MentorResults />} />
-    <Route path="attendance" element={<MentorAttendance />} />
-    <Route path="courses"    element={<MentorCourses />} />
-    <Route path="profile"    element={<MentorProfile />} />
+    <Route index               element={<MentorDashboard />} />
+    <Route path="students"     element={<MentorStudents />} />
+    <Route path="results"      element={<MentorResults />} />
+    <Route path="attendance"   element={<MentorAttendance />} />
+    <Route path="courses"      element={<MentorCourses />} />
+    <Route path="profile"      element={<MentorProfile />} />
+    <Route path="notification" element={<NotifMentor />} />
   </>
 );

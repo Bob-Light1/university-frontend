@@ -8,14 +8,16 @@ import DashboardIcon       from '@mui/icons-material/Dashboard';
 import BusinessIcon        from '@mui/icons-material/Business';
 import AddBusinessIcon     from '@mui/icons-material/AddBusiness';
 import ManageAccountsIcon  from '@mui/icons-material/ManageAccounts';
+import CampaignIcon        from '@mui/icons-material/Campaign';
 
 import AppShell from '../components/AppShell';
 
 const navItems = [
-  { link: '/admin/dashboard',  label: 'Dashboard',     icon: DashboardIcon      },
-  { link: '/admin/campuses',   label: 'Campuses',      icon: BusinessIcon       },
-  { link: '/admin/new-campus', label: 'New Campus',    icon: AddBusinessIcon    },
-  { link: '/admin/accounts',   label: 'Admin Accounts', icon: ManageAccountsIcon },
+  { link: '/admin/dashboard',      label: 'Dashboard',      icon: DashboardIcon      },
+  { link: '/admin/campuses',       label: 'Campuses',       icon: BusinessIcon       },
+  { link: '/admin/new-campus',     label: 'New Campus',     icon: AddBusinessIcon    },
+  { link: '/admin/accounts',       label: 'Admin Accounts', icon: ManageAccountsIcon },
+  { link: '/admin/announcements',  label: 'Announcements',  icon: CampaignIcon       },
 ];
 
 export default function Admin() {

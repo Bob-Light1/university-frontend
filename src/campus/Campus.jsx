@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom';
 
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HomeIcon               from '@mui/icons-material/Home';
+import CampaignIcon           from '@mui/icons-material/Campaign';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import GroupIcon              from '@mui/icons-material/Group';
 import RecordVoiceOverIcon    from '@mui/icons-material/RecordVoiceOver';
@@ -107,6 +108,10 @@ export default function Campus() {
         { link: `/campus/${campusId}/mentors`, label: 'Mentors', icon: PsychologyIcon },
       ],
     },
+
+    // ── Announcements ───────────────────────────────────────────────────────
+    { type: 'divider', label: 'divider-announcements' },
+    { link: `/campus/${campusId}/notification`, label: 'Announcements', icon: CampaignIcon },
 
     // ── Always-visible bottom item ──────────────────────────────────────────
     { type: 'divider', label: 'divider-settings' },

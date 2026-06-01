@@ -6,16 +6,18 @@ const StaffProfile   = lazy(() => import('../staff/components/profile/StaffProfi
 const StaffStudents  = lazy(() => import('../staff/components/students/StaffStudents'));
 const StaffAttendance = lazy(() => import('../staff/components/attendance/StaffAttendance'));
 const StaffResults   = lazy(() => import('../staff/components/results/StaffResults'));
-const StaffCourses   = lazy(() => import('../staff/components/courses/StaffCourses'));
+const StaffCourses        = lazy(() => import('../staff/components/courses/StaffCourses'));
+const StaffAnnouncements  = lazy(() => import('../staff/components/announcements/StaffAnnouncements'));
 
 export const staffRoutes = (
   <>
     <Route index element={<StaffDashboard />} />
-    <Route path="dashboard"   element={<StaffDashboard />} />
-    <Route path="profile"     element={<StaffProfile />} />
-    <Route path="students"    element={<StaffStudents />} />
-    <Route path="attendance"  element={<StaffAttendance />} />
-    <Route path="results"     element={<StaffResults />} />
-    <Route path="courses"     element={<StaffCourses />} />
+    <Route path="dashboard"     element={<StaffDashboard />} />
+    <Route path="profile"       element={<StaffProfile />} />
+    <Route path="students"      element={<StaffStudents />} />
+    <Route path="attendance"    element={<StaffAttendance />} />
+    <Route path="results"       element={<StaffResults />} />
+    <Route path="courses"       element={<StaffCourses />} />
+    <Route path="announcements" element={<StaffAnnouncements />} />
   </>
 );

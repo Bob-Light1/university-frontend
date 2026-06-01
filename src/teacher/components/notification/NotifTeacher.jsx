@@ -1,11 +1,5 @@
-import React from 'react'
+import AnnouncementInbox from '../../../components/announcements/AnnouncementInbox';
 
-const NotifTeacher = () => {
-  return (
-    <div>
-      Notification
-    </div>
-  )
+export default function NotifTeacher() {
+  return <AnnouncementInbox />;
 }
-
-export default NotifTeacher
