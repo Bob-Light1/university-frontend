@@ -131,6 +131,7 @@ export default function StaffForm({ entity: staff, onSuccess, onCancel }) {
           />
         </Grid>
 
+        {/* En création : Password à droite du Phone */}
         {!isEdit && (
           <Grid item xs={12} sm={6}>
             <TextField
@@ -152,7 +153,9 @@ export default function StaffForm({ entity: staff, onSuccess, onCancel }) {
           </Grid>
         )}
 
-        <Grid item xs={12}>
+        {/* En édition : Sub-Role occupe les 6 colonnes restantes à côté du Phone
+            En création : Sub-Role prend toute la largeur sous Phone + Password  */}
+        <Grid item xs={12} sm={isEdit ? 6 : 12}>
           <FormControl fullWidth sx={SX} error={formik.touched.subRole && Boolean(formik.errors.subRole)}>
             <InputLabel>Sub-Role (optional)</InputLabel>
             <Select

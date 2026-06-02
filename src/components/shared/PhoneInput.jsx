@@ -21,8 +21,8 @@
 
 import { useState, useEffect } from 'react';
 import {
-  FormControl, Stack, Select, MenuItem, OutlinedInput,
-  FormHelperText, Typography,
+  FormControl, InputLabel, OutlinedInput, InputAdornment,
+  Select, MenuItem, FormHelperText, Typography, Stack, Divider,
 } from '@mui/material';
 
 // ── Codes pays ─────────────────────────────────────────────────────────────────
@@ -74,14 +74,9 @@ const DEFAULT_CODE = '+237';
 
 // ── Parsing ────────────────────────────────────────────────────────────────────
 
-/**
- * Extrait le code pays et le numéro local depuis une valeur complète.
- * Normalise les espaces/tirets/parenthèses avant de tenter la correspondance.
- */
 const parsePhone = (fullValue) => {
   if (!fullValue) return { code: DEFAULT_CODE, local: '' };
 
-  // Normaliser : supprimer espaces, parenthèses, tirets mais garder le +
   const norm = fullValue.replace(/[\s()\-]/g, '');
 
   for (const cc of SORTED_CODES) {
@@ -90,7 +85,6 @@ const parsePhone = (fullValue) => {
     }
   }
 
-  // Aucun code pays reconnu → garder le code par défaut, traiter le reste comme local
   return { code: DEFAULT_CODE, local: norm.replace(/^\+?/, '') };
 };
 
@@ -98,7 +92,7 @@ const parsePhone = (fullValue) => {
 
 /**
  * @param {string}   name        - Nom du champ Formik
- * @param {string}   label       - Label affiché au-dessus du champ
+ * @param {string}   label       - Label affiché (flottant, style TextField MUI)
  * @param {string}   value       - Valeur complète : "+237612345678"
  * @param {function} onChange    - Appelée avec la nouvelle valeur complète (string)
  * @param {function} onBlur      - Handler Formik (handleBlur)
@@ -118,12 +112,11 @@ export default function PhoneInput({
   helperText,
   required = false,
   disabled = false,
-  size = 'small',
+  size = 'medium',
 }) {
   const [countryCode, setCountryCode] = useState(DEFAULT_CODE);
   const [localNumber, setLocalNumber] = useState('');
 
-  // Synchroniser l'état interne avec la valeur externe (reset de formulaire, chargement)
   useEffect(() => {
     const { code, local } = parsePhone(value);
     setCountryCode(code);
@@ -136,84 +129,77 @@ export default function PhoneInput({
   };
 
   const handleLocalChange = (raw) => {
-    const digits = raw.replace(/\D/g, ''); // chiffres uniquement
+    const digits = raw.replace(/\D/g, '');
     setLocalNumber(digits);
     onChange?.(`${countryCode}${digits}`);
   };
 
   const selectedEntry = COUNTRY_CODES.find((c) => c.code === countryCode);
+  // Le label passé à OutlinedInput définit la largeur du notch — doit inclure " *" si required
+  const notchLabel = required ? `${label} *` : label;
 
   return (
-    <FormControl error={error} fullWidth>
-      {label && (
-        <Typography
-          component="label"
-          htmlFor={`${name}-local`}
-          variant="caption"
-          sx={{
-            mb: 0.5,
-            fontWeight: 500,
-            color: error ? 'error.main' : 'text.secondary',
-            display: 'block',
-          }}
-        >
-          {label}
-          {required && <span aria-hidden="true"> *</span>}
-        </Typography>
-      )}
+    <FormControl error={error} fullWidth variant="outlined" size={size}>
+      <InputLabel htmlFor={`${name}-local`} shrink required={required}>
+        {label}
+      </InputLabel>
 
-      <Stack direction="row" spacing={1} alignItems="flex-start">
-        {/* ── Sélecteur de code pays ── */}
-        <Select
-          value={countryCode}
-          onChange={(e) => handleCodeChange(e.target.value)}
-          disabled={disabled}
-          size={size}
-          aria-label="Country code"
-          displayEmpty
-          renderValue={() =>
-            selectedEntry ? `${selectedEntry.flag} ${selectedEntry.code}` : countryCode
-          }
-          sx={{
-            width: 112,
-            flexShrink: 0,
-            borderRadius: 2,
-            ...(error && {
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'error.main' },
-            }),
-          }}
-          MenuProps={{ PaperProps: { sx: { maxHeight: 320 } } }}
-        >
-          {COUNTRY_CODES.map((cc) => (
-            <MenuItem value={cc.code} key={`${cc.code}-${cc.name}`}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <span>{cc.flag}</span>
-                <Typography variant="body2" sx={{ minWidth: 36, fontVariantNumeric: 'tabular-nums' }}>
-                  {cc.code}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" noWrap>
-                  {cc.name}
-                </Typography>
-              </Stack>
-            </MenuItem>
-          ))}
-        </Select>
+      <OutlinedInput
+        id={`${name}-local`}
+        name={name}
+        value={localNumber}
+        onChange={(e) => handleLocalChange(e.target.value)}
+        onBlur={onBlur}
+        label={notchLabel}
+        notched
+        placeholder="612 345 678"
+        disabled={disabled}
+        inputProps={{ inputMode: 'numeric', 'aria-label': 'Phone number' }}
+        sx={{ borderRadius: 2 }}
+        startAdornment={
+          <InputAdornment position="start" sx={{ mr: 0 }}>
+            {/* Sélecteur de code pays — variant standard pour ne pas doubler le border */}
+            <Select
+              value={countryCode}
+              onChange={(e) => handleCodeChange(e.target.value)}
+              disabled={disabled}
+              variant="standard"
+              disableUnderline
+              aria-label="Country code"
+              renderValue={() =>
+                selectedEntry ? `${selectedEntry.flag} ${selectedEntry.code}` : countryCode
+              }
+              sx={{
+                minWidth: 88,
+                fontSize: size === 'small' ? '0.875rem' : '1rem',
+                '& .MuiSelect-select': {
+                  py: 0,
+                  pr: '24px !important',
+                  pl: 0,
+                },
+                '& .MuiSvgIcon-root': { right: 0 },
+              }}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 320 } } }}
+            >
+              {COUNTRY_CODES.map((cc) => (
+                <MenuItem value={cc.code} key={`${cc.code}-${cc.name}`}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <span>{cc.flag}</span>
+                    <Typography variant="body2" sx={{ minWidth: 36, fontVariantNumeric: 'tabular-nums' }}>
+                      {cc.code}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" noWrap>
+                      {cc.name}
+                    </Typography>
+                  </Stack>
+                </MenuItem>
+              ))}
+            </Select>
 
-        {/* ── Numéro local ── */}
-        <OutlinedInput
-          id={`${name}-local`}
-          name={name}
-          value={localNumber}
-          onChange={(e) => handleLocalChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder="612 345 678"
-          disabled={disabled}
-          size={size}
-          error={error}
-          inputProps={{ inputMode: 'numeric', 'aria-label': 'Phone number' }}
-          sx={{ flex: 1, borderRadius: 2 }}
-        />
-      </Stack>
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, my: 0.5 }} />
+          </InputAdornment>
+        }
+      />
 
       {helperText && (
         <FormHelperText sx={{ mx: 0 }}>{helperText}</FormHelperText>
