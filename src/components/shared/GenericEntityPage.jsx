@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useContext } from 'react';
+import { useState, useMemo, useCallback, useContext } from 'react';
 import {
   Box,
   Container,
@@ -26,7 +26,6 @@ import {
   Checkbox,
   Menu,
   MenuItem,
-  TextField,
   Fab,
   Skeleton,
   Card,
@@ -171,7 +170,7 @@ const GenericEntityPage = ({
     ...relatedDataEndpoints,   // config may override or add more
   }), [relatedDataEndpoints]);
 
-  const { data: relatedData, loading: relatedDataLoading } = useRelatedData(mergedEndpoints, campusId);
+  const { data: relatedData } = useRelatedData(mergedEndpoints, campusId);
 
   // ============================================================
   // LOCAL UI STATE
@@ -239,7 +238,8 @@ const GenericEntityPage = ({
     setFilters({});
     setSearch('');
     setPage(0);
-  }, [setFilters, setSearch, setPage]);
+    setIncludeArchived(false);
+  }, [setFilters, setSearch, setPage, setIncludeArchived]);
 
   const handleOpenFormModal  = useCallback((entity = null) => { 
       setSelectedEntity(entity); 

@@ -1,19 +1,27 @@
 import { useEffect, useState } from 'react';
 import {
-  Grid, TextField, Button, CircularProgress,
-  FormControl, InputLabel, Select, MenuItem,
-  Stack, Alert, FormHelperText, InputAdornment, IconButton, Box,
+  Grid, Button, CircularProgress, Collapse,
+  Stack, Alert, Box, useTheme, useMediaQuery,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import {
+  Person, Email, Badge as BadgeIcon,
+  AdminPanelSettings, Check, Cancel,
+} from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useParams } from 'react-router-dom';
 
-import api from '../../../api/axiosInstance';
+import api                  from '../../../api/axiosInstance';
 import { createStaff, updateStaff } from '../../../services/staffService';
-import PhoneInput          from '../../../components/shared/PhoneInput';
+import PhoneInput           from '../../../components/shared/PhoneInput';
 import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
 import { yupPhone, yupPassword } from '../../../utils/validationRules';
+import FormSection          from '../../../components/form/FormSection';
+import {
+  FormTextField, FormSelectField, FormPasswordField,
+} from '../../../components/form/FormFields';
+
+// ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const createSchema = Yup.object({
   firstName: Yup.string().min(2).max(50).required('First name is required'),
@@ -38,14 +46,15 @@ const editSchema = Yup.object({
   subRole:   Yup.string().notRequired(),
 });
 
-const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
-  const isEdit = Boolean(staff?._id);
+  const isEdit   = Boolean(staff?._id);
   const { campusId } = useParams();
+  const theme    = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [roles,        setRoles]        = useState([]);
-  const [showPwd,      setShowPwd]      = useState(false);
   const [apiError,     setApiError]     = useState('');
   const [profileImage, setProfileImage] = useState(staff?.profileImage ?? null);
 
@@ -54,6 +63,14 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
       .then((r) => setRoles(r.data?.data ?? []))
       .catch(() => {});
   }, [campusId]);
+
+  const roleOptions = [
+    { value: '', label: '— No role —' },
+    ...roles.map((r) => ({
+      value: r._id,
+      label: `${r.name} (${r.permissions?.length ?? 0} permissions)`,
+    })),
+  ];
 
   const formik = useFormik({
     initialValues: {
@@ -90,54 +107,51 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
     },
   });
 
-  const f = (name) => ({
-    name,
-    value:     formik.values[name],
-    onChange:  formik.handleChange,
-    onBlur:    formik.handleBlur,
-    error:     formik.touched[name] && Boolean(formik.errors[name]),
-    helperText: formik.touched[name] && formik.errors[name],
-    sx:        SX,
-    fullWidth: true,
-  });
-
   return (
     <form onSubmit={formik.handleSubmit} noValidate>
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
+
         {apiError && (
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Alert severity="error" sx={{ borderRadius: 2 }}>{apiError}</Alert>
           </Grid>
         )}
 
-        {/* Avatar */}
-        <Grid item xs={12}>
+        {/* ── Profile image ──────────────────────────────────────────────────── */}
+        <Grid size={{ xs: 12 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 1 }}>
             <ProfileImageUploader
               currentImage={profileImage}
               signatureEndpoint="/staff/upload-signature"
               onUploaded={(url) => setProfileImage(url)}
-              size={88}
+              size={100}
             />
           </Box>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
-          <TextField label="First Name" {...f('firstName')} />
+        {/* ── Personal Information ───────────────────────────────────────────── */}
+        <FormSection title="Personal Information" />
+
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormTextField formik={formik} name="firstName" label="First Name" icon={Person} />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Last Name" {...f('lastName')} />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormTextField formik={formik} name="lastName"  label="Last Name"  icon={Person} />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Username" {...f('username')} />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormTextField formik={formik} name="username"  label="Username"   icon={BadgeIcon} />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Email" type="email" {...f('email')} />
+
+        {/* ── Contact ───────────────────────────────────────────────────────── */}
+        <FormSection title="Contact" />
+
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormTextField formik={formik} name="email" label="Email Address" type="email" icon={Email} />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <PhoneInput
             name="phone"
-            label="Phone"
+            label="Phone Number"
             value={formik.values.phone}
             onChange={(v) => formik.setFieldValue('phone', v)}
             onBlur={formik.handleBlur}
@@ -146,66 +160,59 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           />
         </Grid>
 
-        {!isEdit && (
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Password"
-              type={showPwd ? 'text' : 'password'}
-              {...f('password')}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setShowPwd((p) => !p)} edge="end">
-                        {showPwd ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Grid>
-        )}
+        {/* ── Role ──────────────────────────────────────────────────────────── */}
+        <FormSection title="Role" />
 
-        <Grid item xs={12} sm={isEdit ? 6 : 12}>
-          <FormControl fullWidth sx={SX} error={formik.touched.subRole && Boolean(formik.errors.subRole)}>
-            <InputLabel>Sub-Role (optional)</InputLabel>
-            <Select
-              name="subRole"
-              value={formik.values.subRole}
-              label="Sub-Role (optional)"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            >
-              <MenuItem value=""><em>No role</em></MenuItem>
-              {roles.map((r) => (
-                <MenuItem key={r._id} value={r._id}>
-                  {r.name} ({r.permissions?.length ?? 0} permissions)
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.touched.subRole && formik.errors.subRole && (
-              <FormHelperText>{formik.errors.subRole}</FormHelperText>
-            )}
-          </FormControl>
+        <Grid size={{ xs: 12 }}>
+          <FormSelectField
+            formik={formik}
+            name="subRole"
+            label="Sub-Role"
+            icon={AdminPanelSettings}
+            options={roleOptions}
+          />
         </Grid>
 
-        <Grid item xs={12}>
-          <Stack direction="row" spacing={1} justifyContent="flex-end">
-            <Button onClick={onCancel} sx={{ textTransform: 'none', borderRadius: 2 }}>
+        {/* ── Security — password only on create ────────────────────────────── */}
+        <Collapse in={!isEdit} sx={{ width: '100%' }}>
+          <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
+            <FormSection title="Security" />
+            <Grid size={{ xs: 12 }}>
+              <FormPasswordField formik={formik} />
+            </Grid>
+          </Grid>
+        </Collapse>
+
+        {/* ── Actions ───────────────────────────────────────────────────────── */}
+        <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="flex-end">
+            <Button
+              variant="outlined"
+              onClick={onCancel}
+              startIcon={<Cancel />}
+              fullWidth={isMobile}
+              sx={{ px: 4, py: 1.5, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="contained"
               disabled={formik.isSubmitting}
-              startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
-              sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
+              startIcon={formik.isSubmitting ? <CircularProgress size={20} color="inherit" /> : <Check />}
+              fullWidth={isMobile}
+              sx={{
+                px: 4, py: 1.5, borderRadius: 2,
+                textTransform: 'none', fontWeight: 600,
+                boxShadow: theme.shadows[4],
+                '&:hover': { boxShadow: theme.shadows[8] },
+              }}
             >
               {formik.isSubmitting ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Staff'}
             </Button>
           </Stack>
         </Grid>
+
       </Grid>
     </form>
   );
