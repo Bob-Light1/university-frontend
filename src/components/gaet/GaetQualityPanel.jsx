@@ -78,8 +78,10 @@ const MetricCard = ({ icon, label, value, sub, color, progress }) => {
 
 // ─── UNPLACED COURSES LIST ────────────────────────────────────────────────────
 
-const UnplacedCoursesList = ({ unplacedCourses, courseRequirements }) => {
-  const crMap = Object.fromEntries((courseRequirements ?? []).map((cr) => [cr._id, cr]));
+const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptions, classOptions }) => {
+  const crMap = Object.fromEntries(
+    (courseRequirements ?? []).map((cr) => [String(cr._id), cr])
+  );
 
   if (!unplacedCourses?.length) return null;
 
@@ -90,7 +92,12 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements }) => {
       </Typography>
       <Stack spacing={1}>
         {unplacedCourses.map((item, idx) => {
-          const cr = crMap[item.courseRequirementRef];
+          const cr           = crMap[String(item.courseRequirementRef)];
+          const subjectLabel = subjectOptions?.find((o) => o.value === String(cr?.subjectId ?? ''))?.label;
+          const classLabel   = classOptions?.find((o) => o.value === String(cr?.classId ?? ''))?.label;
+          const courseLabel  = subjectLabel
+            ? `${subjectLabel}${classLabel ? ` — ${classLabel}` : ''}`
+            : `Ref: ${String(item.courseRequirementRef).slice(-6)}`;
           return (
             <Box
               key={idx}
@@ -104,7 +111,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements }) => {
               <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
                 <Stack spacing={0.25}>
                   <Typography variant="body2" fontWeight={600}>
-                    {cr ? `Course ${idx + 1}` : `Ref: ${String(item.courseRequirementRef).slice(-6)}`}
+                    {courseLabel}
                   </Typography>
                   {item.reason && (
                     <Typography variant="caption" color="text.secondary">
@@ -124,7 +131,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements }) => {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 
-const GaetQualityPanel = ({ report, status, courseRequirements }) => {
+const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, classOptions }) => {
   const theme = useTheme();
 
   if (!report) return null;
@@ -216,6 +223,8 @@ const GaetQualityPanel = ({ report, status, courseRequirements }) => {
           <UnplacedCoursesList
             unplacedCourses={report.unplacedCourses}
             courseRequirements={courseRequirements}
+            subjectOptions={subjectOptions}
+            classOptions={classOptions}
           />
         </>
       )}

@@ -121,7 +121,7 @@ const TimeSlotsSection = ({ formik }) => {
             const tch = formik.touched?.timeSlots?.[idx];
             return (
               <Paper
-                key={idx}
+                key={slot._id ?? `ts-${idx}`}
                 variant="outlined"
                 sx={{ p: 2, borderRadius: 2, bgcolor: slot.isBreak ? alpha('#ed6c02', 0.04) : 'transparent' }}
               >
@@ -455,7 +455,7 @@ const CoursesSection = ({ formik, teacherOptions, classOptions, subjectOptions }
         <Box>
           {courses.map((cr, idx) => (
             <CourseRow
-              key={idx}
+              key={cr._id ?? `cr-${idx}`}
               idx={idx}
               cr={cr}
               formik={formik}
@@ -536,7 +536,7 @@ const RoomsSection = ({ formik }) => {
             const err = formik.errors?.roomRegistry?.[idx];
             const tch = formik.touched?.roomRegistry?.[idx];
             return (
-              <Paper key={idx} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+              <Paper key={room._id ?? `room-${idx}`} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField
@@ -619,6 +619,7 @@ const GaetConstraintForm = ({
       timeSlots:          initialData?.timeSlots          ?? [],
       courseRequirements: initialData?.courseRequirements ?? [],
       roomRegistry:       initialData?.roomRegistry       ?? [],
+      teacherPreferences: initialData?.teacherPreferences ?? [],
     },
     validationSchema: gaetConstraintSchema,
     enableReinitialize: true,
@@ -629,6 +630,7 @@ const GaetConstraintForm = ({
         timeSlots:          values.timeSlots,
         courseRequirements: values.courseRequirements,
         roomRegistry:       values.roomRegistry,
+        teacherPreferences: values.teacherPreferences,
       });
     },
   });

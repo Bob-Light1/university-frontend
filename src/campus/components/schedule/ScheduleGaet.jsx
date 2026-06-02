@@ -591,6 +591,8 @@ const ScheduleGaet = () => {
               report={qualityReport}
               status={status}
               courseRequirements={constraint?.courseRequirements}
+              subjectOptions={subjectOptions}
+              classOptions={classOptions}
             />
           )}
 

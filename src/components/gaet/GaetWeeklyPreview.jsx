@@ -156,9 +156,9 @@ const DayColumn = ({ day, sessions, crMap, subjectOptions, teacherOptions, class
 
       {/* Sessions */}
       <Stack spacing={1.5} sx={{ p: 1.5 }}>
-        {sessions.map((session) => (
+        {sessions.map((session, idx) => (
           <SessionCard
-            key={session._id ?? Math.random()}
+            key={session._id ?? `session-${idx}`}
             session={session}
             courseReq={crMap[String(session.courseRequirementRef)]}
             subjectOptions={subjectOptions}

@@ -57,6 +57,27 @@ const objectId = (label = 'ID') =>
 
 // ─── SUB-SCHEMAS ──────────────────────────────────────────────────────────────
 
+export const unavailableSlotSchema = Yup.object({
+  day: Yup.string()
+    .oneOf(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'], 'Invalid day')
+    .required('Day is required'),
+  startHour: Yup.number()
+    .integer('Must be a whole hour')
+    .min(0, 'Minimum 0h')
+    .max(23, 'Maximum 23h')
+    .required('Start hour is required'),
+  endHour: Yup.number()
+    .integer('Must be a whole hour')
+    .min(1, 'Minimum 1h')
+    .max(24, 'Maximum 24h')
+    .required('End hour is required')
+    .test(
+      'after-start',
+      'End must be after start',
+      function (v) { return !v || v > this.parent.startHour; }
+    ),
+});
+
 export const timeSlotSchema = Yup.object({
   day: Yup.string()
     .oneOf(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'], 'Invalid day')
@@ -85,7 +106,7 @@ export const courseRequirementSchema = Yup.object({
   teacherId:       objectId('Teacher'),
   sessionType:     Yup.string()
     .oneOf(['LECTURE', 'TUTORIAL', 'PRACTICAL'], 'Invalid session type')
-    .required('Session type is required'),
+    .default('LECTURE'),
   hoursPerWeek:    Yup.number()
     .min(1, 'Minimum 1 h/week')
     .required('Hours per week is required'),
@@ -110,6 +131,7 @@ export const roomRegistrySchema = Yup.object({
   type:     Yup.string()
     .oneOf(['CLASSROOM', 'LAB', 'AMPHITHEATER'])
     .default('CLASSROOM'),
+  unavailableSlots: Yup.array().of(unavailableSlotSchema).default([]),
 });
 
 // ─── MAIN SCHEMA ─────────────────────────────────────────────────────────────

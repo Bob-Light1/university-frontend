@@ -47,6 +47,7 @@ const useGaet = (campusId) => {
 
   const loadConstraint = useCallback(async (academicYear, semester) => {
     if (!campusId) return null;
+    stopPolling();   // cancel any in-flight poll for the previous constraint
     setLoading(true);
     setError(null);
     try {
@@ -65,7 +66,7 @@ const useGaet = (campusId) => {
     } finally {
       setLoading(false);
     }
-  }, [campusId]);
+  }, [campusId, stopPolling]);
 
   // ─── SAVE CONSTRAINTS ────────────────────────────────────────────────────
 
@@ -183,7 +184,8 @@ const useGaet = (campusId) => {
     try {
       const res = await gaetService.getPreview(constraintId);
       setPreview(res.data?.data?.sessions ?? []);
-    } catch {
+    } catch (err) {
+      setError(err.response?.data?.message ?? 'Failed to load preview.');
       setPreview([]);
     }
   }, []);
@@ -196,7 +198,8 @@ const useGaet = (campusId) => {
       setConflicts(
         res.data?.data ?? { conflictCount: 0, conflicts: [], unplacedCourses: [] }
       );
-    } catch {
+    } catch (err) {
+      setError(err.response?.data?.message ?? 'Failed to load conflicts.');
       setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
     }
   }, []);
@@ -212,7 +215,7 @@ const useGaet = (campusId) => {
       setStatus('PUBLISHED');
       setConstraint((prev) => prev ? { ...prev, status: 'PUBLISHED' } : prev);
       if (showSnackbar)
-        showSnackbar(`${result?.created?.length ?? 0} session(s) published successfully.`, 'success');
+        showSnackbar(`${result?.published ?? 0} session(s) published successfully.`, 'success');
       return result;
     } catch (err) {
       const msg = err.response?.data?.message ?? 'Publication failed.';
