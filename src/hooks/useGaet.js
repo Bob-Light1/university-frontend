@@ -9,7 +9,7 @@
  *   GENERATED | PARTIALLY_GENERATED | PUBLISHED | FAILED | CANCELLED
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import * as gaetService from '../services/gaetService';
 
 const TERMINAL_STATUSES = new Set([
@@ -39,6 +39,9 @@ const useGaet = (campusId) => {
 
   // Polling handle — call .stop() to cancel the next scheduled poll
   const pollingRef = useRef({ stop: () => {} });
+
+  // Stop any in-flight polling when the component unmounts
+  useEffect(() => () => pollingRef.current.stop(), []);
 
   // ─── FETCH A SPECIFIC CONSTRAINT ─────────────────────────────────────────
 
@@ -118,8 +121,16 @@ const useGaet = (campusId) => {
           if (onTerminal) onTerminal(newStatus, data);
           return;
         }
-      } catch {
-        // Network error — keep polling silently
+      } catch (err) {
+        // 4xx (e.g. 404 constraint not found, 403 campus mismatch) → stop immediately
+        const httpStatus = err?.response?.status;
+        if (httpStatus && httpStatus >= 400 && httpStatus < 500) {
+          active = false;
+          setGenerating(false);
+          setStatus('FAILED');
+          return;
+        }
+        // Network error or 5xx — keep polling silently
       }
       setTimeout(poll, POLL_INTERVAL_MS);
     };
@@ -137,6 +148,9 @@ const useGaet = (campusId) => {
     try {
       const res          = await gaetService.generateSchedule({ academicYear, semester });
       const constraintId = res.data?.data?.constraintId;
+      if (!constraintId) {
+        throw new Error('Server did not return a constraint ID.');
+      }
       setStatus('GENERATING');
 
       startPolling(constraintId, (terminalStatus, data) => {
@@ -198,7 +212,7 @@ const useGaet = (campusId) => {
       setStatus('PUBLISHED');
       setConstraint((prev) => prev ? { ...prev, status: 'PUBLISHED' } : prev);
       if (showSnackbar)
-        showSnackbar(`${result?.published ?? 0} session(s) published successfully.`, 'success');
+        showSnackbar(`${result?.created?.length ?? 0} session(s) published successfully.`, 'success');
       return result;
     } catch (err) {
       const msg = err.response?.data?.message ?? 'Publication failed.';

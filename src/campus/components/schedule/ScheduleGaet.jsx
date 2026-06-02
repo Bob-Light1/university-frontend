@@ -22,10 +22,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box, Grid, Stack, Typography, Button, Tabs, Tab,
   FormControl, InputLabel, Select, MenuItem,
-  TextField, Alert, Snackbar, Paper, Divider,
+  TextField, Alert, Snackbar, Paper,
   LinearProgress,
-  Chip, Avatar, alpha, useTheme, useMediaQuery,
-  Tooltip,
+  Chip, Avatar, alpha, useTheme,
 } from '@mui/material';
 import {
   AutoAwesome, CalendarMonth, WarningAmber,
@@ -44,14 +43,9 @@ import GaetQualityPanel   from '../../../components/gaet/GaetQualityPanel';
 import GaetGenerateButton from '../../../components/gaet/GaetGenerateButton';
 import GaetStatusChip     from '../../../components/gaet/GaetStatusChip';
 import GaetWeeklyPreview  from '../../../components/gaet/GaetWeeklyPreview';
+import { SEMESTER_OPTIONS } from '../../../yupSchema/gaetSchema';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-
-const SEMESTER_OPTIONS = [
-  { value: 'S1',     label: 'Semester 1' },
-  { value: 'S2',     label: 'Semester 2' },
-  { value: 'Annual', label: 'Annual'     },
-];
 
 const FORM_ENDPOINTS = {
   teachers: (id) => `/campus/${id}/teachers`,
@@ -87,7 +81,7 @@ const GeneratingBanner = () => (
 
 // ─── CONFLICT PANEL ──────────────────────────────────────────────────────────
 
-const ConflictsPanel = ({ conflicts, loading }) => {
+const ConflictsPanel = ({ conflicts }) => {
   const theme = useTheme();
 
   if (!conflicts.conflictCount && !conflicts.unplacedCourses?.length) {
@@ -172,15 +166,16 @@ const ConflictsPanel = ({ conflicts, loading }) => {
 
 // ─── EMPTY SELECTOR STATE ─────────────────────────────────────────────────────
 
-const EmptyState = ({ onConfigure }) => {
+const EmptyState = () => {
   const theme = useTheme();
   return (
     <Box
       sx={{
-        textAlign: 'center', py: 10,
+        textAlign: 'center', py: 6,
         bgcolor: alpha(theme.palette.primary.main, 0.03),
         borderRadius: 3, border: '2px dashed',
         borderColor: alpha(theme.palette.primary.main, 0.15),
+        mb: 3,
       }}
     >
       <Avatar
@@ -195,16 +190,9 @@ const EmptyState = ({ onConfigure }) => {
       <Typography variant="h5" fontWeight={800} mb={1}>
         No timetable configured
       </Typography>
-      <Typography variant="body2" color="text.secondary" mb={3} maxWidth={420} mx="auto">
-        Select an academic year and semester above, then configure your constraints to generate the timetable.
+      <Typography variant="body2" color="text.secondary" maxWidth={420} mx="auto">
+        Fill in the form below to configure constraints and generate the timetable for this semester.
       </Typography>
-      <Button
-        variant="contained"
-        onClick={onConfigure}
-        sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}
-      >
-        Configure Constraints
-      </Button>
     </Box>
   );
 };
@@ -246,7 +234,6 @@ const ScheduleGaet = () => {
   const { campusId } = useParams();
   const { user }     = useAuth();
   const theme        = useTheme();
-  const isMobile     = useMediaQuery(theme.breakpoints.down('md'));
 
   const canWrite = user?.role === 'CAMPUS_MANAGER';
 
@@ -280,10 +267,10 @@ const ScheduleGaet = () => {
   // ─ GAET hook ─
   const {
     constraint, status, qualityReport, preview, conflicts,
-    loading, saving, generating, publishing, error,
+    loading, saving, publishing, error,
     loadConstraint, saveConstraints,
     generate, fetchPreview, fetchConflicts,
-    publish, cancelGenerated, reset,
+    publish, cancelGenerated,
   } = useGaet(campusId);
 
   // Load constraint when year/semester changes
@@ -452,7 +439,11 @@ const ScheduleGaet = () => {
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, sm: 3, md: 5 }}>
-            <Stack direction="row" alignItems="center" spacing={2}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              spacing={1}
+            >
               <ConstraintSummary constraint={constraint} />
               {constraint?.updatedAt && (
                 <Typography variant="caption" color="text.disabled" noWrap>
@@ -468,7 +459,7 @@ const ScheduleGaet = () => {
 
       {/* ── Error alert ──────────────────────────────────────────────────── */}
       {error && (
-        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }} onClose={() => {}}>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
           {error}
         </Alert>
       )}
@@ -512,9 +503,23 @@ const ScheduleGaet = () => {
         </Alert>
       )}
 
-      {/* ── No constraint yet ────────────────────────────────────────────── */}
+      {/* ── No constraint yet: show info banner + create form ───────────── */}
       {!loading && !constraint && (
-        <EmptyState onConfigure={() => {}} />
+        <>
+          <EmptyState />
+          {canWrite && (
+            <GaetConstraintForm
+              initialData={null}
+              academicYear={academicYear}
+              semester={semester}
+              teacherOptions={teacherOptions}
+              classOptions={classOptions}
+              subjectOptions={subjectOptions}
+              onSave={handleSave}
+              saving={saving}
+            />
+          )}
+        </>
       )}
 
       {/* ── Main content (tabs) ───────────────────────────────────────────── */}
@@ -533,7 +538,7 @@ const ScheduleGaet = () => {
               '& .Mui-selected': { fontWeight: 700 },
             }}
           >
-            {visibleTabs.map((tab, idx) => (
+            {visibleTabs.map((tab) => (
               <Tab
                 key={tab.label}
                 label={
@@ -599,7 +604,10 @@ const ScheduleGaet = () => {
       {/* ── Snackbar ─────────────────────────────────────────────────────── */}
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={5000}
+        autoHideDuration={
+          snackbar.severity === 'error'   ? null :
+          snackbar.severity === 'warning' ? 7000 : 4000
+        }
         onClose={closeSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >

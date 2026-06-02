@@ -17,8 +17,8 @@ import {
   FormControl, InputLabel, Select, MenuItem, TextField,
   Checkbox, FormControlLabel, IconButton, Divider,
   Alert, Chip, Tooltip, alpha, useTheme, Paper,
-  Dialog, DialogTitle, DialogContent, DialogActions,
   FormHelperText, Accordion, AccordionSummary, AccordionDetails,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add, Delete, AccessTime, School, MeetingRoom,
@@ -707,7 +707,13 @@ const GaetConstraintForm = ({
         </Box>
 
         {/* Navigation helper */}
-        <Stack direction="row" justifyContent="space-between" mt={3} alignItems="center">
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent={{ xs: 'flex-start', sm: 'space-between' }}
+          alignItems={{ xs: 'stretch', sm: 'center' }}
+          mt={3}
+          spacing={{ xs: 1.5, sm: 0 }}
+        >
           <Stack direction="row" spacing={1}>
             {activeTab > 0 && (
               <Button
@@ -735,9 +741,12 @@ const GaetConstraintForm = ({
             <Button
               type="submit"
               variant="contained"
-              startIcon={saving ? undefined : <Save />}
+              startIcon={saving ? <CircularProgress size={16} color="inherit" /> : <Save />}
               disabled={saving}
-              sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3 }}
+              sx={{
+                fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3,
+                width: { xs: '100%', sm: 'auto' },
+              }}
             >
               {saving ? 'Saving…' : 'Save Configuration'}
             </Button>
