@@ -39,7 +39,7 @@ const editSchema = Yup.object({
 
 const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
-export default function StaffForm({ entity: staff, onSuccess, onCancel }) {
+export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   const isEdit = Boolean(staff?._id);
   const { campusId } = useParams();
 
@@ -78,7 +78,7 @@ export default function StaffForm({ entity: staff, onSuccess, onCancel }) {
           ? await updateStaff(staff._id, payload)
           : await createStaff(payload);
 
-        onSuccess(res.data?.data ?? res.data, isEdit ? 'updated' : 'created');
+        onSuccess(`Staff member ${isEdit ? 'updated' : 'created'} successfully`);
       } catch (err) {
         setApiError(err.response?.data?.message || 'Operation failed.');
       } finally {

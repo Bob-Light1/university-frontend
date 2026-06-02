@@ -1,17 +1,28 @@
 /**
  * @file mentorService.js
- * @description Axios service layer for the Mentor portal.
+ * @description Axios service layer for the Mentor module.
  *
  * Aligned with backend router: /api/mentors (mentor.router.js)
  *
  * Sections:
- *  1. Self-service profile (/me/*)
- *  2. Read-only scope     (/me/dashboard, /me/students, /me/results, /me/attendance, /me/courses)
+ *  1. CM-facing  — Mentor CRUD       (/api/mentors)
+ *  2. Self-service profile            (/me/*)
+ *  3. Read-only scope                 (/me/dashboard, /me/students, /me/results, /me/attendance, /me/courses)
  */
 
 import api from '../api/axiosInstance';
 
-// ─── 1. SELF-SERVICE PROFILE ──────────────────────────────────────────────────
+// ─── 1. MENTOR CRUD (Campus Manager) ─────────────────────────────────────────
+
+export const getMentors              = (params)      => api.get('/mentors', { params });
+export const createMentor            = (data)        => api.post('/mentors', data);
+export const updateMentor            = (id, data)    => api.put(`/mentors/${id}`, data);
+export const archiveMentor           = (id)          => api.delete(`/mentors/${id}`);
+export const restoreMentor           = (id)          => api.patch(`/mentors/${id}/restore`);
+export const deleteMentorPermanently = (id)          => api.delete(`/mentors/${id}/permanent`);
+export const updateMentorStatus      = (id, status)  => api.patch(`/mentors/${id}/status`, { status });
+
+// ─── 2. SELF-SERVICE PROFILE ──────────────────────────────────────────────────
 
 export const getMyProfile          = ()     => api.get('/mentors/me');
 export const updateMyProfile       = (data) => api.patch('/mentors/me/profile', data);
@@ -20,7 +31,7 @@ export const uploadMyProfileImage  = (url)  => api.patch('/mentors/me/profile-im
 export const updateMyNotifications = (data) => api.patch('/mentors/me/notifications', data);
 export const getProfileUploadSignature = ()  => api.get('/mentors/me/upload-signature');
 
-// ─── 2. READ-ONLY SCOPE ───────────────────────────────────────────────────────
+// ─── 3. READ-ONLY SCOPE ───────────────────────────────────────────────────────
 
 /** Aggregated KPIs for the mentor dashboard. */
 export const getMentorDashboard = () =>

@@ -7,7 +7,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { createMentor, updateMentor } from '../../../services/staffService';
+import { createMentor, updateMentor } from '../../../services/mentorService';
 import PhoneInput from '../../../components/shared/PhoneInput';
 import { yupPhone, yupPassword } from '../../../utils/validationRules';
 
@@ -36,7 +36,7 @@ const editSchema = Yup.object({
 
 const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
-export default function MentorForm({ entity: mentor, onSuccess, onCancel }) {
+export default function MentorForm({ initialData: mentor, onSuccess, onCancel }) {
   const isEdit = Boolean(mentor?._id);
   const [showPwd, setShowPwd]   = useState(false);
   const [apiError, setApiError] = useState('');
@@ -66,7 +66,7 @@ export default function MentorForm({ entity: mentor, onSuccess, onCancel }) {
           ? await updateMentor(mentor._id, payload)
           : await createMentor(payload);
 
-        onSuccess(res.data?.data ?? res.data, isEdit ? 'updated' : 'created');
+        onSuccess(`Mentor ${isEdit ? 'updated' : 'created'} successfully`);
       } catch (err) {
         setApiError(err.response?.data?.message || 'Operation failed.');
       } finally {

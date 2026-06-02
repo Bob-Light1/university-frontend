@@ -1,12 +1,11 @@
 /**
  * @file staffService.js
- * @description Axios service layer for Staff and Mentor management.
+ * @description Axios service layer for Staff management.
  *
  * Sections:
  *  1. CM-facing  — Staff CRUD       (/api/staff)
- *  2. CM-facing  — Mentor CRUD      (/api/mentors)
- *  3. CM-facing  — StaffRole CRUD   (/api/staff-roles)
- *  4. Staff self-service portal      (/api/staff/me/*)
+ *  2. CM-facing  — StaffRole CRUD   (/api/staff-roles)
+ *  3. Staff self-service portal      (/api/staff/me/*)
  */
 
 import api from '../api/axiosInstance';
@@ -23,17 +22,7 @@ export const assignStaffRole          = (id, subRoleId) => api.patch(`/staff/${i
 export const updateStaffStatus        = (id, status)  => api.patch(`/staff/${id}/status`, { status });
 export const resetStaffPassword       = (id, newPassword) => api.patch(`/staff/${id}/reset-password`, { newPassword });
 
-// ─── 2. MENTOR CRUD (Campus Manager) ─────────────────────────────────────────
-
-export const getMentors               = (params)   => api.get('/mentors', { params });
-export const createMentor             = (data)     => api.post('/mentors', data);
-export const updateMentor             = (id, data) => api.put(`/mentors/${id}`, data);
-export const archiveMentor            = (id)       => api.delete(`/mentors/${id}`);
-export const restoreMentor            = (id)       => api.patch(`/mentors/${id}/restore`);
-export const deleteMentorPermanently  = (id)       => api.delete(`/mentors/${id}/permanent`);
-export const updateMentorStatus       = (id, status) => api.patch(`/mentors/${id}/status`, { status });
-
-// ─── 3. STAFF ROLES CRUD (Campus Manager) ────────────────────────────────────
+// ─── 2. STAFF ROLES CRUD (Campus Manager) ────────────────────────────────────
 
 export const getStaffRoles    = (params)      => api.get('/staff-roles', { params });
 export const createStaffRole  = (data)        => api.post('/staff-roles', data);
