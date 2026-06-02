@@ -1,0 +1,258 @@
+/**
+ * @file useGaet.js
+ * @description State management hook for GAET — Générateur Automatique d'Emploi du Temps.
+ *
+ * Polling strategy: recursive setTimeout (not setInterval), as specified in GAET v2.
+ * Each poll fires 3 seconds AFTER the previous response — no overlapping requests.
+ *
+ * Status terminal states that stop polling:
+ *   GENERATED | PARTIALLY_GENERATED | PUBLISHED | FAILED | CANCELLED
+ */
+
+import { useState, useCallback, useRef } from 'react';
+import * as gaetService from '../services/gaetService';
+
+const TERMINAL_STATUSES = new Set([
+  'GENERATED',
+  'PARTIALLY_GENERATED',
+  'PUBLISHED',
+  'FAILED',
+  'CANCELLED',
+]);
+
+const POLL_INTERVAL_MS = 3000;
+
+const useGaet = (campusId) => {
+  const [constraint,    setConstraint]    = useState(null);
+  const [status,        setStatus]        = useState(null);
+  const [qualityReport, setQualityReport] = useState(null);
+  const [preview,       setPreview]       = useState([]);
+  const [conflicts,     setConflicts]     = useState({
+    conflictCount: 0, conflicts: [], unplacedCourses: [],
+  });
+
+  const [loading,     setLoading]     = useState(false);
+  const [saving,      setSaving]      = useState(false);
+  const [generating,  setGenerating]  = useState(false);
+  const [publishing,  setPublishing]  = useState(false);
+  const [error,       setError]       = useState(null);
+
+  // Polling handle — call .stop() to cancel the next scheduled poll
+  const pollingRef = useRef({ stop: () => {} });
+
+  // ─── FETCH A SPECIFIC CONSTRAINT ─────────────────────────────────────────
+
+  const loadConstraint = useCallback(async (academicYear, semester) => {
+    if (!campusId) return null;
+    setLoading(true);
+    setError(null);
+    try {
+      const res  = await gaetService.getConstraints(campusId, { academicYear, semester });
+      const list = res.data?.data;
+      const doc  = Array.isArray(list) && list.length > 0 ? list[0] : null;
+      setConstraint(doc);
+      setStatus(doc?.status ?? null);
+      setQualityReport(doc?.qualityReport ?? null);
+      setPreview([]);
+      setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
+      return doc;
+    } catch (err) {
+      setError(err.response?.data?.message ?? 'Failed to load constraint.');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [campusId]);
+
+  // ─── SAVE CONSTRAINTS ────────────────────────────────────────────────────
+
+  const saveConstraints = useCallback(async (payload) => {
+    setSaving(true);
+    setError(null);
+    try {
+      const res     = await gaetService.createOrUpdateConstraints(payload);
+      const updated = res.data?.data;
+      if (updated) {
+        setConstraint(updated);
+        setStatus(updated.status);
+        setQualityReport(updated.qualityReport ?? null);
+      }
+      return updated;
+    } catch (err) {
+      const msg = err.response?.data?.message ?? 'Failed to save constraints.';
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setSaving(false);
+    }
+  }, []);
+
+  // ─── POLLING ─────────────────────────────────────────────────────────────
+
+  const stopPolling = useCallback(() => {
+    pollingRef.current.stop();
+  }, []);
+
+  const startPolling = useCallback((constraintId, onTerminal) => {
+    stopPolling();
+    let active = true;
+    pollingRef.current = { stop: () => { active = false; } };
+
+    const poll = async () => {
+      if (!active) return;
+      try {
+        const res       = await gaetService.getStatus(constraintId);
+        const data      = res.data?.data;
+        const newStatus = data?.status;
+
+        setStatus(newStatus);
+        setQualityReport(data?.qualityReport ?? null);
+
+        if (TERMINAL_STATUSES.has(newStatus)) {
+          active = false;
+          setGenerating(false);
+          // Persist final constraint state locally
+          setConstraint((prev) =>
+            prev ? { ...prev, status: newStatus, qualityReport: data?.qualityReport ?? null } : prev
+          );
+          if (onTerminal) onTerminal(newStatus, data);
+          return;
+        }
+      } catch {
+        // Network error — keep polling silently
+      }
+      setTimeout(poll, POLL_INTERVAL_MS);
+    };
+
+    setTimeout(poll, POLL_INTERVAL_MS);
+  }, [stopPolling]);
+
+  // ─── GENERATE ────────────────────────────────────────────────────────────
+
+  const generate = useCallback(async (academicYear, semester, showSnackbar) => {
+    setGenerating(true);
+    setError(null);
+    setPreview([]);
+    setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
+    try {
+      const res          = await gaetService.generateSchedule({ academicYear, semester });
+      const constraintId = res.data?.data?.constraintId;
+      setStatus('GENERATING');
+
+      startPolling(constraintId, (terminalStatus, data) => {
+        setQualityReport(data?.qualityReport ?? null);
+        setConstraint((prev) =>
+          prev ? { ...prev, status: terminalStatus, qualityReport: data?.qualityReport ?? null } : prev
+        );
+
+        if (!showSnackbar) return;
+        if (terminalStatus === 'GENERATED') {
+          showSnackbar('Timetable generated successfully.', 'success');
+        } else if (terminalStatus === 'PARTIALLY_GENERATED') {
+          showSnackbar('Timetable partially generated — some courses unplaced. Check conflicts.', 'warning');
+        } else if (terminalStatus === 'FAILED') {
+          showSnackbar('Generation failed. Check your constraints and retry.', 'error');
+        }
+      });
+    } catch (err) {
+      const msg = err.response?.data?.message ?? 'Failed to start generation.';
+      setError(msg);
+      setGenerating(false);
+      setStatus(constraint?.status ?? 'DRAFT');
+      throw new Error(msg);
+    }
+  }, [startPolling, constraint]);
+
+  // ─── FETCH PREVIEW ───────────────────────────────────────────────────────
+
+  const fetchPreview = useCallback(async (constraintId) => {
+    try {
+      const res = await gaetService.getPreview(constraintId);
+      setPreview(res.data?.data?.sessions ?? []);
+    } catch {
+      setPreview([]);
+    }
+  }, []);
+
+  // ─── FETCH CONFLICTS ─────────────────────────────────────────────────────
+
+  const fetchConflicts = useCallback(async (constraintId) => {
+    try {
+      const res = await gaetService.getConflicts(constraintId);
+      setConflicts(
+        res.data?.data ?? { conflictCount: 0, conflicts: [], unplacedCourses: [] }
+      );
+    } catch {
+      setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
+    }
+  }, []);
+
+  // ─── PUBLISH ─────────────────────────────────────────────────────────────
+
+  const publish = useCallback(async (constraintId, showSnackbar) => {
+    setPublishing(true);
+    setError(null);
+    try {
+      const res    = await gaetService.publishSchedule(constraintId);
+      const result = res.data?.data;
+      setStatus('PUBLISHED');
+      setConstraint((prev) => prev ? { ...prev, status: 'PUBLISHED' } : prev);
+      if (showSnackbar)
+        showSnackbar(`${result?.published ?? 0} session(s) published successfully.`, 'success');
+      return result;
+    } catch (err) {
+      const msg = err.response?.data?.message ?? 'Publication failed.';
+      setError(msg);
+      if (showSnackbar) showSnackbar(msg, 'error');
+      throw new Error(msg);
+    } finally {
+      setPublishing(false);
+    }
+  }, []);
+
+  // ─── CANCEL GENERATED ────────────────────────────────────────────────────
+
+  const cancelGenerated = useCallback(async (constraintId, showSnackbar) => {
+    setError(null);
+    try {
+      await gaetService.cancelGenerated(constraintId);
+      setStatus('CANCELLED');
+      setPreview([]);
+      setQualityReport(null);
+      setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
+      setConstraint((prev) => prev ? { ...prev, status: 'CANCELLED' } : prev);
+      if (showSnackbar) showSnackbar('Generated timetable cancelled.', 'info');
+    } catch (err) {
+      const msg = err.response?.data?.message ?? 'Failed to cancel.';
+      setError(msg);
+      if (showSnackbar) showSnackbar(msg, 'error');
+    }
+  }, []);
+
+  // ─── RESET LOCAL STATE ───────────────────────────────────────────────────
+
+  const reset = useCallback(() => {
+    stopPolling();
+    setConstraint(null);
+    setStatus(null);
+    setQualityReport(null);
+    setPreview([]);
+    setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
+    setError(null);
+    setGenerating(false);
+  }, [stopPolling]);
+
+  return {
+    // State
+    constraint, status, qualityReport, preview, conflicts,
+    // Loading flags
+    loading, saving, generating, publishing, error,
+    // Actions
+    loadConstraint, saveConstraints,
+    generate, fetchPreview, fetchConflicts,
+    publish, cancelGenerated,
+    startPolling, stopPolling, reset,
+  };
+};
+
+export default useGaet;

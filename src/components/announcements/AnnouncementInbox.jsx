@@ -148,6 +148,8 @@ function AnnouncementDetailDialog({ announcement, onClose }) {
       maxWidth="sm"
       fullWidth
       fullScreen={isMobile}
+      disableEnforceFocus
+      closeAfterTransition={false}
       slotProps={{ paper: { sx: { borderRadius: isMobile ? 0 : 3 } } }}
     >
       <DialogTitle>

@@ -21,6 +21,7 @@ export default function StaffRolesManager() {
   const [error,   setError]   = useState(null);
   const [formOpen,   setFormOpen]   = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+  const [formKey,    setFormKey]    = useState(0);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const load = useCallback(async () => {
@@ -38,8 +39,8 @@ export default function StaffRolesManager() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleCreate = () => { setEditTarget(null); setFormOpen(true); };
-  const handleEdit   = (r)  => { setEditTarget(r);   setFormOpen(true); };
+  const handleCreate = () => { setFormKey((k) => k + 1); setEditTarget(null); setFormOpen(true); };
+  const handleEdit   = (r)  => { setFormKey((k) => k + 1); setEditTarget(r);   setFormOpen(true); };
 
   const handleSaved = (saved) => {
     setRoles((prev) => {
@@ -205,6 +206,7 @@ export default function StaffRolesManager() {
       )}
 
       <StaffRoleForm
+        key={formKey}
         open={formOpen}
         onClose={() => setFormOpen(false)}
         onSaved={handleSaved}

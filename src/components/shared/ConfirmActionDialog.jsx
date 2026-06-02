@@ -75,8 +75,9 @@ const ConfirmActionDialog = ({
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      disableRestoreFocus
-      PaperProps={{ sx: { borderRadius: 3 } }}
+      disableEnforceFocus
+      closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}
     >
       <DialogTitle sx={{ pb: 1 }}>
         <Stack direction="row" alignItems="center" spacing={1.5}>

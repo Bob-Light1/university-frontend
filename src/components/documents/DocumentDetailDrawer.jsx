@@ -118,7 +118,9 @@ const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confi
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <TextField

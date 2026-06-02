@@ -778,7 +778,8 @@ const TeacherAttendanceTab = () => {
 
       {/* Payment reference dialog */}
       <Dialog open={payRefOpen} onClose={() => setPayRefOpen(false)} maxWidth="xs" fullWidth
-        PaperProps={{ sx: { borderRadius: 3 } }}>
+        disableEnforceFocus closeAfterTransition={false}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
         <DialogTitle fontWeight={700}>Mark Session as Paid</DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <TextField
@@ -1034,7 +1035,9 @@ const PostponementTab = () => {
         onClose={() => setReviewTarget(null)}
         maxWidth="sm"
         fullWidth
-        PaperProps={{ sx: { borderRadius: 3 } }}
+        disableEnforceFocus
+        closeAfterTransition={false}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle fontWeight={700}>
           {reviewStatus === 'APPROVED' ? 'Approve' : 'Reject'} Postponement

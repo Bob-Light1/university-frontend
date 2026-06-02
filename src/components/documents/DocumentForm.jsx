@@ -197,7 +197,9 @@ const DocumentForm = ({
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{ sx: { borderRadius: 2 } }}
+      disableEnforceFocus
+      closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 2 } } }}
     >
       {/* DialogTitle renders as <h2> — avoid nesting block elements inside it */}
       <DialogTitle

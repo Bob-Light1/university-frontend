@@ -102,7 +102,9 @@ const DeleteDialog = ({ open, doc, onConfirm, onClose, isAdmin }) => {
   const handleClose = () => { setReason(''); setHardDelete(false); onClose(); };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle>Delete Document</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ mb: 1.5 }}>

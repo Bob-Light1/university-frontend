@@ -82,7 +82,9 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <form onSubmit={formik.handleSubmit} noValidate>
         <DialogTitle sx={{ fontWeight: 700 }}>
           {isEdit ? 'Edit Staff Role' : 'Create Staff Role'}

@@ -98,6 +98,7 @@ const AcademicPrintPreviewDialog = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
       slotProps={{ paper: { sx: { height: '90vh', display: 'flex', flexDirection: 'column' } } }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pr: 1 }}>

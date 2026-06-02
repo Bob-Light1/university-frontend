@@ -96,6 +96,8 @@ export default function AnnouncementFormDialog({
       maxWidth="sm"
       fullWidth
       fullScreen={isMobile}
+      disableEnforceFocus
+      closeAfterTransition={false}
       slotProps={{ paper: { sx: { borderRadius: isMobile ? 0 : 3 } } }}
     >
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

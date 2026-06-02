@@ -22,6 +22,7 @@ import SubjectIcon            from '@mui/icons-material/Subject';
 import ExplicitIcon           from '@mui/icons-material/Explicit';
 import AssessmentIcon         from '@mui/icons-material/Assessment';
 import EventNoteIcon          from '@mui/icons-material/EventNote';
+import AutoAwesomeIcon        from '@mui/icons-material/AutoAwesome';
 import ChecklistRtlIcon       from '@mui/icons-material/ChecklistRtl';
 import MenuBookIcon           from '@mui/icons-material/MenuBook';
 import DescriptionIcon        from '@mui/icons-material/Description';
@@ -66,10 +67,11 @@ export default function Campus() {
     {
       type: 'group', label: 'Academic', icon: LibraryBooksIcon,
       items: [
-        { link: `/campus/${campusId}/classes`,    label: 'Classes',    icon: LibraryBooksIcon },
-        { link: `/campus/${campusId}/subjects`,   label: 'Subjects',   icon: SubjectIcon },
-        { link: `/campus/${campusId}/schedule`,   label: 'Schedule',   icon: EventNoteIcon },
-        { link: `/campus/${campusId}/attendance`, label: 'Attendance', icon: ChecklistRtlIcon },
+        { link: `/campus/${campusId}/classes`,       label: 'Classes',    icon: LibraryBooksIcon },
+        { link: `/campus/${campusId}/subjects`,    label: 'Subjects',   icon: SubjectIcon },
+        { link: `/campus/${campusId}/schedule`,    label: 'Schedule',   icon: EventNoteIcon },
+        { link: `/campus/${campusId}/schedule-gaet`, label: 'GAET',   icon: AutoAwesomeIcon },
+        { link: `/campus/${campusId}/attendance`,  label: 'Attendance', icon: ChecklistRtlIcon },
       ],
     },
 

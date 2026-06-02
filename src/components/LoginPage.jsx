@@ -666,7 +666,9 @@ export default function LoginPage({ variant = 'public' }) {
       </Fade>
 
       {/* ── Forgot password modal ─────────────────────────────────────────── */}
-      <Dialog open={forgotOpen} onClose={() => setForgotOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog open={forgotOpen} onClose={() => setForgotOpen(false)} maxWidth="xs" fullWidth
+        disableEnforceFocus closeAfterTransition={false}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
           <Box sx={{
             width: 40, height: 40, borderRadius: '50%', flexShrink: 0,

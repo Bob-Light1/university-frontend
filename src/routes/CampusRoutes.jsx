@@ -56,27 +56,31 @@ const CampusMentors = lazy(() =>
 const CampusSettings = lazy(() =>
   import('../campus/components/settings/CampusSettings')
 );
+const ScheduleGaet = lazy(() =>
+  import('../campus/components/schedule/ScheduleGaet')
+);
 
 export const campusRoutes = (
   <>
     <Route index element={<Dashboard />} />
-    <Route path="dashboard"   element={<Dashboard />} />
-    <Route path="students"    element={<Students />} />
-    <Route path="teachers"    element={<Teachers />} />
-    <Route path="parents"     element={<Parents />} />
-    <Route path="classes"     element={<Classes />} />
-    <Route path="subjects"    element={<Subjects />} />
-    <Route path="courses"     element={<Courses />} />
-    <Route path="schedule"    element={<Schedule />} />
-    <Route path="examination" element={<Examination />} />
-    <Route path="results"     element={<Results />} />
-    <Route path="attendance"  element={<Attendance />} />
-    <Route path="notification" element={<Notification />} />
-    <Route path="documents"   element={<Document />} />
-    <Route path="print"       element={<Print />} />
-    <Route path="partners"    element={<Partner />} />
-    <Route path="staff"       element={<CampusStaff />} />
-    <Route path="mentors"     element={<CampusMentors />} />
-    <Route path="settings"    element={<CampusSettings />} />
+    <Route path="dashboard"     element={<Dashboard />} />
+    <Route path="students"      element={<Students />} />
+    <Route path="teachers"      element={<Teachers />} />
+    <Route path="parents"       element={<Parents />} />
+    <Route path="classes"       element={<Classes />} />
+    <Route path="subjects"      element={<Subjects />} />
+    <Route path="courses"       element={<Courses />} />
+    <Route path="schedule"      element={<Schedule />} />
+    <Route path="schedule-gaet" element={<ScheduleGaet />} />
+    <Route path="examination"   element={<Examination />} />
+    <Route path="results"       element={<Results />} />
+    <Route path="attendance"    element={<Attendance />} />
+    <Route path="notification"  element={<Notification />} />
+    <Route path="documents"     element={<Document />} />
+    <Route path="print"         element={<Print />} />
+    <Route path="partners"      element={<Partner />} />
+    <Route path="staff"         element={<CampusStaff />} />
+    <Route path="mentors"       element={<CampusMentors />} />
+    <Route path="settings"      element={<CampusSettings />} />
   </>
 );

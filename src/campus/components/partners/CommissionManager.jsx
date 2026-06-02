@@ -83,7 +83,9 @@ const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
   const isFixed = formik.values.ruleType === 'FIXED';
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Settings sx={{ color: 'text.secondary' }} />

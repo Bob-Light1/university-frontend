@@ -44,7 +44,9 @@ const LIMIT = 15;
 
 function ConfirmDialog({ open, title, message, onConfirm, onClose, loading, severity = 'warning' }) {
   return (
-    <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
+    <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth
+      disableEnforceFocus closeAfterTransition={false}
+      slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ fontWeight: 700 }}>{title}</DialogTitle>
       <DialogContent>
         <Typography variant="body2">{message}</Typography>

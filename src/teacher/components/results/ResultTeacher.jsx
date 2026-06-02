@@ -623,7 +623,9 @@ const ResultTeacher = () => {
 
       {/* ── Delete confirm ──────────────────────────────────────────────── */}
       {deleteTarget && (
-        <Dialog open onClose={() => setDeleteTarget(null)} maxWidth="xs">
+        <Dialog open onClose={() => setDeleteTarget(null)} maxWidth="xs"
+          disableEnforceFocus closeAfterTransition={false}
+          slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
           <DialogTitle>Delete Result</DialogTitle>
           <DialogContent>
             <Alert severity="warning">

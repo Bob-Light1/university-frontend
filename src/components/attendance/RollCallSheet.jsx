@@ -272,7 +272,9 @@ const RollCallSheet = ({
       <Dialog
         open={submitConfirm}
         onClose={() => setSubmitConfirm(false)}
-        PaperProps={{ sx: { borderRadius: 3 } }}
+        disableEnforceFocus
+        closeAfterTransition={false}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle fontWeight={800}>Lock attendance sheet?</DialogTitle>
         <DialogContent>
