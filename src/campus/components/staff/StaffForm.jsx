@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Grid, TextField, Button, CircularProgress,
   FormControl, InputLabel, Select, MenuItem,
-  Stack, Alert, FormHelperText, InputAdornment, IconButton,
+  Stack, Alert, FormHelperText, InputAdornment, IconButton, Box,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik';
@@ -11,7 +11,8 @@ import { useParams } from 'react-router-dom';
 
 import api from '../../../api/axiosInstance';
 import { createStaff, updateStaff } from '../../../services/staffService';
-import PhoneInput from '../../../components/shared/PhoneInput';
+import PhoneInput          from '../../../components/shared/PhoneInput';
+import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
 import { yupPhone, yupPassword } from '../../../utils/validationRules';
 
 const createSchema = Yup.object({
@@ -43,9 +44,10 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   const isEdit = Boolean(staff?._id);
   const { campusId } = useParams();
 
-  const [roles, setRoles]         = useState([]);
-  const [showPwd, setShowPwd]     = useState(false);
-  const [apiError, setApiError]   = useState('');
+  const [roles,        setRoles]        = useState([]);
+  const [showPwd,      setShowPwd]      = useState(false);
+  const [apiError,     setApiError]     = useState('');
+  const [profileImage, setProfileImage] = useState(staff?.profileImage ?? null);
 
   useEffect(() => {
     api.get('/staff-roles', { params: { campusId, isActive: 'true', limit: 100 } })
@@ -73,8 +75,9 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         if (!payload.phone)   delete payload.phone;
         if (!payload.subRole) delete payload.subRole;
         if (isEdit)           delete payload.password;
+        if (profileImage)     payload.profileImage = profileImage;
 
-        const res = isEdit
+        isEdit
           ? await updateStaff(staff._id, payload)
           : await createStaff(payload);
 
@@ -107,6 +110,18 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           </Grid>
         )}
 
+        {/* Avatar */}
+        <Grid item xs={12}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 1 }}>
+            <ProfileImageUploader
+              currentImage={profileImage}
+              signatureEndpoint="/staff/upload-signature"
+              onUploaded={(url) => setProfileImage(url)}
+              size={88}
+            />
+          </Box>
+        </Grid>
+
         <Grid item xs={12} sm={6}>
           <TextField label="First Name" {...f('firstName')} />
         </Grid>
@@ -131,7 +146,6 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           />
         </Grid>
 
-        {/* En création : Password à droite du Phone */}
         {!isEdit && (
           <Grid item xs={12} sm={6}>
             <TextField
@@ -153,8 +167,6 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           </Grid>
         )}
 
-        {/* En édition : Sub-Role occupe les 6 colonnes restantes à côté du Phone
-            En création : Sub-Role prend toute la largeur sous Phone + Password  */}
         <Grid item xs={12} sm={isEdit ? 6 : 12}>
           <FormControl fullWidth sx={SX} error={formik.touched.subRole && Boolean(formik.errors.subRole)}>
             <InputLabel>Sub-Role (optional)</InputLabel>

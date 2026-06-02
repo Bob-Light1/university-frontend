@@ -22,6 +22,8 @@ export const assignStaffRole          = (id, subRoleId) => api.patch(`/staff/${i
 export const updateStaffStatus        = (id, status)  => api.patch(`/staff/${id}/status`, { status });
 export const resetStaffPassword       = (id, newPassword) => api.patch(`/staff/${id}/reset-password`, { newPassword });
 
+export const getCMUploadSignature    = ()           => api.get('/staff/upload-signature');
+
 // ─── 2. STAFF ROLES CRUD (Campus Manager) ────────────────────────────────────
 
 export const getStaffRoles    = (params)      => api.get('/staff-roles', { params });

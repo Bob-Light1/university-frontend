@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import {
   Grid, TextField, Button, CircularProgress,
-  Stack, Alert, InputAdornment, IconButton,
+  Stack, Alert, InputAdornment, IconButton, Box,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import { createMentor, updateMentor } from '../../../services/mentorService';
-import PhoneInput from '../../../components/shared/PhoneInput';
+import PhoneInput           from '../../../components/shared/PhoneInput';
+import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
 import { yupPhone, yupPassword } from '../../../utils/validationRules';
 
 const createSchema = Yup.object({
@@ -38,8 +39,9 @@ const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 export default function MentorForm({ initialData: mentor, onSuccess, onCancel }) {
   const isEdit = Boolean(mentor?._id);
-  const [showPwd, setShowPwd]   = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [showPwd,      setShowPwd]      = useState(false);
+  const [apiError,     setApiError]     = useState('');
+  const [profileImage, setProfileImage] = useState(mentor?.profileImage ?? null);
 
   const formik = useFormik({
     initialValues: {
@@ -61,8 +63,9 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
         if (!payload.phone)          delete payload.phone;
         if (!payload.specialization) delete payload.specialization;
         if (isEdit)                  delete payload.password;
+        if (profileImage)            payload.profileImage = profileImage;
 
-        const res = isEdit
+        isEdit
           ? await updateMentor(mentor._id, payload)
           : await createMentor(payload);
 
@@ -94,6 +97,18 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
             <Alert severity="error" sx={{ borderRadius: 2 }}>{apiError}</Alert>
           </Grid>
         )}
+
+        {/* Avatar */}
+        <Grid item xs={12}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 1 }}>
+            <ProfileImageUploader
+              currentImage={profileImage}
+              signatureEndpoint="/mentors/upload-signature"
+              onUploaded={(url) => setProfileImage(url)}
+              size={88}
+            />
+          </Box>
+        </Grid>
 
         <Grid item xs={12} sm={6}>
           <TextField label="First Name" {...f('firstName')} />

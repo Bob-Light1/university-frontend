@@ -21,6 +21,7 @@ export const archiveMentor           = (id)          => api.delete(`/mentors/${i
 export const restoreMentor           = (id)          => api.patch(`/mentors/${id}/restore`);
 export const deleteMentorPermanently = (id)          => api.delete(`/mentors/${id}/permanent`);
 export const updateMentorStatus      = (id, status)  => api.patch(`/mentors/${id}/status`, { status });
+export const getCMUploadSignature    = ()            => api.get('/mentors/upload-signature');
 
 // ─── 2. SELF-SERVICE PROFILE ──────────────────────────────────────────────────
 

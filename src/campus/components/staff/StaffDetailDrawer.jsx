@@ -1,13 +1,14 @@
 import {
   Box, Typography, Avatar, Stack, Divider, Chip,
   Button, List, ListItem, ListItemIcon, ListItemText,
+  IconButton, Paper, Tooltip, Grid,
 } from '@mui/material';
 import {
   Close, Edit, Email, Phone, Person,
-  AdminPanelSettings, Archive, Restore,
-  Badge as BadgeIcon, Security,
+  AdminPanelSettings, Archive, Restore, Security,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { fDate } from '../../../utils/dateFormat';
 
 const STATUS_COLOR = {
   active:    'success',
@@ -15,6 +16,33 @@ const STATUS_COLOR = {
   suspended: 'error',
   archived:  'default',
 };
+
+const InfoItem = ({ icon: Icon, label, secondary, onClick }) => (
+  <ListItem disablePadding sx={{ py: 1 }} onClick={onClick}>
+    <ListItemIcon sx={{ minWidth: 40 }}>
+      <Icon color="action" />
+    </ListItemIcon>
+    <ListItemText
+      primary={label}
+      secondary={secondary || '—'}
+      slotProps={{
+        primary:   { variant: 'caption', color: 'text.secondary' },
+        secondary: {
+          variant:    'body2',
+          fontWeight: 600,
+          ...(onClick && {
+            sx: {
+              wordBreak:      'break-word',
+              color:          'primary.main',
+              textDecoration: 'underline',
+              cursor:         'pointer',
+            },
+          }),
+        },
+      }}
+    />
+  </ListItem>
+);
 
 export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onArchive, onRestore }) {
   if (!staff) return null;
@@ -25,134 +53,187 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
       : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${staff.profileImage.replace(/^\//, '')}`
     : null;
 
-  const isArchived = staff.status === 'archived';
-  const subRole    = staff.subRole;
+  const isArchived  = staff.status === 'archived';
+  const subRole     = staff.subRole;
   const permissions = subRole?.permissions ?? [];
 
   return (
-    <Box sx={{ width: { xs: '100vw', sm: 420 }, p: 3, height: '100%', overflow: 'auto' }}>
-      {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6" fontWeight={700}>Staff Details</Typography>
-        <Button size="small" onClick={onClose} sx={{ minWidth: 0 }}><Close /></Button>
-      </Stack>
-      <Divider sx={{ mb: 2 }} />
+    <Box sx={{ width: { xs: '100vw', sm: 440 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Identity */}
-      <Stack alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
-        <Avatar src={imgUrl} sx={{ width: 80, height: 80, fontSize: 28 }}>
-          {staff.firstName?.[0]}{staff.lastName?.[0]}
-        </Avatar>
-        <Box textAlign="center">
-          <Typography variant="h6" fontWeight={700}>
-            {staff.firstName} {staff.lastName}
-          </Typography>
-          <Chip
-            label={staff.status}
-            size="small"
-            color={STATUS_COLOR[staff.status] ?? 'default'}
-            sx={{ fontWeight: 600, textTransform: 'capitalize', mt: 0.5 }}
-          />
-        </Box>
-      </Stack>
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      <Box sx={{ p: 3, bgcolor: 'primary.main', color: 'white', position: 'relative' }}>
+        <IconButton
+          onClick={onClose}
+          sx={{ position: 'absolute', right: 8, top: 8, color: 'white' }}
+          aria-label="Close"
+        >
+          <Close />
+        </IconButton>
 
-      {/* Contact info */}
-      <List dense disablePadding sx={{ mb: 2 }}>
-        {staff.email && (
-          <ListItem disableGutters>
-            <ListItemIcon sx={{ minWidth: 36 }}><Email fontSize="small" color="action" /></ListItemIcon>
-            <ListItemText primary={staff.email} primaryTypographyProps={{ variant: 'body2' }} />
-          </ListItem>
-        )}
-        {staff.phone && (
-          <ListItem disableGutters>
-            <ListItemIcon sx={{ minWidth: 36 }}><Phone fontSize="small" color="action" /></ListItemIcon>
-            <ListItemText primary={staff.phone} primaryTypographyProps={{ variant: 'body2' }} />
-          </ListItem>
-        )}
-        <ListItem disableGutters>
-          <ListItemIcon sx={{ minWidth: 36 }}><Person fontSize="small" color="action" /></ListItemIcon>
-          <ListItemText primary={`@${staff.username}`} primaryTypographyProps={{ variant: 'body2', fontFamily: 'monospace' }} />
-        </ListItem>
-        {staff.lastLogin && (
-          <ListItem disableGutters>
-            <ListItemIcon sx={{ minWidth: 36 }}><BadgeIcon fontSize="small" color="action" /></ListItemIcon>
-            <ListItemText
-              primary={`Last login: ${new Date(staff.lastLogin).toLocaleString()}`}
-              primaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
-            />
-          </ListItem>
-        )}
-      </List>
+        <Stack alignItems="center" spacing={2} sx={{ mt: 6 }}>
+          <Avatar
+            src={imgUrl}
+            sx={{ width: 100, height: 100, border: '4px solid white', boxShadow: 3, fontSize: 34 }}
+          >
+            {staff.firstName?.[0]}{staff.lastName?.[0]}
+          </Avatar>
+          <Box textAlign="center">
+            <Typography variant="h5" fontWeight={700}>
+              {staff.firstName} {staff.lastName}
+            </Typography>
+            {subRole?.name && (
+              <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+                {subRole.name}
+              </Typography>
+            )}
+          </Box>
+        </Stack>
+      </Box>
 
-      <Divider sx={{ mb: 2 }} />
+      {/* ── Body ────────────────────────────────────────────────────────────── */}
+      <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
+        <Stack spacing={3}>
 
-      {/* Sub-role & permissions */}
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-        <AdminPanelSettings fontSize="small" color="action" />
-        <Typography variant="subtitle2" fontWeight={700}>Sub-Role & Permissions</Typography>
-      </Stack>
-
-      {subRole ? (
-        <Box>
-          <Chip
-            label={subRole.name ?? subRole}
-            color="primary"
-            variant="outlined"
-            icon={<Security />}
-            sx={{ mb: 1.5, fontWeight: 700 }}
-          />
-          {permissions.length > 0 && (
-            <Stack direction="row" flexWrap="wrap" gap={0.5}>
-              {permissions.map((p) => (
-                <Chip key={p} label={p} size="small" sx={{ fontSize: '0.7rem', fontFamily: 'monospace' }} />
-              ))}
+          {/* Status & quick actions */}
+          <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Chip
+                label={staff.status}
+                color={STATUS_COLOR[staff.status] ?? 'default'}
+                sx={{ fontWeight: 600, textTransform: 'capitalize' }}
+              />
+              <Stack direction="row" spacing={0.5}>
+                {!isArchived && (
+                  <Tooltip title="Edit Staff">
+                    <IconButton size="small" color="primary" onClick={onEdit}>
+                      <Edit fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {isArchived ? (
+                  <Tooltip title="Restore Staff">
+                    <IconButton size="small" color="success" onClick={onRestore}>
+                      <Restore fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="Archive Staff">
+                    <IconButton size="small" color="error" onClick={onArchive}>
+                      <Archive fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Stack>
             </Stack>
+          </Paper>
+
+          {/* Contact Information */}
+          <Box>
+            <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
+              Contact Information
+            </Typography>
+            <Divider sx={{ mb: 2, mt: 0.5 }} />
+            <List disablePadding>
+              <InfoItem
+                icon={Email}
+                label="Email"
+                secondary={staff.email}
+                onClick={staff.email ? () => { window.location.href = `mailto:${staff.email}`; } : undefined}
+              />
+              {staff.phone && <InfoItem icon={Phone} label="Phone" secondary={staff.phone} />}
+              <InfoItem icon={Person} label="Username" secondary={`@${staff.username}`} />
+            </List>
+          </Box>
+
+          {/* Role & Permissions */}
+          <Box>
+            <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
+              Role & Permissions
+            </Typography>
+            <Divider sx={{ mb: 2, mt: 0.5 }} />
+            {subRole ? (
+              <Stack spacing={1.5}>
+                <Chip
+                  label={subRole.name ?? subRole}
+                  color="primary"
+                  variant="outlined"
+                  icon={<Security />}
+                  sx={{ alignSelf: 'flex-start', fontWeight: 700 }}
+                />
+                {permissions.length > 0 && (
+                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                    {permissions.map((p) => (
+                      <Chip
+                        key={p}
+                        label={p}
+                        size="small"
+                        variant="outlined"
+                        sx={{ fontSize: '0.7rem', fontFamily: 'monospace' }}
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </Stack>
+            ) : (
+              <Typography variant="body2" color="text.disabled" sx={{ py: 0.5 }}>
+                No role assigned.
+              </Typography>
+            )}
+          </Box>
+
+          {/* Account Information */}
+          <Box>
+            <Typography variant="overline" color="text.secondary" fontSize="0.75rem">
+              Account Information
+            </Typography>
+            <Divider sx={{ mb: 1.5, mt: 0.5 }} />
+            <Grid container spacing={1.5}>
+              {staff.lastLogin && (
+                <Grid size={{ xs: 12 }}>
+                  <Typography variant="caption" color="text.secondary">Last Login</Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {new Date(staff.lastLogin).toLocaleString()}
+                  </Typography>
+                </Grid>
+              )}
+              {staff.createdAt && (
+                <Grid size={{ xs: 6 }}>
+                  <Typography variant="caption" color="text.secondary">Created</Typography>
+                  <Typography variant="body2" fontWeight={500}>{fDate(staff.createdAt)}</Typography>
+                </Grid>
+              )}
+              {staff.updatedAt && (
+                <Grid size={{ xs: 6 }}>
+                  <Typography variant="caption" color="text.secondary">Last Updated</Typography>
+                  <Typography variant="body2" fontWeight={500}>{fDate(staff.updatedAt)}</Typography>
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+
+        </Stack>
+      </Box>
+
+      {/* ── Footer Actions ───────────────────────────────────────────────────── */}
+      <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider' }}>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" fullWidth onClick={onClose} sx={{ borderRadius: 2 }}>
+            Close
+          </Button>
+          {!isArchived && (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<Edit />}
+              onClick={onEdit}
+              sx={{ borderRadius: 2 }}
+            >
+              Edit Staff
+            </Button>
           )}
-        </Box>
-      ) : (
-        <Typography variant="body2" color="text.disabled">No role assigned.</Typography>
-      )}
+        </Stack>
+      </Box>
 
-      <Divider sx={{ my: 2 }} />
-
-      {/* Actions */}
-      <Stack direction="row" spacing={1} flexWrap="wrap">
-        {!isArchived && (
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<Edit />}
-            onClick={onEdit}
-            sx={{ textTransform: 'none', borderRadius: 2 }}
-          >
-            Edit
-          </Button>
-        )}
-        {isArchived ? (
-          <Button
-            variant="outlined"
-            color="success"
-            size="small"
-            startIcon={<Restore />}
-            onClick={onRestore}
-            sx={{ textTransform: 'none', borderRadius: 2 }}
-          >
-            Restore
-          </Button>
-        ) : (
-          <Button
-            variant="outlined"
-            color="error"
-            size="small"
-            startIcon={<Archive />}
-            onClick={onArchive}
-            sx={{ textTransform: 'none', borderRadius: 2 }}
-          >
-            Archive
-          </Button>
-        )}
-      </Stack>
     </Box>
   );
 }
