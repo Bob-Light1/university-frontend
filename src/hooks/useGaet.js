@@ -47,7 +47,7 @@ const useGaet = (campusId) => {
 
   const loadConstraint = useCallback(async (academicYear, semester) => {
     if (!campusId) return null;
-    stopPolling();   // cancel any in-flight poll for the previous constraint
+    pollingRef.current.stop(); // cancel any in-flight poll for the previous constraint
     setLoading(true);
     setError(null);
     try {
@@ -66,7 +66,7 @@ const useGaet = (campusId) => {
     } finally {
       setLoading(false);
     }
-  }, [campusId, stopPolling]);
+  }, [campusId]);
 
   // ─── SAVE CONSTRAINTS ────────────────────────────────────────────────────
 
