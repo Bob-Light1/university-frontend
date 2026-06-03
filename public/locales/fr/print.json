@@ -1,0 +1,13 @@
+{
+  "title": "Impression et PDF",
+  "preview": "Aperçu",
+  "print": "Imprimer",
+  "download": "Télécharger PDF",
+  "batch": "Impression en masse",
+  "bulletin": { "title": "Bulletin", "byClass": "Imprimer par classe", "individual": "Bulletin individuel", "semester": "Semestre" },
+  "transcript": { "title": "Relevé de notes", "official": "Relevé officiel", "student": "Étudiant" },
+  "attendance": { "sheet": "Feuille d'émargement", "monthly": "Rapport mensuel" },
+  "certificate": { "enrollment": "Certificat de scolarité", "completion": "Certificat d'achèvement" },
+  "header": { "institution": "Établissement", "academicYear": "Année académique", "generatedOn": "Généré le", "page": "Page {current} sur {total}" },
+  "footer": { "confidential": "Document confidentiel", "verified": "Vérifié par QR code" }
+}

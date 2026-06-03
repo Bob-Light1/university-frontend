@@ -1,0 +1,41 @@
+{
+  "title": "Documents",
+  "upload": "Upload document",
+  "download": "Download",
+  "view": "View document",
+  "delete": "Delete document",
+  "type": {
+    "title": "Document type",
+    "transcript": "Transcript",
+    "certificate": "Certificate",
+    "report": "Report",
+    "contract": "Contract",
+    "id": "Identity document",
+    "diploma": "Diploma",
+    "other": "Other"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived",
+    "locked": "Locked"
+  },
+  "version": {
+    "title": "Version",
+    "history": "Version history",
+    "current": "Current version"
+  },
+  "qr": {
+    "generate": "Generate QR code",
+    "verify": "Verify authenticity",
+    "verified": "Document verified"
+  },
+  "share": {
+    "link": "Share link",
+    "expires": "Expires in"
+  },
+  "retention": {
+    "policy": "Retention policy",
+    "expiresOn": "Expires on"
+  }
+}

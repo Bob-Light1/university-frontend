@@ -1,0 +1,60 @@
+{
+  "title": "Settings",
+  "language": {
+    "title": "Language & Region",
+    "select": "Select language",
+    "preview": "Preview instantly applied",
+    "saved": "Language preference saved",
+    "rtlBadge": "RTL"
+  },
+  "timezone": {
+    "title": "Timezone",
+    "select": "Select timezone",
+    "current": "Current timezone",
+    "africa": "Africa",
+    "europe": "Europe",
+    "asia": "Asia",
+    "america": "Americas",
+    "pacific": "Pacific"
+  },
+  "grade": {
+    "title": "Grade format",
+    "format": "Display format",
+    "FRACTION": "Fraction (15/20)",
+    "PERCENT": "Percentage (75%)",
+    "LETTER": "Letter grade (A+)",
+    "GPA": "GPA (3.75/4.0)"
+  },
+  "date": {
+    "title": "Date format",
+    "format": "Date format",
+    "DMY": "DD/MM/YYYY",
+    "MDY": "MM/DD/YYYY",
+    "YMD": "YYYY-MM-DD"
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System default"
+  },
+  "profile": {
+    "title": "Profile",
+    "photo": "Profile photo",
+    "update": "Update profile"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "email": "Email notifications",
+    "sms": "SMS notifications",
+    "push": "Push notifications"
+  },
+  "campus": {
+    "title": "Campus defaults",
+    "defaultLanguage": "Default language for new users",
+    "defaultTimezone": "Default timezone",
+    "defaultGradeFormat": "Default grade format"
+  },
+  "save": "Save settings",
+  "saved": "Settings saved successfully"
+}

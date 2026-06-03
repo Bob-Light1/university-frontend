@@ -1,0 +1,46 @@
+{
+  "title": "Results",
+  "grade": {
+    "title": "Grades",
+    "enter": "Enter grades",
+    "edit": "Edit grade",
+    "subject": "Subject",
+    "score": "Score",
+    "outOf": "out of",
+    "average": "Average",
+    "rank": "Rank",
+    "coefficient": "Coefficient",
+    "weighted": "Weighted average",
+    "format": {
+      "FRACTION": "Fraction (e.g. 15/20)",
+      "PERCENT": "Percentage (e.g. 75%)",
+      "LETTER": "Letter grade (e.g. A+)",
+      "GPA": "GPA (e.g. 3.75/4.0)"
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "published": "Published"
+  },
+  "transcript": {
+    "title": "Transcript",
+    "official": "Official transcript",
+    "semester": "Semester",
+    "academicYear": "Academic year",
+    "generate": "Generate transcript",
+    "download": "Download transcript",
+    "signature": "Parent signature"
+  },
+  "bulletin": {
+    "title": "Report card",
+    "generate": "Generate report card",
+    "batch": "Batch print",
+    "class": "Class report cards"
+  },
+  "workflow": {
+    "submit": "Submit for review",
+    "publish": "Publish results",
+    "unpublish": "Unpublish"
+  }
+}

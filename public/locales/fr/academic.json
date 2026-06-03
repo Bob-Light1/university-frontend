@@ -1,0 +1,55 @@
+{
+  "student": {
+    "title": "Étudiants",
+    "create": "Créer un étudiant",
+    "edit": "Modifier l'étudiant",
+    "detail": "Détail étudiant",
+    "list": "Liste des étudiants",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "matricule": "Matricule",
+    "class": "Classe",
+    "level": "Niveau",
+    "department": "Département",
+    "campus": "Campus",
+    "status": { "active": "Actif", "inactive": "Inactif", "archived": "Archivé" },
+    "gender": { "male": "Masculin", "female": "Féminin" },
+    "import": "Importer des étudiants",
+    "export": "Exporter des étudiants"
+  },
+  "teacher": {
+    "title": "Enseignants",
+    "create": "Créer un enseignant",
+    "edit": "Modifier l'enseignant",
+    "list": "Liste des enseignants",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "speciality": "Spécialité",
+    "department": "Département",
+    "subjects": "Matières",
+    "import": "Importer des enseignants"
+  },
+  "class": {
+    "title": "Classes",
+    "create": "Créer une classe",
+    "edit": "Modifier la classe",
+    "list": "Liste des classes",
+    "name": "Nom de la classe",
+    "level": "Niveau",
+    "capacity": "Capacité",
+    "mainTeacher": "Enseignant principal"
+  },
+  "subject": {
+    "title": "Matières",
+    "create": "Créer une matière",
+    "edit": "Modifier la matière",
+    "name": "Nom de la matière",
+    "coefficient": "Coefficient",
+    "type": "Type",
+    "types": { "CM": "Cours Magistral (CM)", "TD": "Travaux Dirigés (TD)", "TP": "Travaux Pratiques (TP)" },
+    "status": { "draft": "Brouillon", "pending": "En attente", "approved": "Approuvé", "archived": "Archivé" }
+  },
+  "level": { "title": "Niveaux", "create": "Créer un niveau", "name": "Nom du niveau" },
+  "department": { "title": "Départements", "create": "Créer un département", "name": "Nom du département" },
+  "campus": { "name": "Nom du campus", "manager": "Responsable", "city": "Ville", "country": "Pays" }
+}

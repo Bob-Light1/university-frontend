@@ -26,6 +26,7 @@ import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import PhoneInput from '../../../components/shared/PhoneInput';
 import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
 import NotificationPreferences from '../../../components/shared/NotificationPreferences';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 import { yupPhone, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
@@ -288,6 +289,11 @@ export default function MentorProfile() {
         onSave={handleSaveNotifs}
         onError={() => showSnackbar('Failed to save preferences.', 'error')}
       />
+
+      {/* ── Section 4: Language & Region ── */}
+      <Box sx={{ mt: 3 }}>
+        <LanguagePreferencesSection />
+      </Box>
 
       <Snackbar
         open={snackbar.open}

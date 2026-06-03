@@ -1,0 +1,34 @@
+{
+  "title": "GAET",
+  "fullTitle": "Academic Activity Tracking",
+  "report": {
+    "generate": "Generate GAET Report",
+    "title": "Academic Activity Tracking Report",
+    "period": "Reporting period",
+    "download": "Download report"
+  },
+  "activity": {
+    "title": "Activities",
+    "planned": "Planned",
+    "completed": "Completed",
+    "missed": "Missed",
+    "rate": "Completion rate"
+  },
+  "teacher": {
+    "load": "Teaching load",
+    "hours": "{n, plural, one{# hour} other{# hours}}",
+    "delivered": "Hours delivered",
+    "remaining": "Hours remaining"
+  },
+  "schedule": {
+    "generate": "Generate schedule",
+    "constraints": "Constraints",
+    "conflict": "Conflict detected",
+    "resolve": "Resolve"
+  },
+  "status": {
+    "onTrack": "On track",
+    "delayed": "Delayed",
+    "completed": "Completed"
+  }
+}

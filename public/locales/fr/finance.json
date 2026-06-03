@@ -1,0 +1,8 @@
+{
+  "title": "Finance",
+  "fee": { "title": "Frais de scolarité", "create": "Créer des frais", "amount": "Montant", "currency": "Devise", "dueDate": "Date d'échéance", "instalment": "Tranche", "level": "Niveau", "class": "Classe" },
+  "payment": { "title": "Paiements", "record": "Enregistrer un paiement", "method": { "title": "Mode de paiement", "cash": "Espèces", "mtnMomo": "MTN Mobile Money", "orangeMoney": "Orange Money", "bankTransfer": "Virement bancaire" }, "status": { "paid": "Payé", "partial": "Partiel", "unpaid": "Impayé", "overdue": "En retard" }, "receipt": "Reçu de paiement", "reconcile": "Rapprocher le paiement" },
+  "scholarship": { "title": "Bourses", "create": "Créer une bourse", "type": "Type", "amount": "Montant", "beneficiary": "Bénéficiaire" },
+  "dashboard": { "title": "Tableau de bord financier", "monthlyRevenue": "Recettes du mois", "forecast": "Prévisions", "latePayments": "Paiements en retard" },
+  "report": { "generate": "Générer le rapport", "export": "Exporter Excel" }
+}

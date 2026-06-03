@@ -23,6 +23,7 @@ import { getMe, updateMyProfile, changeMyPassword } from '../../../services/part
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { TIER_COLOR, BRAND_GRADIENT, BRAND_GRADIENT_BTN, BRAND_ORANGE } from '../../../theme/partnerTokens';
 import PhoneInput from '../../../components/shared/PhoneInput';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 import { yupPhone, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
@@ -298,6 +299,11 @@ export default function PartnerProfile() {
           </Stack>
         </form>
       </Paper>
+
+      {/* Language & Region */}
+      <Box sx={{ mt: 3 }}>
+        <LanguagePreferencesSection />
+      </Box>
 
       <Snackbar
         open={snackbar.open}

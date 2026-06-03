@@ -1,0 +1,28 @@
+{
+  "title": "Notifications",
+  "inbox": "Inbox",
+  "unread": "{n, plural, one{# unread notification} other{# unread notifications}}",
+  "markRead": "Mark as read",
+  "markAllRead": "Mark all as read",
+  "delete": "Delete notification",
+  "empty": "No notifications",
+  "type": {
+    "announcement": "Announcement",
+    "result": "New results",
+    "attendance": "Attendance alert",
+    "payment": "Payment reminder",
+    "exam": "Exam reminder",
+    "document": "Document shared",
+    "system": "System"
+  },
+  "announcement": {
+    "new": "New announcement",
+    "from": "From",
+    "pinned": "Pinned"
+  },
+  "alert": {
+    "absence": "Absence alert",
+    "latePayment": "Late payment",
+    "examUpcoming": "Upcoming exam"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Notifications",
+  "inbox": "Boîte de réception",
+  "unread": "{n, plural, one{# notification non lue} other{# notifications non lues}}",
+  "markRead": "Marquer comme lu",
+  "markAllRead": "Tout marquer comme lu",
+  "delete": "Supprimer",
+  "empty": "Aucune notification",
+  "type": { "announcement": "Annonce", "result": "Nouveaux résultats", "attendance": "Alerte présence", "payment": "Rappel paiement", "exam": "Rappel examen", "document": "Document partagé", "system": "Système" },
+  "announcement": { "new": "Nouvelle annonce", "from": "De", "pinned": "Épinglé" },
+  "alert": { "absence": "Alerte absence", "latePayment": "Paiement en retard", "examUpcoming": "Examen à venir" }
+}

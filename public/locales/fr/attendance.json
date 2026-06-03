@@ -1,0 +1,9 @@
+{
+  "title": "Présences",
+  "rollCall": { "title": "Appel", "take": "Faire l'appel", "session": "Séance" },
+  "status": { "present": "Présent", "absent": "Absent", "late": "En retard", "excused": "Excusé" },
+  "student": { "attendance": "Présences étudiants", "history": "Historique des présences", "rate": "Taux de présence" },
+  "teacher": { "attendance": "Présences enseignants", "hoursDelivered": "Heures dispensées", "hoursContractual": "Heures contractuelles", "absence": "Absence" },
+  "sheet": { "sign": "Signer la feuille", "export": "Exporter la feuille", "pdf": "Télécharger PDF" },
+  "alert": { "absentee": "Absentéisme élevé", "threshold": "Seuil d'absences dépassé" }
+}

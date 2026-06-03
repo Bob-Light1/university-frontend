@@ -1,0 +1,36 @@
+{
+  "title": "Print & PDF",
+  "preview": "Preview",
+  "print": "Print",
+  "download": "Download PDF",
+  "batch": "Batch print",
+  "bulletin": {
+    "title": "Report card",
+    "byClass": "Print by class",
+    "individual": "Individual report card",
+    "semester": "Semester"
+  },
+  "transcript": {
+    "title": "Transcript",
+    "official": "Official transcript",
+    "student": "Student"
+  },
+  "attendance": {
+    "sheet": "Attendance sheet",
+    "monthly": "Monthly report"
+  },
+  "certificate": {
+    "enrollment": "Enrollment certificate",
+    "completion": "Completion certificate"
+  },
+  "header": {
+    "institution": "Institution",
+    "academicYear": "Academic year",
+    "generatedOn": "Generated on",
+    "page": "Page {current} of {total}"
+  },
+  "footer": {
+    "confidential": "Confidential document",
+    "verified": "Verified with QR code"
+  }
+}

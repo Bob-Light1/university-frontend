@@ -1,0 +1,8 @@
+{
+  "title": "Résultats",
+  "grade": { "title": "Notes", "enter": "Saisir les notes", "edit": "Modifier la note", "subject": "Matière", "score": "Note", "outOf": "sur", "average": "Moyenne", "rank": "Rang", "coefficient": "Coefficient", "weighted": "Moyenne pondérée", "format": { "FRACTION": "Fraction (ex. 15/20)", "PERCENT": "Pourcentage (ex. 75%)", "LETTER": "Lettre (ex. A+)", "GPA": "GPA (ex. 3,75/4,0)" } },
+  "status": { "draft": "Brouillon", "submitted": "Soumis", "published": "Publié" },
+  "transcript": { "title": "Relevé de notes", "official": "Relevé officiel", "semester": "Semestre", "academicYear": "Année académique", "generate": "Générer le relevé", "download": "Télécharger", "signature": "Signature parent" },
+  "bulletin": { "title": "Bulletin", "generate": "Générer le bulletin", "batch": "Impression en masse", "class": "Bulletins de classe" },
+  "workflow": { "submit": "Soumettre pour validation", "publish": "Publier les résultats", "unpublish": "Dépublier" }
+}

@@ -15,6 +15,7 @@ import * as Yup from 'yup';
 
 import { getMe, updateMyProfile, changeMyPassword } from '../../../services/parentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -509,6 +510,11 @@ const ParentProfile = () => {
           </Stack>
         </Paper>
       )}
+
+      {/* Language & Region */}
+      <Box sx={{ mt: 3 }}>
+        <LanguagePreferencesSection />
+      </Box>
 
       {/* Snackbar */}
       <Snackbar

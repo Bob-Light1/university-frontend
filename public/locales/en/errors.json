@@ -1,0 +1,30 @@
+{
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "minLength": "Minimum {min} characters required",
+    "maxLength": "Maximum {max} characters allowed",
+    "numberMin": "Value must be at least {min}",
+    "numberMax": "Value must be at most {max}",
+    "positiveNumber": "Value must be a positive number",
+    "invalidDate": "Invalid date",
+    "passwordMatch": "Passwords do not match",
+    "invalidPhone": "Invalid phone number format"
+  },
+  "api": {
+    "unauthorized": "Access denied. Please sign in.",
+    "forbidden": "You do not have permission to perform this action.",
+    "notFound": "The requested resource was not found.",
+    "serverError": "A server error occurred. Please try again later.",
+    "networkError": "Network error. Please check your connection.",
+    "timeout": "Request timed out. Please try again.",
+    "conflict": "This record already exists.",
+    "badRequest": "Invalid request data."
+  },
+  "form": {
+    "submitFailed": "Form submission failed. Please check the fields.",
+    "uploadFailed": "File upload failed.",
+    "fileTooLarge": "File size exceeds the allowed limit.",
+    "invalidFormat": "Invalid file format."
+  }
+}

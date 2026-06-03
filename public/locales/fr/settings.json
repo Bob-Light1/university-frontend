@@ -1,0 +1,13 @@
+{
+  "title": "Paramètres",
+  "language": { "title": "Langue et région", "select": "Choisir la langue", "preview": "Aperçu instantané", "saved": "Préférence de langue enregistrée", "rtlBadge": "RTL" },
+  "timezone": { "title": "Fuseau horaire", "select": "Choisir le fuseau", "current": "Fuseau actuel", "africa": "Afrique", "europe": "Europe", "asia": "Asie", "america": "Amériques", "pacific": "Pacifique" },
+  "grade": { "title": "Format des notes", "format": "Format d'affichage", "FRACTION": "Fraction (15/20)", "PERCENT": "Pourcentage (75%)", "LETTER": "Lettre (A+)", "GPA": "GPA (3,75/4,0)" },
+  "date": { "title": "Format de date", "format": "Format", "DMY": "JJ/MM/AAAA", "MDY": "MM/JJ/AAAA", "YMD": "AAAA-MM-JJ" },
+  "theme": { "title": "Thème", "light": "Clair", "dark": "Sombre", "system": "Système" },
+  "profile": { "title": "Profil", "photo": "Photo de profil", "update": "Modifier le profil" },
+  "notifications": { "title": "Notifications", "email": "Notifications par email", "sms": "Notifications SMS", "push": "Notifications push" },
+  "campus": { "title": "Paramètres campus", "defaultLanguage": "Langue par défaut", "defaultTimezone": "Fuseau par défaut", "defaultGradeFormat": "Format de note par défaut" },
+  "save": "Enregistrer",
+  "saved": "Paramètres enregistrés"
+}

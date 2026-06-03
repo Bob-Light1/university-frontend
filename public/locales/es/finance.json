@@ -1,0 +1,49 @@
+{
+  "title": "Finance",
+  "fee": {
+    "title": "Tuition fees",
+    "create": "Create fee",
+    "amount": "Amount",
+    "currency": "Currency",
+    "dueDate": "Due date",
+    "instalment": "Instalment",
+    "level": "Level",
+    "class": "Class"
+  },
+  "payment": {
+    "title": "Payments",
+    "record": "Record payment",
+    "method": {
+      "title": "Payment method",
+      "cash": "Cash",
+      "mtnMomo": "MTN Mobile Money",
+      "orangeMoney": "Orange Money",
+      "bankTransfer": "Bank transfer"
+    },
+    "status": {
+      "paid": "Paid",
+      "partial": "Partial",
+      "unpaid": "Unpaid",
+      "overdue": "Overdue"
+    },
+    "receipt": "Payment receipt",
+    "reconcile": "Reconcile payment"
+  },
+  "scholarship": {
+    "title": "Scholarships",
+    "create": "Create scholarship",
+    "type": "Type",
+    "amount": "Amount",
+    "beneficiary": "Beneficiary"
+  },
+  "dashboard": {
+    "title": "Financial dashboard",
+    "monthlyRevenue": "Monthly revenue",
+    "forecast": "Forecast",
+    "latePayments": "Late payments"
+  },
+  "report": {
+    "generate": "Generate report",
+    "export": "Export to Excel"
+  }
+}

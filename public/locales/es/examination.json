@@ -1,0 +1,40 @@
+{
+  "title": "Examinations",
+  "session": {
+    "title": "Exam session",
+    "create": "Create session",
+    "edit": "Edit session",
+    "list": "Sessions",
+    "name": "Session name",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "type": "Type"
+  },
+  "questionBank": {
+    "title": "Question bank",
+    "add": "Add question",
+    "question": "Question",
+    "answer": "Answer",
+    "points": "Points"
+  },
+  "enrollment": {
+    "title": "Enrollments",
+    "enroll": "Enroll student",
+    "unenroll": "Unenroll"
+  },
+  "delivery": {
+    "online": "Online exam",
+    "proctoring": "Anti-cheat monitoring",
+    "start": "Start exam",
+    "submit": "Submit exam"
+  },
+  "result": {
+    "correction": "Correction",
+    "publish": "Publish results",
+    "appeal": "Appeal"
+  },
+  "certificate": {
+    "generate": "Generate certificate",
+    "qr": "QR code verification"
+  }
+}

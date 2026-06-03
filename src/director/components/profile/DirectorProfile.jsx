@@ -28,6 +28,7 @@ import { yupPassword, yupConfirmPassword } from '../../../utils/validationRules'
 
 import { getAdminMe, updateAdminPassword } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
@@ -227,6 +228,11 @@ export default function DirectorProfile() {
         </Paper>
 
       </Stack>
+
+      {/* ── Language & Region ── */}
+      <Box sx={{ mt: 3 }}>
+        <LanguagePreferencesSection />
+      </Box>
 
       <Snackbar
         open={snackbar.open}

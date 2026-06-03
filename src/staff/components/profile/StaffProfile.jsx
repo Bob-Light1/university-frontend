@@ -26,6 +26,7 @@ import useFormSnackbar    from '../../../hooks/useFormSnackBar';
 import PhoneInput         from '../../../components/shared/PhoneInput';
 import ProfileImageUploader  from '../../../components/shared/ProfileImageUploader';
 import NotificationPreferences from '../../../components/shared/NotificationPreferences';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 import { yupPhone, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
 
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
@@ -266,6 +267,11 @@ export default function StaffProfile() {
         onSave={handleSaveNotifs}
         onError={() => showSnackbar('Failed to save preferences.', 'error')}
       />
+
+      {/* ── Section 4: Language & Region ── */}
+      <Box sx={{ mt: 3 }}>
+        <LanguagePreferencesSection />
+      </Box>
 
       <Snackbar
         open={snackbar.open}

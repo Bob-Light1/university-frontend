@@ -1,0 +1,13 @@
+{
+  "title": "Documents",
+  "upload": "Téléverser un document",
+  "download": "Télécharger",
+  "view": "Voir le document",
+  "delete": "Supprimer le document",
+  "type": { "title": "Type de document", "transcript": "Relevé de notes", "certificate": "Certificat", "report": "Rapport", "contract": "Contrat", "id": "Pièce d'identité", "diploma": "Diplôme", "other": "Autre" },
+  "status": { "draft": "Brouillon", "published": "Publié", "archived": "Archivé", "locked": "Verrouillé" },
+  "version": { "title": "Version", "history": "Historique des versions", "current": "Version actuelle" },
+  "qr": { "generate": "Générer le QR code", "verify": "Vérifier l'authenticité", "verified": "Document vérifié" },
+  "share": { "link": "Lien de partage", "expires": "Expire dans" },
+  "retention": { "policy": "Politique de rétention", "expiresOn": "Expire le" }
+}

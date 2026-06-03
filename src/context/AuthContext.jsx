@@ -1,5 +1,16 @@
 import { createContext, useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config/env';
+import i18n, { RTL_LANGUAGES } from '../i18n/i18n.js';
+
+// Apply language preference BEFORE React tree renders — prevents language flash
+function applyLanguage(lang) {
+  if (!lang) return;
+  i18n.changeLanguage(lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = RTL_LANGUAGES.includes(lang) ? 'rtl' : 'ltr';
+  document.cookie = `erp_lang=${lang};path=/;SameSite=Lax;max-age=31536000`;
+  localStorage.setItem('erp_language', lang);
+}
 
 export const AuthContext = createContext(undefined);
 
@@ -56,6 +67,11 @@ export function AuthProvider({ children }) {
         ...userData,
         userType, // Store user type for future reference
       };
+
+      // Apply language BEFORE state update — zero flash on login
+      if (enrichedUserData.preferredLanguage) {
+        applyLanguage(enrichedUserData.preferredLanguage);
+      }
 
       // Save to localStorage
       localStorage.setItem('token', token);
@@ -128,7 +144,12 @@ export function AuthProvider({ children }) {
           const isValid = verifyToken();
 
           if (isValid) {
-            setUser(JSON.parse(savedUser));
+            const parsedUser = JSON.parse(savedUser);
+            // Restore language preference on page reload — before first render
+            if (parsedUser.preferredLanguage) {
+              applyLanguage(parsedUser.preferredLanguage);
+            }
+            setUser(parsedUser);
             console.log('✅ User restored from localStorage');
           } else {
             // Token expired or invalid

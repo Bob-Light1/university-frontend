@@ -1,0 +1,49 @@
+{
+  "title": "Schedule",
+  "timetable": "Timetable",
+  "slot": {
+    "create": "Add slot",
+    "edit": "Edit slot",
+    "delete": "Delete slot",
+    "day": "Day",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "subject": "Subject",
+    "teacher": "Teacher",
+    "room": "Room",
+    "class": "Class"
+  },
+  "day": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "view": {
+    "week": "Week view",
+    "day": "Day view",
+    "list": "List view"
+  },
+  "conflict": {
+    "detected": "Conflict detected",
+    "teacher": "Teacher conflict",
+    "room": "Room conflict",
+    "resolve": "Resolve conflict"
+  },
+  "postpone": {
+    "title": "Postpone session",
+    "reason": "Reason",
+    "newDate": "New date"
+  },
+  "cancel": {
+    "title": "Cancel session",
+    "reason": "Reason for cancellation"
+  },
+  "gaet": {
+    "generate": "Generate GAET schedule",
+    "period": "Period"
+  }
+}

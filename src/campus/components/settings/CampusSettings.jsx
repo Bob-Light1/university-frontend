@@ -3,10 +3,11 @@ import {
   Box, Typography, Tabs, Tab, Paper, Stack,
 } from '@mui/material';
 import {
-  AdminPanelSettings, Settings,
+  AdminPanelSettings, Settings, Language,
 } from '@mui/icons-material';
 
 import StaffRolesManager from './StaffRolesManager';
+import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
@@ -46,6 +47,12 @@ export default function CampusSettings() {
             sx={{ textTransform: 'none', fontWeight: 600, minHeight: 56 }}
           />
           <Tab
+            icon={<Language fontSize="small" />}
+            iconPosition="start"
+            label="Language & Region"
+            sx={{ textTransform: 'none', fontWeight: 600, minHeight: 56 }}
+          />
+          <Tab
             icon={<Settings fontSize="small" />}
             iconPosition="start"
             label="System"
@@ -59,6 +66,10 @@ export default function CampusSettings() {
           </TabPanel>
 
           <TabPanel value={tab} index={1}>
+            <LanguagePreferencesSection />
+          </TabPanel>
+
+          <TabPanel value={tab} index={2}>
             <Box
               sx={{
                 border: '2px dashed',

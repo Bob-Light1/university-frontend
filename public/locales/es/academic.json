@@ -1,0 +1,84 @@
+{
+  "student": {
+    "title": "Students",
+    "create": "Create Student",
+    "edit": "Edit Student",
+    "detail": "Student Detail",
+    "list": "Student List",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "matricule": "Student ID",
+    "class": "Class",
+    "level": "Level",
+    "department": "Department",
+    "campus": "Campus",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "archived": "Archived"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female"
+    },
+    "import": "Import Students",
+    "export": "Export Students"
+  },
+  "teacher": {
+    "title": "Teachers",
+    "create": "Create Teacher",
+    "edit": "Edit Teacher",
+    "list": "Teacher List",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "speciality": "Speciality",
+    "department": "Department",
+    "subjects": "Subjects",
+    "import": "Import Teachers"
+  },
+  "class": {
+    "title": "Classes",
+    "create": "Create Class",
+    "edit": "Edit Class",
+    "list": "Class List",
+    "name": "Class name",
+    "level": "Level",
+    "capacity": "Capacity",
+    "mainTeacher": "Main teacher"
+  },
+  "subject": {
+    "title": "Subjects",
+    "create": "Create Subject",
+    "edit": "Edit Subject",
+    "name": "Subject name",
+    "coefficient": "Coefficient",
+    "type": "Type",
+    "types": {
+      "CM": "Lecture (CM)",
+      "TD": "Tutorial (TD)",
+      "TP": "Practical (TP)"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending approval",
+      "approved": "Approved",
+      "archived": "Archived"
+    }
+  },
+  "level": {
+    "title": "Levels",
+    "create": "Create Level",
+    "name": "Level name"
+  },
+  "department": {
+    "title": "Departments",
+    "create": "Create Department",
+    "name": "Department name"
+  },
+  "campus": {
+    "name": "Campus name",
+    "manager": "Manager",
+    "city": "City",
+    "country": "Country"
+  }
+}

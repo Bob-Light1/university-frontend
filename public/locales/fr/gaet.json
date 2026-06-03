@@ -1,0 +1,9 @@
+{
+  "title": "GAET",
+  "fullTitle": "Gestion des Activités d'Enseignement et de Tutorat",
+  "report": { "generate": "Générer le rapport GAET", "title": "Rapport de suivi des activités académiques", "period": "Période", "download": "Télécharger" },
+  "activity": { "title": "Activités", "planned": "Planifiée", "completed": "Réalisée", "missed": "Manquée", "rate": "Taux de réalisation" },
+  "teacher": { "load": "Charge d'enseignement", "hours": "{n, plural, one{# heure} other{# heures}}", "delivered": "Heures dispensées", "remaining": "Heures restantes" },
+  "schedule": { "generate": "Générer le planning", "constraints": "Contraintes", "conflict": "Conflit détecté", "resolve": "Résoudre" },
+  "status": { "onTrack": "Dans les délais", "delayed": "En retard", "completed": "Terminé" }
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Emploi du temps",
+  "timetable": "Emploi du temps",
+  "slot": { "create": "Ajouter un créneau", "edit": "Modifier le créneau", "delete": "Supprimer", "day": "Jour", "startTime": "Heure de début", "endTime": "Heure de fin", "subject": "Matière", "teacher": "Enseignant", "room": "Salle", "class": "Classe" },
+  "day": { "monday": "Lundi", "tuesday": "Mardi", "wednesday": "Mercredi", "thursday": "Jeudi", "friday": "Vendredi", "saturday": "Samedi", "sunday": "Dimanche" },
+  "view": { "week": "Vue semaine", "day": "Vue jour", "list": "Vue liste" },
+  "conflict": { "detected": "Conflit détecté", "teacher": "Conflit enseignant", "room": "Conflit salle", "resolve": "Résoudre le conflit" },
+  "postpone": { "title": "Reporter la séance", "reason": "Motif", "newDate": "Nouvelle date" },
+  "cancel": { "title": "Annuler la séance", "reason": "Motif d'annulation" },
+  "gaet": { "generate": "Générer le planning GAET", "period": "Période" }
+}
