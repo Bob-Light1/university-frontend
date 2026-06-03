@@ -37,5 +37,30 @@
   "retention": {
     "policy": "Retention policy",
     "expiresOn": "Expires on"
+  },
+  "noDocuments": "未找到文件。",
+  "searchPlaceholder": "按标题或描述搜索…",
+  "category": {
+    "ADMINISTRATIVE": "行政",
+    "ACADEMIC": "学术",
+    "FINANCIAL": "财务",
+    "LEGAL": "法律",
+    "GENERAL": "综合",
+    "allCategories": "所有类别"
+  },
+  "staffType": {
+    "NOTICE": "通知",
+    "REPORT": "报告",
+    "FORM": "表格",
+    "CERTIFICATE": "证书",
+    "CIRCULAR": "通函",
+    "allTypes": "所有类型"
+  },
+  "col": {
+    "title": "标题",
+    "type": "类型",
+    "category": "分类",
+    "tags": "标签",
+    "date": "日期"
   }
 }

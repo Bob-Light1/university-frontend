@@ -1,16 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Box, Typography, Paper, Stack, Avatar, Chip,
   TextField, InputAdornment, MenuItem, Select,
   FormControl, InputLabel, Alert, Pagination,
   Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Skeleton,
+  TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
-import { Search, Assessment } from '@mui/icons-material';
+import { Search, Assessment, Refresh } from '@mui/icons-material';
 
-import { getStaffResults } from '../../../services/staffService';
-import { IMAGE_BASE_URL }  from '../../../config/env';
-import PermissionGate      from '../shared/PermissionGate';
+import { getStaffResults }   from '../../../services/staffService';
+import { IMAGE_BASE_URL }    from '../../../config/env';
+import PermissionGate        from '../shared/PermissionGate';
+import usePaginatedList      from '../../../hooks/usePaginatedList';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 const STAFF_PRIMARY = '#00695C';
 
@@ -35,44 +37,36 @@ const YEARS = Array.from({ length: 5 }, (_, i) => {
   return `${y}-${y + 1}`;
 });
 
+const ROWS_OPTIONS = [10, 20, 50, 100];
+
 function ResultsList() {
-  const [results,  setResults]  = useState([]);
-  const [total,    setTotal]    = useState(0);
-  const [page,     setPage]     = useState(1);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
+  const { t } = useAppTranslation(['results', 'common']);
+
   const [search,   setSearch]   = useState('');
   const [semester, setSemester] = useState('');
   const [year,     setYear]     = useState('');
   const [evalType, setEvalType] = useState('');
+  const [limit,    setLimit]    = useState(20);
 
-  const LIMIT = 20;
+  const fetcher = useCallback(
+    (page) => getStaffResults({
+      page, limit,
+      academicYear:   year     || undefined,
+      semester:       semester || undefined,
+      evaluationType: evalType || undefined,
+    }),
+    [limit, year, semester, evalType],
+  );
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getStaffResults({
-        page,
-        limit:          LIMIT,
-        academicYear:   year     || undefined,
-        semester:       semester || undefined,
-        evaluationType: evalType || undefined,
-      });
-      setResults(res.data?.data ?? []);
-      setTotal(res.data?.pagination?.total ?? 0);
-    } catch {
-      setError('Failed to load results.');
-    } finally {
-      setLoading(false);
-    }
-  }, [page, year, semester, evalType]);
+  const {
+    items: results, total, page, setPage, loading, error, refresh,
+  } = usePaginatedList(fetcher);
 
-  useEffect(() => { load(); }, [load]);
+  const totalPages = Math.ceil(total / limit);
+  const rangeStart = total === 0 ? 0 : (page - 1) * limit + 1;
+  const rangeEnd   = Math.min(page * limit, total);
+  const handleFilter = (setter) => (e) => { setter(e.target.value); setPage(1); };
 
-  const resetPage = () => setPage(1);
-
-  // Client-side text filter within the current page
   const displayed = search
     ? results.filter((r) => {
         const name = `${r.student?.firstName ?? ''} ${r.student?.lastName ?? ''}`.toLowerCase();
@@ -83,25 +77,27 @@ function ResultsList() {
       })
     : results;
 
-  const totalPages = Math.ceil(total / LIMIT);
-
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
         <Assessment sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
-        <Box>
-          <Typography variant="h5" fontWeight={800}>Results</Typography>
+        <Box flex={1}>
+          <Typography variant="h5" fontWeight={800}>{t('common:nav.results')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {total} published result{total !== 1 ? 's' : ''} on your campus
+            {t('common:onCampus.results', { count: total })}
           </Typography>
         </Box>
+        <Tooltip title={t('common:action.refresh')}>
+          <IconButton onClick={refresh} size="small" disabled={loading}>
+            <Refresh fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Stack>
 
-      {/* Filters */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2.5 }} flexWrap="wrap">
         <TextField
           size="small"
-          placeholder="Filter by student or subject…"
+          placeholder={t('results:filterStudent')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={{ flex: 2, minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -110,30 +106,28 @@ function ResultsList() {
           }}
         />
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Academic Year</InputLabel>
-          <Select value={year} label="Academic Year" onChange={(e) => { setYear(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All years</MenuItem>
+          <InputLabel>{t('results:transcript.academicYear')}</InputLabel>
+          <Select value={year} label={t('results:transcript.academicYear')} onChange={handleFilter(setYear)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('results:allYears')}</MenuItem>
             {YEARS.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Semester</InputLabel>
-          <Select value={semester} label="Semester" onChange={(e) => { setSemester(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All</MenuItem>
+          <InputLabel>{t('results:transcript.semester')}</InputLabel>
+          <Select value={semester} label={t('results:transcript.semester')} onChange={handleFilter(setSemester)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
             <MenuItem value="S1">S1</MenuItem>
             <MenuItem value="S2">S2</MenuItem>
             <MenuItem value="Annual">Annual</MenuItem>
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Eval. Type</InputLabel>
-          <Select value={evalType} label="Eval. Type" onChange={(e) => { setEvalType(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All types</MenuItem>
-            <MenuItem value="CC">CC</MenuItem>
-            <MenuItem value="EXAM">Exam</MenuItem>
-            <MenuItem value="RETAKE">Retake</MenuItem>
-            <MenuItem value="PROJECT">Project</MenuItem>
-            <MenuItem value="PRACTICAL">Practical</MenuItem>
+          <InputLabel>{t('results:evaluationType.allTypes', { defaultValue: 'Eval. Type' })}</InputLabel>
+          <Select value={evalType} label="Eval. Type" onChange={handleFilter(setEvalType)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('results:evaluationType.allTypes')}</MenuItem>
+            {['CC', 'EXAM', 'RETAKE', 'PROJECT', 'PRACTICAL'].map((et) => (
+              <MenuItem key={et} value={et}>{t(`results:evaluationType.${et}`)}</MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Stack>
@@ -145,12 +139,12 @@ function ResultsList() {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
-                <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Evaluation</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Semester</TableCell>
-                <TableCell sx={{ fontWeight: 700 }} align="center">Score</TableCell>
-                <TableCell sx={{ fontWeight: 700 }} align="center">/ 20</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('results:col.student')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('results:col.subject')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('results:col.evaluation')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('results:col.semester')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }} align="center">{t('results:col.score')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }} align="center">{t('results:col.outOf20')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -162,12 +156,12 @@ function ResultsList() {
                   ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                        No results found.
+                        {t('results:noResults')}
                       </TableCell>
                     </TableRow>
                   )
                   : displayed.map((r) => {
-                      const gc = gradeColor(r.score, r.maxScore);
+                      const gc   = gradeColor(r.score, r.maxScore);
                       const norm = r.normalizedScore ?? (r.maxScore ? +((r.score / r.maxScore) * 20).toFixed(2) : null);
                       return (
                         <TableRow key={r._id} hover>
@@ -194,7 +188,11 @@ function ResultsList() {
                           <TableCell>
                             <Typography variant="body2" color="text.secondary">{r.evaluationTitle ?? '—'}</Typography>
                             {r.evaluationType && (
-                              <Chip label={r.evaluationType} size="small" sx={{ mt: 0.3, height: 16, fontSize: 10 }} />
+                              <Chip
+                                label={t(`results:evaluationType.${r.evaluationType}`, { defaultValue: r.evaluationType })}
+                                size="small"
+                                sx={{ mt: 0.3, height: 16, fontSize: 10 }}
+                              />
                             )}
                           </TableCell>
                           <TableCell>
@@ -207,11 +205,7 @@ function ResultsList() {
                           </TableCell>
                           <TableCell align="center">
                             {norm !== null && (
-                              <Chip
-                                label={norm}
-                                size="small"
-                                sx={{ bgcolor: gc.bg, color: gc.color, fontWeight: 700, minWidth: 44 }}
-                              />
+                              <Chip label={norm} size="small" sx={{ bgcolor: gc.bg, color: gc.color, fontWeight: 700, minWidth: 44 }} />
                             )}
                           </TableCell>
                         </TableRow>
@@ -222,11 +216,21 @@ function ResultsList() {
         </TableContainer>
       </Paper>
 
-      {totalPages > 1 && (
-        <Stack alignItems="center" sx={{ mt: 2.5 }}>
-          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" />
+      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <FormControl size="small">
+            <Select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }} sx={{ borderRadius: 2, fontSize: 13 }}>
+              {ROWS_OPTIONS.map((n) => <MenuItem key={n} value={n}>{t('common:perPage', { count: n })}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary">
+            {total === 0 ? t('results:noResults') : t('common:range', { start: rangeStart, end: rangeEnd, total })}
+          </Typography>
         </Stack>
-      )}
+        {totalPages > 1 && (
+          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" size="small" />
+        )}
+      </Stack>
     </Box>
   );
 }

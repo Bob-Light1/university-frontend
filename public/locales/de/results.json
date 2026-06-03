@@ -42,5 +42,24 @@
     "submit": "Submit for review",
     "publish": "Publish results",
     "unpublish": "Unpublish"
+  },
+  "noResults": "Keine Ergebnisse gefunden.",
+  "filterStudent": "Nach Schüler oder Fach filtern…",
+  "evaluationType": {
+    "CC": "Lfd. Kontrolle",
+    "EXAM": "Prüfung",
+    "RETAKE": "Nachprüfung",
+    "PROJECT": "Projekt",
+    "PRACTICAL": "Praktikum",
+    "allTypes": "Alle Typen"
+  },
+  "allYears": "Alle Jahre",
+  "col": {
+    "student": "Schüler",
+    "subject": "Fach",
+    "evaluation": "Bewertung",
+    "semester": "Semester",
+    "score": "Punktzahl",
+    "outOf20": "/ 20"
   }
 }

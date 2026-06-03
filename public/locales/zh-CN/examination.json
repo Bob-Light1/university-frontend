@@ -36,5 +36,17 @@
   "certificate": {
     "generate": "Generate certificate",
     "qr": "QR code verification"
+  },
+  "noSessions": "未找到考试场次。",
+  "allYears": "所有学年",
+  "academicYear": "学年",
+  "semester": "学期",
+  "col": {
+    "session": "场次",
+    "academicYear": "学年",
+    "semester": "学期",
+    "start": "开始",
+    "end": "结束",
+    "status": "状态"
   }
 }

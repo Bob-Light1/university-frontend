@@ -42,5 +42,24 @@
     "submit": "Submit for review",
     "publish": "Publish results",
     "unpublish": "Unpublish"
+  },
+  "noResults": "No se encontraron resultados.",
+  "filterStudent": "Filtrar por estudiante o materia…",
+  "evaluationType": {
+    "CC": "CC",
+    "EXAM": "Examen",
+    "RETAKE": "Reexamen",
+    "PROJECT": "Proyecto",
+    "PRACTICAL": "Práctico",
+    "allTypes": "Todos los tipos"
+  },
+  "allYears": "Todos los años",
+  "col": {
+    "student": "Estudiante",
+    "subject": "Materia",
+    "evaluation": "Evaluación",
+    "semester": "Semestre",
+    "score": "Puntuación",
+    "outOf20": "/ 20"
   }
 }

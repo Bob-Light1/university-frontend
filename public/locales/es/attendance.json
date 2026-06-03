@@ -30,5 +30,18 @@
   "alert": {
     "absentee": "High absenteeism",
     "threshold": "Absence threshold exceeded"
+  },
+  "campus": "Registros de asistencia del campus",
+  "noRecords": "No se encontraron registros de asistencia.",
+  "col": {
+    "student": "Estudiante",
+    "class": "Clase",
+    "date": "Fecha",
+    "session": "Sesión"
+  },
+  "filter": {
+    "status": "Estado",
+    "from": "Desde",
+    "to": "Hasta"
   }
 }

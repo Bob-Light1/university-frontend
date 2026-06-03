@@ -45,5 +45,19 @@
   "gaet": {
     "generate": "Generate GAET schedule",
     "period": "Period"
+  },
+  "noSessions": "لم يتم العثور على جلسات.",
+  "col": {
+    "session": "الجلسة",
+    "subject": "المادة",
+    "classes": "الفصل/الفصول",
+    "start": "البداية",
+    "end": "النهاية",
+    "status": "الحالة"
+  },
+  "filter": {
+    "from": "من",
+    "to": "إلى",
+    "status": "الحالة"
   }
 }

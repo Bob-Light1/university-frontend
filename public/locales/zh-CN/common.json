@@ -41,7 +41,11 @@
     "completed": "已完成",
     "cancelled": "已取消",
     "open": "开放",
-    "closed": "已关闭"
+    "closed": "已关闭",
+    "suspended": "已暂停",
+    "scheduled": "已排期",
+    "ongoing": "进行中",
+    "postponed": "已延期"
   },
   "nav": {
     "dashboard": "仪表板",
@@ -105,7 +109,8 @@
     "gender": "性别",
     "male": "男",
     "female": "女",
-    "neighborhood": "街区"
+    "neighborhood": "街区",
+    "status": "状态"
   },
   "time": {
     "today": "今天",
@@ -113,5 +118,31 @@
     "thisWeek": "本周",
     "thisMonth": "本月",
     "thisYear": "今年"
+  },
+  "all": "全部",
+  "noAccess": "无访问权限",
+  "goToModule": "前往模块",
+  "perPage": "{count} / 页",
+  "range": "{start}–{end} / {total}",
+  "onCampus": {
+    "students": "您的校区共 {count, plural, other {#}} 名学生",
+    "teachers": "您的校区共 {count, plural, other {#}} 名教师",
+    "sessions": "您的校区共 {count, plural, other {#}} 节课",
+    "records": "您的校区共 {count, plural, other {#}} 条记录",
+    "results": "您的校区共 {count, plural, other {#}} 条已发布成绩",
+    "documents": "您的校区共 {count, plural, other {#}} 份文件"
+  },
+  "sessionType": {
+    "LECTURE": "讲课",
+    "LAB": "实验课",
+    "TUTORIAL": "辅导课",
+    "SEMINAR": "研讨会",
+    "WORKSHOP": "工作坊"
+  },
+  "employmentType": {
+    "full-time": "全职",
+    "part-time": "兼职",
+    "contract": "合同制",
+    "temporary": "临时"
   }
 }

@@ -32,5 +32,18 @@
   "footer": {
     "confidential": "Confidential document",
     "verified": "Verified with QR code"
+  },
+  "center": {
+    "title": "Centro de impresión",
+    "subtitle": "Navegue al módulo correspondiente y use la función de impresión del navegador (Ctrl+P / Cmd+P).",
+    "info": "Para imprimir un informe, abra el módulo correspondiente, aplique sus filtros y pulse Ctrl+P (o Cmd+P en Mac). Todas las tablas están optimizadas para impresión.",
+    "available": "Módulos disponibles"
+  },
+  "module": {
+    "results": "Imprimir resultados académicos publicados para los estudiantes de su campus.",
+    "students": "Imprimir la lista de estudiantes del campus con matrícula e información de clase.",
+    "attendance": "Imprimir registros de asistencia filtrados por rango de fechas o clase.",
+    "examinations": "Imprimir horarios y listas de sesiones de examen.",
+    "documents": "Imprimir documentos institucionales publicados en su campus."
   }
 }

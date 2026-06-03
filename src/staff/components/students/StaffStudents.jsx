@@ -1,16 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Box, Typography, Paper, Stack, Avatar, Chip,
   TextField, InputAdornment, MenuItem, Select,
   FormControl, InputLabel, Alert, Pagination,
   Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Skeleton,
+  TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
-import { Search, Group } from '@mui/icons-material';
+import { Search, Group, Refresh } from '@mui/icons-material';
 
-import { getStaffStudents }      from '../../../services/staffService';
-import { IMAGE_BASE_URL }        from '../../../config/env';
-import PermissionGate            from '../shared/PermissionGate';
+import { getStaffStudents }   from '../../../services/staffService';
+import { IMAGE_BASE_URL }     from '../../../config/env';
+import PermissionGate         from '../shared/PermissionGate';
+import usePaginatedList       from '../../../hooks/usePaginatedList';
+import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
 const STAFF_PRIMARY = '#00695C';
 
@@ -21,77 +23,71 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const STATUS_COLORS = {
+const STATUS_BG = {
   active:    { bg: '#e8f5e9', color: '#2e7d32' },
   inactive:  { bg: '#fff3e0', color: '#e65100' },
   suspended: { bg: '#fdecea', color: '#c62828' },
   archived:  { bg: '#f5f5f5', color: '#616161' },
 };
 
+const ROWS_OPTIONS = [10, 20, 50, 100];
+
 function StudentsList() {
-  const [students, setStudents] = useState([]);
-  const [total,    setTotal]    = useState(0);
-  const [page,     setPage]     = useState(1);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
-  const [search,   setSearch]   = useState('');
-  const [status,   setStatus]   = useState('');
+  const { t } = useAppTranslation('common');
 
-  const LIMIT = 20;
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('');
+  const [limit,  setLimit]  = useState(20);
 
-  const fetch = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getStaffStudents({ page, limit: LIMIT, search: search || undefined, status: status || undefined });
-      setStudents(res.data?.data ?? []);
-      setTotal(res.data?.pagination?.total ?? 0);
-    } catch {
-      setError('Failed to load students.');
-    } finally {
-      setLoading(false);
-    }
-  }, [page, search, status]);
+  const fetcher = useCallback(
+    (page) => getStaffStudents({ page, limit, search: search || undefined, status: status || undefined }),
+    [limit, search, status],
+  );
 
-  useEffect(() => { fetch(); }, [fetch]);
+  const {
+    items: students, total, page, setPage, loading, error, refresh,
+  } = usePaginatedList(fetcher);
 
-  const totalPages = Math.ceil(total / LIMIT);
+  const totalPages = Math.ceil(total / limit);
+  const rangeStart = total === 0 ? 0 : (page - 1) * limit + 1;
+  const rangeEnd   = Math.min(page * limit, total);
+  const handleFilter = (setter) => (e) => { setter(e.target.value); setPage(1); };
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
         <Group sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
-        <Box>
-          <Typography variant="h5" fontWeight={800}>Students</Typography>
+        <Box flex={1}>
+          <Typography variant="h5" fontWeight={800}>{t('common:nav.students')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {total} student{total !== 1 ? 's' : ''} on your campus
+            {t('common:onCampus.students', { count: total })}
           </Typography>
         </Box>
+        <Tooltip title={t('common:action.refresh')}>
+          <IconButton onClick={refresh} size="small" disabled={loading}>
+            <Refresh fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Stack>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2.5 }}>
         <TextField
           size="small"
-          placeholder="Search name, email, matricule…"
+          placeholder={`${t('common:action.search')} …`}
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          onChange={handleFilter(setSearch)}
           sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
           slotProps={{
             input: { startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment> },
           }}
         />
-        <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={status}
-            label="Status"
-            onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-            sx={{ borderRadius: 2 }}
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
-            <MenuItem value="suspended">Suspended</MenuItem>
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel>{t('common:field.status')}</InputLabel>
+          <Select value={status} label={t('common:field.status')} onChange={handleFilter(setStatus)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
+            {['active', 'inactive', 'suspended', 'archived'].map((s) => (
+              <MenuItem key={s} value={s}>{t(`common:status.${s}`)}</MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Stack>
@@ -103,32 +99,28 @@ function StudentsList() {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
-                <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.students')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Matricule</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.classes')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.email')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {loading
                 ? Array.from({ length: 6 }).map((_, i) => (
-                    <TableRow key={i}>
-                      {Array.from({ length: 5 }).map((__, j) => (
-                        <TableCell key={j}><Skeleton /></TableCell>
-                      ))}
-                    </TableRow>
+                    <TableRow key={i}>{Array.from({ length: 5 }).map((__, j) => <TableCell key={j}><Skeleton /></TableCell>)}</TableRow>
                   ))
                 : students.length === 0
                   ? (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                        No students found.
+                        {t('common:table.noResults')}
                       </TableCell>
                     </TableRow>
                   )
                   : students.map((s) => {
-                      const sc = STATUS_COLORS[s.status] ?? STATUS_COLORS.inactive;
+                      const sc = STATUS_BG[s.status] ?? STATUS_BG.inactive;
                       return (
                         <TableRow key={s._id} hover>
                           <TableCell>
@@ -151,11 +143,8 @@ function StudentsList() {
                             <Typography variant="body2" color="text.secondary">{s.email}</Typography>
                           </TableCell>
                           <TableCell>
-                            <Chip
-                              label={s.status}
-                              size="small"
-                              sx={{ bgcolor: sc.bg, color: sc.color, fontWeight: 600, textTransform: 'capitalize' }}
-                            />
+                            <Chip label={t(`common:status.${s.status}`)} size="small"
+                              sx={{ bgcolor: sc.bg, color: sc.color, fontWeight: 600 }} />
                           </TableCell>
                         </TableRow>
                       );
@@ -165,11 +154,21 @@ function StudentsList() {
         </TableContainer>
       </Paper>
 
-      {totalPages > 1 && (
-        <Stack alignItems="center" sx={{ mt: 2.5 }}>
-          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" />
+      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <FormControl size="small">
+            <Select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }} sx={{ borderRadius: 2, fontSize: 13 }}>
+              {ROWS_OPTIONS.map((n) => <MenuItem key={n} value={n}>{t('common:perPage', { count: n })}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary">
+            {total === 0 ? t('common:table.noResults') : t('common:range', { start: rangeStart, end: rangeEnd, total })}
+          </Typography>
         </Stack>
-      )}
+        {totalPages > 1 && (
+          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" size="small" />
+        )}
+      </Stack>
     </Box>
   );
 }

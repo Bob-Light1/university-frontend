@@ -45,5 +45,19 @@
   "gaet": {
     "generate": "Generate GAET schedule",
     "period": "Period"
+  },
+  "noSessions": "未找到课节。",
+  "col": {
+    "session": "课节",
+    "subject": "科目",
+    "classes": "班级",
+    "start": "开始",
+    "end": "结束",
+    "status": "状态"
+  },
+  "filter": {
+    "from": "开始日期",
+    "to": "结束日期",
+    "status": "状态"
   }
 }

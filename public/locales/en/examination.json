@@ -36,5 +36,17 @@
   "certificate": {
     "generate": "Generate certificate",
     "qr": "QR code verification"
+  },
+  "noSessions": "No examination sessions found.",
+  "allYears": "All years",
+  "academicYear": "Academic year",
+  "semester": "Semester",
+  "col": {
+    "session": "Session",
+    "academicYear": "Academic Year",
+    "semester": "Semester",
+    "start": "Start",
+    "end": "End",
+    "status": "Status"
   }
 }

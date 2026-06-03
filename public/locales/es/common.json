@@ -41,7 +41,11 @@
     "completed": "Completado",
     "cancelled": "Cancelado",
     "open": "Abierto",
-    "closed": "Cerrado"
+    "closed": "Cerrado",
+    "suspended": "Suspendido",
+    "scheduled": "Programado",
+    "ongoing": "En curso",
+    "postponed": "Pospuesto"
   },
   "nav": {
     "dashboard": "Panel",
@@ -105,7 +109,8 @@
     "gender": "Género",
     "male": "Masculino",
     "female": "Femenino",
-    "neighborhood": "Barrio"
+    "neighborhood": "Barrio",
+    "status": "Estado"
   },
   "time": {
     "today": "Hoy",
@@ -113,5 +118,31 @@
     "thisWeek": "Esta semana",
     "thisMonth": "Este mes",
     "thisYear": "Este año"
+  },
+  "all": "Todos",
+  "noAccess": "Sin acceso",
+  "goToModule": "Ir al módulo",
+  "perPage": "{count} / pág.",
+  "range": "{start}–{end} de {total}",
+  "onCampus": {
+    "students": "{count, plural, one {# estudiante} other {# estudiantes}} en su campus",
+    "teachers": "{count, plural, one {# docente} other {# docentes}} en su campus",
+    "sessions": "{count, plural, one {# sesión} other {# sesiones}} en su campus",
+    "records": "{count, plural, one {# registro} other {# registros}} en su campus",
+    "results": "{count, plural, one {# resultado publicado} other {# resultados publicados}} en su campus",
+    "documents": "{count, plural, one {# documento} other {# documentos}} en su campus"
+  },
+  "sessionType": {
+    "LECTURE": "Clase magistral",
+    "LAB": "Laboratorio",
+    "TUTORIAL": "Tutorial",
+    "SEMINAR": "Seminario",
+    "WORKSHOP": "Taller"
+  },
+  "employmentType": {
+    "full-time": "Tiempo completo",
+    "part-time": "Tiempo parcial",
+    "contract": "Contrato",
+    "temporary": "Temporal"
   }
 }

@@ -32,5 +32,18 @@
   "footer": {
     "confidential": "Confidential document",
     "verified": "Verified with QR code"
+  },
+  "center": {
+    "title": "Druckzentrum",
+    "subtitle": "Navigieren Sie zum entsprechenden Modul und nutzen Sie die Druckfunktion Ihres Browsers (Strg+P / Cmd+P).",
+    "info": "Um einen Bericht zu drucken, öffnen Sie das entsprechende Modul, wenden Sie Ihre Filter an und drücken Sie Strg+P (oder Cmd+P auf Mac). Alle Tabellen sind druckoptimiert.",
+    "available": "Verfügbare Module"
+  },
+  "module": {
+    "results": "Veröffentlichte akademische Ergebnisse für Campus-Schüler drucken.",
+    "students": "Campus-Schülerliste mit Matrikelnummer und Klasseninformationen drucken.",
+    "attendance": "Anwesenheitsaufzeichnungen nach Datumsbereich oder Klasse gefiltert drucken.",
+    "examinations": "Prüfungssitzungspläne und Teilnehmerlisten drucken.",
+    "documents": "Auf dem Campus veröffentlichte institutionelle Dokumente drucken."
   }
 }

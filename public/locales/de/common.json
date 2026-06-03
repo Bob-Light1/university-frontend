@@ -41,7 +41,11 @@
     "completed": "Abgeschlossen",
     "cancelled": "Abgebrochen",
     "open": "Offen",
-    "closed": "Geschlossen"
+    "closed": "Geschlossen",
+    "suspended": "Gesperrt",
+    "scheduled": "Geplant",
+    "ongoing": "Laufend",
+    "postponed": "Verschoben"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -105,7 +109,8 @@
     "gender": "Geschlecht",
     "male": "Männlich",
     "female": "Weiblich",
-    "neighborhood": "Stadtviertel"
+    "neighborhood": "Stadtviertel",
+    "status": "Status"
   },
   "time": {
     "today": "Heute",
@@ -113,5 +118,31 @@
     "thisWeek": "Diese Woche",
     "thisMonth": "Dieser Monat",
     "thisYear": "Dieses Jahr"
+  },
+  "all": "Alle",
+  "noAccess": "Kein Zugang",
+  "goToModule": "Zum Modul",
+  "perPage": "{count} / Seite",
+  "range": "{start}–{end} von {total}",
+  "onCampus": {
+    "students": "{count, plural, one {# Schüler} other {# Schüler}} auf Ihrem Campus",
+    "teachers": "{count, plural, one {# Lehrer} other {# Lehrer}} auf Ihrem Campus",
+    "sessions": "{count, plural, one {# Sitzung} other {# Sitzungen}} auf Ihrem Campus",
+    "records": "{count, plural, one {# Eintrag} other {# Einträge}} auf Ihrem Campus",
+    "results": "{count, plural, one {# veröffentlichtes Ergebnis} other {# veröffentlichte Ergebnisse}} auf Ihrem Campus",
+    "documents": "{count, plural, one {# Dokument} other {# Dokumente}} auf Ihrem Campus"
+  },
+  "sessionType": {
+    "LECTURE": "Vorlesung",
+    "LAB": "Labor",
+    "TUTORIAL": "Übung",
+    "SEMINAR": "Seminar",
+    "WORKSHOP": "Workshop"
+  },
+  "employmentType": {
+    "full-time": "Vollzeit",
+    "part-time": "Teilzeit",
+    "contract": "Vertrag",
+    "temporary": "Befristet"
   }
 }

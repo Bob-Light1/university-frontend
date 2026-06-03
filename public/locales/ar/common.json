@@ -41,7 +41,11 @@
     "completed": "مكتمل",
     "cancelled": "ملغى",
     "open": "مفتوح",
-    "closed": "مغلق"
+    "closed": "مغلق",
+    "suspended": "موقوف",
+    "scheduled": "مجدول",
+    "ongoing": "جارٍ",
+    "postponed": "مؤجل"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -105,7 +109,8 @@
     "gender": "الجنس",
     "male": "ذكر",
     "female": "أنثى",
-    "neighborhood": "الحي"
+    "neighborhood": "الحي",
+    "status": "الحالة"
   },
   "time": {
     "today": "اليوم",
@@ -113,5 +118,31 @@
     "thisWeek": "هذا الأسبوع",
     "thisMonth": "هذا الشهر",
     "thisYear": "هذا العام"
+  },
+  "all": "الكل",
+  "noAccess": "لا يوجد وصول",
+  "goToModule": "الذهاب إلى الوحدة",
+  "perPage": "{count} / صفحة",
+  "range": "{start}–{end} من {total}",
+  "onCampus": {
+    "students": "{count, plural, one {# طالب} other {# طلاب}} في حرمك الجامعي",
+    "teachers": "{count, plural, one {# مدرس} other {# مدرسين}} في حرمك الجامعي",
+    "sessions": "{count, plural, one {# جلسة} other {# جلسات}} في حرمك الجامعي",
+    "records": "{count, plural, one {# سجل} other {# سجلات}} في حرمك الجامعي",
+    "results": "{count, plural, one {# نتيجة منشورة} other {# نتائج منشورة}} في حرمك الجامعي",
+    "documents": "{count, plural, one {# وثيقة} other {# وثائق}} في حرمك الجامعي"
+  },
+  "sessionType": {
+    "LECTURE": "محاضرة",
+    "LAB": "مختبر",
+    "TUTORIAL": "درس تطبيقي",
+    "SEMINAR": "ندوة",
+    "WORKSHOP": "ورشة عمل"
+  },
+  "employmentType": {
+    "full-time": "دوام كامل",
+    "part-time": "دوام جزئي",
+    "contract": "عقد",
+    "temporary": "مؤقت"
   }
 }

@@ -37,5 +37,30 @@
   "retention": {
     "policy": "Retention policy",
     "expiresOn": "Expires on"
+  },
+  "noDocuments": "لم يتم العثور على وثائق.",
+  "searchPlaceholder": "بحث بالعنوان أو الوصف…",
+  "category": {
+    "ADMINISTRATIVE": "إداري",
+    "ACADEMIC": "أكاديمي",
+    "FINANCIAL": "مالي",
+    "LEGAL": "قانوني",
+    "GENERAL": "عام",
+    "allCategories": "كل الفئات"
+  },
+  "staffType": {
+    "NOTICE": "إشعار",
+    "REPORT": "تقرير",
+    "FORM": "نموذج",
+    "CERTIFICATE": "شهادة",
+    "CIRCULAR": "تعميم",
+    "allTypes": "كل الأنواع"
+  },
+  "col": {
+    "title": "العنوان",
+    "type": "النوع",
+    "category": "الفئة",
+    "tags": "الوسوم",
+    "date": "التاريخ"
   }
 }

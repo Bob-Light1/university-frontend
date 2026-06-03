@@ -45,5 +45,19 @@
   "gaet": {
     "generate": "Generate GAET schedule",
     "period": "Period"
+  },
+  "noSessions": "No sessions found.",
+  "col": {
+    "session": "Session",
+    "subject": "Subject",
+    "classes": "Class(es)",
+    "start": "Start",
+    "end": "End",
+    "status": "Status"
+  },
+  "filter": {
+    "from": "From",
+    "to": "To",
+    "status": "Status"
   }
 }

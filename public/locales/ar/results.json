@@ -42,5 +42,24 @@
     "submit": "Submit for review",
     "publish": "Publish results",
     "unpublish": "Unpublish"
+  },
+  "noResults": "لم يتم العثور على نتائج.",
+  "filterStudent": "تصفية حسب الطالب أو المادة…",
+  "evaluationType": {
+    "CC": "تقييم مستمر",
+    "EXAM": "امتحان",
+    "RETAKE": "إعادة",
+    "PROJECT": "مشروع",
+    "PRACTICAL": "تطبيقي",
+    "allTypes": "كل الأنواع"
+  },
+  "allYears": "كل السنوات",
+  "col": {
+    "student": "الطالب",
+    "subject": "المادة",
+    "evaluation": "التقييم",
+    "semester": "الفصل",
+    "score": "الدرجة",
+    "outOf20": "/ 20"
   }
 }

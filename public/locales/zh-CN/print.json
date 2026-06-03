@@ -32,5 +32,18 @@
   "footer": {
     "confidential": "Confidential document",
     "verified": "Verified with QR code"
+  },
+  "center": {
+    "title": "打印中心",
+    "subtitle": "请进入相应模块，使用浏览器的打印功能（Ctrl+P / Cmd+P）。",
+    "info": "如需打印报表，请打开相应模块，应用筛选条件，然后按 Ctrl+P（Mac 上为 Cmd+P）。所有表格均已针对打印进行优化。",
+    "available": "可用模块"
+  },
+  "module": {
+    "results": "打印校区学生的已发布学业成绩。",
+    "students": "打印校区学生名单（含学号和班级信息）。",
+    "attendance": "打印按日期范围或班级筛选的考勤记录。",
+    "examinations": "打印考试场次时间表和名单。",
+    "documents": "打印本校区已发布的机构文件。"
   }
 }

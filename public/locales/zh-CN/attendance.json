@@ -30,5 +30,18 @@
   "alert": {
     "absentee": "High absenteeism",
     "threshold": "Absence threshold exceeded"
+  },
+  "campus": "全校区考勤记录",
+  "noRecords": "未找到考勤记录。",
+  "col": {
+    "student": "学生",
+    "class": "班级",
+    "date": "日期",
+    "session": "课节"
+  },
+  "filter": {
+    "status": "状态",
+    "from": "开始日期",
+    "to": "结束日期"
   }
 }

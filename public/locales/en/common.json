@@ -41,7 +41,11 @@
     "completed": "Completed",
     "cancelled": "Cancelled",
     "open": "Open",
-    "closed": "Closed"
+    "closed": "Closed",
+    "suspended": "Suspended",
+    "scheduled": "Scheduled",
+    "ongoing": "Ongoing",
+    "postponed": "Postponed"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -105,7 +109,8 @@
     "gender": "Gender",
     "male": "Male",
     "female": "Female",
-    "neighborhood": "Neighborhood"
+    "neighborhood": "Neighborhood",
+    "status": "Status"
   },
   "time": {
     "today": "Today",
@@ -113,5 +118,31 @@
     "thisWeek": "This week",
     "thisMonth": "This month",
     "thisYear": "This year"
+  },
+  "all": "All",
+  "noAccess": "No access",
+  "goToModule": "Go to module",
+  "perPage": "{count} / page",
+  "range": "{start}–{end} of {total}",
+  "onCampus": {
+    "students": "{count, plural, one {# student} other {# students}} on your campus",
+    "teachers": "{count, plural, one {# teacher} other {# teachers}} on your campus",
+    "sessions": "{count, plural, one {# session} other {# sessions}} on your campus",
+    "records": "{count, plural, one {# record} other {# records}} on your campus",
+    "results": "{count, plural, one {# published result} other {# published results}} on your campus",
+    "documents": "{count, plural, one {# document} other {# documents}} on your campus"
+  },
+  "sessionType": {
+    "LECTURE": "Lecture",
+    "LAB": "Lab",
+    "TUTORIAL": "Tutorial",
+    "SEMINAR": "Seminar",
+    "WORKSHOP": "Workshop"
+  },
+  "employmentType": {
+    "full-time": "Full-time",
+    "part-time": "Part-time",
+    "contract": "Contract",
+    "temporary": "Temporary"
   }
 }

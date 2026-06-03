@@ -42,5 +42,24 @@
     "submit": "Submit for review",
     "publish": "Publish results",
     "unpublish": "Unpublish"
+  },
+  "noResults": "No results found.",
+  "filterStudent": "Filter by student or subject…",
+  "evaluationType": {
+    "CC": "CC",
+    "EXAM": "Exam",
+    "RETAKE": "Retake",
+    "PROJECT": "Project",
+    "PRACTICAL": "Practical",
+    "allTypes": "All types"
+  },
+  "allYears": "All years",
+  "col": {
+    "student": "Student",
+    "subject": "Subject",
+    "evaluation": "Evaluation",
+    "semester": "Semester",
+    "score": "Score",
+    "outOf20": "/ 20"
   }
 }

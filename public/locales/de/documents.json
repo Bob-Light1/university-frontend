@@ -37,5 +37,30 @@
   "retention": {
     "policy": "Retention policy",
     "expiresOn": "Expires on"
+  },
+  "noDocuments": "Keine Dokumente gefunden.",
+  "searchPlaceholder": "Nach Titel oder Beschreibung suchen…",
+  "category": {
+    "ADMINISTRATIVE": "Verwaltung",
+    "ACADEMIC": "Akademisch",
+    "FINANCIAL": "Finanziell",
+    "LEGAL": "Rechtlich",
+    "GENERAL": "Allgemein",
+    "allCategories": "Alle Kategorien"
+  },
+  "staffType": {
+    "NOTICE": "Mitteilung",
+    "REPORT": "Bericht",
+    "FORM": "Formular",
+    "CERTIFICATE": "Zertifikat",
+    "CIRCULAR": "Rundschreiben",
+    "allTypes": "Alle Typen"
+  },
+  "col": {
+    "title": "Titel",
+    "type": "Typ",
+    "category": "Kategorie",
+    "tags": "Tags",
+    "date": "Datum"
   }
 }

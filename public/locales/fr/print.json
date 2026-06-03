@@ -4,10 +4,46 @@
   "print": "Imprimer",
   "download": "Télécharger PDF",
   "batch": "Impression en masse",
-  "bulletin": { "title": "Bulletin", "byClass": "Imprimer par classe", "individual": "Bulletin individuel", "semester": "Semestre" },
-  "transcript": { "title": "Relevé de notes", "official": "Relevé officiel", "student": "Étudiant" },
-  "attendance": { "sheet": "Feuille d'émargement", "monthly": "Rapport mensuel" },
-  "certificate": { "enrollment": "Certificat de scolarité", "completion": "Certificat d'achèvement" },
-  "header": { "institution": "Établissement", "academicYear": "Année académique", "generatedOn": "Généré le", "page": "Page {current} sur {total}" },
-  "footer": { "confidential": "Document confidentiel", "verified": "Vérifié par QR code" }
+  "bulletin": {
+    "title": "Bulletin",
+    "byClass": "Imprimer par classe",
+    "individual": "Bulletin individuel",
+    "semester": "Semestre"
+  },
+  "transcript": {
+    "title": "Relevé de notes",
+    "official": "Relevé officiel",
+    "student": "Étudiant"
+  },
+  "attendance": {
+    "sheet": "Feuille d'émargement",
+    "monthly": "Rapport mensuel"
+  },
+  "certificate": {
+    "enrollment": "Certificat de scolarité",
+    "completion": "Certificat d'achèvement"
+  },
+  "header": {
+    "institution": "Établissement",
+    "academicYear": "Année académique",
+    "generatedOn": "Généré le",
+    "page": "Page {current} sur {total}"
+  },
+  "footer": {
+    "confidential": "Document confidentiel",
+    "verified": "Vérifié par QR code"
+  },
+  "center": {
+    "title": "Centre d'impression",
+    "subtitle": "Accédez au module concerné et utilisez la fonction d'impression de votre navigateur (Ctrl+P / Cmd+P).",
+    "info": "Pour imprimer un rapport, ouvrez le module correspondant, appliquez vos filtres, puis appuyez sur Ctrl+P (ou Cmd+P sur Mac). Tous les tableaux sont optimisés pour l'impression.",
+    "available": "Modules disponibles"
+  },
+  "module": {
+    "results": "Imprimer les résultats académiques publiés pour les étudiants de votre campus.",
+    "students": "Imprimer la liste des étudiants du campus avec le matricule et la classe.",
+    "attendance": "Imprimer les registres de présence filtrés par plage de dates ou classe.",
+    "examinations": "Imprimer les emplois du temps et les listes des sessions d'examens.",
+    "documents": "Imprimer les documents institutionnels publiés sur votre campus."
+  }
 }

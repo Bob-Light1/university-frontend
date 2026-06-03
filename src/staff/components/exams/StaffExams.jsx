@@ -1,32 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Box, Typography, Paper, Stack, Chip,
   MenuItem, Select, FormControl, InputLabel,
   Alert, Pagination, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Skeleton,
+  IconButton, Tooltip,
 } from '@mui/material';
-import { LibraryBooks } from '@mui/icons-material';
+import { LibraryBooks, Refresh } from '@mui/icons-material';
 
 import { getStaffExaminations } from '../../../services/staffService';
 import PermissionGate            from '../shared/PermissionGate';
+import usePaginatedList          from '../../../hooks/usePaginatedList';
+import { useAppTranslation }     from '../../../hooks/useAppTranslation';
 
 const STAFF_PRIMARY = '#00695C';
 
-const STATUS_COLORS = {
-  SCHEDULED:  { bg: '#e3f2fd', color: '#1565c0' },
-  ONGOING:    { bg: '#e8f5e9', color: '#2e7d32' },
-  COMPLETED:  { bg: '#f5f5f5', color: '#616161' },
-  DRAFT:      { bg: '#fff8e1', color: '#f57f17' },
-  POSTPONED:  { bg: '#fff3e0', color: '#e65100' },
-  CANCELLED:  { bg: '#fdecea', color: '#c62828' },
-};
-
-const fmtDate = (d) => {
-  if (!d) return '—';
-  return new Date(d).toLocaleString('fr-FR', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
+const STATUS_BG = {
+  SCHEDULED: { bg: '#e3f2fd', color: '#1565c0' },
+  ONGOING:   { bg: '#e8f5e9', color: '#2e7d32' },
+  COMPLETED: { bg: '#f5f5f5', color: '#616161' },
+  DRAFT:     { bg: '#fff8e1', color: '#f57f17' },
+  POSTPONED: { bg: '#fff3e0', color: '#e65100' },
+  CANCELLED: { bg: '#fdecea', color: '#c62828' },
 };
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -35,83 +30,82 @@ const YEARS = Array.from({ length: 5 }, (_, i) => {
   return `${y}-${y + 1}`;
 });
 
+const ROWS_OPTIONS = [10, 20, 50, 100];
+
 function ExamsList() {
-  const [exams,    setExams]    = useState([]);
-  const [total,    setTotal]    = useState(0);
-  const [page,     setPage]     = useState(1);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
+  const { t, i18n } = useAppTranslation(['examination', 'common']);
+
   const [year,     setYear]     = useState('');
   const [semester, setSemester] = useState('');
   const [status,   setStatus]   = useState('');
+  const [limit,    setLimit]    = useState(20);
 
-  const LIMIT = 20;
+  const fetcher = useCallback(
+    (page) => getStaffExaminations({
+      page, limit,
+      academicYear: year     || undefined,
+      semester:     semester || undefined,
+      status:       status   || undefined,
+    }),
+    [limit, year, semester, status],
+  );
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getStaffExaminations({
-        page,
-        limit:        LIMIT,
-        academicYear: year     || undefined,
-        semester:     semester || undefined,
-        status:       status   || undefined,
-      });
-      setExams(res.data?.data ?? []);
-      setTotal(res.data?.pagination?.total ?? 0);
-    } catch {
-      setError('Failed to load examinations.');
-    } finally {
-      setLoading(false);
-    }
-  }, [page, year, semester, status]);
+  const {
+    items: exams, total, page, setPage, loading, error, refresh,
+  } = usePaginatedList(fetcher);
 
-  useEffect(() => { load(); }, [load]);
+  const totalPages = Math.ceil(total / limit);
+  const rangeStart = total === 0 ? 0 : (page - 1) * limit + 1;
+  const rangeEnd   = Math.min(page * limit, total);
+  const handleFilter = (setter) => (e) => { setter(e.target.value); setPage(1); };
 
-  const resetPage = () => setPage(1);
-
-  const totalPages = Math.ceil(total / LIMIT);
+  const fmtDate = (d) =>
+    d ? new Date(d).toLocaleString(i18n.language, {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    }) : '—';
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
         <LibraryBooks sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
-        <Box>
-          <Typography variant="h5" fontWeight={800}>Examinations</Typography>
+        <Box flex={1}>
+          <Typography variant="h5" fontWeight={800}>{t('common:nav.examinations')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {total} session{total !== 1 ? 's' : ''} on your campus
+            {t('common:onCampus.sessions', { count: total })}
           </Typography>
         </Box>
+        <Tooltip title={t('common:action.refresh')}>
+          <IconButton onClick={refresh} size="small" disabled={loading}>
+            <Refresh fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Stack>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2.5 }} flexWrap="wrap">
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Academic Year</InputLabel>
-          <Select value={year} label="Academic Year" onChange={(e) => { setYear(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All years</MenuItem>
+          <InputLabel>{t('examination:academicYear')}</InputLabel>
+          <Select value={year} label={t('examination:academicYear')} onChange={handleFilter(setYear)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('examination:allYears')}</MenuItem>
             {YEARS.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Semester</InputLabel>
-          <Select value={semester} label="Semester" onChange={(e) => { setSemester(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All</MenuItem>
+          <InputLabel>{t('examination:semester')}</InputLabel>
+          <Select value={semester} label={t('examination:semester')} onChange={handleFilter(setSemester)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
             <MenuItem value="S1">S1</MenuItem>
             <MenuItem value="S2">S2</MenuItem>
             <MenuItem value="Annual">Annual</MenuItem>
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
-          <Select value={status} label="Status" onChange={(e) => { setStatus(e.target.value); resetPage(); }} sx={{ borderRadius: 2 }}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="DRAFT">Draft</MenuItem>
-            <MenuItem value="SCHEDULED">Scheduled</MenuItem>
-            <MenuItem value="ONGOING">Ongoing</MenuItem>
-            <MenuItem value="COMPLETED">Completed</MenuItem>
-            <MenuItem value="POSTPONED">Postponed</MenuItem>
-            <MenuItem value="CANCELLED">Cancelled</MenuItem>
+          <InputLabel>{t('common:field.status')}</InputLabel>
+          <Select value={status} label={t('common:field.status')} onChange={handleFilter(setStatus)} sx={{ borderRadius: 2 }}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
+            {['DRAFT', 'SCHEDULED', 'ONGOING', 'COMPLETED', 'POSTPONED', 'CANCELLED'].map((s) => (
+              <MenuItem key={s} value={s}>{t(`common:status.${s.toLowerCase()}`)}</MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Stack>
@@ -123,12 +117,12 @@ function ExamsList() {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
-                <TableCell sx={{ fontWeight: 700 }}>Session</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Academic Year</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Semester</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Start</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>End</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.session')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.academicYear')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.semester')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.start')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.end')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.status')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -140,34 +134,28 @@ function ExamsList() {
                   ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                        No examination sessions found.
+                        {t('examination:noSessions')}
                       </TableCell>
                     </TableRow>
                   )
                   : exams.map((e) => {
-                      const sc = STATUS_COLORS[e.status] ?? { bg: '#f5f5f5', color: '#616161' };
+                      const sc = STATUS_BG[e.status] ?? { bg: '#f5f5f5', color: '#616161' };
                       return (
                         <TableRow key={e._id} hover>
                           <TableCell>
                             <Typography variant="body2" fontWeight={600}>{e.name ?? e.title ?? `Session ${e.reference ?? ''}`}</Typography>
-                            {e.venue && (
-                              <Typography variant="caption" color="text.secondary">{e.venue}</Typography>
-                            )}
+                            {e.venue && <Typography variant="caption" color="text.secondary">{e.venue}</Typography>}
                           </TableCell>
+                          <TableCell><Typography variant="body2">{e.academicYear ?? '—'}</Typography></TableCell>
+                          <TableCell><Typography variant="body2">{e.semester ?? '—'}</Typography></TableCell>
+                          <TableCell><Typography variant="body2">{fmtDate(e.startTime)}</Typography></TableCell>
+                          <TableCell><Typography variant="body2">{fmtDate(e.endTime)}</Typography></TableCell>
                           <TableCell>
-                            <Typography variant="body2">{e.academicYear ?? '—'}</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body2">{e.semester ?? '—'}</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body2">{fmtDate(e.startTime)}</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body2">{fmtDate(e.endTime)}</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Chip label={e.status} size="small" sx={{ bgcolor: sc.bg, color: sc.color, fontWeight: 600 }} />
+                            <Chip
+                              label={t(`common:status.${e.status?.toLowerCase() ?? 'draft'}`)}
+                              size="small"
+                              sx={{ bgcolor: sc.bg, color: sc.color, fontWeight: 600 }}
+                            />
                           </TableCell>
                         </TableRow>
                       );
@@ -177,11 +165,21 @@ function ExamsList() {
         </TableContainer>
       </Paper>
 
-      {totalPages > 1 && (
-        <Stack alignItems="center" sx={{ mt: 2.5 }}>
-          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" />
+      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <FormControl size="small">
+            <Select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }} sx={{ borderRadius: 2, fontSize: 13 }}>
+              {ROWS_OPTIONS.map((n) => <MenuItem key={n} value={n}>{t('common:perPage', { count: n })}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary">
+            {total === 0 ? t('examination:noSessions') : t('common:range', { start: rangeStart, end: rangeEnd, total })}
+          </Typography>
         </Stack>
-      )}
+        {totalPages > 1 && (
+          <Pagination count={totalPages} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" size="small" />
+        )}
+      </Stack>
     </Box>
   );
 }

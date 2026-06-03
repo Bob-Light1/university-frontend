@@ -1,9 +1,52 @@
 {
   "title": "Examens",
-  "session": { "title": "Session d'examen", "create": "Créer une session", "edit": "Modifier la session", "list": "Sessions", "name": "Nom de la session", "startDate": "Date de début", "endDate": "Date de fin", "type": "Type" },
-  "questionBank": { "title": "Banque de questions", "add": "Ajouter une question", "question": "Question", "answer": "Réponse", "points": "Points" },
-  "enrollment": { "title": "Inscriptions", "enroll": "Inscrire l'étudiant", "unenroll": "Désinscrire" },
-  "delivery": { "online": "Examen en ligne", "proctoring": "Surveillance anti-triche", "start": "Démarrer l'examen", "submit": "Soumettre" },
-  "result": { "correction": "Correction", "publish": "Publier les résultats", "appeal": "Appel" },
-  "certificate": { "generate": "Générer le certificat", "qr": "Vérification QR" }
+  "session": {
+    "title": "Session d'examen",
+    "create": "Créer une session",
+    "edit": "Modifier la session",
+    "list": "Sessions",
+    "name": "Nom de la session",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "type": "Type"
+  },
+  "questionBank": {
+    "title": "Banque de questions",
+    "add": "Ajouter une question",
+    "question": "Question",
+    "answer": "Réponse",
+    "points": "Points"
+  },
+  "enrollment": {
+    "title": "Inscriptions",
+    "enroll": "Inscrire l'étudiant",
+    "unenroll": "Désinscrire"
+  },
+  "delivery": {
+    "online": "Examen en ligne",
+    "proctoring": "Surveillance anti-triche",
+    "start": "Démarrer l'examen",
+    "submit": "Soumettre"
+  },
+  "result": {
+    "correction": "Correction",
+    "publish": "Publier les résultats",
+    "appeal": "Appel"
+  },
+  "certificate": {
+    "generate": "Générer le certificat",
+    "qr": "Vérification QR"
+  },
+  "noSessions": "Aucune session d'examen trouvée.",
+  "allYears": "Toutes les années",
+  "academicYear": "Année scolaire",
+  "semester": "Semestre",
+  "col": {
+    "session": "Session",
+    "academicYear": "Année scolaire",
+    "semester": "Semestre",
+    "start": "Début",
+    "end": "Fin",
+    "status": "Statut"
+  }
 }

@@ -30,5 +30,18 @@
   "alert": {
     "absentee": "High absenteeism",
     "threshold": "Absence threshold exceeded"
+  },
+  "campus": "سجلات الحضور على مستوى الحرم الجامعي",
+  "noRecords": "لم يتم العثور على سجلات حضور.",
+  "col": {
+    "student": "الطالب",
+    "class": "الفصل",
+    "date": "التاريخ",
+    "session": "الجلسة"
+  },
+  "filter": {
+    "status": "الحالة",
+    "from": "من",
+    "to": "إلى"
   }
 }

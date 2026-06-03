@@ -30,5 +30,18 @@
   "alert": {
     "absentee": "High absenteeism",
     "threshold": "Absence threshold exceeded"
+  },
+  "campus": "Campus-wide attendance records",
+  "noRecords": "No attendance records found.",
+  "col": {
+    "student": "Student",
+    "class": "Class",
+    "date": "Date",
+    "session": "Session"
+  },
+  "filter": {
+    "status": "Status",
+    "from": "From",
+    "to": "To"
   }
 }

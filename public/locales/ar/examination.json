@@ -36,5 +36,17 @@
   "certificate": {
     "generate": "Generate certificate",
     "qr": "QR code verification"
+  },
+  "noSessions": "لم يتم العثور على جلسات امتحان.",
+  "allYears": "كل السنوات",
+  "academicYear": "السنة الدراسية",
+  "semester": "الفصل الدراسي",
+  "col": {
+    "session": "الجلسة",
+    "academicYear": "السنة الدراسية",
+    "semester": "الفصل",
+    "start": "البداية",
+    "end": "النهاية",
+    "status": "الحالة"
   }
 }

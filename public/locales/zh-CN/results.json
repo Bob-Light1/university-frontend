@@ -42,5 +42,24 @@
     "submit": "Submit for review",
     "publish": "Publish results",
     "unpublish": "Unpublish"
+  },
+  "noResults": "未找到成绩。",
+  "filterStudent": "按学生或科目筛选…",
+  "evaluationType": {
+    "CC": "平时成绩",
+    "EXAM": "考试",
+    "RETAKE": "补考",
+    "PROJECT": "项目",
+    "PRACTICAL": "实践",
+    "allTypes": "所有类型"
+  },
+  "allYears": "所有学年",
+  "col": {
+    "student": "学生",
+    "subject": "科目",
+    "evaluation": "评测",
+    "semester": "学期",
+    "score": "分数",
+    "outOf20": "/ 20"
   }
 }

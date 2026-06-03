@@ -4,10 +4,63 @@
   "download": "Télécharger",
   "view": "Voir le document",
   "delete": "Supprimer le document",
-  "type": { "title": "Type de document", "transcript": "Relevé de notes", "certificate": "Certificat", "report": "Rapport", "contract": "Contrat", "id": "Pièce d'identité", "diploma": "Diplôme", "other": "Autre" },
-  "status": { "draft": "Brouillon", "published": "Publié", "archived": "Archivé", "locked": "Verrouillé" },
-  "version": { "title": "Version", "history": "Historique des versions", "current": "Version actuelle" },
-  "qr": { "generate": "Générer le QR code", "verify": "Vérifier l'authenticité", "verified": "Document vérifié" },
-  "share": { "link": "Lien de partage", "expires": "Expire dans" },
-  "retention": { "policy": "Politique de rétention", "expiresOn": "Expire le" }
+  "type": {
+    "title": "Type de document",
+    "transcript": "Relevé de notes",
+    "certificate": "Certificat",
+    "report": "Rapport",
+    "contract": "Contrat",
+    "id": "Pièce d'identité",
+    "diploma": "Diplôme",
+    "other": "Autre"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé",
+    "locked": "Verrouillé"
+  },
+  "version": {
+    "title": "Version",
+    "history": "Historique des versions",
+    "current": "Version actuelle"
+  },
+  "qr": {
+    "generate": "Générer le QR code",
+    "verify": "Vérifier l'authenticité",
+    "verified": "Document vérifié"
+  },
+  "share": {
+    "link": "Lien de partage",
+    "expires": "Expire dans"
+  },
+  "retention": {
+    "policy": "Politique de rétention",
+    "expiresOn": "Expire le"
+  },
+  "noDocuments": "Aucun document trouvé.",
+  "searchPlaceholder": "Rechercher par titre ou description…",
+  "category": {
+    "ADMINISTRATIVE": "Administratif",
+    "ACADEMIC": "Académique",
+    "FINANCIAL": "Financier",
+    "LEGAL": "Juridique",
+    "GENERAL": "Général",
+    "allCategories": "Toutes catégories"
+  },
+  "staffType": {
+    "NOTICE": "Avis",
+    "REPORT": "Rapport",
+    "FORM": "Formulaire",
+    "CERTIFICATE": "Certificat",
+    "CIRCULAR": "Circulaire",
+    "allTypes": "Tous les types"
+  },
+  "col": {
+    "title": "Titre",
+    "type": "Type",
+    "category": "Catégorie",
+    "tags": "Étiquettes",
+    "date": "Date"
+  }
 }
