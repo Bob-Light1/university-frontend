@@ -104,7 +104,8 @@
     "category": "Category",
     "gender": "Gender",
     "male": "Male",
-    "female": "Female"
+    "female": "Female",
+    "neighborhood": "Neighborhood"
   },
   "time": {
     "today": "Today",

@@ -23,6 +23,14 @@ export const deleteMentorPermanently = (id)          => api.delete(`/mentors/${i
 export const updateMentorStatus      = (id, status)  => api.patch(`/mentors/${id}/status`, { status });
 export const getCMUploadSignature    = ()            => api.get('/mentors/upload-signature');
 
+/**
+ * Bulk-assign students to a mentor via class resolution.
+ * @param {string} id      - Mentor _id
+ * @param {{ classIds?: string[], studentIds?: string[], mode: 'add'|'remove'|'replace' }} payload
+ */
+export const assignStudents = (id, payload) =>
+  api.patch(`/mentors/${id}/assign-students`, payload);
+
 // ─── 2. SELF-SERVICE PROFILE ──────────────────────────────────────────────────
 
 export const getMyProfile          = ()     => api.get('/mentors/me');

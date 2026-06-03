@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import {
   Person, Email, Badge,
-  Domain, School, Check, Cancel, ContactEmergency,
+  Domain, School, Check, Cancel, ContactEmergency, LocationOn,
 } from '@mui/icons-material';
 import NumbersIcon from '@mui/icons-material/Numbers';
 
@@ -193,6 +193,8 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
       emergencyContactName:     initialData?.emergencyContact?.name         || '',
       emergencyContactPhone:    initialData?.emergencyContact?.phone        || '',
       emergencyContactRelation: initialData?.emergencyContact?.relationship || '',
+      // ── Location ──────────────────────────────────────────────────────────
+      neighborhood: initialData?.neighborhood || '',
     },
     validationSchema: createStudentSchema(isEdit),
     validateOnChange: true,
@@ -324,6 +326,18 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <CampusField campusName={campus?.campus_name} icon={Domain} />
+          </Grid>
+
+          {/* ── Location (optional) ───────────────────────────────────────── */}
+          <FormSection title="Location" subtitle="(optional)" />
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormTextField
+              formik={formik}
+              name="neighborhood"
+              label="Neighborhood"
+              icon={LocationOn}
+            />
           </Grid>
 
           {/* ── Emergency contact (optional) ──────────────────────────────── */}

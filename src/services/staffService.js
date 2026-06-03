@@ -42,8 +42,12 @@ export const uploadMyStaffProfileImage  = (url)  => api.patch('/staff/me/profile
 export const updateMyStaffNotifications = (data) => api.patch('/staff/me/notifications', data);
 export const getStaffUploadSignature    = ()     => api.get('/staff/me/upload-signature');
 
-export const getStaffDashboard  = ()         => api.get('/staff/me/dashboard');
-export const getStaffStudents   = (params)   => api.get('/staff/me/students',   { params });
-export const getStaffAttendance = (params)   => api.get('/staff/me/attendance', { params });
-export const getStaffResults    = (params)   => api.get('/staff/me/results',    { params });
-export const getStaffCourses    = (params)   => api.get('/staff/me/courses',    { params });
+export const getStaffDashboard    = ()       => api.get('/staff/me/dashboard');
+export const getStaffStudents     = (params) => api.get('/staff/me/students',     { params });
+export const getStaffAttendance   = (params) => api.get('/staff/me/attendance',   { params });
+export const getStaffResults      = (params) => api.get('/staff/me/results',      { params });
+export const getStaffCourses      = (params) => api.get('/staff/me/courses',      { params });
+export const getStaffTeachers     = (params) => api.get('/staff/me/teachers',     { params });
+export const getStaffSchedule     = (params) => api.get('/staff/me/schedule',     { params });
+export const getStaffDocuments    = (params) => api.get('/staff/me/documents',    { params });
+export const getStaffExaminations = (params) => api.get('/staff/me/examinations', { params });

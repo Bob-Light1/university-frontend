@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import {
   DashboardCustomize, Group, ChecklistRtl,
-  Assessment, AdminPanelSettings, Security,
+  Assessment, AdminPanelSettings, Security, School,
 } from '@mui/icons-material';
 
 import { useAuth }             from '../../../hooks/useAuth';
@@ -141,6 +141,11 @@ export default function StaffDashboard() {
         {stats.publishedResults !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
             <KpiCard label="Published Results" value={stats.publishedResults} icon={<Assessment sx={{ fontSize: 32 }} />} color="#E65100" />
+          </Grid>
+        )}
+        {stats.totalTeachers !== undefined && (
+          <Grid item xs={12} sm={6} md={3}>
+            <KpiCard label="Teachers" value={stats.totalTeachers} icon={<School sx={{ fontSize: 32 }} />} color="#00838F" />
           </Grid>
         )}
       </Grid>

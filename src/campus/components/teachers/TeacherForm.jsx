@@ -9,7 +9,7 @@ import {
 import {
   Person, Email, Badge, Lock, Domain,
   Business, Work, Star, Psychology, AccessTime, ContactEmergency,
-  Check, Cancel,
+  Check, Cancel, LocationOn,
   MenuBook, Add, Remove, ManageAccounts,
   Class as ClassIcon,
 } from '@mui/icons-material';
@@ -391,6 +391,8 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
       emergencyContactName:     initialData?.emergencyContact?.name         || '',
       emergencyContactPhone:    initialData?.emergencyContact?.phone        || '',
       emergencyContactRelation: initialData?.emergencyContact?.relationship || '',
+      // ── Location ──────────────────────────────────────────────────────────
+      neighborhood: initialData?.neighborhood || '',
     },
     validationSchema: createTeacherSchema(isEdit),
     validateOnChange: true,
@@ -627,6 +629,18 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
               </Typography>
             </Grid>
           )}
+
+          {/* ── Location ───────────────────────────────────────────────── */}
+          <FormSection title="Location" subtitle="(optional)" />
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormTextField
+              formik={formik}
+              name="neighborhood"
+              label="Neighborhood"
+              icon={LocationOn}
+            />
+          </Grid>
 
           {/* ── Emergency contact ──────────────────────────────────────── */}
           <FormSection title="Emergency Contact" subtitle="(optional)" />

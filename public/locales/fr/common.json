@@ -104,7 +104,8 @@
     "category": "Catégorie",
     "gender": "Genre",
     "male": "Masculin",
-    "female": "Féminin"
+    "female": "Féminin",
+    "neighborhood": "Quartier"
   },
   "time": {
     "today": "Aujourd'hui",

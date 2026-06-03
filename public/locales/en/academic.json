@@ -80,5 +80,28 @@
     "manager": "Manager",
     "city": "City",
     "country": "Country"
+  },
+  "mentor": {
+    "title": "Mentors",
+    "create": "Add Mentor",
+    "edit": "Edit Mentor",
+    "list": "Mentor List",
+    "assignStudents": {
+      "title": "Assign Students",
+      "manage": "Manage",
+      "modeLabel": "Assignment mode",
+      "selectClasses": "Select classes",
+      "noClasses": "No active classes found for this campus.",
+      "mode": {
+        "add": "Add",
+        "remove": "Remove",
+        "replace": "Replace all"
+      },
+      "modeDesc": {
+        "add": "Add students from selected classes without removing existing assignments.",
+        "remove": "Remove students of selected classes from this mentor.",
+        "replace": "Replace all current student assignments with those from the selected classes."
+      }
+    }
   }
 }

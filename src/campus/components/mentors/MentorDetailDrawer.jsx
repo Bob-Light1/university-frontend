@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box, Typography, Avatar, Stack, Divider, Chip,
   Button, List, ListItem, ListItemIcon, ListItemText,
@@ -5,10 +6,11 @@ import {
 } from '@mui/material';
 import {
   Close, Edit, Email, Phone, Person,
-  Archive, Restore, Psychology,
+  Archive, Restore, Psychology, Group,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
-import { fDate } from '../../../utils/dateFormat';
+import { fDate }              from '../../../utils/dateFormat';
+import AssignStudentsDialog   from './AssignStudentsDialog';
 
 const STATUS_COLOR = {
   active:    'success',
@@ -53,7 +55,9 @@ const StatBox = ({ label, value, color }) => (
   </Paper>
 );
 
-export default function MentorDetailDrawer({ entity: mentor, onClose, onEdit, onArchive, onRestore }) {
+export default function MentorDetailDrawer({ entity: mentor, onClose, onEdit, onArchive, onRestore, onRefresh }) {
+  const [assignOpen, setAssignOpen] = useState(false);
+
   if (!mentor) return null;
 
   const imgUrl = mentor.profileImage
@@ -136,9 +140,24 @@ export default function MentorDetailDrawer({ entity: mentor, onClose, onEdit, on
 
           {/* Assignments */}
           <Box>
-            <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
-              Assignments
-            </Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+              <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
+                Assignments
+              </Typography>
+              {!isArchived && (
+                <Tooltip title="Assign students by class">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<Group fontSize="small" />}
+                    onClick={() => setAssignOpen(true)}
+                    sx={{ borderRadius: 2, textTransform: 'none', fontSize: '0.75rem', py: 0.5 }}
+                  >
+                    Manage
+                  </Button>
+                </Tooltip>
+              )}
+            </Stack>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <Stack direction="row" spacing={1.5}>
               <StatBox label="Students" value={mentor.students?.length ?? 0} color="primary.main" />
@@ -226,6 +245,14 @@ export default function MentorDetailDrawer({ entity: mentor, onClose, onEdit, on
           )}
         </Stack>
       </Box>
+
+      {/* ── Assign Students Dialog ───────────────────────────────────────────── */}
+      <AssignStudentsDialog
+        open={assignOpen}
+        onClose={() => setAssignOpen(false)}
+        mentor={mentor}
+        onSuccess={() => { setAssignOpen(false); onRefresh?.(); }}
+      />
 
     </Box>
   );

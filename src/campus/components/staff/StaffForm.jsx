@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import {
   Person, Email, Badge as BadgeIcon,
-  AdminPanelSettings, Check, Cancel,
+  AdminPanelSettings, Check, Cancel, LocationOn,
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -24,26 +24,28 @@ import {
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const createSchema = Yup.object({
-  firstName: Yup.string().min(2).max(50).required('First name is required'),
-  lastName:  Yup.string().min(2).max(50).required('Last name is required'),
-  username:  Yup.string().min(3).max(30)
+  firstName:    Yup.string().min(2).max(50).required('First name is required'),
+  lastName:     Yup.string().min(2).max(50).required('Last name is required'),
+  username:     Yup.string().min(3).max(30)
     .matches(/^[a-z0-9_.-]+$/, 'Lowercase letters, numbers, dots, hyphens, underscores only')
     .required('Username is required'),
-  email:     Yup.string().email('Invalid email').notRequired(),
-  phone:     yupPhone(false),
-  password:  yupPassword(),
-  subRole:   Yup.string().notRequired(),
+  email:        Yup.string().email('Invalid email').notRequired(),
+  phone:        yupPhone(false),
+  password:     yupPassword(),
+  subRole:      Yup.string().notRequired(),
+  neighborhood: Yup.string().max(100).notRequired(),
 });
 
 const editSchema = Yup.object({
-  firstName: Yup.string().min(2).max(50).required('First name is required'),
-  lastName:  Yup.string().min(2).max(50).required('Last name is required'),
-  username:  Yup.string().min(3).max(30)
+  firstName:    Yup.string().min(2).max(50).required('First name is required'),
+  lastName:     Yup.string().min(2).max(50).required('Last name is required'),
+  username:     Yup.string().min(3).max(30)
     .matches(/^[a-z0-9_.-]+$/, 'Lowercase letters, numbers, dots, hyphens, underscores only')
     .required('Username is required'),
-  email:     Yup.string().email('Invalid email').notRequired(),
-  phone:     yupPhone(false),
-  subRole:   Yup.string().notRequired(),
+  email:        Yup.string().email('Invalid email').notRequired(),
+  phone:        yupPhone(false),
+  subRole:      Yup.string().notRequired(),
+  neighborhood: Yup.string().max(100).notRequired(),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -74,13 +76,14 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
 
   const formik = useFormik({
     initialValues: {
-      firstName: staff?.firstName ?? '',
-      lastName:  staff?.lastName  ?? '',
-      username:  staff?.username  ?? '',
-      email:     staff?.email     ?? '',
-      phone:     staff?.phone     ?? '',
-      password:  '',
-      subRole:   staff?.subRole?._id ?? staff?.subRole ?? '',
+      firstName:    staff?.firstName    ?? '',
+      lastName:     staff?.lastName     ?? '',
+      username:     staff?.username     ?? '',
+      email:        staff?.email        ?? '',
+      phone:        staff?.phone        ?? '',
+      password:     '',
+      subRole:      staff?.subRole?._id ?? staff?.subRole ?? '',
+      neighborhood: staff?.neighborhood ?? '',
     },
     validationSchema: isEdit ? editSchema : createSchema,
     validateOnBlur: true,
@@ -157,6 +160,18 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
             onBlur={formik.handleBlur}
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
+          />
+        </Grid>
+
+        {/* ── Location ──────────────────────────────────────────────────────── */}
+        <FormSection title="Location" subtitle="(optional)" />
+
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormTextField
+            formik={formik}
+            name="neighborhood"
+            label="Neighborhood"
+            icon={LocationOn}
           />
         </Grid>
 

@@ -28,7 +28,7 @@ const USER_TYPE_ENDPOINTS = {
   parent: '/parents/login',
   mentor: '/mentors/login',
   staff: '/staff/login',
-  partner: '/partners/login',
+  partner: '/partners/auth/login',
 };
 
 export function AuthProvider({ children }) {

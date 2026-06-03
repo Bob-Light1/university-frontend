@@ -12,8 +12,15 @@
     "level": "Niveau",
     "department": "Département",
     "campus": "Campus",
-    "status": { "active": "Actif", "inactive": "Inactif", "archived": "Archivé" },
-    "gender": { "male": "Masculin", "female": "Féminin" },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "archived": "Archivé"
+    },
+    "gender": {
+      "male": "Masculin",
+      "female": "Féminin"
+    },
     "import": "Importer des étudiants",
     "export": "Exporter des étudiants"
   },
@@ -46,10 +53,55 @@
     "name": "Nom de la matière",
     "coefficient": "Coefficient",
     "type": "Type",
-    "types": { "CM": "Cours Magistral (CM)", "TD": "Travaux Dirigés (TD)", "TP": "Travaux Pratiques (TP)" },
-    "status": { "draft": "Brouillon", "pending": "En attente", "approved": "Approuvé", "archived": "Archivé" }
+    "types": {
+      "CM": "Cours Magistral (CM)",
+      "TD": "Travaux Dirigés (TD)",
+      "TP": "Travaux Pratiques (TP)"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "archived": "Archivé"
+    }
   },
-  "level": { "title": "Niveaux", "create": "Créer un niveau", "name": "Nom du niveau" },
-  "department": { "title": "Départements", "create": "Créer un département", "name": "Nom du département" },
-  "campus": { "name": "Nom du campus", "manager": "Responsable", "city": "Ville", "country": "Pays" }
+  "level": {
+    "title": "Niveaux",
+    "create": "Créer un niveau",
+    "name": "Nom du niveau"
+  },
+  "department": {
+    "title": "Départements",
+    "create": "Créer un département",
+    "name": "Nom du département"
+  },
+  "campus": {
+    "name": "Nom du campus",
+    "manager": "Responsable",
+    "city": "Ville",
+    "country": "Pays"
+  },
+  "mentor": {
+    "title": "Mentors",
+    "create": "Ajouter un mentor",
+    "edit": "Modifier le mentor",
+    "list": "Liste des mentors",
+    "assignStudents": {
+      "title": "Attribuer des étudiants",
+      "manage": "Gérer",
+      "modeLabel": "Mode d'attribution",
+      "selectClasses": "Sélectionner les classes",
+      "noClasses": "Aucune classe active trouvée pour ce campus.",
+      "mode": {
+        "add": "Ajouter",
+        "remove": "Retirer",
+        "replace": "Remplacer tout"
+      },
+      "modeDesc": {
+        "add": "Ajoute les étudiants des classes sélectionnées sans modifier les attributions existantes.",
+        "remove": "Retire les étudiants des classes sélectionnées de ce mentor.",
+        "replace": "Remplace toutes les attributions actuelles par les étudiants des classes sélectionnées."
+      }
+    }
+  }
 }

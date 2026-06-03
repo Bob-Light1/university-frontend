@@ -80,5 +80,28 @@
     "manager": "Manager",
     "city": "City",
     "country": "Country"
+  },
+  "mentor": {
+    "title": "Mentoren",
+    "create": "Mentor hinzufügen",
+    "edit": "Mentor bearbeiten",
+    "list": "Mentorenliste",
+    "assignStudents": {
+      "title": "Schüler zuweisen",
+      "manage": "Verwalten",
+      "modeLabel": "Zuweisungsmodus",
+      "selectClasses": "Klassen auswählen",
+      "noClasses": "Keine aktiven Klassen für diesen Campus gefunden.",
+      "mode": {
+        "add": "Hinzufügen",
+        "remove": "Entfernen",
+        "replace": "Alle ersetzen"
+      },
+      "modeDesc": {
+        "add": "Fügt Schüler aus den ausgewählten Klassen hinzu, ohne bestehende Zuweisungen zu entfernen.",
+        "remove": "Entfernt Schüler der ausgewählten Klassen von diesem Mentor.",
+        "replace": "Ersetzt alle aktuellen Schülerzuweisungen durch die der ausgewählten Klassen."
+      }
+    }
   }
 }

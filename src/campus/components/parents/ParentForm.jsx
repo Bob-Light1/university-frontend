@@ -7,7 +7,7 @@ import {
 import {
   Person, Email, Domain,
   FamilyRestroom, Badge, Work, Language, Cancel, Check,
-  Add, Remove,
+  Add, Remove, LocationOn,
 } from '@mui/icons-material';
 
 import { useFormik } from 'formik';
@@ -224,6 +224,7 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
       preferredLanguage: initialData?.preferredLanguage || 'fr',
       notes:             initialData?.notes             || '',
       schoolCampus:      initialData?.schoolCampus?._id || campusId || '',
+      neighborhood:      initialData?.neighborhood      || '',
       // Normalize children[] to an array of string IDs
       children: (initialData?.children || []).map((c) => c._id ?? c),
     },
@@ -362,6 +363,18 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
                   : 'Invalid selection'}
               </Typography>
             )}
+          </Grid>
+
+          {/* ── Location ─────────────────────────────────────────────── */}
+          <FormSection title="Location" subtitle="(optional)" />
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormTextField
+              formik={formik}
+              name="neighborhood"
+              label="Neighborhood"
+              icon={LocationOn}
+            />
           </Grid>
 
           {/* ── Preferences ──────────────────────────────────────────── */}

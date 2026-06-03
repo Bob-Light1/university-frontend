@@ -80,5 +80,28 @@
     "manager": "Manager",
     "city": "City",
     "country": "Country"
+  },
+  "mentor": {
+    "title": "导师",
+    "create": "添加导师",
+    "edit": "编辑导师",
+    "list": "导师列表",
+    "assignStudents": {
+      "title": "分配学生",
+      "manage": "管理",
+      "modeLabel": "分配模式",
+      "selectClasses": "选择班级",
+      "noClasses": "此校区未找到活跃班级。",
+      "mode": {
+        "add": "添加",
+        "remove": "移除",
+        "replace": "全部替换"
+      },
+      "modeDesc": {
+        "add": "从所选班级添加学生，不删除现有分配。",
+        "remove": "从该导师移除所选班级的学生。",
+        "replace": "用所选班级的学生替换所有当前分配。"
+      }
+    }
   }
 }

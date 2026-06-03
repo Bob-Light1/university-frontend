@@ -80,5 +80,28 @@
     "manager": "Manager",
     "city": "City",
     "country": "Country"
+  },
+  "mentor": {
+    "title": "Mentores",
+    "create": "Agregar mentor",
+    "edit": "Editar mentor",
+    "list": "Lista de mentores",
+    "assignStudents": {
+      "title": "Asignar estudiantes",
+      "manage": "Gestionar",
+      "modeLabel": "Modo de asignación",
+      "selectClasses": "Seleccionar clases",
+      "noClasses": "No se encontraron clases activas para este campus.",
+      "mode": {
+        "add": "Agregar",
+        "remove": "Quitar",
+        "replace": "Reemplazar todo"
+      },
+      "modeDesc": {
+        "add": "Agrega estudiantes de las clases seleccionadas sin eliminar las asignaciones existentes.",
+        "remove": "Quita los estudiantes de las clases seleccionadas de este mentor.",
+        "replace": "Reemplaza todas las asignaciones actuales con las de las clases seleccionadas."
+      }
+    }
   }
 }
