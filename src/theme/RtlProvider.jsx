@@ -7,7 +7,7 @@
  *
  * Wraps the entire app so any language switch immediately mirrors the layout.
  */
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import stylisRTLPlugin from 'stylis-plugin-rtl';
@@ -20,9 +20,10 @@ const ltrCache = createCache({ key: 'muiltr' });
 export function RtlProvider({ children }) {
   const { isRTL, language } = useLanguage();
 
-  // Sync HTML attributes for accessibility + screen readers
-  document.documentElement.lang = language;
-  document.documentElement.dir  = isRTL ? 'rtl' : 'ltr';
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir  = isRTL ? 'rtl' : 'ltr';
+  }, [language, isRTL]);
 
   const theme = useMemo(
     () => createTheme({ direction: isRTL ? 'rtl' : 'ltr' }),

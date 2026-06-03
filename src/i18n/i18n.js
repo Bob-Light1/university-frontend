@@ -31,7 +31,6 @@ i18n
   .use(ICU)           // ICU replaces default parser — no {{}} interpolation
   .use(initReactI18next)
   .init({
-    lng:           DEFAULT_LANG,
     fallbackLng:   DEFAULT_LANG,
     supportedLngs: SUPPORTED_LANGUAGES,
 

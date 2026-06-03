@@ -1,15 +1,19 @@
 import { createContext, useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config/env';
 import i18n, { RTL_LANGUAGES } from '../i18n/i18n.js';
+import { configureLocale } from '../utils/dateFormat.js';
 
-// Apply language preference BEFORE React tree renders — prevents language flash
-function applyLanguage(lang) {
+const SECURE = location.protocol === 'https:' ? ';Secure' : '';
+
+// Apply language + locale settings BEFORE React tree renders — prevents flash
+function applyLanguage(lang, timezone, preferredLocale) {
   if (!lang) return;
   i18n.changeLanguage(lang);
   document.documentElement.lang = lang;
   document.documentElement.dir  = RTL_LANGUAGES.includes(lang) ? 'rtl' : 'ltr';
-  document.cookie = `erp_lang=${lang};path=/;SameSite=Lax;max-age=31536000`;
+  document.cookie = `erp_lang=${lang};path=/;SameSite=Lax;max-age=31536000${SECURE}`;
   localStorage.setItem('erp_language', lang);
+  configureLocale(lang, timezone, preferredLocale);
 }
 
 export const AuthContext = createContext(undefined);
@@ -68,9 +72,13 @@ export function AuthProvider({ children }) {
         userType, // Store user type for future reference
       };
 
-      // Apply language BEFORE state update — zero flash on login
+      // Apply language + locale BEFORE state update — zero flash on login
       if (enrichedUserData.preferredLanguage) {
-        applyLanguage(enrichedUserData.preferredLanguage);
+        applyLanguage(
+          enrichedUserData.preferredLanguage,
+          enrichedUserData.timezone,
+          enrichedUserData.preferredLocale,
+        );
       }
 
       // Save to localStorage
@@ -95,9 +103,13 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('userType');
+    localStorage.removeItem('erp_language');
+    document.cookie = 'erp_lang=;path=/;SameSite=Lax;max-age=0';
+    i18n.changeLanguage('en');
+    document.documentElement.lang = 'en';
+    document.documentElement.dir  = 'ltr';
     setUser(null);
-    
-    // Redirect to login
+
     window.location.href = '/login';
   };
 
@@ -145,15 +157,39 @@ export function AuthProvider({ children }) {
 
           if (isValid) {
             const parsedUser = JSON.parse(savedUser);
-            // Restore language preference on page reload — before first render
+            // Restore language + locale from cache — prevents flash on first render
             if (parsedUser.preferredLanguage) {
-              applyLanguage(parsedUser.preferredLanguage);
+              applyLanguage(
+                parsedUser.preferredLanguage,
+                parsedUser.timezone,
+                parsedUser.preferredLocale,
+              );
             }
             setUser(parsedUser);
-            console.log('✅ User restored from localStorage');
+
+            // Background resync from server — reconciles multi-device preference changes
+            fetch(`${API_BASE_URL}/settings`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+              .then((r) => r.json())
+              .then(({ data }) => {
+                if (!data) return;
+                const { preferredLanguage, timezone, preferredLocale } = data;
+                const changed =
+                  preferredLanguage !== parsedUser.preferredLanguage ||
+                  timezone          !== parsedUser.timezone          ||
+                  preferredLocale   !== parsedUser.preferredLocale;
+                if (changed) {
+                  if (preferredLanguage) applyLanguage(preferredLanguage, timezone, preferredLocale);
+                  setUser((prev) => {
+                    const updated = { ...prev, preferredLanguage, timezone, preferredLocale };
+                    localStorage.setItem('user', JSON.stringify(updated));
+                    return updated;
+                  });
+                }
+              })
+              .catch(() => {});
           } else {
-            // Token expired or invalid
-            console.warn('⚠️ Token invalid, logging out');
             logout();
           }
         }
@@ -176,11 +212,7 @@ export function AuthProvider({ children }) {
     setUser((prev) => {
       const updatedUser = { ...prev, ...newData };
 
-      // Update localStorage
       localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      console.log('✅ User updated:', updatedUser);
-      
       return updatedUser;
     });
   };

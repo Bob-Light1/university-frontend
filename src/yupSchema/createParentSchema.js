@@ -46,7 +46,7 @@ export const createParentSchema = (isEdit = false) =>
       .notRequired(),
 
     preferredLanguage: Yup.string()
-      .oneOf(['fr', 'en', 'es', 'ar'], 'Invalid language')
+      .oneOf(['en', 'fr', 'es', 'ar', 'zh-CN', 'de'], 'Invalid language')
       .notRequired(),
 
     notes: Yup.string()

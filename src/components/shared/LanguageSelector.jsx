@@ -1,65 +1,77 @@
 /**
- * LanguageSelector — shared component injected in all 9 portal Settings pages.
+ * LanguageSelector — shared component injected in all portal Settings pages.
  *
  * Rules:
  * - FormControl + InputLabel + Select (never TextField[select])
- * - SVG flags via country-flag-icons (no emoji — broken on Windows)
- * - Instant preview: i18n.changeLanguage() fires immediately (persist=false)
- * - Save button persists to server via PATCH /api/settings
+ * - SVG flags via country-flag-icons npm package (local, no CDN, no emoji)
+ * - Instant preview: changeLanguage(code, false) — no local/server persist
+ * - Save button: persists to server + localStorage/cookie + updates AuthContext user
+ * - Save button disabled when nothing has changed since last save
  */
-import { useState } from 'react';
+import { useState, useRef, useContext } from 'react';
 import {
   FormControl, InputLabel, Select, MenuItem,
   Chip, Box, Typography, Divider, Button,
   CircularProgress, Snackbar, Alert,
 } from '@mui/material';
+import * as AllFlags from 'country-flag-icons/react/3x2';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
 import useFormSnackbar from '../../hooks/useFormSnackBar';
 import api from '../../api/axiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 
 function FlagIcon({ countryCode, size = 20 }) {
-  try {
-    // country-flag-icons provides SVG URLs
-    return (
-      <img
-        src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode}.svg`}
-        alt={countryCode}
-        width={size * 1.5}
-        height={size}
-        style={{ borderRadius: 2, flexShrink: 0 }}
-      />
-    );
-  } catch {
-    return null;
-  }
+  const FlagComponent = AllFlags[countryCode];
+  if (!FlagComponent) return null;
+  return (
+    <FlagComponent
+      title={countryCode}
+      style={{ width: size * 1.5, height: size, borderRadius: 2, flexShrink: 0, display: 'block' }}
+    />
+  );
 }
 
 export function LanguageSelector({ onSaved }) {
   const { language, changeLanguage, supportedLangs, languageMeta } = useLanguage();
   const { t } = useAppTranslation('settings');
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+  const { updateUser } = useContext(AuthContext);
 
-  const [selected, setSelected]   = useState(language);
-  const [saving,   setSaving]     = useState(false);
+  const [selected, setSelected] = useState(language);
+  const [saving,   setSaving]   = useState(false);
+
+  // Track the language as it was at last save — needed because `language` from
+  // useLanguage() updates immediately when the preview fires (persist=false),
+  // so comparing selected !== language would always be false after any selection.
+  const savedLangRef = useRef(language);
+  const hasChanged = selected !== savedLangRef.current;
 
   const handleChange = async (e) => {
     const code = e.target.value;
     setSelected(code);
-    // Instant preview — no server persist yet
+    // Instant preview only — no localStorage/cookie/server persist
     await changeLanguage(code, false);
   };
 
   const handleSave = async () => {
     setSaving(true);
+    const previousLang = savedLangRef.current;
     try {
       await api.patch('/api/settings', { preferredLanguage: selected });
-      // Also write cookie + localStorage
-      document.cookie = `erp_lang=${selected};path=/;SameSite=Lax;max-age=31536000`;
+      // Write local storage + cookie now that the save is confirmed
+      const secure = location.protocol === 'https:' ? ';Secure' : '';
+      document.cookie = `erp_lang=${selected};path=/;SameSite=Lax;max-age=31536000${secure}`;
       localStorage.setItem('erp_language', selected);
+      // Keep AuthContext user in sync so next page reload picks up the correct language
+      updateUser?.({ preferredLanguage: selected });
+      savedLangRef.current = selected;
       showSnackbar(t('language.saved'), 'success');
       onSaved?.(selected);
     } catch {
+      // Rollback preview to the last saved language
+      await changeLanguage(previousLang, false);
+      setSelected(previousLang);
       showSnackbar(t('api.serverError', { ns: 'errors' }), 'error');
     } finally {
       setSaving(false);
@@ -101,7 +113,7 @@ export function LanguageSelector({ onSaved }) {
                   </Typography>
                   {meta?.rtl && (
                     <Chip
-                      label="RTL"
+                      label={t('language.rtlBadge')}
                       size="small"
                       color="info"
                       variant="outlined"
@@ -125,7 +137,7 @@ export function LanguageSelector({ onSaved }) {
         variant="contained"
         size="small"
         onClick={handleSave}
-        disabled={saving}
+        disabled={saving || !hasChanged}
         sx={{ alignSelf: 'flex-start' }}
         startIcon={saving ? <CircularProgress size={14} color="inherit" /> : null}
       >

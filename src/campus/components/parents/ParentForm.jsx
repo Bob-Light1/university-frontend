@@ -46,10 +46,12 @@ const RELATIONSHIP_OPTIONS = [
 ];
 
 const LANGUAGE_OPTIONS = [
-  { value: 'fr', label: 'French'  },
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'ar', label: 'Arabic'  },
+  { value: 'en',    label: 'English'  },
+  { value: 'fr',    label: 'Français' },
+  { value: 'es',    label: 'Español'  },
+  { value: 'ar',    label: 'العربية'  },
+  { value: 'zh-CN', label: '中文'     },
+  { value: 'de',    label: 'Deutsch'  },
 ];
 
 // ─── Endpoint config ──────────────────────────────────────────────────────────

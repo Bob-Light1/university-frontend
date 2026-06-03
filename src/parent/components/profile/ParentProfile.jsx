@@ -27,10 +27,12 @@ const profileUrl = (img) => {
 };
 
 const LANGUAGE_OPTIONS = [
-  { value: 'fr', label: 'French'  },
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'ar', label: 'Arabic'  },
+  { value: 'en',    label: 'English'  },
+  { value: 'fr',    label: 'Français' },
+  { value: 'es',    label: 'Español'  },
+  { value: 'ar',    label: 'العربية'  },
+  { value: 'zh-CN', label: '中文'     },
+  { value: 'de',    label: 'Deutsch'  },
 ];
 
 // ─── Profile Edit Form ────────────────────────────────────────────────────────
@@ -56,7 +58,7 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
         .matches(/^\+?[0-9\s()-]{6,20}$/, 'Please enter a valid phone number')
         .required('Phone number is required'),
       preferredLanguage: Yup.string()
-        .oneOf(['fr', 'en', 'es', 'ar']).required(),
+        .oneOf(['en', 'fr', 'es', 'ar', 'zh-CN', 'de']).required(),
     }),
     validateOnChange: true,
     validateOnBlur:   true,
@@ -317,7 +319,8 @@ const ParentProfile = () => {
   const avatarUrl = profileUrl(parent.profileImage);
 
   const languageLabel = {
-    fr: 'French', en: 'English', es: 'Spanish', ar: 'Arabic',
+    en: 'English', fr: 'Français', es: 'Español',
+    ar: 'العربية', 'zh-CN': '中文', de: 'Deutsch',
   }[parent.preferredLanguage] ?? parent.preferredLanguage;
 
   return (

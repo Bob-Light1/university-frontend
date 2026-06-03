@@ -62,7 +62,8 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive, onRest
   }[parent.relationship] ?? parent.relationship;
 
   const languageLabel = {
-    fr: 'French', en: 'English', es: 'Spanish', ar: 'Arabic',
+    en: 'English', fr: 'Français', es: 'Español',
+    ar: 'العربية', 'zh-CN': '中文', de: 'Deutsch',
   }[parent.preferredLanguage] ?? parent.preferredLanguage;
 
   // ── Render ─────────────────────────────────────────────────────────────────

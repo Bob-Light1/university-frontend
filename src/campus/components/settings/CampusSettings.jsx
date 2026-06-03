@@ -8,6 +8,7 @@ import {
 
 import StaffRolesManager from './StaffRolesManager';
 import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
+import CampusDefaultsSection from './CampusDefaultsSection';
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
@@ -66,7 +67,10 @@ export default function CampusSettings() {
           </TabPanel>
 
           <TabPanel value={tab} index={1}>
-            <LanguagePreferencesSection />
+            <Stack spacing={4}>
+              <LanguagePreferencesSection />
+              <CampusDefaultsSection />
+            </Stack>
           </TabPanel>
 
           <TabPanel value={tab} index={2}>
