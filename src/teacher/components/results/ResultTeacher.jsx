@@ -232,14 +232,18 @@ const ResultTeacher = () => {
       setSnackMsg('Set class, subject, academic year and semester filters first.');
       return;
     }
-    const res = await submitAllBatch({
-      classId:         filters.classId,
-      subjectId:       filters.subjectId,
-      evaluationTitle: filters.evaluationTitle ?? '',
-      academicYear:    filters.academicYear,
-      semester:        filters.semester,
-    });
-    setSnackMsg(res?.message ?? 'Batch submitted.');
+    try {
+      const res = await submitAllBatch({
+        classId:         filters.classId,
+        subjectId:       filters.subjectId,
+        evaluationTitle: filters.evaluationTitle ?? '',
+        academicYear:    filters.academicYear,
+        semester:        filters.semester,
+      });
+      setSnackMsg(res?.message ?? 'Batch submitted.');
+    } catch (err) {
+      setSnackMsg(err.response?.data?.message ?? 'Failed to submit batch.');
+    }
   };
 
   // ── Delete confirm ─────────────────────────────────────────────────────────
@@ -260,13 +264,13 @@ const ResultTeacher = () => {
 
   // ── KPI metrics ───────────────────────────────────────────────────────────
   const kpiMetrics = [
-    { key: 'total',     label: 'My Results',    value: pagination.total ?? summary.total,
+    { key: 'total',     label: 'My Results',       value: pagination.total ?? summary.total,
       icon: <BarChart />, color: '#3b82f6' },
-    { key: 'draft',     label: 'Drafts',        value: summary.draft,
+    { key: 'draft',     label: 'Drafts (this page)',    value: summary.draft,
       icon: <Edit />,     color: '#94a3b8' },
-    { key: 'submitted', label: 'Submitted',     value: summary.submitted,
+    { key: 'submitted', label: 'Submitted (this page)', value: summary.submitted,
       icon: <Send />,     color: '#f97316' },
-    { key: 'avg',       label: 'Class Avg /20', value: summary.avg?.toFixed(2) ?? '—',
+    { key: 'avg',       label: 'Avg /20 (this page)',   value: summary.avg?.toFixed(2) ?? '—',
       icon: <PlaylistAddCheck />, color: '#10b981' },
   ];
 
@@ -536,23 +540,29 @@ const ResultTeacher = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {retakeList.map((r) => (
-                  <TableRow key={r._id} hover>
-                    <TableCell>
-                      {r.student?.firstName} {r.student?.lastName}
-                      <Typography variant="caption" display="block" color="text.secondary">
-                        {r.student?.matricule}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{r.subject?.subject_name}</TableCell>
-                    <TableCell>
-                      <ScoreDisplay score={r.normalizedScore} rawScore={r.score} maxScore={r.maxScore} />
-                    </TableCell>
-                    <TableCell>
-                      <Chip label="Retake Eligible" color="warning" size="small" />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {retakeList.map((item) =>
+                  (item.failedSubjects ?? []).map((fs, fi) => (
+                    <TableRow key={`${item.student?._id}-${fi}`} hover>
+                      {fi === 0 && (
+                        <TableCell rowSpan={item.failedSubjects.length}>
+                          <Typography variant="body2" fontWeight={500}>
+                            {item.student?.firstName} {item.student?.lastName}
+                          </Typography>
+                          <Typography variant="caption" display="block" color="text.secondary">
+                            {item.student?.matricule}
+                          </Typography>
+                        </TableCell>
+                      )}
+                      <TableCell>{fs.subject?.subject_name ?? '—'}</TableCell>
+                      <TableCell>
+                        <ScoreDisplay score={fs.normalizedScore} rawScore={fs.score} maxScore={fs.maxScore} />
+                      </TableCell>
+                      <TableCell>
+                        <Chip label="Retake Eligible" color="warning" size="small" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
             </Box>

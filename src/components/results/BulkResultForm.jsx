@@ -225,7 +225,19 @@ const BulkResultForm = ({
     };
 
     try {
-      await onSubmit(payload);
+      const result = await onSubmit(payload);
+      const skipped = result?.skipped ?? 0;
+      const errors  = result?.errors  ?? [];
+      if (skipped > 0 && errors.length > 0) {
+        // Partial success — show summary before closing
+        const errMsg = errors.slice(0, 3).map((e) => `• ${e.error}`).join('\n');
+        setError(
+          `${result.inserted} result(s) saved. ${skipped} skipped:\n${errMsg}` +
+          (errors.length > 3 ? `\n…and ${errors.length - 3} more.` : '')
+        );
+        setSubmitting(false);
+        return; // keep dialog open so user can review
+      }
       handleClose();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save results.');
@@ -572,15 +584,15 @@ const BulkResultForm = ({
               </Alert>
             ) : (
               <>
-                {/* Bulk fill toolbar */}
+                {/* Bulk fill toolbar — values scale with maxScore */}
                 <Stack direction="row" spacing={1} alignItems="center" mb={1}>
                   <Typography variant="body2" color="text.secondary">Quick fill:</Typography>
-                  {[0, 10, 20].map((v) => (
+                  {[0, Math.round(context.maxScore / 2), context.maxScore].map((v) => (
                     <Button
                       key={v}
                       size="small"
                       variant="outlined"
-                      onClick={() => handleFillAll(Math.min(v, context.maxScore))}
+                      onClick={() => handleFillAll(v)}
                     >
                       {v}
                     </Button>

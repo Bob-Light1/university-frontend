@@ -363,6 +363,7 @@ const ResultDetailDrawer = ({
                     <TableCell>Field</TableCell>
                     <TableCell>Old</TableCell>
                     <TableCell>New</TableCell>
+                    <TableCell>Reason</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -377,6 +378,9 @@ const ResultDetailDrawer = ({
                       </TableCell>
                       <TableCell sx={{ fontSize: '0.7rem', color: 'success.main' }}>
                         {String(entry.newValue ?? '—')}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.7rem', color: 'text.secondary', maxWidth: 160 }}>
+                        {entry.reason ?? '—'}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -76,13 +76,13 @@ const LockSemesterDialog = ({ open, onClose, onConfirm, loading }) => {
           This action cannot be undone.
         </Alert>
         <Grid container spacing={2}>
-          <Grid item xs={8}>
+          <Grid size={{ xs: 8 }}>
             <TextField select fullWidth size="small" label="Academic Year"
               value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}>
               {years.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
             </TextField>
           </Grid>
-          <Grid item xs={4}>
+          <Grid size={{ xs: 4 }}>
             <TextField select fullWidth size="small" label="Semester"
               value={semester} onChange={(e) => setSemester(e.target.value)}>
               {['S1', 'S2', 'Annual'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
@@ -235,17 +235,17 @@ const ResultManager = () => {
       icon: <BarChart />, color: '#3b82f6',
     },
     {
-      key: 'submitted', label: 'Pending Review', value: summary.submitted,
+      key: 'submitted', label: 'Pending (this page)', value: summary.submitted,
       icon: <Send />, color: '#f97316',
       trend: summary.submitted > 0 ? 'up' : null,
     },
     {
-      key: 'avg', label: 'Class Avg (/20)',
+      key: 'avg', label: 'Avg /20 (this page)',
       value: summary.avg != null ? summary.avg.toFixed(2) : '—',
       icon: <BarChart />, color: '#10b981',
     },
     {
-      key: 'passRate', label: 'Pass Rate',
+      key: 'passRate', label: 'Pass Rate (this page)',
       value: summary.passRate != null ? `${summary.passRate}%` : '—',
       icon: <PlaylistAddCheck />, color: '#8b5cf6',
     },
@@ -258,14 +258,18 @@ const ResultManager = () => {
       setSnackMsg('Set class, subject, academic year and semester filters first.');
       return;
     }
-    await publishAllBatch({
-      classId: filters.classId,
-      subjectId: filters.subjectId,
-      evaluationTitle: filters.evaluationTitle ?? '',
-      academicYear: filters.academicYear,
-      semester: filters.semester,
-    });
-    setSnackMsg('Batch published successfully.');
+    try {
+      const res = await publishAllBatch({
+        classId:         filters.classId,
+        subjectId:       filters.subjectId,
+        evaluationTitle: filters.evaluationTitle ?? '',
+        academicYear:    filters.academicYear,
+        semester:        filters.semester,
+      });
+      setSnackMsg(res?.message ?? 'Batch published successfully.');
+    } catch (err) {
+      setSnackMsg(err.response?.data?.message ?? 'Failed to publish batch.');
+    }
   };
 
   const handleLockSemester = async (data) => {
@@ -305,7 +309,7 @@ const ResultManager = () => {
             Refresh
           </Button>
           <Button size="small" variant="outlined" startIcon={<CloudUpload />}
-            onClick={() => setBulkOpen(true)}>
+            onClick={() => { setBulkStudents([]); setBulkOpen(true); }}>
             Bulk Entry
           </Button>
           <Button size="small" variant="outlined" color="warning"
@@ -430,7 +434,13 @@ const ResultManager = () => {
                       <>
                         <Tooltip title="Edit">
                           <IconButton size="small"
-                            onClick={() => { setEditTarget(r); setFormOpen(true); }}>
+                            onClick={() => {
+                              const classId = r.class?._id ?? r.class ?? '';
+                              setSingleStudents([]);
+                              if (classId) fetchStudentsByClass(classId, 'single');
+                              setEditTarget(r);
+                              setFormOpen(true);
+                            }}>
                             <Edit fontSize="small" />
                           </IconButton>
                         </Tooltip>

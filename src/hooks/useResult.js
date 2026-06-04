@@ -291,7 +291,10 @@ const useResult = (mode = 'manager', contextParams = {}) => {
     // Filter actions
     handleFilterChange,
     handleReset,
-    setPage: (page) => setPagination((p) => ({ ...p, page })),
+    setPage: (page) => {
+      setFilters((prev) => ({ ...prev, page }));
+      setPagination((prev) => ({ ...prev, page }));
+    },
 
     // CRUD mutations
     create,
