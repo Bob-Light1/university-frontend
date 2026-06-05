@@ -33,7 +33,7 @@ const STATUS_BG = {
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function StudentsList() {
-  const { t } = useAppTranslation('common');
+  const { t } = useAppTranslation(['common', 'staff']);
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -100,7 +100,7 @@ function StudentsList() {
             <TableHead>
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.students')}</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Matricule</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('staff:col.matricule')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.classes')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:field.email')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>

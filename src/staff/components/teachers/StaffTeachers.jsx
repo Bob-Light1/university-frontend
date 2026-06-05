@@ -40,7 +40,7 @@ const EMP_BG = {
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function TeachersList() {
-  const { t } = useAppTranslation('common');
+  const { t } = useAppTranslation(['common', 'staff']);
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -108,7 +108,7 @@ function TeachersList() {
               <TableRow sx={{ bgcolor: '#f5f7fa' }}>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.teachers')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:field.email')}</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Employment</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('staff:col.employment')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.subjects')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
               </TableRow>
