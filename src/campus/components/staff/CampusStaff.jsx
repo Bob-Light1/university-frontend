@@ -1,27 +1,34 @@
+import { PersonAdd } from '@mui/icons-material';
+
 import GenericEntityPage from '../../../components/shared/GenericEntityPage';
 import StaffForm         from './StaffForm';
 import StaffDetailDrawer from './StaffDetailDrawer';
-import { staffConfig }   from './StaffConfig';
+import {
+  staffConfig, getKPIMetrics, getTableColumns, getFilterConfig, renderTableRow,
+} from './StaffConfig';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 export default function CampusStaff() {
+  const { t } = useAppTranslation(['staff', 'common']);
+
   return (
     <GenericEntityPage
-      entityName={staffConfig.entityName}
-      entityNamePlural={staffConfig.entityNamePlural}
+      entityName={t('staff:list.entityName')}
+      entityNamePlural={t('staff:list.entityNamePlural')}
       apiEndpoint={staffConfig.apiEndpoint}
 
-      tableColumns={staffConfig.tableColumns}
-      renderTableRow={staffConfig.renderTableRow}
+      tableColumns={getTableColumns(t)}
+      renderTableRow={(staff, helpers) => renderTableRow(staff, helpers, t)}
 
-      filterConfig={staffConfig.getFilterConfig}
-      searchPlaceholder={staffConfig.searchPlaceholder}
+      filterConfig={() => getFilterConfig(t)}
+      searchPlaceholder={t('staff:list.searchPlaceholder')}
 
-      getKPIMetrics={staffConfig.getKPIMetrics}
+      getKPIMetrics={(kpis, theme) => getKPIMetrics(kpis, theme, t)}
 
       bulkActions={staffConfig.bulkActions}
 
-      addButtonText={staffConfig.addButtonText}
-      addButtonIcon={staffConfig.addButtonIcon}
+      addButtonText={t('staff:list.addButton')}
+      addButtonIcon={<PersonAdd />}
 
       relatedDataEndpoints={staffConfig.relatedDataEndpoints}
 

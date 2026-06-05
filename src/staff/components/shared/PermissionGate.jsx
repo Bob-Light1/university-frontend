@@ -2,6 +2,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { Lock } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useStaffPermission } from '../../hooks/useStaffPermission';
+import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
 /**
  * Renders children only if the user has the required permission.
@@ -14,6 +15,7 @@ import { useStaffPermission } from '../../hooks/useStaffPermission';
 export default function PermissionGate({ permission, anyOf, children }) {
   const { has, hasAny } = useStaffPermission();
   const navigate = useNavigate();
+  const { t }    = useAppTranslation('staff');
 
   const allowed = permission
     ? has(permission)
@@ -37,18 +39,17 @@ export default function PermissionGate({ permission, anyOf, children }) {
     >
       <Lock sx={{ fontSize: 56, mb: 2, color: 'text.disabled' }} />
       <Typography variant="h6" fontWeight={700} gutterBottom>
-        Access Denied
+        {t('staff:access.denied')}
       </Typography>
       <Typography variant="body2" sx={{ mb: 3, maxWidth: 340 }}>
-        Your current role does not include the permission required to view this module.
-        Contact your campus administrator to request access.
+        {t('staff:access.deniedMsg')}
       </Typography>
       <Button
         variant="outlined"
         onClick={() => navigate('/staff')}
         sx={{ textTransform: 'none', borderRadius: 2 }}
       >
-        Back to Dashboard
+        {t('staff:access.backToDashboard')}
       </Button>
     </Box>
   );

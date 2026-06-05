@@ -23,42 +23,44 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import AppShell  from '../components/AppShell';
 import { useAuth } from '../hooks/useAuth';
+import { useAppTranslation } from '../hooks/useAppTranslation';
 
-// Map permission keys → nav item definition
-const PERMISSION_NAV = [
-  { keys: ['students.read',     'students.manage'],     link: '/staff/students',   label: 'Students',     icon: GroupIcon         },
-  { keys: ['teachers.read',     'teachers.manage'],     link: '/staff/teachers',   label: 'Teachers',     icon: RecordVoiceOverIcon },
-  { keys: ['attendance.read',   'attendance.manage'],   link: '/staff/attendance', label: 'Attendance',   icon: ChecklistIcon     },
-  { keys: ['results.read',      'results.manage'],      link: '/staff/results',    label: 'Results',      icon: AssessmentIcon    },
-  { keys: ['courses.read',      'courses.manage'],      link: '/staff/courses',    label: 'Courses',      icon: MenuBookIcon      },
-  { keys: ['schedule.read',     'schedule.manage'],     link: '/staff/schedule',   label: 'Schedule',     icon: EventNoteIcon     },
-  { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',  label: 'Documents',    icon: DescriptionIcon   },
-  { keys: ['finance.read',      'finance.manage'],      link: '/staff/finance',    label: 'Finance',      icon: AccountBalanceIcon },
-  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',      label: 'Examinations', icon: QuizIcon          },
-  { keys: ['print'],                                    link: '/staff/print',      label: 'Print',        icon: PrintIcon         },
-  { keys: ['announcements'],                            link: '/staff/announcements', label: 'Announcements', icon: CampaignIcon   },
-  { keys: ['messages'],                                 link: '/staff/messages',   label: 'Messages',     icon: MessageIcon       },
+// Map permission keys → nav item definition (labels resolved at render via t())
+const PERMISSION_NAV_CONFIG = [
+  { keys: ['students.read',     'students.manage'],     link: '/staff/students',      tKey: 'common:nav.students',     icon: GroupIcon          },
+  { keys: ['teachers.read',     'teachers.manage'],     link: '/staff/teachers',      tKey: 'common:nav.teachers',     icon: RecordVoiceOverIcon },
+  { keys: ['attendance.read',   'attendance.manage'],   link: '/staff/attendance',    tKey: 'common:nav.attendance',   icon: ChecklistIcon      },
+  { keys: ['results.read',      'results.manage'],      link: '/staff/results',       tKey: 'common:nav.results',      icon: AssessmentIcon     },
+  { keys: ['courses.read',      'courses.manage'],      link: '/staff/courses',       tKey: 'common:nav.courses',      icon: MenuBookIcon       },
+  { keys: ['schedule.read',     'schedule.manage'],     link: '/staff/schedule',      tKey: 'common:nav.schedule',     icon: EventNoteIcon      },
+  { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',     tKey: 'common:nav.documents',    icon: DescriptionIcon    },
+  { keys: ['finance.read',      'finance.manage'],      link: '/staff/finance',       tKey: 'common:nav.finance',      icon: AccountBalanceIcon },
+  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',         tKey: 'common:nav.examinations', icon: QuizIcon           },
+  { keys: ['print'],                                    link: '/staff/print',         tKey: 'common:nav.print',        icon: PrintIcon          },
+  { keys: ['announcements'],                            link: '/staff/announcements', tKey: 'common:nav.announcements',icon: CampaignIcon       },
+  { keys: ['messages'],                                 link: '/staff/messages',      tKey: 'common:nav.messages',     icon: MessageIcon        },
 ];
 
 export default function Staff() {
   const { user } = useAuth();
+  const { t }    = useAppTranslation(['staff', 'common']);
   const perms    = user?.permissions ?? [];
 
-  const dynamicItems = PERMISSION_NAV
+  const dynamicItems = PERMISSION_NAV_CONFIG
     .filter(({ keys }) => keys.some((k) => perms.includes(k)))
-    .map(({ link, label, icon }) => ({ link, label, icon }));
+    .map(({ link, tKey, icon }) => ({ link, label: t(tKey), icon }));
 
   const navItems = [
-    { link: '/',      label: 'Home',      icon: HomeIcon      },
-    { link: '/staff', label: 'Dashboard', icon: DashboardIcon },
+    { link: '/',      label: t('common:nav.home'),      icon: HomeIcon      },
+    { link: '/staff', label: t('common:nav.dashboard'), icon: DashboardIcon },
     ...dynamicItems,
   ];
 
   return (
     <AppShell
       navItems={navItems}
-      drawerLabel="Staff Portal"
-      pageTitle="Staff Dashboard"
+      drawerLabel={t('staff:portal.label')}
+      pageTitle={t('staff:portal.pageTitle')}
     />
   );
 }

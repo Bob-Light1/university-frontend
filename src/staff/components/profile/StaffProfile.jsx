@@ -28,21 +28,24 @@ import ProfileImageUploader  from '../../../components/shared/ProfileImageUpload
 import NotificationPreferences from '../../../components/shared/NotificationPreferences';
 import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 import { yupPhone, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
 const STAFF_PRIMARY  = '#00695C';
 
-const profileSchema = Yup.object({
-  phone: yupPhone(false),
-});
-
-const passwordSchema = Yup.object({
-  currentPassword: Yup.string().required('Current password is required'),
-  newPassword:     yupPassword(),
-  confirmPassword: yupConfirmPassword('newPassword'),
-});
-
 export default function StaffProfile() {
+  const { t } = useAppTranslation(['staff', 'common']);
+
+  const profileSchema = Yup.object({
+    phone: yupPhone(false),
+  });
+
+  const passwordSchema = Yup.object({
+    currentPassword: Yup.string().required(t('staff:profile.currentPasswordRequired')),
+    newPassword:     yupPassword(),
+    confirmPassword: yupConfirmPassword('newPassword'),
+  });
+
   const [profile,    setProfile]    = useState(null);
   const [loading,    setLoading]    = useState(true);
   const [notifPrefs, setNotifPrefs] = useState({ email: true, sms: false, push: false });
@@ -56,7 +59,7 @@ export default function StaffProfile() {
         setProfile(data);
         if (data?.notificationPrefs) setNotifPrefs(data.notificationPrefs);
       })
-      .catch(() => showSnackbar('Failed to load profile.', 'error'))
+      .catch(() => showSnackbar(t('staff:profile.loadError'), 'error'))
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -71,9 +74,9 @@ export default function StaffProfile() {
       try {
         const res = await updateMyStaffProfile({ phone: values.phone || null });
         setProfile((prev) => ({ ...prev, ...(res.data?.data ?? res.data) }));
-        showSnackbar('Profile updated.', 'success');
+        showSnackbar(t('staff:profile.profileUpdated'), 'success');
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to update profile.', 'error');
+        showSnackbar(err.response?.data?.message || t('staff:profile.updateError'), 'error');
       } finally {
         setSubmitting(false);
       }
@@ -89,10 +92,10 @@ export default function StaffProfile() {
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         await changeMyStaffPassword(values);
-        showSnackbar('Password changed.', 'success');
+        showSnackbar(t('staff:profile.passwordChanged'), 'success');
         resetForm();
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to change password.', 'error');
+        showSnackbar(err.response?.data?.message || t('staff:profile.passwordError'), 'error');
       } finally {
         setSubmitting(false);
       }
@@ -105,9 +108,9 @@ export default function StaffProfile() {
     try {
       await uploadMyStaffProfileImage(url);
       setProfile((prev) => ({ ...prev, profileImage: url }));
-      showSnackbar('Photo updated.', 'success');
+      showSnackbar(t('staff:profile.photoUpdated'), 'success');
     } catch {
-      showSnackbar('Failed to save photo.', 'error');
+      showSnackbar(t('staff:profile.photoError'), 'error');
     }
   };
 
@@ -116,9 +119,9 @@ export default function StaffProfile() {
   const handleSaveNotifs = async () => {
     try {
       await updateMyStaffNotifications(notifPrefs);
-      showSnackbar('Preferences saved.', 'success');
+      showSnackbar(t('staff:profile.prefsSaved'), 'success');
     } catch {
-      showSnackbar('Failed to save preferences.', 'error');
+      showSnackbar(t('staff:profile.prefsError'), 'error');
     }
   };
 
@@ -131,6 +134,12 @@ export default function StaffProfile() {
   }
 
   const subRole = profile?.subRole;
+
+  const pwdFields = [
+    { name: 'currentPassword', label: t('staff:profile.currentPassword'), key: 'current' },
+    { name: 'newPassword',     label: t('staff:profile.newPassword'),     key: 'newPwd'  },
+    { name: 'confirmPassword', label: t('staff:profile.confirmPassword'), key: 'confirm' },
+  ];
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
@@ -174,7 +183,7 @@ export default function StaffProfile() {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
           <Person color="action" />
-          <Typography variant="subtitle1" fontWeight={700}>Personal Information</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('staff:profile.personalInfo')}</Typography>
         </Stack>
         <Divider sx={{ mb: 2.5 }} />
 
@@ -182,7 +191,7 @@ export default function StaffProfile() {
           <Stack spacing={2.5}>
             <PhoneInput
               name="phone"
-              label="Phone Number"
+              label={t('staff:profile.phoneNumber')}
               value={profileFormik.values.phone}
               onChange={(v) => profileFormik.setFieldValue('phone', v)}
               onBlur={profileFormik.handleBlur}
@@ -197,7 +206,7 @@ export default function StaffProfile() {
                 startIcon={profileFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Save />}
                 sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: STAFF_GRADIENT }}
               >
-                {profileFormik.isSubmitting ? 'Saving…' : 'Save Profile'}
+                {profileFormik.isSubmitting ? t('staff:profile.saving') : t('staff:profile.saveProfile')}
               </Button>
             </Box>
           </Stack>
@@ -208,17 +217,13 @@ export default function StaffProfile() {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
           <Lock color="action" />
-          <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('staff:profile.changePassword')}</Typography>
         </Stack>
         <Divider sx={{ mb: 2.5 }} />
 
         <form onSubmit={passwordFormik.handleSubmit} noValidate>
           <Stack spacing={2.5}>
-            {[
-              { name: 'currentPassword', label: 'Current Password', key: 'current' },
-              { name: 'newPassword',     label: 'New Password',     key: 'newPwd'  },
-              { name: 'confirmPassword', label: 'Confirm Password', key: 'confirm' },
-            ].map(({ name, label, key }) => (
+            {pwdFields.map(({ name, label, key }) => (
               <TextField
                 key={name}
                 fullWidth
@@ -253,7 +258,7 @@ export default function StaffProfile() {
                 startIcon={passwordFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Lock />}
                 sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
               >
-                {passwordFormik.isSubmitting ? 'Updating…' : 'Update Password'}
+                {passwordFormik.isSubmitting ? t('staff:profile.updating') : t('staff:profile.updatePassword')}
               </Button>
             </Box>
           </Stack>
@@ -265,7 +270,7 @@ export default function StaffProfile() {
         value={notifPrefs}
         onChange={setNotifPrefs}
         onSave={handleSaveNotifs}
-        onError={() => showSnackbar('Failed to save preferences.', 'error')}
+        onError={() => showSnackbar(t('staff:profile.prefsError'), 'error')}
       />
 
       {/* ── Section 4: Language & Region ── */}

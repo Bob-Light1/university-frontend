@@ -6,13 +6,16 @@ import {
 } from '@mui/material';
 import { Search, MenuBook, Person } from '@mui/icons-material';
 
-import { getStaffCourses } from '../../../services/staffService';
-import PermissionGate      from '../shared/PermissionGate';
+import { getStaffCourses }     from '../../../services/staffService';
+import PermissionGate          from '../shared/PermissionGate';
+import { useAppTranslation }   from '../../../hooks/useAppTranslation';
 
 const STAFF_PRIMARY  = '#00695C';
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
 
 function CoursesList() {
+  const { t } = useAppTranslation(['staff', 'common']);
+
   const [courses, setCourses] = useState([]);
   const [total,   setTotal]   = useState(0);
   const [page,    setPage]    = useState(1);
@@ -30,11 +33,11 @@ function CoursesList() {
       setCourses(res.data?.data ?? []);
       setTotal(res.data?.pagination?.total ?? 0);
     } catch {
-      setError('Failed to load courses.');
+      setError(t('staff:courses.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { fetch(); }, [fetch]);
 
@@ -45,13 +48,13 @@ function CoursesList() {
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
         <MenuBook sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
         <Box>
-          <Typography variant="h5" fontWeight={800}>Courses</Typography>
-          <Typography variant="body2" color="text.secondary">Published course catalogue (read-only)</Typography>
+          <Typography variant="h5" fontWeight={800}>{t('common:nav.courses')}</Typography>
+          <Typography variant="body2" color="text.secondary">{t('staff:courses.subtitle')}</Typography>
         </Box>
       </Stack>
 
       <TextField
-        size="small" fullWidth placeholder="Search title, code…"
+        size="small" fullWidth placeholder={t('staff:courses.searchPlaceholder')}
         value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         sx={{ mb: 2.5, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
         slotProps={{
@@ -71,7 +74,7 @@ function CoursesList() {
         </Grid>
       ) : courses.length === 0 ? (
         <Paper variant="outlined" sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
-          <Typography color="text.secondary">No courses found.</Typography>
+          <Typography color="text.secondary">{t('staff:courses.noResults')}</Typography>
         </Paper>
       ) : (
         <Grid container spacing={2}>

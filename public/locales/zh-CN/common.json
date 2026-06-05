@@ -67,7 +67,11 @@
     "levels": "年级",
     "reports": "报告",
     "announcements": "公告",
-    "gaet": "GAET"
+    "gaet": "GAET",
+    "home": "首页",
+    "courses": "课程",
+    "messages": "消息",
+    "print": "打印中心"
   },
   "message": {
     "success": "操作成功",

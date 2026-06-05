@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { fDate } from '../../../utils/dateFormat';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 const STATUS_COLOR = {
   active:    'success',
@@ -45,6 +46,8 @@ const InfoItem = ({ icon: Icon, label, secondary, onClick }) => (
 );
 
 export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onArchive, onRestore }) {
+  const { t } = useAppTranslation('staff');
+
   if (!staff) return null;
 
   const imgUrl = staff.profileImage
@@ -65,7 +68,7 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
         <IconButton
           onClick={onClose}
           sx={{ position: 'absolute', right: 8, top: 8, color: 'white' }}
-          aria-label="Close"
+          aria-label={t('staff:detail.close')}
         >
           <Close />
         </IconButton>
@@ -104,20 +107,20 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
               />
               <Stack direction="row" spacing={0.5}>
                 {!isArchived && (
-                  <Tooltip title="Edit Staff">
+                  <Tooltip title={t('staff:detail.tooltipEdit')}>
                     <IconButton size="small" color="primary" onClick={onEdit}>
                       <Edit fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 )}
                 {isArchived ? (
-                  <Tooltip title="Restore Staff">
+                  <Tooltip title={t('staff:detail.tooltipRestore')}>
                     <IconButton size="small" color="success" onClick={onRestore}>
                       <Restore fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 ) : (
-                  <Tooltip title="Archive Staff">
+                  <Tooltip title={t('staff:detail.tooltipArchive')}>
                     <IconButton size="small" color="error" onClick={onArchive}>
                       <Archive fontSize="small" />
                     </IconButton>
@@ -130,25 +133,25 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
           {/* Contact Information */}
           <Box>
             <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
-              Contact Information
+              {t('staff:detail.contactInfo')}
             </Typography>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             <List disablePadding>
               <InfoItem
                 icon={Email}
-                label="Email"
+                label={t('staff:detail.email')}
                 secondary={staff.email}
                 onClick={staff.email ? () => { window.location.href = `mailto:${staff.email}`; } : undefined}
               />
-              {staff.phone && <InfoItem icon={Phone} label="Phone" secondary={staff.phone} />}
-              <InfoItem icon={Person} label="Username" secondary={`@${staff.username}`} />
+              {staff.phone && <InfoItem icon={Phone} label={t('staff:detail.phone')} secondary={staff.phone} />}
+              <InfoItem icon={Person} label={t('staff:detail.username')} secondary={`@${staff.username}`} />
             </List>
           </Box>
 
           {/* Role & Permissions */}
           <Box>
             <Typography variant="overline" color="primary" fontWeight={700} fontSize="0.875rem">
-              Role & Permissions
+              {t('staff:detail.rolePermissions')}
             </Typography>
             <Divider sx={{ mb: 2, mt: 0.5 }} />
             {subRole ? (
@@ -176,7 +179,7 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
               </Stack>
             ) : (
               <Typography variant="body2" color="text.disabled" sx={{ py: 0.5 }}>
-                No role assigned.
+                {t('staff:detail.noRole')}
               </Typography>
             )}
           </Box>
@@ -184,13 +187,13 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
           {/* Account Information */}
           <Box>
             <Typography variant="overline" color="text.secondary" fontSize="0.75rem">
-              Account Information
+              {t('staff:detail.accountInfo')}
             </Typography>
             <Divider sx={{ mb: 1.5, mt: 0.5 }} />
             <Grid container spacing={1.5}>
               {staff.lastLogin && (
                 <Grid size={{ xs: 12 }}>
-                  <Typography variant="caption" color="text.secondary">Last Login</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('staff:detail.lastLogin')}</Typography>
                   <Typography variant="body2" fontWeight={500}>
                     {new Date(staff.lastLogin).toLocaleString()}
                   </Typography>
@@ -198,13 +201,13 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
               )}
               {staff.createdAt && (
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" color="text.secondary">Created</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('staff:detail.created')}</Typography>
                   <Typography variant="body2" fontWeight={500}>{fDate(staff.createdAt)}</Typography>
                 </Grid>
               )}
               {staff.updatedAt && (
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" color="text.secondary">Last Updated</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('staff:detail.lastUpdated')}</Typography>
                   <Typography variant="body2" fontWeight={500}>{fDate(staff.updatedAt)}</Typography>
                 </Grid>
               )}
@@ -218,7 +221,7 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
       <Box sx={{ p: 3, borderTop: 1, borderColor: 'divider' }}>
         <Stack direction="row" spacing={2}>
           <Button variant="outlined" fullWidth onClick={onClose} sx={{ borderRadius: 2 }}>
-            Close
+            {t('staff:detail.close')}
           </Button>
           {!isArchived && (
             <Button
@@ -228,7 +231,7 @@ export default function StaffDetailDrawer({ entity: staff, onClose, onEdit, onAr
               onClick={onEdit}
               sx={{ borderRadius: 2 }}
             >
-              Edit Staff
+              {t('staff:detail.editButton')}
             </Button>
           )}
         </Stack>

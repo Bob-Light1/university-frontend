@@ -67,7 +67,11 @@
     "levels": "المستويات",
     "reports": "التقارير",
     "announcements": "الإعلانات",
-    "gaet": "GAET"
+    "gaet": "GAET",
+    "home": "الرئيسية",
+    "courses": "المقررات",
+    "messages": "الرسائل",
+    "print": "مركز الطباعة"
   },
   "message": {
     "success": "تمت العملية بنجاح",

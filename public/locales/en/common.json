@@ -67,7 +67,11 @@
     "levels": "Levels",
     "reports": "Reports",
     "announcements": "Announcements",
-    "gaet": "GAET"
+    "gaet": "GAET",
+    "home": "Home",
+    "courses": "Courses",
+    "messages": "Messages",
+    "print": "Print Center"
   },
   "message": {
     "success": "Operation successful",

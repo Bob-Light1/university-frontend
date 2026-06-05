@@ -20,16 +20,17 @@ import FormSection          from '../../../components/form/FormSection';
 import {
   FormTextField, FormSelectField, FormPasswordField,
 } from '../../../components/form/FormFields';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const createSchema = Yup.object({
-  firstName:    Yup.string().min(2).max(50).required('First name is required'),
-  lastName:     Yup.string().min(2).max(50).required('Last name is required'),
+  firstName:    Yup.string().min(2).max(50).required(),
+  lastName:     Yup.string().min(2).max(50).required(),
   username:     Yup.string().min(3).max(30)
     .matches(/^[a-z0-9_.-]+$/, 'Lowercase letters, numbers, dots, hyphens, underscores only')
-    .required('Username is required'),
-  email:        Yup.string().email('Invalid email').notRequired(),
+    .required(),
+  email:        Yup.string().email().notRequired(),
   phone:        yupPhone(false),
   password:     yupPassword(),
   subRole:      Yup.string().notRequired(),
@@ -37,12 +38,12 @@ const createSchema = Yup.object({
 });
 
 const editSchema = Yup.object({
-  firstName:    Yup.string().min(2).max(50).required('First name is required'),
-  lastName:     Yup.string().min(2).max(50).required('Last name is required'),
+  firstName:    Yup.string().min(2).max(50).required(),
+  lastName:     Yup.string().min(2).max(50).required(),
   username:     Yup.string().min(3).max(30)
     .matches(/^[a-z0-9_.-]+$/, 'Lowercase letters, numbers, dots, hyphens, underscores only')
-    .required('Username is required'),
-  email:        Yup.string().email('Invalid email').notRequired(),
+    .required(),
+  email:        Yup.string().email().notRequired(),
   phone:        yupPhone(false),
   subRole:      Yup.string().notRequired(),
   neighborhood: Yup.string().max(100).notRequired(),
@@ -51,10 +52,11 @@ const editSchema = Yup.object({
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
-  const isEdit   = Boolean(staff?._id);
+  const { t }     = useAppTranslation('staff');
+  const isEdit    = Boolean(staff?._id);
   const { campusId } = useParams();
-  const theme    = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const theme     = useTheme();
+  const isMobile  = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [roles,        setRoles]        = useState([]);
   const [apiError,     setApiError]     = useState('');
@@ -67,7 +69,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   }, [campusId]);
 
   const roleOptions = [
-    { value: '', label: '— No role —' },
+    { value: '', label: t('staff:form.noRole') },
     ...roles.map((r) => ({
       value: r._id,
       label: `${r.name} (${r.permissions?.length ?? 0} permissions)`,
@@ -101,9 +103,9 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           ? await updateStaff(staff._id, payload)
           : await createStaff(payload);
 
-        onSuccess(`Staff member ${isEdit ? 'updated' : 'created'} successfully`);
+        onSuccess(t(isEdit ? 'staff:form.updatedSuccess' : 'staff:form.createdSuccess'));
       } catch (err) {
-        setApiError(err.response?.data?.message || 'Operation failed.');
+        setApiError(err.response?.data?.message || t('staff:form.failed'));
       } finally {
         setSubmitting(false);
       }
@@ -133,28 +135,28 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         </Grid>
 
         {/* ── Personal Information ───────────────────────────────────────────── */}
-        <FormSection title="Personal Information" />
+        <FormSection title={t('staff:form.personalInfo')} />
 
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormTextField formik={formik} name="firstName" label="First Name" icon={Person} />
+          <FormTextField formik={formik} name="firstName" label={t('staff:form.firstName')} icon={Person} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormTextField formik={formik} name="lastName"  label="Last Name"  icon={Person} />
+          <FormTextField formik={formik} name="lastName"  label={t('staff:form.lastName')}  icon={Person} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormTextField formik={formik} name="username"  label="Username"   icon={BadgeIcon} />
+          <FormTextField formik={formik} name="username"  label={t('staff:form.username')}  icon={BadgeIcon} />
         </Grid>
 
         {/* ── Contact ───────────────────────────────────────────────────────── */}
-        <FormSection title="Contact" />
+        <FormSection title={t('staff:form.contact')} />
 
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormTextField formik={formik} name="email" label="Email Address" type="email" icon={Email} />
+          <FormTextField formik={formik} name="email" label={t('staff:form.emailAddress')} type="email" icon={Email} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <PhoneInput
             name="phone"
-            label="Phone Number"
+            label={t('staff:form.phoneNumber')}
             value={formik.values.phone}
             onChange={(v) => formik.setFieldValue('phone', v)}
             onBlur={formik.handleBlur}
@@ -164,25 +166,25 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         </Grid>
 
         {/* ── Location ──────────────────────────────────────────────────────── */}
-        <FormSection title="Location" subtitle="(optional)" />
+        <FormSection title={t('staff:form.location')} subtitle={t('staff:form.locationOptional')} />
 
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormTextField
             formik={formik}
             name="neighborhood"
-            label="Neighborhood"
+            label={t('staff:form.neighborhood')}
             icon={LocationOn}
           />
         </Grid>
 
         {/* ── Role ──────────────────────────────────────────────────────────── */}
-        <FormSection title="Role" />
+        <FormSection title={t('staff:form.role')} />
 
         <Grid size={{ xs: 12 }}>
           <FormSelectField
             formik={formik}
             name="subRole"
-            label="Sub-Role"
+            label={t('staff:form.subRole')}
             icon={AdminPanelSettings}
             options={roleOptions}
           />
@@ -191,7 +193,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         {/* ── Security — password only on create ────────────────────────────── */}
         <Collapse in={!isEdit} sx={{ width: '100%' }}>
           <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-            <FormSection title="Security" />
+            <FormSection title={t('staff:form.security')} />
             <Grid size={{ xs: 12 }}>
               <FormPasswordField formik={formik} />
             </Grid>
@@ -208,7 +210,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
               fullWidth={isMobile}
               sx={{ px: 4, py: 1.5, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
             >
-              Cancel
+              {t('staff:form.cancel')}
             </Button>
             <Button
               type="submit"
@@ -223,7 +225,11 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
                 '&:hover': { boxShadow: theme.shadows[8] },
               }}
             >
-              {formik.isSubmitting ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Staff'}
+              {formik.isSubmitting
+                ? t('staff:form.saving')
+                : isEdit
+                  ? t('staff:form.saveChanges')
+                  : t('staff:form.createStaff')}
             </Button>
           </Stack>
         </Grid>

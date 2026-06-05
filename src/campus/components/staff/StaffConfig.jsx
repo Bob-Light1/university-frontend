@@ -11,60 +11,60 @@ import { IMAGE_BASE_URL } from '../../../config/env';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
-export const getKPIMetrics = (kpis, theme) => [
+export const getKPIMetrics = (kpis, theme, t) => [
   {
-    label:    'Total Staff',
+    label:    t('staff:kpi.totalStaff'),
     value:    kpis?.staff?.total ?? 0,
     icon:     <People sx={{ fontSize: 28 }} />,
     color:    theme.palette.primary.main,
-    subtitle: 'All members',
+    subtitle: t('staff:kpi.allMembers'),
   },
   {
-    label:    'Active',
+    label:    t('staff:kpi.active'),
     value:    kpis?.staff?.active ?? 0,
     icon:     <PersonAdd sx={{ fontSize: 28 }} />,
     color:    theme.palette.success.main,
-    subtitle: 'Currently active',
+    subtitle: t('staff:kpi.currentlyActive'),
   },
   {
-    label:    'With Role',
+    label:    t('staff:kpi.withRole'),
     value:    kpis?.staff?.withRole ?? 0,
     icon:     <AdminPanelSettings sx={{ fontSize: 28 }} />,
     color:    theme.palette.info.main,
-    subtitle: 'Role assigned',
+    subtitle: t('staff:kpi.roleAssigned'),
   },
   {
-    label:    'Without Role',
+    label:    t('staff:kpi.withoutRole'),
     value:    kpis?.staff?.withoutRole ?? 0,
     icon:     <ManageAccounts sx={{ fontSize: 28 }} />,
     color:    theme.palette.warning.main,
-    subtitle: 'No role yet',
+    subtitle: t('staff:kpi.noRoleYet'),
   },
 ];
 
 // ─── Table Columns ────────────────────────────────────────────────────────────
 
-export const tableColumns = [
-  { key: 'staff',   label: 'Staff Member' },
-  { key: 'role',    label: 'Sub-Role'     },
-  { key: 'contact', label: 'Contact'      },
-  { key: 'status',  label: 'Status'       },
-  { key: 'actions', label: 'Actions', align: 'right' },
+export const getTableColumns = (t) => [
+  { key: 'staff',   label: t('staff:list.colMember') },
+  { key: 'role',    label: t('staff:list.colRole')   },
+  { key: 'contact', label: t('staff:list.colContact') },
+  { key: 'status',  label: t('staff:list.colStatus') },
+  { key: 'actions', label: t('staff:list.colActions'), align: 'right' },
 ];
 
 // ─── Filter Configuration ─────────────────────────────────────────────────────
 
-export const getFilterConfig = () => [
+export const getFilterConfig = (t) => [
   {
     key:     'status',
-    label:   'Status',
+    label:   t('staff:list.filterStatus'),
     type:    'select',
     options: [
-      { value: '',           label: 'All Statuses' },
-      { value: 'active',     label: 'Active'       },
-      { value: 'inactive',   label: 'Inactive'     },
-      { value: 'suspended',  label: 'Suspended'    },
-      { value: 'archived',   label: 'Archived'     },
+      { value: '',           label: t('staff:list.filterAllStatuses') },
+      { value: 'active',     label: t('common:status.active')         },
+      { value: 'inactive',   label: t('common:status.inactive')       },
+      { value: 'suspended',  label: t('common:status.suspended')      },
+      { value: 'archived',   label: t('common:status.archived')       },
     ],
   },
 ];
@@ -78,7 +78,7 @@ const STATUS_COLOR = {
   archived:  'default',
 };
 
-export const renderTableRow = (staff, helpers) => {
+export const renderTableRow = (staff, helpers, t) => {
   const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme } = helpers;
 
   const imgUrl = staff.profileImage
@@ -122,7 +122,7 @@ export const renderTableRow = (staff, helpers) => {
               variant="outlined"
             />
           )
-          : <Typography variant="caption" color="text.disabled">No role</Typography>
+          : <Typography variant="caption" color="text.disabled">{t('staff:list.noRole')}</Typography>
         }
       </TableCell>
 
@@ -146,22 +146,22 @@ export const renderTableRow = (staff, helpers) => {
       {/* Actions */}
       <TableCell align="right">
         <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-          <Tooltip title="View">
+          <Tooltip title={t('staff:list.tooltipView')}>
             <IconButton size="small" onClick={onView}><Visibility fontSize="small" /></IconButton>
           </Tooltip>
           {!isArchived && (
-            <Tooltip title="Edit">
+            <Tooltip title={t('staff:list.tooltipEdit')}>
               <IconButton size="small" color="info" onClick={onEdit}><Edit fontSize="small" /></IconButton>
             </Tooltip>
           )}
           {isArchived
             ? (
-              <Tooltip title="Restore">
+              <Tooltip title={t('staff:list.tooltipRestore')}>
                 <IconButton size="small" color="success" onClick={onRestore}><Restore fontSize="small" /></IconButton>
               </Tooltip>
             )
             : (
-              <Tooltip title="Archive">
+              <Tooltip title={t('staff:list.tooltipArchive')}>
                 <IconButton size="small" color="error" onClick={onArchive}>
                   <ManageAccounts fontSize="small" />
                 </IconButton>
@@ -174,24 +174,13 @@ export const renderTableRow = (staff, helpers) => {
   );
 };
 
-// ─── Main Config Object ───────────────────────────────────────────────────────
+// ─── Static config (translation-independent) ─────────────────────────────────
 
 export const staffConfig = {
   entityName:       'Staff',
   entityNamePlural: 'Staff Members',
   apiEndpoint:      'staff',
-
-  addButtonText:     'Add Staff Member',
-  addButtonIcon:     <PersonAdd />,
-  searchPlaceholder: 'Search by name, email, username…',
-
-  getKPIMetrics,
-  tableColumns,
-  getFilterConfig,
-  renderTableRow,
-
-  bulkActions: ['sendEmail', 'archive', 'export'],
-
+  bulkActions:      ['sendEmail', 'archive', 'export'],
   relatedDataEndpoints: {},
 };
 

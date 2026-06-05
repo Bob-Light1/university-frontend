@@ -9,32 +9,34 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import { createStaffRole, updateStaffRole } from '../../../services/staffService';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 // ─── Permission groups matching backend staff-permissions.js ─────────────────
 
 const PERMISSION_GROUPS = [
-  { label: 'Students',     keys: ['students.read',     'students.manage']     },
-  { label: 'Teachers',     keys: ['teachers.read',     'teachers.manage']     },
-  { label: 'Parents',      keys: ['parents.read',      'parents.manage']      },
-  { label: 'Finance',      keys: ['finance.read',      'finance.manage']      },
-  { label: 'Schedule',     keys: ['schedule.read',     'schedule.manage']     },
-  { label: 'Attendance',   keys: ['attendance.read',   'attendance.manage']   },
-  { label: 'Results',      keys: ['results.read',      'results.manage']      },
-  { label: 'Courses',      keys: ['courses.read',      'courses.manage']      },
-  { label: 'Documents',    keys: ['documents.read',    'documents.manage']    },
-  { label: 'Examinations', keys: ['examinations.read', 'examinations.manage'] },
-  { label: 'Other',        keys: ['announcements',     'messages',  'print']  },
+  { labelKey: 'Students',     keys: ['students.read',     'students.manage']     },
+  { labelKey: 'Teachers',     keys: ['teachers.read',     'teachers.manage']     },
+  { labelKey: 'Parents',      keys: ['parents.read',      'parents.manage']      },
+  { labelKey: 'Finance',      keys: ['finance.read',      'finance.manage']      },
+  { labelKey: 'Schedule',     keys: ['schedule.read',     'schedule.manage']     },
+  { labelKey: 'Attendance',   keys: ['attendance.read',   'attendance.manage']   },
+  { labelKey: 'Results',      keys: ['results.read',      'results.manage']      },
+  { labelKey: 'Courses',      keys: ['courses.read',      'courses.manage']      },
+  { labelKey: 'Documents',    keys: ['documents.read',    'documents.manage']    },
+  { labelKey: 'Examinations', keys: ['examinations.read', 'examinations.manage'] },
+  { labelKey: 'Other',        keys: ['announcements',     'messages',  'print']  },
 ];
 
 const schema = Yup.object({
-  name:        Yup.string().min(2).max(60).required('Role name is required'),
+  name:        Yup.string().min(2).max(60).required(),
   description: Yup.string().max(200).notRequired(),
 });
 
 const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 export default function StaffRoleForm({ open, onClose, onSaved, role }) {
-  const isEdit  = Boolean(role?._id);
+  const { t }    = useAppTranslation('staff');
+  const isEdit   = Boolean(role?._id);
   const [apiError, setApiError] = useState('');
 
   const formik = useFormik({
@@ -55,7 +57,7 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
         onSaved(res.data?.data ?? res.data);
         onClose();
       } catch (err) {
-        setApiError(err.response?.data?.message || 'Operation failed.');
+        setApiError(err.response?.data?.message || t('staff:roleForm.failed'));
       } finally {
         setSubmitting(false);
       }
@@ -87,7 +89,7 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
       slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <form onSubmit={formik.handleSubmit} noValidate>
         <DialogTitle sx={{ fontWeight: 700 }}>
-          {isEdit ? 'Edit Staff Role' : 'Create Staff Role'}
+          {isEdit ? t('staff:roleForm.editTitle') : t('staff:roleForm.createTitle')}
         </DialogTitle>
         <Divider />
 
@@ -97,7 +99,7 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
 
             <TextField
               fullWidth
-              label="Role Name"
+              label={t('staff:roleForm.roleName')}
               name="name"
               value={formik.values.name}
               onChange={formik.handleChange}
@@ -109,7 +111,7 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
 
             <TextField
               fullWidth
-              label="Description (optional)"
+              label={t('staff:roleForm.descriptionOptional')}
               name="description"
               value={formik.values.description}
               onChange={formik.handleChange}
@@ -123,9 +125,9 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
 
             <Box>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                <Typography variant="subtitle2" fontWeight={700}>Permissions</Typography>
+                <Typography variant="subtitle2" fontWeight={700}>{t('staff:roleForm.permissions')}</Typography>
                 <Chip
-                  label={`${formik.values.permissions.length} selected`}
+                  label={t('staff:roleForm.selected', { count: formik.values.permissions.length })}
                   size="small"
                   color={formik.values.permissions.length > 0 ? 'primary' : 'default'}
                 />
@@ -133,11 +135,11 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
 
               <Stack spacing={1.5}>
                 {PERMISSION_GROUPS.map((group) => {
-                  const allSelected = group.keys.every((k) => formik.values.permissions.includes(k));
-                  const someSelected = group.keys.some((k) => formik.values.permissions.includes(k));
+                  const allSelected  = group.keys.every((k) => formik.values.permissions.includes(k));
+                  const someSelected = group.keys.some((k)  => formik.values.permissions.includes(k));
                   return (
                     <Box
-                      key={group.label}
+                      key={group.labelKey}
                       sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5 }}
                     >
                       <FormControlLabel
@@ -150,7 +152,9 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
                           />
                         }
                         label={
-                          <Typography variant="subtitle2" fontWeight={700}>{group.label}</Typography>
+                          <Typography variant="subtitle2" fontWeight={700}>
+                            {t(`staff:roleForm.permGroup.${group.labelKey}`)}
+                          </Typography>
                         }
                         sx={{ mb: 0.5 }}
                       />
@@ -182,7 +186,9 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
 
         <Divider />
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={onClose} sx={{ textTransform: 'none', borderRadius: 2 }}>Cancel</Button>
+          <Button onClick={onClose} sx={{ textTransform: 'none', borderRadius: 2 }}>
+            {t('staff:roleForm.cancel')}
+          </Button>
           <Button
             type="submit"
             variant="contained"
@@ -190,7 +196,11 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
             startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
             sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
           >
-            {formik.isSubmitting ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Role'}
+            {formik.isSubmitting
+              ? t('staff:roleForm.saving')
+              : isEdit
+                ? t('staff:roleForm.saveChanges')
+                : t('staff:roleForm.createRole')}
           </Button>
         </DialogActions>
       </form>

@@ -67,7 +67,11 @@
     "levels": "Niveaus",
     "reports": "Berichte",
     "announcements": "Ankündigungen",
-    "gaet": "GAET"
+    "gaet": "GAET",
+    "home": "Startseite",
+    "courses": "Kurse",
+    "messages": "Nachrichten",
+    "print": "Druckzentrum"
   },
   "message": {
     "success": "Vorgang erfolgreich",

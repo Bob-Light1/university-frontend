@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box, Typography, Paper, Stack, Chip, Grid,
-  CircularProgress, Alert, Divider, LinearProgress,
+  CircularProgress, Alert, Divider,
 } from '@mui/material';
 import {
   DashboardCustomize, Group, ChecklistRtl,
@@ -10,35 +10,36 @@ import {
 
 import { useAuth }             from '../../../hooks/useAuth';
 import { getStaffDashboard }   from '../../../services/staffService';
+import { useAppTranslation }   from '../../../hooks/useAppTranslation';
 
 const STAFF_PRIMARY  = '#00695C';
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
 
-// Permission key → human label
-const PERM_LABELS = {
-  'students.read':      'View Students',
-  'students.manage':    'Manage Students',
-  'teachers.read':      'View Teachers',
-  'teachers.manage':    'Manage Teachers',
-  'parents.read':       'View Parents',
-  'parents.manage':     'Manage Parents',
-  'finance.read':       'View Finance',
-  'finance.manage':     'Manage Finance',
-  'schedule.read':      'View Schedule',
-  'schedule.manage':    'Manage Schedule',
-  'attendance.read':    'View Attendance',
-  'attendance.manage':  'Manage Attendance',
-  'results.read':       'View Results',
-  'results.manage':     'Manage Results',
-  'courses.read':       'View Courses',
-  'courses.manage':     'Manage Courses',
-  'documents.read':     'View Documents',
-  'documents.manage':   'Manage Documents',
-  'examinations.read':  'View Examinations',
-  'examinations.manage':'Manage Examinations',
-  'announcements':      'Announcements',
-  'messages':           'Messages',
-  'print':              'Print',
+// Map permission key → staff:perm translation key
+const PERM_KEY_MAP = {
+  'students.read':       'staff:perm.studentsRead',
+  'students.manage':     'staff:perm.studentsManage',
+  'teachers.read':       'staff:perm.teachersRead',
+  'teachers.manage':     'staff:perm.teachersManage',
+  'parents.read':        'staff:perm.parentsRead',
+  'parents.manage':      'staff:perm.parentsManage',
+  'finance.read':        'staff:perm.financeRead',
+  'finance.manage':      'staff:perm.financeManage',
+  'schedule.read':       'staff:perm.scheduleRead',
+  'schedule.manage':     'staff:perm.scheduleManage',
+  'attendance.read':     'staff:perm.attendanceRead',
+  'attendance.manage':   'staff:perm.attendanceManage',
+  'results.read':        'staff:perm.resultsRead',
+  'results.manage':      'staff:perm.resultsManage',
+  'courses.read':        'staff:perm.coursesRead',
+  'courses.manage':      'staff:perm.coursesManage',
+  'documents.read':      'staff:perm.documentsRead',
+  'documents.manage':    'staff:perm.documentsManage',
+  'examinations.read':   'staff:perm.examinationsRead',
+  'examinations.manage': 'staff:perm.examinationsManage',
+  'announcements':       'staff:perm.announcements',
+  'messages':            'staff:perm.messages',
+  'print':               'staff:perm.print',
 };
 
 function KpiCard({ label, value, icon, color, suffix }) {
@@ -64,6 +65,7 @@ function KpiCard({ label, value, icon, color, suffix }) {
 
 export default function StaffDashboard() {
   const { user }                  = useAuth();
+  const { t }                     = useAppTranslation(['staff', 'common']);
   const [data,    setData]        = useState(null);
   const [loading, setLoading]     = useState(true);
   const [error,   setError]       = useState(null);
@@ -71,9 +73,9 @@ export default function StaffDashboard() {
   useEffect(() => {
     getStaffDashboard()
       .then((r) => setData(r.data?.data ?? r.data))
-      .catch(() => setError('Failed to load dashboard.'))
+      .catch(() => setError(t('staff:dashboard.loadError')))
       .finally(() => setLoading(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>;
@@ -103,13 +105,13 @@ export default function StaffDashboard() {
             <Stack direction="row" spacing={1} sx={{ mt: 0.5, flexWrap: 'wrap', gap: 0.5 }}>
               <Chip
                 icon={<AdminPanelSettings sx={{ fontSize: 13, color: 'white !important' }} />}
-                label="Staff"
+                label={t('staff:dashboard.badge')}
                 size="small"
                 sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)' }}
               />
               <Chip
                 icon={<Security sx={{ fontSize: 13, color: 'white !important' }} />}
-                label={`${permissions.length} permissions`}
+                label={t('staff:dashboard.permCount', { count: permissions.length })}
                 size="small"
                 sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
               />
@@ -125,27 +127,27 @@ export default function StaffDashboard() {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {stats.totalStudents !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label="Total Students" value={stats.totalStudents} icon={<Group sx={{ fontSize: 32 }} />} color={STAFF_PRIMARY} />
+            <KpiCard label={t('staff:kpi.totalStudents')} value={stats.totalStudents} icon={<Group sx={{ fontSize: 32 }} />} color={STAFF_PRIMARY} />
           </Grid>
         )}
         {stats.activeStudents !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label="Active Students" value={stats.activeStudents} icon={<Group sx={{ fontSize: 32 }} />} color="#1565C0" />
+            <KpiCard label={t('staff:kpi.activeStudents')} value={stats.activeStudents} icon={<Group sx={{ fontSize: 32 }} />} color="#1565C0" />
           </Grid>
         )}
         {stats.attendanceRate !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label="Attendance Rate" value={stats.attendanceRate} suffix="%" icon={<ChecklistRtl sx={{ fontSize: 32 }} />} color="#6A1B9A" />
+            <KpiCard label={t('staff:kpi.attendanceRate')} value={stats.attendanceRate} suffix="%" icon={<ChecklistRtl sx={{ fontSize: 32 }} />} color="#6A1B9A" />
           </Grid>
         )}
         {stats.publishedResults !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label="Published Results" value={stats.publishedResults} icon={<Assessment sx={{ fontSize: 32 }} />} color="#E65100" />
+            <KpiCard label={t('staff:kpi.publishedResults')} value={stats.publishedResults} icon={<Assessment sx={{ fontSize: 32 }} />} color="#E65100" />
           </Grid>
         )}
         {stats.totalTeachers !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label="Teachers" value={stats.totalTeachers} icon={<School sx={{ fontSize: 32 }} />} color="#00838F" />
+            <KpiCard label={t('staff:kpi.teachers')} value={stats.totalTeachers} icon={<School sx={{ fontSize: 32 }} />} color="#00838F" />
           </Grid>
         )}
       </Grid>
@@ -154,20 +156,20 @@ export default function StaffDashboard() {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
           <Security color="action" />
-          <Typography variant="subtitle1" fontWeight={700}>Your Permissions</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('staff:dashboard.yourPermissions')}</Typography>
         </Stack>
         <Divider sx={{ mb: 2 }} />
 
         {permissions.length === 0 ? (
           <Typography variant="body2" color="text.secondary">
-            No permissions assigned. Contact your campus administrator.
+            {t('staff:dashboard.noPermissions')}
           </Typography>
         ) : (
           <Stack direction="row" flexWrap="wrap" gap={1}>
             {permissions.map((p) => (
               <Chip
                 key={p}
-                label={PERM_LABELS[p] ?? p}
+                label={PERM_KEY_MAP[p] ? t(PERM_KEY_MAP[p]) : p}
                 size="small"
                 variant="outlined"
                 color="primary"

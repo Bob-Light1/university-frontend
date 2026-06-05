@@ -11,11 +11,13 @@ import {
 import { useParams } from 'react-router-dom';
 
 import { getStaffRoles, toggleStaffRole, deleteStaffRole } from '../../../services/staffService';
-import StaffRoleForm from './StaffRoleForm';
-import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import StaffRoleForm    from './StaffRoleForm';
+import useFormSnackbar  from '../../../hooks/useFormSnackBar';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 export default function StaffRolesManager() {
-  const { campusId } = useParams();
+  const { t }         = useAppTranslation('staff');
+  const { campusId }  = useParams();
   const [roles,   setRoles]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(null);
@@ -31,11 +33,11 @@ export default function StaffRolesManager() {
       const res = await getStaffRoles({ campusId, limit: 100 });
       setRoles(res.data?.data ?? []);
     } catch {
-      setError('Failed to load staff roles.');
+      setError(t('staff:roles.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [campusId]);
+  }, [campusId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { load(); }, [load]);
 
@@ -48,7 +50,7 @@ export default function StaffRolesManager() {
       if (idx >= 0) { const next = [...prev]; next[idx] = saved; return next; }
       return [saved, ...prev];
     });
-    showSnackbar(editTarget ? 'Role updated.' : 'Role created.', 'success');
+    showSnackbar(editTarget ? t('staff:roles.updated') : t('staff:roles.created'), 'success');
   };
 
   const handleToggle = async (role) => {
@@ -57,18 +59,18 @@ export default function StaffRolesManager() {
       const updated = res.data?.data ?? res.data;
       setRoles((prev) => prev.map((r) => r._id === updated._id ? updated : r));
     } catch {
-      showSnackbar('Failed to toggle role.', 'error');
+      showSnackbar(t('staff:roles.toggleError'), 'error');
     }
   };
 
   const handleDelete = async (role) => {
-    if (!window.confirm(`Delete role "${role.name}"? This action cannot be undone.`)) return;
+    if (!window.confirm(t('staff:roles.deleteConfirm', { name: role.name }))) return;
     try {
       await deleteStaffRole(role._id);
       setRoles((prev) => prev.filter((r) => r._id !== role._id));
-      showSnackbar('Role deleted.', 'success');
+      showSnackbar(t('staff:roles.deleted'), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to delete role.', 'error');
+      showSnackbar(err.response?.data?.message || t('staff:roles.deleteError'), 'error');
     }
   };
 
@@ -84,9 +86,9 @@ export default function StaffRolesManager() {
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
         <Box>
-          <Typography variant="h6" fontWeight={700}>Staff Roles</Typography>
+          <Typography variant="h6" fontWeight={700}>{t('staff:roles.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Define sub-roles and their permission sets for campus staff members.
+            {t('staff:roles.subtitle')}
           </Typography>
         </Box>
         <Button
@@ -95,7 +97,7 @@ export default function StaffRolesManager() {
           onClick={handleCreate}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          New Role
+          {t('staff:roles.newRole')}
         </Button>
       </Stack>
 
@@ -112,13 +114,13 @@ export default function StaffRolesManager() {
           }}
         >
           <AdminPanelSettings sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
-          <Typography color="text.secondary">No staff roles yet.</Typography>
+          <Typography color="text.secondary">{t('staff:roles.noRoles')}</Typography>
           <Button
             onClick={handleCreate}
             startIcon={<Add />}
             sx={{ mt: 2, textTransform: 'none' }}
           >
-            Create the first role
+            {t('staff:roles.createFirst')}
           </Button>
         </Box>
       ) : (
@@ -140,7 +142,7 @@ export default function StaffRolesManager() {
                       <Security fontSize="small" color="primary" />
                       <Typography variant="subtitle1" fontWeight={700}>{role.name}</Typography>
                       <Chip
-                        label={role.isActive ? 'Active' : 'Inactive'}
+                        label={role.isActive ? t('common:status.active') : t('common:status.inactive')}
                         size="small"
                         color={role.isActive ? 'success' : 'default'}
                         sx={{ fontWeight: 600 }}
@@ -170,7 +172,7 @@ export default function StaffRolesManager() {
 
                 <Box>
                   <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                    {role.permissions?.length ?? 0} permission{role.permissions?.length !== 1 ? 's' : ''}
+                    {t('staff:roles.permCount', { count: role.permissions?.length ?? 0 })}
                   </Typography>
                   <Stack direction="row" flexWrap="wrap" gap={0.5}>
                     {(role.permissions ?? []).map((p) => (
@@ -182,19 +184,21 @@ export default function StaffRolesManager() {
                       />
                     ))}
                     {(!role.permissions || role.permissions.length === 0) && (
-                      <Typography variant="caption" color="text.disabled">No permissions assigned</Typography>
+                      <Typography variant="caption" color="text.disabled">
+                        {t('staff:roles.noPermissions')}
+                      </Typography>
                     )}
                   </Stack>
                 </Box>
               </CardContent>
 
               <CardActions sx={{ pt: 0, px: 2, pb: 1.5 }}>
-                <Tooltip title="Edit">
+                <Tooltip title={t('common:action.edit')}>
                   <IconButton size="small" onClick={() => handleEdit(role)}>
                     <Edit fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Delete">
+                <Tooltip title={t('common:action.delete')}>
                   <IconButton size="small" color="error" onClick={() => handleDelete(role)}>
                     <Delete fontSize="small" />
                   </IconButton>
