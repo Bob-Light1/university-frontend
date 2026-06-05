@@ -39,7 +39,7 @@ i18n
     defaultNS: 'common',
 
     backend: {
-      loadPath:          '/locales/{lng}/{ns}.json',
+      loadPath:          '/locales/{{lng}}/{{ns}}.json',
       queryStringParams: { v: import.meta.env.VITE_BUILD_HASH ?? '1' },
     },
 
