@@ -15,15 +15,10 @@
 import { useState } from 'react';
 import {
   Paper, Stack, Typography, Divider, Switch,
-  FormControlLabel, Button, CircularProgress,
+  Button, CircularProgress,
 } from '@mui/material';
 import { Notifications } from '@mui/icons-material';
-
-const PREFS_META = [
-  { key: 'email', label: 'Email', description: 'Receive notifications by email' },
-  { key: 'sms',   label: 'SMS',   description: 'Receive text messages for urgent alerts' },
-  { key: 'push',  label: 'Push',  description: 'In-app and browser push notifications' },
-];
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 export default function NotificationPreferences({
   value = { email: true, sms: false, push: false },
@@ -33,7 +28,14 @@ export default function NotificationPreferences({
   loading = false,
   accentColor = 'primary',
 }) {
+  const { t } = useAppTranslation('common');
   const [saving, setSaving] = useState(false);
+
+  const PREFS_META = [
+    { key: 'email', label: t('notifPref.email'), description: t('notifPref.emailDesc') },
+    { key: 'sms',   label: t('notifPref.sms'),   description: t('notifPref.smsDesc') },
+    { key: 'push',  label: t('notifPref.push'),  description: t('notifPref.pushDesc') },
+  ];
 
   const handleToggle = (key) => {
     if (onChange) onChange({ ...value, [key]: !value[key] });
@@ -57,7 +59,7 @@ export default function NotificationPreferences({
     <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
       <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
         <Notifications color="action" />
-        <Typography variant="subtitle1" fontWeight={700}>Notification Preferences</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('notifPref.title')}</Typography>
       </Stack>
       <Divider sx={{ mb: 2.5 }} />
 
@@ -92,7 +94,7 @@ export default function NotificationPreferences({
           startIcon={isBusy ? <CircularProgress size={16} color="inherit" /> : null}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {isBusy ? 'Saving…' : 'Save Preferences'}
+          {isBusy ? t('notifPref.saving') : t('notifPref.save')}
         </Button>
       </Stack>
     </Paper>

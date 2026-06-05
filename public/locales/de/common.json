@@ -148,5 +148,21 @@
     "part-time": "Teilzeit",
     "contract": "Vertrag",
     "temporary": "Befristet"
+  },
+  "user": {
+    "myProfile": "Mein Profil",
+    "signOut": "Abmelden",
+    "settings": "Einstellungen"
+  },
+  "notifPref": {
+    "title": "Benachrichtigungseinstellungen",
+    "email": "E-Mail",
+    "emailDesc": "Benachrichtigungen per E-Mail erhalten",
+    "sms": "SMS",
+    "smsDesc": "Textnachrichten für dringende Warnungen erhalten",
+    "push": "Push",
+    "pushDesc": "In-App- und Browser-Push-Benachrichtigungen",
+    "save": "Einstellungen speichern",
+    "saving": "Wird gespeichert…"
   }
 }

@@ -148,5 +148,21 @@
     "part-time": "Part-time",
     "contract": "Contract",
     "temporary": "Temporary"
+  },
+  "user": {
+    "myProfile": "My Profile",
+    "signOut": "Sign out",
+    "settings": "Settings"
+  },
+  "notifPref": {
+    "title": "Notification Preferences",
+    "email": "Email",
+    "emailDesc": "Receive notifications by email",
+    "sms": "SMS",
+    "smsDesc": "Receive text messages for urgent alerts",
+    "push": "Push",
+    "pushDesc": "In-app and browser push notifications",
+    "save": "Save Preferences",
+    "saving": "Saving…"
   }
 }

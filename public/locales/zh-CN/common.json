@@ -148,5 +148,21 @@
     "part-time": "兼职",
     "contract": "合同制",
     "temporary": "临时"
+  },
+  "user": {
+    "myProfile": "我的资料",
+    "signOut": "退出登录",
+    "settings": "设置"
+  },
+  "notifPref": {
+    "title": "通知偏好设置",
+    "email": "电子邮件",
+    "emailDesc": "通过电子邮件接收通知",
+    "sms": "短信",
+    "smsDesc": "接收紧急警报短信",
+    "push": "推送",
+    "pushDesc": "应用内和浏览器推送通知",
+    "save": "保存偏好设置",
+    "saving": "保存中…"
   }
 }

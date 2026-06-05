@@ -54,7 +54,8 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import NavigateNextIcon    from '@mui/icons-material/NavigateNext';
 import HomeIcon            from '@mui/icons-material/Home';
 
-import { useAuth }        from '../hooks/useAuth';
+import { useAuth }             from '../hooks/useAuth';
+import { useAppTranslation }  from '../hooks/useAppTranslation';
 import { IMAGE_BASE_URL } from '../config/env';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -270,6 +271,7 @@ const useBreadcrumbs = () => {
 
 const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   const { user, logout } = useAuth();
+  const { t } = useAppTranslation('common');
 
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [aiDialogOpen,  setAiDialogOpen]  = useState(false);
@@ -542,7 +544,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
                 <ListItemIcon sx={{ minWidth: 'unset' }}>
                   <PersonIcon fontSize="small" />
                 </ListItemIcon>
-                My Profile
+                {t('user.myProfile')}
               </MenuItem>
             )}
 
@@ -551,7 +553,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
                 <ListItemIcon sx={{ minWidth: 'unset' }}>
                   <SettingsIcon fontSize="small" />
                 </ListItemIcon>
-                Settings
+                {t('user.settings')}
               </MenuItem>
             )}
 
@@ -564,7 +566,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
               <ListItemIcon sx={{ minWidth: 'unset' }}>
                 <LogoutIcon fontSize="small" sx={{ color: 'error.main' }} />
               </ListItemIcon>
-              Sign out
+              {t('user.signOut')}
             </MenuItem>
           </Menu>
         </Toolbar>
