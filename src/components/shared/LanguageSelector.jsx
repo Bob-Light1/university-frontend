@@ -58,7 +58,7 @@ export function LanguageSelector({ onSaved }) {
     setSaving(true);
     const previousLang = savedLangRef.current;
     try {
-      await api.patch('/api/settings', { preferredLanguage: selected });
+      await api.patch('/settings', { preferredLanguage: selected });
       // Write local storage + cookie now that the save is confirmed
       const secure = location.protocol === 'https:' ? ';Secure' : '';
       document.cookie = `erp_lang=${selected};path=/;SameSite=Lax;max-age=31536000${secure}`;
