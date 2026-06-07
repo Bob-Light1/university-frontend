@@ -25,6 +25,15 @@ export const testimonialsApi  = contentApi('testimonials');
 export const faqApi           = contentApi('faq');
 export const coursePreviewsApi = contentApi('course-previews');
 
+// ─── Partner applications (Phase 3) ───────────────────────────────────────────
+
+export const applicationsApi = {
+  list:   (params)          => api.get('/portal-admin/applications', { params }),
+  getOne: (id)              => api.get(`/portal-admin/applications/${id}`),
+  review: (id, data)        => api.patch(`/portal-admin/applications/${id}/review`, data),
+  remove: (id)              => api.delete(`/portal-admin/applications/${id}`),
+};
+
 // ─── Competition (prize schedule + cron-driven winners) ────────────────────────
 
 export const competitionApi = {

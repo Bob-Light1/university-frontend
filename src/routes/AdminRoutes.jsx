@@ -21,6 +21,9 @@ const FaqAdmin            = lazy(() => import('../admin/components/portal/FaqAdm
 const CoursesAdmin        = lazy(() => import('../admin/components/portal/CoursesAdmin'));
 const CompetitionAdmin    = lazy(() => import('../admin/components/portal/CompetitionAdmin'));
 
+// ─── Phase 3 — Partner applications review ────────────────────────────────────
+const PartnerApplicationsAdmin = lazy(() => import('../admin/components/portal/PartnerApplicationsAdmin'));
+
 export const adminRoutes = (
   <Route path="/admin">
 
@@ -43,6 +46,9 @@ export const adminRoutes = (
         <Route path="portal/faq"          element={<FaqAdmin />}          />
         <Route path="portal/courses"      element={<CoursesAdmin />}      />
         <Route path="portal/competition"  element={<CompetitionAdmin />}  />
+
+        {/* Phase 3 — Partner applications */}
+        <Route path="portal/applications" element={<PartnerApplicationsAdmin />} />
       </Route>
     </Route>
 

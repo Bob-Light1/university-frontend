@@ -13,6 +13,7 @@ import FormatQuoteIcon     from '@mui/icons-material/FormatQuote';
 import HelpOutlineIcon     from '@mui/icons-material/HelpOutline';
 import MenuBookIcon        from '@mui/icons-material/MenuBook';
 import EmojiEventsIcon     from '@mui/icons-material/EmojiEvents';
+import HandshakeIcon       from '@mui/icons-material/Handshake';
 
 import AppShell from '../components/AppShell';
 
@@ -27,6 +28,7 @@ const navItems = [
   { link: '/admin/portal/faq',          label: 'FAQ',             icon: HelpOutlineIcon },
   { link: '/admin/portal/courses',      label: 'Course Previews', icon: MenuBookIcon    },
   { link: '/admin/portal/competition',  label: 'Competition',     icon: EmojiEventsIcon },
+  { link: '/admin/portal/applications', label: 'Applications',    icon: HandshakeIcon   },
 ];
 
 export default function Admin() {
