@@ -17,9 +17,17 @@ import api from '../api/axiosInstance';
  * Paginated list of courses with optional filters.
  * @param {Object} params - Query params (page, limit, search, category, level,
  *                          approvalStatus, difficultyLevel, isLatestVersion, sort, …)
+ * @param {Object} [config] - Extra axios config (e.g. { signal } to cancel stale requests)
  */
-export const listCourses = (params = {}) =>
-  api.get('/courses', { params });
+export const listCourses = (params = {}, config = {}) =>
+  api.get('/courses', { params, ...config });
+
+/**
+ * Catalog-wide KPI counts by approval status (role-scoped server-side).
+ * @param {Object} [config] - Extra axios config (e.g. { signal })
+ */
+export const getCourseStats = (config = {}) =>
+  api.get('/courses/stats', { ...config });
 
 /**
  * Retrieve a single course by its MongoDB _id.
@@ -41,8 +49,8 @@ export const getCourseByCode = (courseCode) =>
  * @param {string} id - Any version _id of the target course
  * @param {Object} params - { page, limit }
  */
-export const getCourseVersions = (id, params = {}) =>
-  api.get(`/courses/${id}/versions`, { params });
+export const getCourseVersions = (id, params = {}, config = {}) =>
+  api.get(`/courses/${id}/versions`, { params, ...config });
 
 // ─── WRITE ────────────────────────────────────────────────────────────────────
 

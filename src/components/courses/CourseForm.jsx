@@ -15,7 +15,7 @@
  *  mode           {'create'|'edit'}
  */
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -145,7 +145,7 @@ const ObjectivesField = ({ objectives, onChange, error }) => {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
           fullWidth
-          inputProps={{ maxLength: 300 }}
+          slotProps={{ htmlInput: { maxLength: 300 } }}
         />
         <Button size="small" variant="outlined" onClick={add} disabled={!input.trim()}>
           Add
@@ -177,7 +177,7 @@ const ObjectivesField = ({ objectives, onChange, error }) => {
 
 // ─── Syllabus FieldArray ──────────────────────────────────────────────────────
 
-const SyllabusField = ({ values, errors, touched }) => (
+const SyllabusField = ({ values, errors, touched, setFieldValue }) => (
   <FieldArray name="syllabus">
     {({ push, remove, swap }) => (
       <Box>
@@ -212,12 +212,12 @@ const SyllabusField = ({ values, errors, touched }) => (
                       value={unit.periodNumber}
                       onChange={(e) => {
                         const v = parseInt(e.target.value, 10);
-                        unit.periodNumber = isNaN(v) ? '' : v;
+                        setFieldValue(`syllabus[${i}].periodNumber`, isNaN(v) ? '' : v);
                       }}
                       error={unitTouched.periodNumber && !!unitErrors.periodNumber}
                       helperText={unitTouched.periodNumber && unitErrors.periodNumber}
                       fullWidth
-                      inputProps={{ min: 1, max: 60 }}
+                      slotProps={{ htmlInput: { min: 1, max: 60 } }}
                     />
                   </Grid>
 
@@ -230,7 +230,7 @@ const SyllabusField = ({ values, errors, touched }) => (
                         id={`syl-ptype-sel-${i}`}
                         value={unit.periodType || 'week'}
                         label="Period type"
-                        onChange={(e) => { unit.periodType = e.target.value; }}
+                        onChange={(e) => setFieldValue(`syllabus[${i}].periodType`, e.target.value)}
                       >
                         {COURSE_ENUMS.PERIOD_TYPE.map((p) => (
                           <MenuItem key={p.value} value={p.value}>{p.label}</MenuItem>
@@ -246,11 +246,11 @@ const SyllabusField = ({ values, errors, touched }) => (
                       label="Title"
                       name={`syllabus[${i}].title`}
                       value={unit.title}
-                      onChange={(e) => { unit.title = e.target.value; }}
+                      onChange={(e) => setFieldValue(`syllabus[${i}].title`, e.target.value)}
                       error={unitTouched.title && !!unitErrors.title}
                       helperText={unitTouched.title && unitErrors.title}
                       fullWidth
-                      inputProps={{ maxLength: 150 }}
+                      slotProps={{ htmlInput: { maxLength: 150 } }}
                     />
                   </Grid>
 
@@ -276,11 +276,11 @@ const SyllabusField = ({ values, errors, touched }) => (
                       label="Content / Description"
                       name={`syllabus[${i}].content`}
                       value={unit.content || ''}
-                      onChange={(e) => { unit.content = e.target.value; }}
+                      onChange={(e) => setFieldValue(`syllabus[${i}].content`, e.target.value)}
                       fullWidth
                       multiline
                       minRows={2}
-                      inputProps={{ maxLength: 1000 }}
+                      slotProps={{ htmlInput: { maxLength: 1000 } }}
                     />
                   </Grid>
 
@@ -293,7 +293,7 @@ const SyllabusField = ({ values, errors, touched }) => (
                         id={`syl-stype-sel-${i}`}
                         value={unit.sessionType || 'LECTURE'}
                         label="Session type"
-                        onChange={(e) => { unit.sessionType = e.target.value; }}
+                        onChange={(e) => setFieldValue(`syllabus[${i}].sessionType`, e.target.value)}
                       >
                         {COURSE_ENUMS.SESSION_TYPE.map((s) => (
                           <MenuItem key={s} value={s}>{s}</MenuItem>
@@ -310,10 +310,10 @@ const SyllabusField = ({ values, errors, touched }) => (
                       value={unit.estimatedHours || ''}
                       onChange={(e) => {
                         const v = parseFloat(e.target.value);
-                        unit.estimatedHours = isNaN(v) ? '' : v;
+                        setFieldValue(`syllabus[${i}].estimatedHours`, isNaN(v) ? '' : v);
                       }}
                       fullWidth
-                      inputProps={{ min: 0.5, max: 20, step: 0.5 }}
+                      slotProps={{ htmlInput: { min: 0.5, max: 20, step: 0.5 } }}
                     />
                   </Grid>
                 </Grid>
@@ -348,7 +348,7 @@ const SyllabusField = ({ values, errors, touched }) => (
 
 // ─── Prerequisites FieldArray ─────────────────────────────────────────────────
 
-const PrerequisitesField = ({ values, errors, touched, availableCourses }) => (
+const PrerequisitesField = ({ values, errors, touched, availableCourses, setFieldValue }) => (
   <FieldArray name="prerequisites">
     {({ push, remove }) => (
       <Box>
@@ -371,7 +371,7 @@ const PrerequisitesField = ({ values, errors, touched, availableCourses }) => (
                       id={`prereq-course-sel-${i}`}
                       value={prereq.course || ''}
                       label="Course"
-                      onChange={(e) => { prereq.course = e.target.value; }}
+                      onChange={(e) => setFieldValue(`prerequisites[${i}].course`, e.target.value)}
                     >
                       {availableCourses.map((c) => (
                         <MenuItem key={c._id} value={c._id}>
@@ -392,7 +392,7 @@ const PrerequisitesField = ({ values, errors, touched, availableCourses }) => (
                       id={`prereq-type-sel-${i}`}
                       value={prereq.type || 'REQUIRED'}
                       label="Type"
-                      onChange={(e) => { prereq.type = e.target.value; }}
+                      onChange={(e) => setFieldValue(`prerequisites[${i}].type`, e.target.value)}
                     >
                       {COURSE_ENUMS.PREREQUISITE_TYPE.map((t) => (
                         <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>
@@ -557,7 +557,7 @@ const CourseForm = ({
                       error={touched.courseCode && !!errors.courseCode}
                       helperText={touched.courseCode && errors.courseCode}
                       disabled={isApproved}
-                      inputProps={{ maxLength: 30 }}
+                      slotProps={{ htmlInput: { maxLength: 30 } }}
                     />
                   </Grid>
 
@@ -573,7 +573,7 @@ const CourseForm = ({
                       error={touched.title && !!errors.title}
                       helperText={touched.title && errors.title}
                       disabled={isApproved}
-                      inputProps={{ maxLength: 150 }}
+                      slotProps={{ htmlInput: { maxLength: 150 } }}
                     />
                   </Grid>
 
@@ -666,7 +666,7 @@ const CourseForm = ({
                       name="discipline"
                       value={values.discipline}
                       onChange={handleChange}
-                      inputProps={{ maxLength: 100 }}
+                      slotProps={{ htmlInput: { maxLength: 100 } }}
                     />
                   </Grid>
 
@@ -728,7 +728,7 @@ const CourseForm = ({
                       name="description"
                       value={values.description}
                       onChange={handleChange}
-                      inputProps={{ maxLength: 2000 }}
+                      slotProps={{ htmlInput: { maxLength: 2000 } }}
                       helperText={`${(values.description || '').length}/2000`}
                     />
                   </Grid>
@@ -742,7 +742,7 @@ const CourseForm = ({
                       type="number"
                       value={values.durationWeeks}
                       onChange={handleChange}
-                      inputProps={{ min: 0, max: 104 }}
+                      slotProps={{ htmlInput: { min: 0, max: 104 } }}
                       disabled={isApproved}
                     />
                   </Grid>
@@ -756,7 +756,7 @@ const CourseForm = ({
                       type="number"
                       value={values.creditHours}
                       onChange={handleChange}
-                      inputProps={{ min: 0, max: 30, step: 0.5 }}
+                      slotProps={{ htmlInput: { min: 0, max: 30, step: 0.5 } }}
                       disabled={isApproved}
                     />
                   </Grid>
@@ -778,7 +778,7 @@ const CourseForm = ({
                             type="number"
                             value={values.estimatedWorkload[k]}
                             onChange={handleChange}
-                            inputProps={{ min: 0, step: 0.5 }}
+                            slotProps={{ htmlInput: { min: 0, step: 0.5 } }}
                           />
                         </Grid>
                       ))}
@@ -811,7 +811,7 @@ const CourseForm = ({
                       Syllabus editing is not available for Approved courses.
                     </Typography>
                   ) : (
-                    <SyllabusField values={values} errors={errors} touched={touched} />
+                    <SyllabusField values={values} errors={errors} touched={touched} setFieldValue={setFieldValue} />
                   )}
                 </Box>
               )}
@@ -823,6 +823,7 @@ const CourseForm = ({
                   errors={errors}
                   touched={touched}
                   availableCourses={availablePrereqCourses}
+                  setFieldValue={setFieldValue}
                 />
               )}
             </DialogContent>

@@ -31,8 +31,11 @@ export const adminRoutes = (
     <Route index   element={<LoginAdmin />} />
     <Route path="login" element={<LoginAdmin />} />
 
-    {/* ── Protected: Admin / Director portal ─────────────────────────────── */}
-    <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'DIRECTOR']} redirectTo="/admin/login" />}>
+    {/* ── Protected: Admin portal (ADMIN only) ───────────────────────────── */}
+    {/* Directors have their own dedicated portal at /director. Several pages here
+        (accounts, status changes, account creation) call ADMIN-only backend
+        endpoints, so granting DIRECTOR access produced silent 403s. */}
+    <Route element={<ProtectedRoute allowedRoles={['ADMIN']} redirectTo="/admin/login" />}>
       <Route element={<Admin />}>
         <Route path="dashboard"  element={<AdminDashboard />} />
         <Route path="campuses"   element={<CampusList />}     />

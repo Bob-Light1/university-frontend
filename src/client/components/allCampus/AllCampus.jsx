@@ -20,12 +20,10 @@ import {
   TextField, InputAdornment,
 } from '@mui/material';
 import InfoOutlinedIcon  from '@mui/icons-material/InfoOutlined';
-import EmailIcon         from '@mui/icons-material/Email';
 import PersonIcon        from '@mui/icons-material/Person';
 import SearchIcon        from '@mui/icons-material/Search';
 import CloseIcon         from '@mui/icons-material/Close';
 import LocationOnIcon    from '@mui/icons-material/LocationOn';
-import PhoneIcon         from '@mui/icons-material/Phone';
 import SchoolIcon        from '@mui/icons-material/School';
 import GroupsIcon        from '@mui/icons-material/Groups';
 import TrendingUpIcon    from '@mui/icons-material/TrendingUp';
@@ -525,10 +523,10 @@ export default function AllCampus() {
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {/* Public listing — manager contact details (email/phone) are
+                    intentionally NOT exposed on this anonymous-facing page. */}
                 {[
                   { icon: <PersonIcon />,     label: 'Campus Manager', value: selectedCampus?.manager_name              || '—', color: '#4989c8' },
-                  { icon: <EmailIcon />,      label: 'Contact Email',  value: selectedCampus?.email                     || '—', color: '#ffda78' },
-                  { icon: <PhoneIcon />,      label: 'Phone Number',   value: selectedCampus?.manager_phone             || '—', color: '#ff7f3e' },
                   { icon: <LocationOnIcon />, label: 'Location',       value: formatLocation(selectedCampus?.location),         color: '#4989c8' },
                 ].map((item, i) => (
                   <MotionDiv

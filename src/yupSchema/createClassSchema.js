@@ -26,13 +26,14 @@ export const createClassSchema = Yup.object().shape({
       excludeEmptyString: true,
     }),
 
-  // maxStudents: Positive integer
+  // maxStudents: Positive integer — bounds mirror the backend Class model
+  // (min 1, max 200, default 50) which is the single source of truth.
   maxStudents: Yup.number()
     .typeError('The number of students must be a number')
     .integer('The number must be an integer')
     .min(1, 'The minimum capacity is 1 student')
-    .max(100, 'The maximum capacity seems too high (max 100)')
-    .default(30),
+    .max(200, 'The maximum capacity cannot exceed 200')
+    .default(50),
 
   // status: Enumeration validation (useful for modification)
   status: Yup.string()

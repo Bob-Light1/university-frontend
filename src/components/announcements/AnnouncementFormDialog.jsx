@@ -27,6 +27,14 @@ const defaultValues = {
   expiresAt:   '',
 };
 
+/**
+ * Convert a calendar-day input ("YYYY-MM-DD") to an end-of-day local ISO
+ * timestamp. Keeps a same-day deadline strictly in the future (the announcement
+ * stays live through the whole chosen day) instead of expiring at 00:00 UTC.
+ */
+const endOfDayISO = (dateStr) =>
+  dateStr ? new Date(`${dateStr}T23:59:59.999`).toISOString() : null;
+
 export default function AnnouncementFormDialog({
   open,
   onClose,
@@ -59,8 +67,9 @@ export default function AnnouncementFormDialog({
       try {
         await onSubmit({
           ...values,
-          pinnedUntil: values.pinnedUntil || null,
-          expiresAt:   values.expiresAt   || null,
+          // Auto-unpin only applies while pinned.
+          pinnedUntil: values.pinned ? endOfDayISO(values.pinnedUntil) : null,
+          expiresAt:   endOfDayISO(values.expiresAt),
         });
         onClose();
       } catch (err) {

@@ -90,8 +90,15 @@ const STATUS_META = {
   REJECTED:       { color: '#ef4444', bg: '#fef2f2', icon: <Cancel sx={{ fontSize: 18 }} /> },
 };
 
-const buildKpis = (courses, total) => ({
-  total:    total,
+/** True when a course document is archived (soft-deleted) on the backend. */
+const isArchived = (c) => c?.status === 'archived';
+
+/**
+ * KPI source. Catalog-wide stats (server aggregation) are authoritative and
+ * accurate at any scale; the per-page fallback is only used until stats load.
+ */
+const buildKpis = (stats, courses, total) => stats ?? ({
+  total,
   draft:    courses.filter((c) => c.approvalStatus === 'DRAFT').length,
   pending:  courses.filter((c) => c.approvalStatus === 'PENDING_REVIEW').length,
   approved: courses.filter((c) => c.approvalStatus === 'APPROVED').length,
@@ -105,12 +112,28 @@ const VersionHistoryDialog = ({ open, onClose, courseId, courseCode }) => {
   const [loading, setLoading]   = useState(false);
 
   useEffect(() => {
-    if (!open || !courseId) return;
-    setLoading(true);
-    getCourseVersions(courseId)
-      .then((res) => setVersions(res.data?.data ?? []))
-      .catch(() => setVersions([]))
-      .finally(() => setLoading(false));
+    if (!open || !courseId) return undefined;
+
+    const controller = new AbortController();
+    let active = true;
+
+    // Wrapped in a named async function so the loading setState is not called
+    // synchronously in the effect body (avoids cascading-render lint + matches
+    // the useEntityManager fetch pattern).
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await getCourseVersions(courseId, {}, { signal: controller.signal });
+        if (active) setVersions(res.data?.data ?? []);
+      } catch (err) {
+        if (active && err.name !== 'CanceledError' && err.name !== 'AbortError') setVersions([]);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    load();
+    return () => { active = false; controller.abort(); };
   }, [open, courseId]);
 
   return (
@@ -159,6 +182,7 @@ const VersionHistoryDialog = ({ open, onClose, courseId, courseCode }) => {
 
 const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, isAdmin }) => {
   const sm = STATUS_META[c.approvalStatus] ?? STATUS_META.DRAFT;
+  const archived = isArchived(c);
 
   return (
     <Card
@@ -167,8 +191,8 @@ const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, 
         borderRadius: 2,
         borderLeftWidth: 4,
         borderLeftColor: sm.color,
-        bgcolor: c.isDeleted ? 'action.hover' : sm.bg,
-        opacity: c.isDeleted ? 0.6 : 1,
+        bgcolor: archived ? 'action.hover' : sm.bg,
+        opacity: archived ? 0.6 : 1,
         transition: 'box-shadow 0.2s',
         '&:hover': { boxShadow: 3 },
       }}
@@ -198,7 +222,7 @@ const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, 
       <Divider />
 
       <CardActions sx={{ px: 1.5, py: 1, justifyContent: 'flex-end' }}>
-        {!c.isDeleted ? (
+        {!archived ? (
           <Stack direction="row" spacing={0.5}>
             <Tooltip title="View detail">
               <IconButton size="small" onClick={() => onView(c)}><Visibility fontSize="small" /></IconButton>
@@ -271,10 +295,14 @@ const CourseManager = () => {
 
   useEffect(() => {
     course.fetch({
-      includeDeleted: tab === 1 ? 'true' : undefined,
-      isDeleted:      tab === 1 ? 'true' : undefined,
+      archived: tab === 1 ? 'true' : undefined,
     });
   }, [course.filters, tab]);
+
+  // Catalog-wide KPI counts (accurate regardless of pagination).
+  useEffect(() => {
+    course.fetchStats();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -284,10 +312,10 @@ const CourseManager = () => {
 
   const reload = useCallback(() => {
     course.fetch({
-      includeDeleted: tab === 1 ? 'true' : undefined,
-      isDeleted:      tab === 1 ? 'true' : undefined,
+      archived: tab === 1 ? 'true' : undefined,
     });
-  }, [course.fetch, tab]);
+    course.fetchStats();
+  }, [course.fetch, course.fetchStats, tab]);
 
   const openDetail = useCallback(async (c) => {
     try {
@@ -381,7 +409,7 @@ const CourseManager = () => {
 
   // ── KPIs ──────────────────────────────────────────────────────────────────
 
-  const kpis = buildKpis(course.courses, course.total);
+  const kpis = buildKpis(course.stats, course.courses, course.total);
 
   const kpiMetrics = [
     { key: 'total',    label: 'Total',          value: kpis.total,    color: '#3b82f6', icon: <MenuBook /> },
@@ -504,7 +532,7 @@ const CourseManager = () => {
                   onEdit={(c) => { openEdit(c); }}
                   onHistory={openHistory}
                   onDelete={(c) => {
-                    if (c.isDeleted) { setDeleteTarget(c); setRestoreDialogOpen(true); }
+                    if (isArchived(c)) { setDeleteTarget(c); setRestoreDialogOpen(true); }
                     else openDelete(c);
                   }}
                   isGlobal={isGlobal}
@@ -569,14 +597,15 @@ const CourseManager = () => {
                 ) : (
                   course.courses.map((c) => {
                     const sm = STATUS_META[c.approvalStatus] ?? STATUS_META.DRAFT;
+                    const archived = isArchived(c);
                     return (
                       <TableRow
                         key={c._id}
                         hover
-                        onClick={() => !c.isDeleted && openDetail(c)}
+                        onClick={() => !archived && openDetail(c)}
                         sx={{
-                          cursor: c.isDeleted ? 'default' : 'pointer',
-                          opacity: c.isDeleted ? 0.5 : 1,
+                          cursor: archived ? 'default' : 'pointer',
+                          opacity: archived ? 0.5 : 1,
                           borderLeft: `3px solid ${sm.color}`,
                           '&:hover td': { bgcolor: alpha(sm.color, 0.04) },
                           transition: 'background 0.15s',
@@ -634,7 +663,7 @@ const CourseManager = () => {
 
                         {/* Actions */}
                         <TableCell align="right" sx={{ py: 1, whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
-                          {!c.isDeleted ? (
+                          {!archived ? (
                             <Stack direction="row" spacing={0.25} justifyContent="flex-end">
                               <Tooltip title="View detail">
                                 <IconButton size="small" onClick={() => openDetail(c)}>

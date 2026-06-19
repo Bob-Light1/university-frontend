@@ -47,37 +47,37 @@ const AcademicBatchDrawer = ({ open, onClose, jobId }) => {
   const pollRef = useRef(null);
 
   const fetchJob = useCallback(async () => {
-    if (!jobId) return;
+    if (!jobId) return null;
     try {
       const res = await getBatchJobStatus(jobId);
       setJob(res.data.data);
       setLoadErr(null);
+      return res.data.data;
     } catch (err) {
       setLoadErr(err?.response?.data?.message ?? 'Could not load job status.');
+      return null;
     }
   }, [jobId]);
 
-  // Polling: every 3s while job is active
+  // Poll with a self-scheduling timeout while the job is active. A timeout chain
+  // (vs setInterval) guarantees no overlap and stops cleanly once terminal.
   useEffect(() => {
-    if (!open || !jobId) return;
-    fetchJob();
-    pollRef.current = setInterval(() => {
-      setJob((prev) => {
-        const active = ['PENDING', 'PROCESSING'].includes(prev?.status);
-        if (!active) clearInterval(pollRef.current);
-        return prev;
-      });
-      fetchJob();
-    }, 3000);
-    return () => clearInterval(pollRef.current);
-  }, [open, jobId, fetchJob]);
+    if (!open || !jobId) return undefined;
+    let cancelled = false;
+    setJob(null);
+    setLoadErr(null);
 
-  // Stop polling when job finishes
-  useEffect(() => {
-    if (job && !['PENDING', 'PROCESSING'].includes(job.status)) {
-      clearInterval(pollRef.current);
-    }
-  }, [job?.status]);
+    const poll = async () => {
+      const data = await fetchJob();
+      if (cancelled) return;
+      if (data && ['PENDING', 'PROCESSING'].includes(data.status)) {
+        pollRef.current = setTimeout(poll, 3000);
+      }
+    };
+    poll();
+
+    return () => { cancelled = true; clearTimeout(pollRef.current); };
+  }, [open, jobId, fetchJob]);
 
   const handleDownloadResult = async (result) => {
     if (!result.fileName || downloading[result.fileName]) return;

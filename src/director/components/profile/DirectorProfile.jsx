@@ -4,7 +4,7 @@
  * Reuses the same /admin/me endpoint as the Admin portal.
  *
  * Data: GET /admin/me
- * Action: PUT /admin/me/password — { currentPassword, newPassword }
+ * Action: PATCH /admin/me/password — { currentPassword, newPassword }
  */
 
 import { useState, useEffect } from 'react';

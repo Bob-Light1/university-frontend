@@ -5,14 +5,15 @@
  * Displays all APPROVED + latest-version courses.
  * Teachers can:
  *  - Browse, filter, and search the global catalog
- *  - View full course detail (syllabus, objectives, all resources)
- *  - Add resources (non-public resources visible to staff)
+ *  - View full course detail (syllabus, objectives, public resources)
  *
- * Teachers cannot create, edit, approve, or delete courses.
+ * Teachers are read-only on the global catalog: they cannot create, edit,
+ * approve, delete, or add resources (backend restricts resource writes to
+ * ADMIN / DIRECTOR / CAMPUS_MANAGER).
  * Campus isolation: irrelevant for the global catalog (backend enforced).
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -29,7 +30,6 @@ import {
   CardActions,
   Button,
   Chip,
-  Snackbar,
   Tooltip,
   Pagination,
   FormControl,
@@ -46,7 +46,6 @@ import {
 } from '@mui/icons-material';
 
 import useCourse from '../../../hooks/useCourse';
-import { addCourseResource } from '../../../services/courseService';
 import api from '../../../api/axiosInstance';
 
 import CourseDetailDrawer from '../../../components/courses/CourseDetailDrawer';
@@ -125,11 +124,6 @@ const CourseTeacher = () => {
   const [levels,       setLevels]       = useState([]);
   const [detailOpen,   setDetailOpen]   = useState(false);
   const [detailTarget, setDetailTarget] = useState(null);
-  const [snackbar,     setSnackbar]     = useState({ open: false, message: '', severity: 'success' });
-
-  const showSnackbar = useCallback((message, severity = 'success') => {
-    setSnackbar({ open: true, message, severity });
-  }, []);
 
   // Load levels for filter
   useEffect(() => {
@@ -151,20 +145,6 @@ const CourseTeacher = () => {
       setDetailTarget(c);
     }
     setDetailOpen(true);
-  };
-
-  const handleAddResource = async (courseId, res) => {
-    try {
-      await addCourseResource(courseId, res);
-      showSnackbar('Resource added successfully.');
-      // Refresh detail
-      if (detailTarget?._id === courseId) {
-        const updated = await course.fetchById(courseId);
-        setDetailTarget(updated);
-      }
-    } catch (err) {
-      throw err; // Let drawer handle the error display
-    }
   };
 
   const totalPages = Math.ceil(course.total / (course.filters.limit ?? 25));
@@ -199,15 +179,17 @@ const CourseTeacher = () => {
               value={course.filters.search || ''}
               onChange={(e) => course.handleFilterChange('search', e.target.value)}
               disabled={course.loading}
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>,
-                endAdornment: course.filters.search ? (
-                  <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => course.handleFilterChange('search', '')}>
-                      <Clear fontSize="small" />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
+              slotProps={{
+                input: {
+                  startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>,
+                  endAdornment: course.filters.search ? (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => course.handleFilterChange('search', '')}>
+                        <Clear fontSize="small" />
+                      </IconButton>
+                    </InputAdornment>
+                  ) : null,
+                },
               }}
             />
           </Grid>
@@ -334,28 +316,11 @@ const CourseTeacher = () => {
         onApprove={() => {}}
         onReject={() => {}}
         onNewVersion={() => {}}
-        onAddResource={handleAddResource}
+        onAddResource={() => {}}
         onRemoveResource={() => {}}
         onDelete={() => {}}
         role="TEACHER"
       />
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ borderRadius: 2 }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

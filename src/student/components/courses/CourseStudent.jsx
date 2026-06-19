@@ -266,15 +266,17 @@ const CourseStudent = () => {
           onChange={(e) => course.handleFilterChange('search', e.target.value)}
           disabled={course.loading}
           sx={{ flex: '1 1 200px', minWidth: 160 }}
-          InputProps={{
-            startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>,
-            endAdornment: course.filters.search ? (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={() => course.handleFilterChange('search', '')}>
-                  <Clear fontSize="small" />
-                </IconButton>
-              </InputAdornment>
-            ) : null,
+          slotProps={{
+            input: {
+              startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>,
+              endAdornment: course.filters.search ? (
+                <InputAdornment position="end">
+                  <IconButton size="small" onClick={() => course.handleFilterChange('search', '')}>
+                    <Clear fontSize="small" />
+                  </IconButton>
+                </InputAdornment>
+              ) : null,
+            },
           }}
         />
 

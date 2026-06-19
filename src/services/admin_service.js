@@ -3,9 +3,10 @@
  * @description Axios service layer for Admin / Director platform endpoints.
  *
  * Endpoint groups:
- *   1. Admin self-service    — GET /api/admin/me, PUT /api/admin/me/password
+ *   1. Admin self-service    — GET /api/admin/me, PATCH /api/admin/me/password
  *   2. Campus management     — GET|POST|PUT|DELETE /api/campus/*
- *   3. Admin account mgmt    — POST /api/admin/create
+ *   3. Admin account mgmt    — POST /api/admin/create, GET /api/admin/all,
+ *                              PATCH /api/admin/:id/status
  */
 
 import api from '../api/axiosInstance';
@@ -75,12 +76,12 @@ export const restoreCampus = (id) =>
   api.patch(`/campus/${id}/restore`);
 
 /**
- * GET /campus/:id/dashboard-stats
+ * GET /campus/:id/dashboard
  * Dashboard KPIs for a specific campus.
  * @param {string} id
  */
 export const getCampusStats = (id) =>
-  api.get(`/campus/${id}/dashboard-stats`);
+  api.get(`/campus/${id}/dashboard`);
 
 // ─── ADMIN ACCOUNT MANAGEMENT ─────────────────────────────────────────────────
 

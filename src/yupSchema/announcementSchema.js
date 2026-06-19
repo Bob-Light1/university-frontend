@@ -1,8 +1,17 @@
 import * as yup from 'yup';
 import { VALID_TYPES, VALID_ROLES } from '../components/announcements/announcementConstants';
 
-// Evaluated at validation time, not at module load.
-const isFutureDate = (val) => !val || val > new Date();
+// Date inputs are calendar days. Yup casts "YYYY-MM-DD" to UTC midnight, so a
+// naive `val > new Date()` wrongly rejects *today*. Compare calendar days
+// instead: a deadline is valid if its day is today or later (it is enforced at
+// end-of-day — see AnnouncementFormDialog).
+const isFutureDate = (val) => {
+  if (!val) return true;
+  const now = new Date();
+  const todayUTC  = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const pickedUTC = Date.UTC(val.getUTCFullYear(), val.getUTCMonth(), val.getUTCDate());
+  return pickedUTC >= todayUTC;
+};
 
 export const announcementSchema = yup.object({
   title: yup
@@ -40,7 +49,7 @@ export const announcementSchema = yup.object({
       is: true,
       then: (s) =>
         s
-          .test('future', 'Auto-unpin date must be in the future.', isFutureDate)
+          .test('future', 'Auto-unpin date must be today or later.', isFutureDate)
           .nullable(),
     }),
 
@@ -48,5 +57,5 @@ export const announcementSchema = yup.object({
     .date()
     .nullable()
     .optional()
-    .test('future', 'Expiry date must be in the future.', isFutureDate),
+    .test('future', 'Expiry date must be today or later.', isFutureDate),
 });

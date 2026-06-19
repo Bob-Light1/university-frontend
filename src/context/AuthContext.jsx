@@ -21,7 +21,9 @@ export const AuthContext = createContext(undefined);
 // User type to endpoint mapping
 const USER_TYPE_ENDPOINTS = {
   admin: '/admin/login',
-  director: '/director/login',
+  // Directors authenticate through the shared admin endpoint (no /director/login
+  // exists on the backend — the admin module issues tokens for ADMIN and DIRECTOR).
+  director: '/admin/login',
   manager: '/campus/login',
   teacher: '/teachers/login',
   student: '/students/login',

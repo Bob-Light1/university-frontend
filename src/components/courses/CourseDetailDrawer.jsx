@@ -38,7 +38,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -197,7 +196,7 @@ const RejectDialog = ({ open, onClose, onConfirm, loading }) => {
           helperText={`${note.length}/500 — minimum 10 characters`}
           error={note.length > 0 && note.length < 10}
           sx={{ mt: 1 }}
-          inputProps={{ maxLength: 500 }}
+          slotProps={{ htmlInput: { maxLength: 500 } }}
         />
       </DialogContent>
       <DialogActions>
@@ -283,7 +282,7 @@ const AddResourceDialog = ({ open, onClose, onConfirm, loading }) => {
             label="Title *" 
             value={form.title} 
             onChange={handle('title')} 
-            inputProps={{ maxLength: 200 }} 
+            slotProps={{ htmlInput: { maxLength: 200 } }} 
           />
 
           {/* Resource type — FormControl + InputLabel + Select (no TextField[select]) */}
@@ -370,12 +369,12 @@ const CourseDetailDrawer = ({
 
   // ── Workflow action wrapper ─────────────────────────────────────────────────
 
-  const runAction = async (fn) => {
+  const runAction = async (fn, { closeOnSuccess = true } = {}) => {
     setActionLoading(true);
     setActionError('');
     try {
       await fn();
-      onClose();
+      if (closeOnSuccess) onClose();
     } catch (err) {
       setActionError(err?.response?.data?.message ?? err?.message ?? 'Action failed.');
     } finally {
@@ -387,8 +386,10 @@ const CourseDetailDrawer = ({
   const handleApprove        = () => runAction(() => onApprove(course._id));
   const handleReject         = (note) => { setRejectOpen(false); runAction(() => onReject(course._id, note)); };
   const handleNewVersion     = (copyRes) => { setNewVersionOpen(false); runAction(() => onNewVersion(course._id, copyRes)); };
-  const handleAddResource    = (res) => { setAddResourceOpen(false); runAction(() => onAddResource(course._id, res)); };
-  const handleRemoveResource = (resId) => runAction(() => onRemoveResource(course._id, resId));
+  // Resource edits keep the drawer open so the user can manage several at once;
+  // the parent refreshes the detail in place.
+  const handleAddResource    = (res) => { setAddResourceOpen(false); runAction(() => onAddResource(course._id, res), { closeOnSuccess: false }); };
+  const handleRemoveResource = (resId) => runAction(() => onRemoveResource(course._id, resId), { closeOnSuccess: false });
   const handleDelete         = () => runAction(() => onDelete(course._id));
 
   // ── Status color accent ────────────────────────────────────────────────────

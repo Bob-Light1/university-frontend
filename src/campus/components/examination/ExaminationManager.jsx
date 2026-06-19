@@ -777,7 +777,8 @@ const ExaminationManager = () => {
       const [subRes, teachRes, classRes] = await Promise.all([
         api.get('/subject',  { params }).catch(() => ({ data: {} })),
         api.get('/teachers', { params }).catch(() => ({ data: {} })),
-        api.get('/class',    { params }).catch(() => ({ data: {} })),
+        // limit=200 so the class picker is not silently capped at the default page size.
+        api.get('/class',    { params: { ...params, limit: 200 } }).catch(() => ({ data: {} })),
       ]);
       const pick = (res) => {
         const d = res.data?.data;

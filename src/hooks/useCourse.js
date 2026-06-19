@@ -9,10 +9,11 @@
  *   const course = useCourse('manager');  // 'manager' | 'teacher' | 'student'
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 import {
   listCourses,
+  getCourseStats,
   getCourseById,
   createCourse,
   updateCourse,
@@ -51,6 +52,7 @@ const useCourse = (mode = 'manager') => {
   // ── Data state ─────────────────────────────────────────────────────────────
   const [courses,    setCourses]    = useState([]);
   const [total,      setTotal]      = useState(0);
+  const [stats,      setStats]      = useState(null);
   const [loading,    setLoading]    = useState(false);
   const [error,      setError]      = useState(null);
 
@@ -63,10 +65,15 @@ const useCourse = (mode = 'manager') => {
 
   // ── Abort controller ref — cancels stale in-flight requests ───────────────
   const abortRef = useRef(null);
+  // ── Debounce ref + last-applied search — debounce typing, fire immediately
+  //    for every other change (pagination, filters, explicit refresh).
+  const debounceRef    = useRef(null);
+  const lastSearchRef  = useRef(filters.search ?? '');
 
   // ─── FETCH LIST ──────────────────────────────────────────────────────────────
 
-  const fetch = useCallback(async (overrides = {}) => {
+  /** Performs the actual request (no debounce). */
+  const runFetch = useCallback(async (overrides = {}) => {
     // Cancel previous in-flight request
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
@@ -82,7 +89,9 @@ const useCourse = (mode = 'manager') => {
         Object.entries(params).filter(([, v]) => v !== '' && v !== null && v !== undefined),
       );
 
-      const res = await listCourses(cleanParams);
+      // Pass the abort signal so stale in-flight responses can never overwrite
+      // the latest results (race condition on rapid filter/search changes).
+      const res = await listCourses(cleanParams, { signal: abortRef.current.signal });
 
       const body  = res.data;
       const data  = body?.data ?? body?.records ?? [];
@@ -98,6 +107,43 @@ const useCourse = (mode = 'manager') => {
       setLoading(false);
     }
   }, [filters]);
+
+  /**
+   * Public fetch. Debounces (400ms) only when the search term changed since the
+   * last call — so typing waits for a pause, while pagination/filter/refresh
+   * changes fire immediately. Mirrors the useEntityManager search pattern.
+   */
+  const fetch = useCallback((overrides = {}) => {
+    const nextSearch    = overrides.search ?? filters.search ?? '';
+    const searchChanged = nextSearch !== lastSearchRef.current;
+    lastSearchRef.current = nextSearch;
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (searchChanged && nextSearch !== '') {
+      debounceRef.current = setTimeout(() => runFetch(overrides), 400);
+    } else {
+      runFetch(overrides);
+    }
+  }, [runFetch, filters.search]);
+
+  // Clear any pending debounced fetch on unmount.
+  useEffect(() => () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (abortRef.current)    abortRef.current.abort();
+  }, []);
+
+  // ─── FETCH STATS ────────────────────────────────────────────────────────────
+
+  /** Load catalog-wide KPI counts (role-scoped server-side). */
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await getCourseStats();
+      setStats(res.data?.data ?? null);
+    } catch {
+      // Non-fatal — KPIs simply stay on their previous value.
+    }
+  }, []);
 
   // ─── FILTER HELPERS ───────────────────────────────────────────────────────
 
@@ -205,6 +251,7 @@ const useCourse = (mode = 'manager') => {
     // State
     courses,
     total,
+    stats,
     loading,
     error,
     filters,
@@ -212,6 +259,7 @@ const useCourse = (mode = 'manager') => {
     // Data
     fetch,
     fetchById,
+    fetchStats,
 
     // Filters
     handleFilterChange,

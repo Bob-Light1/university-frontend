@@ -22,11 +22,13 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
 
+// Public marketing navigation. Intentionally limited to public entry points —
+// administrative actions (campus creation, admin-account creation) must never be
+// advertised here. "Login" routes to the unified role picker, not the restricted
+// admin portal.
 const NAV_LINKS = [
-  { href: '/',          label: 'Home'     },
-  { href: '/admin/login',     label: 'Login'    },
-  { href: '/admin/newcampus', label: 'Create'   },
-  { href: '/admin/create', label: 'newAdmin'},
+  { href: '/',      label: 'Home'  },
+  { href: '/login', label: 'Login' },
 ];
 
 // ─── SVG Logo mark ────────────────────────────────────────────────────────────
