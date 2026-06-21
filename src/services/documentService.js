@@ -70,18 +70,22 @@ export const updateDocument = (id, payload) => {
 
 /**
  * Soft-delete a document (sets deletedAt, retains for retention policy).
+ * The backend requires a reason of at least 10 characters; it must be sent in
+ * the request body (DELETE with body via axios `data`).
  * @param {string} id
+ * @param {string} reason - Justification (min 10 chars), required server-side
  */
-export const softDeleteDocument = (id) =>
-  api.delete(`/documents/${id}`);
+export const softDeleteDocument = (id, reason = '') =>
+  api.delete(`/documents/${id}`, { data: { reason } });
 
 /**
  * Permanently destroy a document and its storage artefacts.
  * ADMIN only. Pass { hard: true } in the query string.
  * @param {string} id
+ * @param {string} [reason] - Optional justification recorded in the audit trail
  */
-export const hardDeleteDocument = (id) =>
-  api.delete(`/documents/${id}`, { params: { hard: true } });
+export const hardDeleteDocument = (id, reason = '') =>
+  api.delete(`/documents/${id}`, { params: { hard: true }, data: { reason } });
 
 // ─── WORKFLOW ─────────────────────────────────────────────────────────────────
 
@@ -102,7 +106,8 @@ export const archiveDocument = (id, reason = '') =>
   api.post(`/documents/${id}/archive`, { reason });
 
 /**
- * Restore a soft-deleted document.
+ * Restore an ARCHIVED document back to DRAFT (not an undelete).
+ * Requires a reason of at least 10 characters server-side.
  * @param {string} id
  * @param {string} [reason]
  */
@@ -214,7 +219,8 @@ export const getPrintJobStatus = (jobId) =>
 /**
  * Create a time-limited share link for a document.
  * @param {string} id
- * @param {Object} opts - { expiresIn, maxAccess, allowDownload, password }
+ * @param {Object} opts - { expiresInHours?: number, maxDownloads?: number }
+ *                        matching the backend share contract.
  */
 export const createShareLink = (id, opts = {}) =>
   api.post(`/documents/${id}/share`, opts);
@@ -317,19 +323,22 @@ export const deleteTemplate = (id) =>
 
 /**
  * Generate a document from a template, binding provided variables.
- * @param {string} id       - Template _id
+ * The backend expects the variable map under the `templateData` key.
+ * @param {string} id        - Template _id
  * @param {Object} variables - Key-value pairs matching template placeholders
+ * @param {Object} [extra]   - Optional { title, metadata } forwarded to the backend
  */
-export const generateFromTemplate = (id, variables = {}) =>
-  api.post(`/documents/templates/${id}/generate`, { variables });
+export const generateFromTemplate = (id, variables = {}, extra = {}) =>
+  api.post(`/documents/templates/${id}/generate`, { templateData: variables, ...extra });
 
 /**
  * Preview a template with sample variable values (returns HTML string).
+ * The backend expects the variable map under the `templateData` key.
  * @param {string} id
  * @param {Object} [variables]
  */
 export const previewTemplate = (id, variables = {}) =>
-  api.post(`/documents/templates/${id}/preview`, { variables });
+  api.post(`/documents/templates/${id}/preview`, { templateData: variables });
 
 // ─── TYPED GENERATION ─────────────────────────────────────────────────────────
 

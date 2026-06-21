@@ -28,6 +28,7 @@ import MenuBookIcon           from '@mui/icons-material/MenuBook';
 import DescriptionIcon        from '@mui/icons-material/Description';
 import PrintIcon              from '@mui/icons-material/Print';
 import HandshakeIcon          from '@mui/icons-material/Handshake';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import BadgeIcon              from '@mui/icons-material/Badge';
 import PsychologyIcon         from '@mui/icons-material/Psychology';
 import SettingsIcon           from '@mui/icons-material/Settings';
@@ -94,11 +95,12 @@ export default function Campus() {
       ],
     },
 
-    // ── Business — Partners ─────────────────────────────────────────────────
+    // ── Business — Partners · Finance ───────────────────────────────────────
     {
       type: 'group', label: 'Business', icon: HandshakeIcon,
       items: [
         { link: `/campus/${campusId}/partners`, label: 'Partners', icon: HandshakeIcon },
+        { link: `/campus/${campusId}/finance`,  label: 'Finance',  icon: AccountBalanceWalletIcon },
       ],
     },
 

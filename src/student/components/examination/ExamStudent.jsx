@@ -147,7 +147,7 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
     const handle = () => {
       if (document.hidden && !antiCheatSent.current) {
         antiCheatSent.current = true;
-        examService.logAntiCheat(attempt.submissionId, { event: 'TAB_SWITCH' })
+        examService.logAntiCheat(attempt.submissionId, { type: 'TAB_SWITCH' })
           .finally(() => { antiCheatSent.current = false; });
       }
     };
@@ -180,11 +180,26 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
     }
   }, [remaining, handleSubmit]);
 
+  // MCQ — `value` is the 0-based option index (matches the backend Number schema
+  // and the auto-grading correctIdx comparison).
   const handleAnswer = async (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
     setSaving((prev) => ({ ...prev, [questionId]: true }));
     try {
       await examService.saveAnswer(attempt.submissionId, { questionId, selectedOption: value });
+    } catch {
+      // silent — answer is still in local state
+    } finally {
+      setSaving((prev) => ({ ...prev, [questionId]: false }));
+    }
+  };
+
+  // TRUE/FALSE — stored as openText ('true'|'false'); selectedOption is numeric only.
+  const handleTextChoice = async (questionId, value) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+    setSaving((prev) => ({ ...prev, [questionId]: true }));
+    try {
+      await examService.saveAnswer(attempt.submissionId, { questionId, openText: value });
     } catch {
       // silent — answer is still in local state
     } finally {
@@ -260,16 +275,16 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
               </Stack>
             </Stack>
 
-            {/* MCQ */}
+            {/* MCQ — radio value is the option index, sent as selectedOption */}
             {q.questionType === 'MCQ' && (
               <RadioGroup
                 value={answers[q._id] ?? ''}
-                onChange={(e) => handleAnswer(q._id, e.target.value)}
+                onChange={(e) => handleAnswer(q._id, Number(e.target.value))}
               >
                 {(q.options || []).map((opt, oi) => (
                   <FormControlLabel
                     key={oi}
-                    value={opt.text}
+                    value={oi}
                     control={<Radio />}
                     label={opt.text}
                   />
@@ -290,11 +305,11 @@ const TakeExamPanel = ({ attempt, onSubmitted, showSnack }) => {
               />
             )}
 
-            {/* True/False */}
+            {/* True/False — stored as openText */}
             {q.questionType === 'TRUE_FALSE' && (
               <RadioGroup
                 value={answers[q._id] ?? ''}
-                onChange={(e) => handleAnswer(q._id, e.target.value)}
+                onChange={(e) => handleTextChoice(q._id, e.target.value)}
                 row
               >
                 <FormControlLabel value="true"  control={<Radio />} label="True"  />
@@ -515,7 +530,7 @@ const ExamStudent = () => {
                           {s.academicYear} · {s.semester} · {s.examPeriod}
                         </Typography>
                       </TableCell>
-                      <TableCell>{s.subject?.subjectName || '—'}</TableCell>
+                      <TableCell>{s.subject?.subject_name || '—'}</TableCell>
                       <TableCell>
                         <Typography variant="caption">
                           {fDateTime(s.startTime)}
@@ -613,7 +628,7 @@ const ExamStudent = () => {
                           {g.examSession?.title || '—'}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {g.examSession?.subject?.subjectName || '—'}
+                          {g.examSession?.subject?.subject_name || '—'}
                         </Typography>
                       </TableCell>
                       <TableCell>

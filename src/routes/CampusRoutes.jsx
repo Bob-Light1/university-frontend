@@ -47,6 +47,9 @@ const Print = lazy(() =>
 const Partner = lazy(() =>
   import('../campus/components/partners/Partner')
 );
+const Finance = lazy(() =>
+  import('../campus/components/finance/Finance')
+);
 const CampusStaff = lazy(() =>
   import('../campus/components/staff/CampusStaff')
 );
@@ -79,6 +82,7 @@ export const campusRoutes = (
     <Route path="documents"     element={<Document />} />
     <Route path="print"         element={<Print />} />
     <Route path="partners"      element={<Partner />} />
+    <Route path="finance"       element={<Finance />} />
     <Route path="staff"         element={<CampusStaff />} />
     <Route path="mentors"       element={<CampusMentors />} />
     <Route path="settings"      element={<CampusSettings />} />

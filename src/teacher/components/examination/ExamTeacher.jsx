@@ -400,7 +400,7 @@ const ExamTeacher = () => {
                         <Typography variant="body2" fontWeight={600}>{s.title}</Typography>
                         <Typography variant="caption" color="text.secondary">{s.academicYear} · {s.semester}</Typography>
                       </TableCell>
-                      <TableCell>{s.subject?.subjectName || '—'}</TableCell>
+                      <TableCell>{s.subject?.subject_name || '—'}</TableCell>
                       <TableCell>{s.examPeriod}</TableCell>
                       <TableCell>
                         <Typography variant="caption">

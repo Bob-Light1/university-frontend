@@ -23,7 +23,7 @@ import {
   School, EventNote, MenuBook, Assessment,
   ChecklistRtl, Description, CalendarMonth, TrendingUp,
   Explicit, CheckCircle, HourglassEmpty,
-  EmojiEvents, GradeOutlined,
+  EmojiEvents, GradeOutlined, AccountBalanceWallet,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
@@ -31,6 +31,8 @@ import { getStudentDashboard } from '../../../services/studentService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import StudentDashboardSkeleton from './StudentDashboardSkeleton';
 import { fTime, fDateWeekday, fDateWeekdayLong } from '../../../utils/dateFormat';
+import useStudentLedger from '../../../hooks/useStudentLedger';
+import { formatMoney } from '../../../campus/components/finance/financeConstants';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -158,9 +160,13 @@ export default function StudentDashboard() {
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState(null);
 
+  // Own finance ledger — lightweight side call for the "Outstanding balance" card.
+  const { ledger: finance, loading: financeLoading } = useStudentLedger({ mine: true });
+
   useEffect(() => {
+    // `loading` is already initialised to true, so no synchronous setState here
+    // (avoids react-hooks/set-state-in-effect + a redundant mount re-render).
     let cancelled = false;
-    setLoading(true);
     getStudentDashboard()
       .then(({ data }) => { if (!cancelled) setDashboard(data.data); })
       .catch((err)     => { if (!cancelled) setError(err.response?.data?.message || 'Failed to load dashboard.'); })
@@ -314,6 +320,49 @@ export default function StudentDashboard() {
           </Grid>
         ))}
       </Grid>
+
+      {/* ── Outstanding balance ── */}
+      {!financeLoading && (() => {
+        const balance = finance.totals?.balance ?? 0;
+        const owes    = balance > 0;
+        const color   = owes ? theme.palette.error.main : theme.palette.success.main;
+        return (
+          <Paper
+            elevation={2}
+            sx={{ borderRadius: 3, mb: 3, borderLeft: `4px solid ${color}`, overflow: 'hidden' }}
+          >
+            <CardActionArea onClick={() => navigate('/student/finance')} sx={{ p: 2.5 }}>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Box sx={{
+                  bgcolor: `${color}18`, color, borderRadius: 2,
+                  width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <AccountBalanceWallet />
+                </Box>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                    Outstanding balance
+                  </Typography>
+                  <Typography variant="h5" fontWeight={700} sx={{ color, lineHeight: 1.2 }}>
+                    {formatMoney(balance)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {owes ? 'Tap to review and settle your fees' : 'All fees settled — nothing due'}
+                  </Typography>
+                </Box>
+                <Chip
+                  label={owes ? 'View fees →' : 'Up to date'}
+                  size="small"
+                  color={owes ? 'error' : 'success'}
+                  variant="outlined"
+                  sx={{ flexShrink: 0 }}
+                />
+              </Stack>
+            </CardActionArea>
+          </Paper>
+        );
+      })()}
 
       <Grid container spacing={3}>
 
@@ -526,6 +575,7 @@ export default function StudentDashboard() {
                 { label: 'Attendance',  path: '/student/attendance',  icon: <ChecklistRtl />, color: theme.palette.warning.main },
                 { label: 'Courses',     path: '/student/courses',     icon: <MenuBook />,     color: theme.palette.info.main },
                 { label: 'Documents',   path: '/student/documents',   icon: <Description />,  color: theme.palette.secondary.main },
+                { label: 'Finance',     path: '/student/finance',     icon: <AccountBalanceWallet />, color: theme.palette.success.main },
               ].map((item) => (
                 <Grid key={item.label} size={{ xs: 4, sm: 2 }}>
                   <QuickLink {...item} />
