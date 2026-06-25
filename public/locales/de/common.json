@@ -156,12 +156,12 @@
   },
   "notifPref": {
     "title": "Benachrichtigungseinstellungen",
+    "inapp": "In-App",
+    "inappDesc": "Immer aktive Benachrichtigungen in Ihrem Posteingang",
     "email": "E-Mail",
     "emailDesc": "Benachrichtigungen per E-Mail erhalten",
-    "sms": "SMS",
-    "smsDesc": "Textnachrichten für dringende Warnungen erhalten",
-    "push": "Push",
-    "pushDesc": "In-App- und Browser-Push-Benachrichtigungen",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Nachrichten über WhatsApp erhalten (mobil)",
     "save": "Einstellungen speichern",
     "saving": "Wird gespeichert…"
   }

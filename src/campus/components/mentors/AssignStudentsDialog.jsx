@@ -1,10 +1,10 @@
 'use strict';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, Stack, Typography, Chip, CircularProgress,
   Alert, Box, Divider, ToggleButton, ToggleButtonGroup,
-  IconButton,
+  IconButton, Tabs, Tab, Autocomplete, TextField, Avatar,
 } from '@mui/material';
 import {
   Add, Remove, Group, PersonAdd, PersonRemove,
@@ -19,21 +19,21 @@ const MODES = [
   {
     value:       'add',
     label:       'Add',
-    description: 'Add students from selected classes without removing existing assignments.',
+    description: 'Add the selected students without removing existing assignments.',
     icon:        <PersonAdd fontSize="small" />,
     color:       'success',
   },
   {
     value:       'remove',
     label:       'Remove',
-    description: 'Remove students of selected classes from this mentor.',
+    description: 'Remove the selected students from this mentor.',
     icon:        <PersonRemove fontSize="small" />,
     color:       'error',
   },
   {
     value:       'replace',
     label:       'Replace all',
-    description: 'Replace all current student assignments with those from the selected classes.',
+    description: 'Replace all current student assignments with the current selection.',
     icon:        <Refresh fontSize="small" />,
     color:       'warning',
   },
@@ -42,7 +42,9 @@ const MODES = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * Dialog for bulk-assigning students to a mentor by selecting campus classes.
+ * Dialog for assigning students to a mentor — by whole classes and/or by
+ * individual students. The backend (PATCH /mentors/:id/assign-students) merges
+ * `classIds` and `studentIds` and enforces the single-mentor invariant.
  *
  * Props:
  *  open       {boolean}   - Controls visibility
@@ -51,13 +53,21 @@ const MODES = [
  *  onSuccess  {Function}  - Called with API response data after a successful assignment
  */
 export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess }) {
+  const [tab,         setTab]         = useState('class'); // 'class' | 'student'
   const [classes,     setClasses]     = useState([]);
   const [loading,     setLoading]     = useState(false);
   const [submitting,  setSubmitting]  = useState(false);
   const [error,       setError]       = useState('');
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedClassIds, setSelectedClassIds] = useState([]);
   const [mode,        setMode]        = useState('add');
   const [result,      setResult]      = useState(null); // summary from last successful call
+
+  // Individual-student picker state
+  const [studentOptions, setStudentOptions] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [studentInput,   setStudentInput]   = useState('');
+  const [studentLoading, setStudentLoading] = useState(false);
+  const searchTimer = useRef(null);
 
   const campusId = mentor?.schoolCampus?._id ?? mentor?.schoolCampus;
 
@@ -73,24 +83,50 @@ export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess 
       .finally(() => setLoading(false));
   }, [open, campusId]);
 
-  const handleClose = () => {
-    if (submitting) return;
-    setSelectedIds([]);
+  // Debounced async search of campus students for the individual picker
+  useEffect(() => {
+    if (!open || !campusId || tab !== 'student') return;
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      setStudentLoading(true);
+      api.get(`/campus/${campusId}/students`, {
+        params: { search: studentInput || undefined, limit: 20, status: 'active' },
+      })
+        .then((r) => setStudentOptions(r.data?.data ?? []))
+        .catch(() => setStudentOptions([]))
+        .finally(() => setStudentLoading(false));
+    }, 300);
+    return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+  }, [open, campusId, tab, studentInput]);
+
+  const resetState = () => {
+    setTab('class');
+    setSelectedClassIds([]);
+    setSelectedStudents([]);
+    setStudentInput('');
+    setStudentOptions([]);
     setMode('add');
     setError('');
     setResult(null);
+  };
+
+  const handleClose = () => {
+    if (submitting) return;
+    resetState();
     onClose();
   };
 
   const toggleClass = (id) => {
-    setSelectedIds((prev) =>
+    setSelectedClassIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
+  const totalSelected = selectedClassIds.length + selectedStudents.length;
+
   const handleSubmit = async () => {
-    if (selectedIds.length === 0) {
-      setError('Please select at least one class.');
+    if (totalSelected === 0) {
+      setError('Please select at least one class or student.');
       return;
     }
     setSubmitting(true);
@@ -98,8 +134,8 @@ export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess 
     setResult(null);
     try {
       const { data } = await assignStudents(mentor._id, {
-        classIds:   selectedIds,
-        studentIds: [],
+        classIds:   selectedClassIds,
+        studentIds: selectedStudents.map((s) => s._id),
         mode,
       });
       setResult(data.data?.summary ?? null);
@@ -114,7 +150,8 @@ export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess 
   };
 
   const modeObj  = MODES.find((m) => m.value === mode);
-  const btnLabel = `${mode === 'add' ? 'Add' : mode === 'remove' ? 'Remove' : 'Replace'} — ${selectedIds.length} class${selectedIds.length !== 1 ? 'es' : ''}`;
+  const verb     = mode === 'add' ? 'Add' : mode === 'remove' ? 'Remove' : 'Replace';
+  const btnLabel = `${verb} — ${totalSelected} selected`;
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth disableEnforceFocus>
@@ -167,42 +204,115 @@ export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess 
             </Typography>
           </Box>
 
-          {/* ── Class chips ───────────────────────────────────────────── */}
+          {/* ── Target selector: by class or by student ───────────────── */}
           <Box>
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Select classes
-              {selectedIds.length > 0 && (
-                <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1 }}>
-                  ({selectedIds.length} selected)
-                </Typography>
-              )}
-            </Typography>
+            <Tabs
+              value={tab}
+              onChange={(_, v) => setTab(v)}
+              variant="fullWidth"
+              sx={{ minHeight: 40, mb: 2, '& .MuiTab-root': { minHeight: 40, textTransform: 'none', fontWeight: 600 } }}
+            >
+              <Tab value="class"   label="By class" />
+              <Tab value="student" label="By student" />
+            </Tabs>
 
-            {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-                <CircularProgress size={28} />
-              </Box>
-            ) : classes.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                No active classes found for this campus.
-              </Typography>
+            {tab === 'class' ? (
+              <>
+                <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                  Select classes
+                  {selectedClassIds.length > 0 && (
+                    <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1 }}>
+                      ({selectedClassIds.length} selected)
+                    </Typography>
+                  )}
+                </Typography>
+
+                {loading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+                    <CircularProgress size={28} />
+                  </Box>
+                ) : classes.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary" fontStyle="italic">
+                    No active classes found for this campus.
+                  </Typography>
+                ) : (
+                  <Stack direction="row" flexWrap="wrap" spacing={1} useFlexGap>
+                    {classes.map((c) => {
+                      const selected = selectedClassIds.includes(c._id);
+                      return (
+                        <Chip
+                          key={c._id}
+                          label={c.className}
+                          icon={selected ? <Remove fontSize="small" /> : <Add fontSize="small" />}
+                          onClick={() => toggleClass(c._id)}
+                          color={selected ? 'primary' : 'default'}
+                          variant={selected ? 'filled' : 'outlined'}
+                          sx={{ cursor: 'pointer', mb: 0.5 }}
+                        />
+                      );
+                    })}
+                  </Stack>
+                )}
+              </>
             ) : (
-              <Stack direction="row" flexWrap="wrap" spacing={1} useFlexGap>
-                {classes.map((c) => {
-                  const selected = selectedIds.includes(c._id);
-                  return (
-                    <Chip
-                      key={c._id}
-                      label={c.className}
-                      icon={selected ? <Remove fontSize="small" /> : <Add fontSize="small" />}
-                      onClick={() => toggleClass(c._id)}
-                      color={selected ? 'primary' : 'default'}
-                      variant={selected ? 'filled' : 'outlined'}
-                      sx={{ cursor: 'pointer', mb: 0.5 }}
+              <>
+                <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                  Select students
+                  {selectedStudents.length > 0 && (
+                    <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1 }}>
+                      ({selectedStudents.length} selected)
+                    </Typography>
+                  )}
+                </Typography>
+                <Autocomplete
+                  multiple
+                  filterSelectedOptions
+                  value={selectedStudents}
+                  onChange={(_, val) => setSelectedStudents(val)}
+                  inputValue={studentInput}
+                  onInputChange={(_, val) => setStudentInput(val)}
+                  options={studentOptions}
+                  loading={studentLoading}
+                  isOptionEqualToValue={(opt, val) => opt._id === val._id}
+                  getOptionLabel={(o) =>
+                    `${o.firstName ?? ''} ${o.lastName ?? ''}${o.matricule ? ` (${o.matricule})` : ''}`.trim()
+                  }
+                  noOptionsText={studentInput ? 'No students found' : 'Type to search…'}
+                  renderOption={(props, o) => (
+                    <Box component="li" {...props} key={o._id}>
+                      <Avatar sx={{ width: 26, height: 26, fontSize: 12, mr: 1.5 }}>
+                        {o.firstName?.[0]}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body2" fontWeight={600}>
+                          {o.firstName} {o.lastName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {o.matricule ?? '—'} · {o.studentClass?.className ?? 'No class'}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Search by name or matricule…"
+                      size="small"
+                      slotProps={{
+                        input: {
+                          ...params.InputProps,
+                          endAdornment: (
+                            <>
+                              {studentLoading ? <CircularProgress color="inherit" size={18} /> : null}
+                              {params.InputProps.endAdornment}
+                            </>
+                          ),
+                        },
+                      }}
                     />
-                  );
-                })}
-              </Stack>
+                  )}
+                />
+              </>
             )}
           </Box>
 
@@ -232,7 +342,7 @@ export default function AssignStudentsDialog({ open, onClose, mentor, onSuccess 
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={submitting || selectedIds.length === 0 || loading}
+          disabled={submitting || totalSelected === 0 || loading}
           color={modeObj?.color ?? 'primary'}
           startIcon={
             submitting

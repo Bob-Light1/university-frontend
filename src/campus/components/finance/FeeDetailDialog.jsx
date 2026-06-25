@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Box,
   Typography, Divider, Chip, CircularProgress, Alert, Link,
@@ -17,8 +18,9 @@ import { Receipt, Payment, Close, InsertDriveFile } from '@mui/icons-material';
 
 import { getFee } from '../../../services/financeService';
 import { StatusChip } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import {
-  FEE_STATUS_LABEL, FEE_STATUS_COLOR, formatMoney, formatDate,
+  FEE_STATUS_COLOR, formatMoney, formatDate,
 } from './financeConstants';
 
 const studentName = (s) =>
@@ -36,6 +38,8 @@ const Field = ({ label, children }) => (
 );
 
 const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
+  const { t } = useTranslation('finance');
+  const { feeStatus: feeStatusLabel } = useFinanceLabels();
   const [data,    setData]    = useState(null);   // { fee, payments }
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
@@ -48,11 +52,11 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
       const { data: res } = await getFee(feeId, campusId ? { campusId } : {});
       setData(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load the fee.');
+      setError(err.response?.data?.message || t('feeDetail.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [feeId, campusId]);
+  }, [feeId, campusId, t]);
 
   useEffect(() => {
     if (open) load();
@@ -73,10 +77,10 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={1}>
             <Receipt color="primary" />
-            <Typography variant="h6" fontWeight={700}>Fee Detail</Typography>
+            <Typography variant="h6" fontWeight={700}>{t('feeDetail.title')}</Typography>
           </Stack>
           {fee && (
-            <StatusChip status={fee.status} labelMap={FEE_STATUS_LABEL} colorMap={FEE_STATUS_COLOR} />
+            <StatusChip status={fee.status} labelMap={feeStatusLabel} colorMap={FEE_STATUS_COLOR} />
           )}
         </Stack>
       </DialogTitle>
@@ -96,13 +100,13 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
                 gap: 2,
               }}
             >
-              <Field label="Student">{studentName(fee.student)}</Field>
-              <Field label="Label">{fee.label}</Field>
-              <Field label="Academic year">{fee.academicYear || '—'}</Field>
-              <Field label="Due date">{formatDate(fee.dueDate)}</Field>
-              <Field label="Created">{formatDate(fee.createdAt)}</Field>
+              <Field label={t('fields.student')}>{studentName(fee.student)}</Field>
+              <Field label={t('fields.label')}>{fee.label}</Field>
+              <Field label={t('fields.academicYear')}>{fee.academicYear || '—'}</Field>
+              <Field label={t('fields.dueDate')}>{formatDate(fee.dueDate)}</Field>
+              <Field label={t('fields.createdAt')}>{formatDate(fee.createdAt)}</Field>
               {fee.student?.matricule && (
-                <Field label="Matricule">
+                <Field label={t('fields.matricule')}>
                   <Box component="span" sx={{ fontFamily: 'monospace' }}>{fee.student.matricule}</Box>
                 </Field>
               )}
@@ -111,17 +115,17 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
             {/* Amount summary */}
             <Stack direction="row" spacing={1.5}>
               <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2, flex: 1, textAlign: 'center' }}>
-                <Typography variant="caption" color="text.secondary">Due</Typography>
+                <Typography variant="caption" color="text.secondary">{t('fields.due')}</Typography>
                 <Typography variant="h6" fontWeight={700}>{formatMoney(fee.amountDue, fee.currency)}</Typography>
               </Paper>
               <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2, flex: 1, textAlign: 'center' }}>
-                <Typography variant="caption" color="text.secondary">Paid</Typography>
+                <Typography variant="caption" color="text.secondary">{t('fields.paid')}</Typography>
                 <Typography variant="h6" fontWeight={700} sx={{ color: 'success.main' }}>
                   {formatMoney(fee.amountPaid, fee.currency)}
                 </Typography>
               </Paper>
               <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2, flex: 1, textAlign: 'center' }}>
-                <Typography variant="caption" color="text.secondary">Balance</Typography>
+                <Typography variant="caption" color="text.secondary">{t('fields.balance')}</Typography>
                 <Typography variant="h6" fontWeight={700} sx={{ color: balance > 0 ? 'error.main' : 'success.main' }}>
                   {formatMoney(balance, fee.currency)}
                 </Typography>
@@ -131,30 +135,30 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
             {fee.notes && (
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 0.4 }}>
-                  Notes
+                  {t('fields.notes')}
                 </Typography>
                 <Typography variant="body2">{fee.notes}</Typography>
               </Box>
             )}
 
             <Divider textAlign="left">
-              <Chip label={`Payments (${payments.length})`} size="small" />
+              <Chip label={t('feeDetail.payments', { count: payments.length })} size="small" />
             </Divider>
 
             {/* Payment history */}
             {payments.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
-                No payment recorded yet.
+                {t('feeDetail.noPayments')}
               </Typography>
             ) : (
               <TableContainerLite>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>Method</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>Reference</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.reference')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -175,7 +179,7 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
             {Array.isArray(fee.attachments) && fee.attachments.length > 0 && (
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 0.4 }}>
-                  Attachments
+                  {t('feeDetail.attachments')}
                 </Typography>
                 <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 0.5 }}>
                   {fee.attachments.map((url, i) => (
@@ -186,7 +190,7 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
                       sx={{ borderRadius: 2 }}
                       label={(
                         <Link href={url} target="_blank" rel="noopener noreferrer" underline="hover" color="inherit">
-                          Document {i + 1}
+                          {t('feeDetail.document', { index: i + 1 })}
                         </Link>
                       )}
                     />
@@ -199,14 +203,14 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={onClose} startIcon={<Close />} sx={{ textTransform: 'none' }}>Close</Button>
+        <Button onClick={onClose} startIcon={<Close />} sx={{ textTransform: 'none' }}>{t('actions.close')}</Button>
         {canPay && onPay && (
           <Button
             variant="contained" color="success" startIcon={<Payment />}
             onClick={() => onPay(fee)}
             sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
           >
-            Record Payment
+            {t('payment.submit')}
           </Button>
         )}
       </DialogActions>

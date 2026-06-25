@@ -134,6 +134,19 @@ export const roomRegistrySchema = Yup.object({
   unavailableSlots: Yup.array().of(unavailableSlotSchema).default([]),
 });
 
+export const teacherPreferenceSchema = Yup.object({
+  teacherId:           objectId('Teacher'),
+  unavailableSlots:    Yup.array().of(unavailableSlotSchema).default([]),
+  maxConsecutiveHours: Yup.number()
+    .integer('Must be a whole number')
+    .min(1, 'Minimum 1h')
+    .max(12, 'Maximum 12h')
+    .default(4),
+  preferredDays: Yup.array()
+    .of(Yup.string().oneOf(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'], 'Invalid day'))
+    .default([]),
+});
+
 // ─── MAIN SCHEMA ─────────────────────────────────────────────────────────────
 
 export const gaetConstraintSchema = Yup.object({
@@ -148,6 +161,18 @@ export const gaetConstraintSchema = Yup.object({
   semester: Yup.string()
     .oneOf(['S1', 'S2', 'Annual'], 'Invalid semester')
     .required('Semester is required'),
+  semesterStartDate: Yup.string()
+    .nullable()
+    .test('within-year', 'Must fall within the academic year', function (v) {
+      if (!v) return true;
+      const d = new Date(v);
+      if (Number.isNaN(d.getTime())) return false;
+      const ay = this.parent.academicYear;
+      if (!ACADEMIC_YEAR_REGEX.test(ay || '')) return true;
+      const [s, e] = ay.split('-').map(Number);
+      const y = d.getUTCFullYear();
+      return y === s || y === e;
+    }),
   timeSlots: Yup.array()
     .of(timeSlotSchema)
     .min(1, 'Add at least one time slot'),
@@ -157,6 +182,9 @@ export const gaetConstraintSchema = Yup.object({
   roomRegistry: Yup.array()
     .of(roomRegistrySchema)
     .min(1, 'Add at least one room'),
+  teacherPreferences: Yup.array()
+    .of(teacherPreferenceSchema)
+    .default([]),
 });
 
 // ─── DEFAULT VALUES ───────────────────────────────────────────────────────────
@@ -173,6 +201,14 @@ export const defaultCourseRequirement = () => ({
 
 export const defaultRoom = () => ({
   name: '', capacity: 30, type: 'CLASSROOM',
+});
+
+export const defaultUnavailableSlot = () => ({
+  day: 'MO', startHour: 8, endHour: 10,
+});
+
+export const defaultTeacherPreference = () => ({
+  teacherId: '', unavailableSlots: [], maxConsecutiveHours: 4, preferredDays: [],
 });
 
 export default gaetConstraintSchema;

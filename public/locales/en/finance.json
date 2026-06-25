@@ -1,49 +1,285 @@
 {
-  "title": "Finance",
-  "fee": {
-    "title": "Tuition fees",
-    "create": "Create fee",
+  "title": "Finance Module",
+  "tabs": {
+    "overview": "Overview",
+    "fees": "Fees",
+    "incomes": "Incomes",
+    "expenses": "Expenses"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "reset": "Reset",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "saving": "Saving…",
+    "viewDetail": "View detail",
+    "ledger": "Ledger",
+    "recordPayment": "Record payment",
+    "sendReminder": "Send reminder",
+    "categories": "Categories"
+  },
+  "fields": {
+    "student": "Student",
+    "label": "Label",
+    "title": "Title",
     "amount": "Amount",
+    "amountDue": "Amount due",
     "currency": "Currency",
+    "method": "Method",
+    "paymentMethod": "Payment method",
+    "status": "Status",
+    "source": "Source",
+    "category": "Category",
+    "date": "Date",
     "dueDate": "Due date",
-    "instalment": "Instalment",
-    "level": "Level",
-    "class": "Class"
+    "academicYear": "Academic year",
+    "reference": "Reference",
+    "notes": "Notes",
+    "description": "Description",
+    "balance": "Balance",
+    "due": "Due",
+    "paid": "Paid",
+    "createdAt": "Created",
+    "matricule": "Matricule",
+    "year": "Year",
+    "month": "Month",
+    "period": "Period",
+    "recurring": "Recurring",
+    "actions": "Actions"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "e.g. Tuition 2025-2026"
+  },
+  "filters": {
+    "allYears": "All years",
+    "allMonths": "All months",
+    "allStatuses": "All statuses",
+    "allSources": "All sources",
+    "allCategories": "All categories"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "Pending",
+      "partial": "Partial",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "expenseStatus": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "paid": "Paid",
+      "rejected": "Rejected"
+    },
+    "incomeStatus": {
+      "pending": "Pending",
+      "received": "Received",
+      "cancelled": "Cancelled"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Enrollment fees",
+      "Tuition": "Tuition",
+      "Course Payment": "Course payment",
+      "Exam": "Exam",
+      "Certification": "Certification",
+      "Grant": "Grant",
+      "Donation": "Donation",
+      "Partnership": "Partnership",
+      "Other": "Other"
+    },
+    "recurringPeriod": {
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "yearly": "Yearly"
+    },
+    "paymentMethod": {
+      "Cash": "Cash",
+      "Mobile Money": "Mobile Money",
+      "Bank Transfer": "Bank transfer",
+      "Cheque": "Cheque"
+    },
+    "months": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    }
+  },
+  "overview": {
+    "title": "Financial Overview",
+    "subtitle": "Income vs expenses and outstanding student debts for this campus.",
+    "kpi": {
+      "incomeReceived": "Income received",
+      "expensesPaid": "Expenses paid",
+      "netBalance": "Net balance",
+      "overdueDebts": "Overdue debts",
+      "records": "{count, plural, one {# record} other {# records}}",
+      "surplus": "Surplus",
+      "deficit": "Deficit",
+      "studentsPastDue": "Students past due"
+    },
+    "shortcuts": {
+      "newFee": "New fee",
+      "newPayment": "New payment",
+      "newIncome": "New income",
+      "newExpense": "New expense"
+    },
+    "chart": {
+      "title": "Monthly income vs expenses — {year}",
+      "income": "Income",
+      "expense": "Expense"
+    }
+  },
+  "fees": {
+    "title": "Student Fees",
+    "subtitle": "Track debts, record payments and send balance reminders.",
+    "new": "New Fee",
+    "empty": "No fees found. Create one to start tracking a student debt.",
+    "confirmDelete": "Delete the fee \"{label}\"? This is a soft delete.",
+    "toast": {
+      "created": "Fee created.",
+      "paymentRecorded": "Payment recorded.",
+      "reminderSent": "Reminder sent to the student.",
+      "reminderFailed": "Failed to send reminder.",
+      "deleted": "Fee deleted.",
+      "deleteFailed": "Failed to delete fee."
+    }
+  },
+  "feeDetail": {
+    "title": "Fee Detail",
+    "loadError": "Failed to load the fee.",
+    "payments": "Payments ({count})",
+    "noPayments": "No payment recorded yet.",
+    "attachments": "Attachments",
+    "document": "Document {index}"
+  },
+  "feeForm": {
+    "title": "New Fee",
+    "creating": "Creating…",
+    "submit": "Create Fee"
   },
   "payment": {
-    "title": "Payments",
-    "record": "Record payment",
-    "method": {
-      "title": "Payment method",
-      "cash": "Cash",
-      "mtnMomo": "MTN Mobile Money",
-      "orangeMoney": "Orange Money",
-      "bankTransfer": "Bank transfer"
+    "title": "Record Payment",
+    "remainingBalance": "remaining balance",
+    "referenceLabel": "Reference / receipt #",
+    "paymentDate": "Payment date",
+    "recording": "Recording…",
+    "submit": "Record Payment",
+    "failed": "Payment failed. Please retry."
+  },
+  "incomes": {
+    "title": "Incomes",
+    "subtitle": "Record and track all institutional income.",
+    "new": "New Income",
+    "empty": "No incomes found.",
+    "confirmDelete": "Delete the income \"{title}\"?",
+    "toast": {
+      "created": "Income created.",
+      "updated": "Income updated.",
+      "deleted": "Income deleted.",
+      "deleteFailed": "Failed to delete income."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "New Income",
+    "titleEdit": "Edit Income",
+    "studentOptional": "Student (optional)",
+    "saveError": "Failed to save income.",
+    "submitNew": "Create Income",
+    "submitEdit": "Save Changes"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Record outflows and run them through the approval workflow.",
+    "new": "New Expense",
+    "empty": "No expenses found.",
+    "recurringTip": "Recurring ({period})",
+    "confirmDelete": "Delete the expense \"{title}\"?",
+    "workflow": {
+      "approve": "Approve",
+      "markPaid": "Mark paid",
+      "reject": "Reject"
     },
-    "status": {
-      "paid": "Paid",
-      "partial": "Partial",
-      "unpaid": "Unpaid",
-      "overdue": "Overdue"
+    "toast": {
+      "created": "Expense created.",
+      "updated": "Expense updated.",
+      "approved": "Expense approved.",
+      "rejected": "Expense rejected.",
+      "paid": "Expense paid.",
+      "transitionError": "Action not allowed for the current status.",
+      "deleted": "Expense deleted.",
+      "deleteFailed": "Failed to delete expense."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "New Expense",
+    "titleEdit": "Edit Expense",
+    "noCategories": "No categories — create one first",
+    "lockedError": "This expense is paid and locked — it can no longer be edited.",
+    "saveError": "Failed to save expense.",
+    "submitNew": "Create Expense",
+    "submitEdit": "Save Changes"
+  },
+  "categories": {
+    "title": "Expense Categories",
+    "newCategory": "New category",
+    "empty": "No categories yet.",
+    "createError": "Failed to create category.",
+    "deleteError": "Cannot delete: the category may still be in use."
+  },
+  "ledger": {
+    "title": "Student Ledger",
+    "totalDue": "Total due",
+    "totalPaid": "Total paid",
+    "balance": "Balance",
+    "debts": "Debts ({count})",
+    "noDebts": "No debts recorded.",
+    "payments": "Payments ({count})",
+    "noPayments": "No payments recorded.",
+    "dueAndPaid": "Due {due} · Paid {paid}"
+  },
+  "student": {
+    "title": "My Finance",
+    "subtitle": "Your fees, payments and outstanding balance.",
+    "kpi": {
+      "totalDue": "Total due",
+      "totalPaid": "Total paid",
+      "outstandingBalance": "Outstanding balance",
+      "debtsCount": "{count, plural, one {# debt} other {# debts}}",
+      "paymentsCount": "{count, plural, one {# payment} other {# payments}}",
+      "settle": "Please settle your balance",
+      "allSettled": "All settled"
     },
-    "receipt": "Payment receipt",
-    "reconcile": "Reconcile payment"
+    "warning": "You have an outstanding balance of {amount}. Please contact your campus finance office to settle it.",
+    "myDebts": "My Debts ({count})",
+    "noFees": "No fees on record.",
+    "myPayments": "My Payments ({count})",
+    "noPayments": "No payments recorded yet."
   },
-  "scholarship": {
-    "title": "Scholarships",
-    "create": "Create scholarship",
-    "type": "Type",
-    "amount": "Amount",
-    "beneficiary": "Beneficiary"
+  "attachments": {
+    "attach": "Attach files",
+    "uploading": "Uploading…",
+    "hint": "Receipts / invoices — JPG, PNG, WEBP, PDF · max 5 MB",
+    "invalidType": "Only JPG, PNG, WEBP or PDF files are allowed.",
+    "tooLarge": "Each file must be 5 MB or smaller.",
+    "uploadFailed": "Upload failed. Try again."
   },
-  "dashboard": {
-    "title": "Financial dashboard",
-    "monthlyRevenue": "Monthly revenue",
-    "forecast": "Forecast",
-    "latePayments": "Late payments"
-  },
-  "report": {
-    "generate": "Generate report",
-    "export": "Export to Excel"
+  "errors": {
+    "loadFees": "Failed to load fees.",
+    "loadIncomes": "Failed to load incomes.",
+    "loadExpenses": "Failed to load expenses.",
+    "loadLedger": "Failed to load the ledger.",
+    "loadSummary": "Failed to load the financial summary."
   }
 }

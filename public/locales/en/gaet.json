@@ -1,34 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Academic Activity Tracking",
-  "report": {
-    "generate": "Generate GAET Report",
-    "title": "Academic Activity Tracking Report",
-    "period": "Reporting period",
-    "download": "Download report"
+  "subtitle": "Automatic Timetable Generator",
+  "header": {
+    "manager": "Configure constraints, generate, review and publish your semester timetable.",
+    "viewer": "View generated timetables for this campus."
   },
-  "activity": {
-    "title": "Activities",
-    "planned": "Planned",
-    "completed": "Completed",
-    "missed": "Missed",
-    "rate": "Completion rate"
+  "context": {
+    "academicYear": "Academic Year",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semester",
+    "updated": "Updated {date}"
   },
-  "teacher": {
-    "load": "Teaching load",
-    "hours": "{n, plural, one{# hour} other{# hours}}",
-    "delivered": "Hours delivered",
-    "remaining": "Hours remaining"
+  "semesterOptions": {
+    "S1": "Semester 1",
+    "S2": "Semester 2",
+    "Annual": "Annual"
   },
-  "schedule": {
-    "generate": "Generate schedule",
-    "constraints": "Constraints",
-    "conflict": "Conflict detected",
-    "resolve": "Resolve"
+  "weekday": {
+    "MO": "Monday",
+    "TU": "Tuesday",
+    "WE": "Wednesday",
+    "TH": "Thursday",
+    "FR": "Friday",
+    "SA": "Saturday",
+    "SU": "Sunday"
+  },
+  "sessionType": {
+    "LECTURE": "Lecture",
+    "TUTORIAL": "Tutorial",
+    "PRACTICAL": "Practical"
+  },
+  "roomType": {
+    "CLASSROOM": "Classroom",
+    "LAB": "Lab",
+    "AMPHITHEATER": "Amphitheater"
+  },
+  "summary": {
+    "timeSlots": "Time Slots",
+    "courses": "Courses",
+    "rooms": "Rooms"
   },
   "status": {
-    "onTrack": "On track",
-    "delayed": "Delayed",
-    "completed": "Completed"
+    "DRAFT": "Draft",
+    "GENERATING": "Generating…",
+    "GENERATED": "Generated",
+    "PARTIALLY_GENERATED": "Partial",
+    "PUBLISHED": "Published",
+    "FAILED": "Failed",
+    "CANCELLED": "Cancelled"
+  },
+  "empty": {
+    "title": "No timetable configured",
+    "body": "Fill in the form below to configure constraints and generate the timetable for this semester."
+  },
+  "banner": {
+    "generatingTitle": "Timetable generation in progress…",
+    "generatingBody": "The algorithm is running in a background thread. This page will update automatically when complete.",
+    "failed": "Generation failed. Verify that your constraints are not over-constrained and retry.",
+    "retry": "Retry",
+    "publishedTitle": "Timetable published successfully.",
+    "publishedOn": "Published on {date}"
+  },
+  "tabs": {
+    "configuration": "Configuration",
+    "preview": "Preview",
+    "quality": "Quality",
+    "conflicts": "Conflicts"
+  },
+  "actions": {
+    "generate": "Generate Timetable",
+    "generating": "Generating…",
+    "regenerate": "Regenerate",
+    "publish": "Publish Timetable",
+    "publishing": "Publishing…",
+    "cancel": "Cancel",
+    "retry": "Retry Generation",
+    "published": "Timetable published successfully",
+    "disabledHint": "Complete all three constraint sections before generating",
+    "tooltipCancel": "Discard and cancel the generated timetable",
+    "tooltipRegenerate": "Run the algorithm again with current constraints",
+    "tooltipPublishPartial": "Some courses were not placed — publish partial timetable",
+    "tooltipPublishFull": "Publish to StudentSchedule and TeacherSchedule"
+  },
+  "conflicts": {
+    "none": "No conflicts detected — all hard constraints satisfied.",
+    "detected": "{count, plural, one {# conflict detected} other {# conflicts detected}}",
+    "day": "Day",
+    "room": "Room",
+    "label": "Conflict",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Teacher double-booking",
+      "ROOM_DOUBLE_BOOKING": "Room double-booking",
+      "CLASS_DOUBLE_BOOKING": "Class double-booking",
+      "fallback": "Conflict"
+    },
+    "unplacedTitle": "Unplaced Courses ({count})",
+    "unplacedLabel": "Unplaced",
+    "unplacedDefaultReason": "Could not be placed with current constraints"
+  },
+  "quality": {
+    "partialTitle": "Partially generated — {count, plural, one {# course could not be placed} other {# courses could not be placed}}.",
+    "partialBody": "You may publish the partial timetable or adjust constraints and regenerate.",
+    "score": "Quality Score",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Excellent",
+    "scoreGood": "Good",
+    "scoreNeedsReview": "Needs review",
+    "hardConstraints": "Hard Constraints",
+    "hardConstraintsSub": "No teacher / room / class conflicts",
+    "softConstraints": "Soft Constraints",
+    "softConstraintsSub": "Preferences & morning slots satisfied",
+    "roomUtilization": "Room Utilization",
+    "roomUtilizationSub": "Average room occupancy rate",
+    "generatedIn": "Generated in {seconds}s",
+    "unplacedTitle": "Unplaced Courses ({count})",
+    "unplacedLabel": "Unplaced",
+    "unplacedRefFallback": "Ref: {ref}",
+    "allPlaced": "All courses successfully placed — no constraint violations detected."
+  },
+  "preview": {
+    "emptyTitle": "No sessions generated yet",
+    "emptyBody": "Run generation to see the timetable preview here",
+    "summary": "{sessions, plural, one {# session} other {# sessions}} across {days, plural, one {# day} other {# days}}",
+    "dayCount": "{count, plural, one {# session} other {# sessions}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Time Slots",
+      "title": "Available Time Slots",
+      "subtitle": "Define the weekly time windows the algorithm may use.",
+      "add": "Add Slot",
+      "empty": "No time slots defined. Click \"Add Slot\" to start.",
+      "day": "Day",
+      "start": "Start (h)",
+      "end": "End (h)",
+      "break": "Break",
+      "removeSlot": "Remove slot",
+      "duration": "Duration: {hours}h · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Courses",
+      "title": "Course Requirements",
+      "subtitle": "One entry per class + subject + teacher combination.",
+      "add": "Add Course",
+      "empty": "No courses defined. Click \"Add Course\" to create a planning unit.",
+      "newCourse": "New course",
+      "hoursPerWeekShort": "{hours}h/week",
+      "studentsShort": "{count, plural, one {# student} other {# students}}",
+      "remove": "Remove this course requirement",
+      "class": "Class",
+      "subject": "Subject",
+      "teacher": "Teacher",
+      "sessionType": "Session Type",
+      "hoursPerWeek": "h/week",
+      "duration": "Duration (min)",
+      "students": "Students",
+      "roomType": "Room Type",
+      "requiresLab": "Requires Lab",
+      "preferMorning": "Prefer Morning"
+    },
+    "rooms": {
+      "tab": "Rooms",
+      "title": "Room Registry",
+      "subtitle": "Physical rooms available for timetable allocation.",
+      "add": "Add Room",
+      "empty": "No rooms defined. Click \"Add Room\" to register a room.",
+      "name": "Room Name",
+      "namePlaceholder": "e.g. Amphi A, Lab 201",
+      "capacity": "Capacity",
+      "type": "Room Type",
+      "remove": "Remove room"
+    },
+    "semesterStart": {
+      "label": "Semester Start Date",
+      "helper": "First teaching day — published sessions start from this date."
+    },
+    "teacherPrefs": {
+      "tab": "Teacher Preferences",
+      "title": "Teacher Preferences",
+      "subtitle": "Optional soft constraints: unavailability, preferred days and maximum consecutive hours.",
+      "add": "Add Teacher",
+      "empty": "No teacher preferences defined. These are optional and refine the generated timetable.",
+      "newTeacher": "New teacher",
+      "teacher": "Teacher",
+      "remove": "Remove teacher preference",
+      "maxConsecutive": "Max consecutive hours",
+      "maxConsecutiveHelp": "1–12 hours",
+      "preferredDays": "Preferred days",
+      "unavailable": "Unavailable slots",
+      "addSlot": "Add slot",
+      "noSlots": "No unavailable slots",
+      "slotStart": "Start (h)",
+      "slotEnd": "End (h)",
+      "day": "Day",
+      "removeSlot": "Remove slot",
+      "slotsCount": "Unavailable: {count}",
+      "preferredCount": "Preferred: {count}"
+    },
+    "nav": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "save": "Save Configuration",
+    "saving": "Saving…"
+  },
+  "messages": {
+    "saved": "Constraints saved successfully.",
+    "loadFailed": "Failed to load constraint.",
+    "saveFailed": "Failed to save constraints.",
+    "generateStartFailed": "Failed to start generation.",
+    "generatedSuccess": "Timetable generated successfully.",
+    "generatedPartial": "Timetable partially generated — some courses unplaced. Check conflicts.",
+    "generatedFailed": "Generation failed. Check your constraints and retry.",
+    "noConstraintId": "Server did not return a constraint ID.",
+    "previewFailed": "Failed to load preview.",
+    "conflictsFailed": "Failed to load conflicts.",
+    "publishedCount": "{count, plural, one {# session published successfully.} other {# sessions published successfully.}}",
+    "publishFailed": "Publication failed.",
+    "cancelled": "Generated timetable cancelled.",
+    "cancelFailed": "Failed to cancel."
   }
 }

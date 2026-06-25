@@ -10,6 +10,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Typography, Button, Paper, Alert, Snackbar, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -23,18 +24,23 @@ import {
 import useExpenses from '../../../hooks/useExpenses';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { StatusChip, PeriodSelector } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import {
-  EXPENSE_STATUSES, EXPENSE_STATUS_LABEL, EXPENSE_STATUS_COLOR, EXPENSE_TRANSITIONS,
+  EXPENSE_STATUSES, EXPENSE_STATUS_COLOR, EXPENSE_TRANSITIONS,
   formatMoney, formatDate,
 } from './financeConstants';
 import ExpenseFormDialog from './ExpenseFormDialog';
 import ExpenseCategoriesPanel from './ExpenseCategoriesPanel';
 
+/** Workflow action → i18n label key + icon/colour (labels resolved at render). */
 const WORKFLOW_META = {
-  approve: { label: 'Approve', icon: <CheckCircle fontSize="small" />, color: 'info' },
-  pay:     { label: 'Mark paid', icon: <Paid fontSize="small" />, color: 'success' },
-  reject:  { label: 'Reject', icon: <Cancel fontSize="small" />, color: 'error' },
+  approve: { labelKey: 'approve',  icon: <CheckCircle fontSize="small" />, color: 'info' },
+  pay:     { labelKey: 'markPaid', icon: <Paid fontSize="small" />, color: 'success' },
+  reject:  { labelKey: 'reject',   icon: <Cancel fontSize="small" />, color: 'error' },
 };
+
+/** expense transition action → success toast key. */
+const TRANSITION_TOAST = { approve: 'approved', reject: 'rejected', pay: 'paid' };
 
 const ExpensesManager = ({ campusId }) => {
   const {
@@ -43,6 +49,8 @@ const ExpensesManager = ({ campusId }) => {
     create, update, transition, remove, createCategory, removeCategory,
   } = useExpenses(campusId);
 
+  const { t } = useTranslation('finance');
+  const { expenseStatus: expenseStatusLabel } = useFinanceLabels();
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
   const [editing,      setEditing]      = useState(null);   // expense or {} for new
   const [catsOpen,     setCatsOpen]     = useState(false);
@@ -51,10 +59,10 @@ const ExpensesManager = ({ campusId }) => {
   const handleSubmit = async (payload) => {
     if (editing?._id) {
       await update(editing._id, payload);
-      showSnackbar('Expense updated.', 'success');
+      showSnackbar(t('expenses.toast.updated'), 'success');
     } else {
       await create(payload);
-      showSnackbar('Expense created.', 'success');
+      showSnackbar(t('expenses.toast.created'), 'success');
     }
   };
 
@@ -62,23 +70,23 @@ const ExpensesManager = ({ campusId }) => {
     setBusyId(expense._id);
     try {
       await transition(expense._id, action);
-      showSnackbar(`Expense ${action === 'pay' ? 'paid' : `${action}d`}.`, 'success');
+      showSnackbar(t(`expenses.toast.${TRANSITION_TOAST[action]}`), 'success');
     } catch (err) {
       // 409 → illegal transition (e.g. another user moved it first).
-      showSnackbar(err.response?.data?.message || 'Action not allowed for the current status.', 'error');
+      showSnackbar(err.response?.data?.message || t('expenses.toast.transitionError'), 'error');
     } finally {
       setBusyId(null);
     }
   };
 
   const handleDelete = async (expense) => {
-    if (!window.confirm(`Delete the expense "${expense.title}"?`)) return;
+    if (!window.confirm(t('expenses.confirmDelete', { title: expense.title }))) return;
     setBusyId(expense._id);
     try {
       await remove(expense._id);
-      showSnackbar('Expense deleted.', 'success');
+      showSnackbar(t('expenses.toast.deleted'), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to delete expense.', 'error');
+      showSnackbar(err.response?.data?.message || t('expenses.toast.deleteFailed'), 'error');
     } finally {
       setBusyId(null);
     }
@@ -95,9 +103,9 @@ const ExpensesManager = ({ campusId }) => {
         sx={{ mb: 2.5 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={700}>Expenses</Typography>
+          <Typography variant="h5" fontWeight={700}>{t('expenses.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Record outflows and run them through the approval workflow.
+            {t('expenses.subtitle')}
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
@@ -105,13 +113,13 @@ const ExpensesManager = ({ campusId }) => {
             variant="outlined" startIcon={<Category />} onClick={() => setCatsOpen(true)}
             sx={{ textTransform: 'none', borderRadius: 2 }}
           >
-            Categories
+            {t('actions.categories')}
           </Button>
           <Button
             variant="contained" color="error" startIcon={<Add />} onClick={() => setEditing({})}
             sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}
           >
-            New Expense
+            {t('expenses.new')}
           </Button>
         </Stack>
       </Stack>
@@ -119,16 +127,16 @@ const ExpensesManager = ({ campusId }) => {
       {/* Filters */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel>Status</InputLabel>
-          <Select label="Status" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-            <MenuItem value="">All statuses</MenuItem>
-            {EXPENSE_STATUSES.map((s) => <MenuItem key={s} value={s}>{EXPENSE_STATUS_LABEL[s]}</MenuItem>)}
+          <InputLabel>{t('fields.status')}</InputLabel>
+          <Select label={t('fields.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+            <MenuItem value="">{t('filters.allStatuses')}</MenuItem>
+            {EXPENSE_STATUSES.map((s) => <MenuItem key={s} value={s}>{expenseStatusLabel[s]}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Category</InputLabel>
-          <Select label="Category" value={filters.category} onChange={(e) => handleFilterChange('category', e.target.value)}>
-            <MenuItem value="">All categories</MenuItem>
+          <InputLabel>{t('fields.category')}</InputLabel>
+          <Select label={t('fields.category')} value={filters.category} onChange={(e) => handleFilterChange('category', e.target.value)}>
+            <MenuItem value="">{t('filters.allCategories')}</MenuItem>
             {categories.map((c) => <MenuItem key={c._id} value={c._id}>{c.name}</MenuItem>)}
           </Select>
         </FormControl>
@@ -140,7 +148,7 @@ const ExpensesManager = ({ campusId }) => {
           size="small" variant="outlined" startIcon={<FilterListOff />} onClick={handleReset}
           sx={{ borderRadius: 2, textTransform: 'none', alignSelf: 'center' }}
         >
-          Reset
+          {t('actions.reset')}
         </Button>
       </Stack>
 
@@ -151,12 +159,12 @@ const ExpensesManager = ({ campusId }) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.title')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.category')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.status')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -171,7 +179,7 @@ const ExpensesManager = ({ campusId }) => {
             ) : expenses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 5, color: 'text.secondary' }}>
-                  No expenses found.
+                  {t('expenses.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -185,7 +193,7 @@ const ExpensesManager = ({ campusId }) => {
                       <Stack direction="row" spacing={0.75} alignItems="center">
                         <Typography variant="body2" fontWeight={500}>{exp.title}</Typography>
                         {exp.isRecurring && (
-                          <Tooltip title={`Recurring (${exp.recurringPeriod ?? ''})`}>
+                          <Tooltip title={t('expenses.recurringTip', { period: exp.recurringPeriod ? t(`enums.recurringPeriod.${exp.recurringPeriod}`) : '' })}>
                             <Repeat sx={{ fontSize: 14, color: 'text.secondary' }} />
                           </Tooltip>
                         )}
@@ -206,14 +214,14 @@ const ExpensesManager = ({ campusId }) => {
                     </TableCell>
                     <TableCell>{formatDate(exp.expenseDate)}</TableCell>
                     <TableCell>
-                      <StatusChip status={exp.status} labelMap={EXPENSE_STATUS_LABEL} colorMap={EXPENSE_STATUS_COLOR} />
+                      <StatusChip status={exp.status} labelMap={expenseStatusLabel} colorMap={EXPENSE_STATUS_COLOR} />
                     </TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.25} justifyContent="flex-end">
                         {transitions.map((action) => {
                           const meta = WORKFLOW_META[action];
                           return (
-                            <Tooltip key={action} title={meta.label}>
+                            <Tooltip key={action} title={t(`expenses.workflow.${meta.labelKey}`)}>
                               <span>
                                 <IconButton
                                   size="small" color={meta.color} disabled={busy}
@@ -226,13 +234,13 @@ const ExpensesManager = ({ campusId }) => {
                           );
                         })}
                         {editable && (
-                          <Tooltip title="Edit">
+                          <Tooltip title={t('actions.edit')}>
                             <IconButton size="small" color="primary" onClick={() => setEditing(exp)}>
                               <Edit fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         )}
-                        <Tooltip title="Delete">
+                        <Tooltip title={t('actions.delete')}>
                           <span>
                             <IconButton size="small" color="error" disabled={busy} onClick={() => handleDelete(exp)}>
                               <Delete fontSize="small" />

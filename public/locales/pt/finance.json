@@ -1,0 +1,285 @@
+{
+  "title": "Módulo Financeiro",
+  "tabs": {
+    "overview": "Visão geral",
+    "fees": "Taxas",
+    "incomes": "Receitas",
+    "expenses": "Despesas"
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "reset": "Repor",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Adicionar",
+    "saving": "A guardar…",
+    "viewDetail": "Ver detalhe",
+    "ledger": "Livro-razão",
+    "recordPayment": "Registar pagamento",
+    "sendReminder": "Enviar lembrete",
+    "categories": "Categorias"
+  },
+  "fields": {
+    "student": "Estudante",
+    "label": "Rótulo",
+    "title": "Título",
+    "amount": "Montante",
+    "amountDue": "Montante devido",
+    "currency": "Moeda",
+    "method": "Método",
+    "paymentMethod": "Método de pagamento",
+    "status": "Estado",
+    "source": "Origem",
+    "category": "Categoria",
+    "date": "Data",
+    "dueDate": "Data de vencimento",
+    "academicYear": "Ano letivo",
+    "reference": "Referência",
+    "notes": "Notas",
+    "description": "Descrição",
+    "balance": "Saldo",
+    "due": "Devido",
+    "paid": "Pago",
+    "createdAt": "Criado",
+    "matricule": "Matrícula",
+    "year": "Ano",
+    "month": "Mês",
+    "period": "Período",
+    "recurring": "Recorrente",
+    "actions": "Ações"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "ex.: Propinas 2025-2026"
+  },
+  "filters": {
+    "allYears": "Todos os anos",
+    "allMonths": "Todos os meses",
+    "allStatuses": "Todos os estados",
+    "allSources": "Todas as origens",
+    "allCategories": "Todas as categorias"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "Pendente",
+      "partial": "Parcial",
+      "paid": "Pago",
+      "overdue": "Em atraso",
+      "cancelled": "Cancelado"
+    },
+    "expenseStatus": {
+      "pending": "Pendente",
+      "approved": "Aprovado",
+      "paid": "Pago",
+      "rejected": "Rejeitado"
+    },
+    "incomeStatus": {
+      "pending": "Pendente",
+      "received": "Recebido",
+      "cancelled": "Cancelado"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Taxas de inscrição",
+      "Tuition": "Propinas",
+      "Course Payment": "Pagamento de curso",
+      "Exam": "Exame",
+      "Certification": "Certificação",
+      "Grant": "Subsídio",
+      "Donation": "Doação",
+      "Partnership": "Parceria",
+      "Other": "Outro"
+    },
+    "recurringPeriod": {
+      "monthly": "Mensal",
+      "quarterly": "Trimestral",
+      "yearly": "Anual"
+    },
+    "paymentMethod": {
+      "Cash": "Numerário",
+      "Mobile Money": "Mobile Money",
+      "Bank Transfer": "Transferência bancária",
+      "Cheque": "Cheque"
+    },
+    "months": {
+      "1": "Janeiro",
+      "2": "Fevereiro",
+      "3": "Março",
+      "4": "Abril",
+      "5": "Maio",
+      "6": "Junho",
+      "7": "Julho",
+      "8": "Agosto",
+      "9": "Setembro",
+      "10": "Outubro",
+      "11": "Novembro",
+      "12": "Dezembro"
+    }
+  },
+  "overview": {
+    "title": "Resumo financeiro",
+    "subtitle": "Receitas face a despesas e dívidas de estudantes pendentes neste campus.",
+    "kpi": {
+      "incomeReceived": "Receitas recebidas",
+      "expensesPaid": "Despesas pagas",
+      "netBalance": "Saldo líquido",
+      "overdueDebts": "Dívidas em atraso",
+      "records": "{count, plural, one {# registo} other {# registos}}",
+      "surplus": "Excedente",
+      "deficit": "Défice",
+      "studentsPastDue": "Estudantes em atraso"
+    },
+    "shortcuts": {
+      "newFee": "Nova taxa",
+      "newPayment": "Novo pagamento",
+      "newIncome": "Nova receita",
+      "newExpense": "Nova despesa"
+    },
+    "chart": {
+      "title": "Receitas e despesas mensais — {year}",
+      "income": "Receitas",
+      "expense": "Despesas"
+    }
+  },
+  "fees": {
+    "title": "Taxas de estudantes",
+    "subtitle": "Acompanhe dívidas, registe pagamentos e envie lembretes de saldo.",
+    "new": "Nova taxa",
+    "empty": "Nenhuma taxa encontrada. Crie uma para começar a acompanhar a dívida de um estudante.",
+    "confirmDelete": "Eliminar a taxa «{label}»? Trata-se de uma eliminação lógica.",
+    "toast": {
+      "created": "Taxa criada.",
+      "paymentRecorded": "Pagamento registado.",
+      "reminderSent": "Lembrete enviado ao estudante.",
+      "reminderFailed": "Falha ao enviar o lembrete.",
+      "deleted": "Taxa eliminada.",
+      "deleteFailed": "Falha ao eliminar a taxa."
+    }
+  },
+  "feeDetail": {
+    "title": "Detalhe da taxa",
+    "loadError": "Falha ao carregar a taxa.",
+    "payments": "Pagamentos ({count})",
+    "noPayments": "Ainda não há pagamentos registados.",
+    "attachments": "Anexos",
+    "document": "Documento {index}"
+  },
+  "feeForm": {
+    "title": "Nova taxa",
+    "creating": "A criar…",
+    "submit": "Criar taxa"
+  },
+  "payment": {
+    "title": "Registar pagamento",
+    "remainingBalance": "saldo restante",
+    "referenceLabel": "Referência / n.º de recibo",
+    "paymentDate": "Data de pagamento",
+    "recording": "A registar…",
+    "submit": "Registar pagamento",
+    "failed": "Falha no pagamento. Tente novamente."
+  },
+  "incomes": {
+    "title": "Receitas",
+    "subtitle": "Registe e acompanhe todas as receitas da instituição.",
+    "new": "Nova receita",
+    "empty": "Nenhuma receita encontrada.",
+    "confirmDelete": "Eliminar a receita «{title}»?",
+    "toast": {
+      "created": "Receita criada.",
+      "updated": "Receita atualizada.",
+      "deleted": "Receita eliminada.",
+      "deleteFailed": "Falha ao eliminar a receita."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Nova receita",
+    "titleEdit": "Editar receita",
+    "studentOptional": "Estudante (opcional)",
+    "saveError": "Falha ao guardar a receita.",
+    "submitNew": "Criar receita",
+    "submitEdit": "Guardar alterações"
+  },
+  "expenses": {
+    "title": "Despesas",
+    "subtitle": "Registe as saídas e faça-as passar pelo fluxo de aprovação.",
+    "new": "Nova despesa",
+    "empty": "Nenhuma despesa encontrada.",
+    "recurringTip": "Recorrente ({period})",
+    "confirmDelete": "Eliminar a despesa «{title}»?",
+    "workflow": {
+      "approve": "Aprovar",
+      "markPaid": "Marcar como paga",
+      "reject": "Rejeitar"
+    },
+    "toast": {
+      "created": "Despesa criada.",
+      "updated": "Despesa atualizada.",
+      "approved": "Despesa aprovada.",
+      "rejected": "Despesa rejeitada.",
+      "paid": "Despesa paga.",
+      "transitionError": "Ação não permitida para o estado atual.",
+      "deleted": "Despesa eliminada.",
+      "deleteFailed": "Falha ao eliminar a despesa."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Nova despesa",
+    "titleEdit": "Editar despesa",
+    "noCategories": "Sem categorias — crie uma primeiro",
+    "lockedError": "Esta despesa está paga e bloqueada — já não pode ser editada.",
+    "saveError": "Falha ao guardar a despesa.",
+    "submitNew": "Criar despesa",
+    "submitEdit": "Guardar alterações"
+  },
+  "categories": {
+    "title": "Categorias de despesa",
+    "newCategory": "Nova categoria",
+    "empty": "Ainda não há categorias.",
+    "createError": "Falha ao criar a categoria.",
+    "deleteError": "Não é possível eliminar: a categoria pode ainda estar em uso."
+  },
+  "ledger": {
+    "title": "Livro-razão do estudante",
+    "totalDue": "Total devido",
+    "totalPaid": "Total pago",
+    "balance": "Saldo",
+    "debts": "Dívidas ({count})",
+    "noDebts": "Nenhuma dívida registada.",
+    "payments": "Pagamentos ({count})",
+    "noPayments": "Nenhum pagamento registado.",
+    "dueAndPaid": "Devido {due} · Pago {paid}"
+  },
+  "student": {
+    "title": "As minhas finanças",
+    "subtitle": "As suas taxas, pagamentos e saldo pendente.",
+    "kpi": {
+      "totalDue": "Total devido",
+      "totalPaid": "Total pago",
+      "outstandingBalance": "Saldo pendente",
+      "debtsCount": "{count, plural, one {# dívida} other {# dívidas}}",
+      "paymentsCount": "{count, plural, one {# pagamento} other {# pagamentos}}",
+      "settle": "Por favor, regularize o seu saldo",
+      "allSettled": "Tudo regularizado"
+    },
+    "warning": "Tem um saldo pendente de {amount}. Contacte o gabinete financeiro do seu campus para o regularizar.",
+    "myDebts": "As minhas dívidas ({count})",
+    "noFees": "Nenhuma taxa registada.",
+    "myPayments": "Os meus pagamentos ({count})",
+    "noPayments": "Ainda não há pagamentos registados."
+  },
+  "attachments": {
+    "attach": "Anexar ficheiros",
+    "uploading": "A carregar…",
+    "hint": "Recibos / faturas — JPG, PNG, WEBP, PDF · máx. 5 MB",
+    "invalidType": "Apenas são permitidos ficheiros JPG, PNG, WEBP ou PDF.",
+    "tooLarge": "Cada ficheiro deve ter 5 MB ou menos.",
+    "uploadFailed": "Falha no carregamento. Tente novamente."
+  },
+  "errors": {
+    "loadFees": "Falha ao carregar as taxas.",
+    "loadIncomes": "Falha ao carregar as receitas.",
+    "loadExpenses": "Falha ao carregar as despesas.",
+    "loadLedger": "Falha ao carregar o livro-razão.",
+    "loadSummary": "Falha ao carregar o resumo financeiro."
+  }
+}

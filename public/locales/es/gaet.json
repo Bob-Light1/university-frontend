@@ -1,34 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Academic Activity Tracking",
-  "report": {
-    "generate": "Generate GAET Report",
-    "title": "Academic Activity Tracking Report",
-    "period": "Reporting period",
-    "download": "Download report"
+  "subtitle": "Generador automático de horarios",
+  "header": {
+    "manager": "Configure las restricciones, genere, revise y publique el horario de su semestre.",
+    "viewer": "Consulte los horarios generados para este campus."
   },
-  "activity": {
-    "title": "Activities",
-    "planned": "Planned",
-    "completed": "Completed",
-    "missed": "Missed",
-    "rate": "Completion rate"
+  "context": {
+    "academicYear": "Año académico",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semestre",
+    "updated": "Actualizado el {date}"
   },
-  "teacher": {
-    "load": "Teaching load",
-    "hours": "{n, plural, one{# hour} other{# hours}}",
-    "delivered": "Hours delivered",
-    "remaining": "Hours remaining"
+  "semesterOptions": {
+    "S1": "Semestre 1",
+    "S2": "Semestre 2",
+    "Annual": "Anual"
   },
-  "schedule": {
-    "generate": "Generate schedule",
-    "constraints": "Constraints",
-    "conflict": "Conflict detected",
-    "resolve": "Resolve"
+  "weekday": {
+    "MO": "Lunes",
+    "TU": "Martes",
+    "WE": "Miércoles",
+    "TH": "Jueves",
+    "FR": "Viernes",
+    "SA": "Sábado",
+    "SU": "Domingo"
+  },
+  "sessionType": {
+    "LECTURE": "Clase magistral",
+    "TUTORIAL": "Clase práctica",
+    "PRACTICAL": "Laboratorio"
+  },
+  "roomType": {
+    "CLASSROOM": "Aula",
+    "LAB": "Laboratorio",
+    "AMPHITHEATER": "Auditorio"
+  },
+  "summary": {
+    "timeSlots": "Franjas horarias",
+    "courses": "Cursos",
+    "rooms": "Aulas"
   },
   "status": {
-    "onTrack": "On track",
-    "delayed": "Delayed",
-    "completed": "Completed"
+    "DRAFT": "Borrador",
+    "GENERATING": "Generando…",
+    "GENERATED": "Generado",
+    "PARTIALLY_GENERATED": "Parcial",
+    "PUBLISHED": "Publicado",
+    "FAILED": "Fallido",
+    "CANCELLED": "Cancelado"
+  },
+  "empty": {
+    "title": "Ningún horario configurado",
+    "body": "Complete el formulario a continuación para configurar las restricciones y generar el horario de este semestre."
+  },
+  "banner": {
+    "generatingTitle": "Generación del horario en curso…",
+    "generatingBody": "El algoritmo se está ejecutando en un hilo en segundo plano. Esta página se actualizará automáticamente al finalizar.",
+    "failed": "Error en la generación. Verifique que sus restricciones no sean demasiado estrictas e inténtelo de nuevo.",
+    "retry": "Reintentar",
+    "publishedTitle": "Horario publicado con éxito.",
+    "publishedOn": "Publicado el {date}"
+  },
+  "tabs": {
+    "configuration": "Configuración",
+    "preview": "Vista previa",
+    "quality": "Calidad",
+    "conflicts": "Conflictos"
+  },
+  "actions": {
+    "generate": "Generar horario",
+    "generating": "Generando…",
+    "regenerate": "Regenerar",
+    "publish": "Publicar horario",
+    "publishing": "Publicando…",
+    "cancel": "Cancelar",
+    "retry": "Reintentar generación",
+    "published": "Horario publicado con éxito",
+    "disabledHint": "Complete las tres secciones de restricciones antes de generar",
+    "tooltipCancel": "Descartar y cancelar el horario generado",
+    "tooltipRegenerate": "Ejecutar el algoritmo de nuevo con las restricciones actuales",
+    "tooltipPublishPartial": "Algunos cursos no se ubicaron — publicar horario parcial",
+    "tooltipPublishFull": "Publicar en los horarios de estudiantes y profesores"
+  },
+  "conflicts": {
+    "none": "No se detectaron conflictos — todas las restricciones estrictas se cumplen.",
+    "detected": "{count, plural, one {# conflicto detectado} other {# conflictos detectados}}",
+    "day": "Día",
+    "room": "Aula",
+    "label": "Conflicto",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Doble reserva de profesor",
+      "ROOM_DOUBLE_BOOKING": "Doble reserva de aula",
+      "CLASS_DOUBLE_BOOKING": "Doble reserva de clase",
+      "fallback": "Conflicto"
+    },
+    "unplacedTitle": "Cursos no ubicados ({count})",
+    "unplacedLabel": "No ubicado",
+    "unplacedDefaultReason": "No se pudo ubicar con las restricciones actuales"
+  },
+  "quality": {
+    "partialTitle": "Generado parcialmente — {count, plural, one {# curso no se pudo ubicar} other {# cursos no se pudieron ubicar}}.",
+    "partialBody": "Puede publicar el horario parcial o ajustar las restricciones y regenerar.",
+    "score": "Puntuación de calidad",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Excelente",
+    "scoreGood": "Bueno",
+    "scoreNeedsReview": "Necesita revisión",
+    "hardConstraints": "Restricciones estrictas",
+    "hardConstraintsSub": "Sin conflictos de profesor / aula / clase",
+    "softConstraints": "Restricciones flexibles",
+    "softConstraintsSub": "Preferencias y franjas de mañana respetadas",
+    "roomUtilization": "Uso de aulas",
+    "roomUtilizationSub": "Tasa media de ocupación de aulas",
+    "generatedIn": "Generado en {seconds} s",
+    "unplacedTitle": "Cursos no ubicados ({count})",
+    "unplacedLabel": "No ubicado",
+    "unplacedRefFallback": "Ref.: {ref}",
+    "allPlaced": "Todos los cursos se ubicaron con éxito — no se detectaron violaciones de restricciones."
+  },
+  "preview": {
+    "emptyTitle": "Aún no se ha generado ninguna sesión",
+    "emptyBody": "Ejecute la generación para ver aquí la vista previa del horario",
+    "summary": "{sessions, plural, one {# sesión} other {# sesiones}} en {days, plural, one {# día} other {# días}}",
+    "dayCount": "{count, plural, one {# sesión} other {# sesiones}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Franjas horarias",
+      "title": "Franjas horarias disponibles",
+      "subtitle": "Defina las ventanas horarias semanales que el algoritmo puede usar.",
+      "add": "Añadir franja",
+      "empty": "No hay franjas definidas. Haga clic en «Añadir franja» para comenzar.",
+      "day": "Día",
+      "start": "Inicio (h)",
+      "end": "Fin (h)",
+      "break": "Descanso",
+      "removeSlot": "Eliminar franja",
+      "duration": "Duración: {hours} h · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Cursos",
+      "title": "Requisitos de cursos",
+      "subtitle": "Una entrada por combinación de clase + asignatura + profesor.",
+      "add": "Añadir curso",
+      "empty": "No hay cursos definidos. Haga clic en «Añadir curso» para crear una unidad de planificación.",
+      "newCourse": "Nuevo curso",
+      "hoursPerWeekShort": "{hours} h/sem",
+      "studentsShort": "{count, plural, one {# estudiante} other {# estudiantes}}",
+      "remove": "Eliminar este requisito de curso",
+      "class": "Clase",
+      "subject": "Asignatura",
+      "teacher": "Profesor",
+      "sessionType": "Tipo de sesión",
+      "hoursPerWeek": "h/sem",
+      "duration": "Duración (min)",
+      "students": "Estudiantes",
+      "roomType": "Tipo de aula",
+      "requiresLab": "Requiere laboratorio",
+      "preferMorning": "Preferir la mañana"
+    },
+    "rooms": {
+      "tab": "Aulas",
+      "title": "Registro de aulas",
+      "subtitle": "Aulas físicas disponibles para la asignación del horario.",
+      "add": "Añadir aula",
+      "empty": "No hay aulas definidas. Haga clic en «Añadir aula» para registrar un aula.",
+      "name": "Nombre del aula",
+      "namePlaceholder": "ej. Auditorio A, Lab 201",
+      "capacity": "Capacidad",
+      "type": "Tipo de aula",
+      "remove": "Eliminar aula"
+    },
+    "semesterStart": {
+      "label": "Fecha de inicio del semestre",
+      "helper": "Primer día de clase: las sesiones publicadas comienzan desde esta fecha."
+    },
+    "teacherPrefs": {
+      "tab": "Preferencias del profesor",
+      "title": "Preferencias de los profesores",
+      "subtitle": "Restricciones flexibles opcionales: indisponibilidad, días preferidos y horas consecutivas máximas.",
+      "add": "Añadir profesor",
+      "empty": "No se han definido preferencias del profesor. Son opcionales y refinan el horario generado.",
+      "newTeacher": "Nuevo profesor",
+      "teacher": "Profesor",
+      "remove": "Eliminar preferencia",
+      "maxConsecutive": "Horas consecutivas máx.",
+      "maxConsecutiveHelp": "1–12 horas",
+      "preferredDays": "Días preferidos",
+      "unavailable": "Franjas no disponibles",
+      "addSlot": "Añadir franja",
+      "noSlots": "Sin franjas no disponibles",
+      "slotStart": "Inicio (h)",
+      "slotEnd": "Fin (h)",
+      "day": "Día",
+      "removeSlot": "Eliminar franja",
+      "slotsCount": "No disponibles: {count}",
+      "preferredCount": "Preferidos: {count}"
+    },
+    "nav": {
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "save": "Guardar configuración",
+    "saving": "Guardando…"
+  },
+  "messages": {
+    "saved": "Restricciones guardadas con éxito.",
+    "loadFailed": "Error al cargar las restricciones.",
+    "saveFailed": "Error al guardar las restricciones.",
+    "generateStartFailed": "Error al iniciar la generación.",
+    "generatedSuccess": "Horario generado con éxito.",
+    "generatedPartial": "Horario generado parcialmente — algunos cursos sin ubicar. Revise los conflictos.",
+    "generatedFailed": "Error en la generación. Revise sus restricciones e inténtelo de nuevo.",
+    "noConstraintId": "El servidor no devolvió un identificador de restricción.",
+    "previewFailed": "Error al cargar la vista previa.",
+    "conflictsFailed": "Error al cargar los conflictos.",
+    "publishedCount": "{count, plural, one {# sesión publicada con éxito.} other {# sesiones publicadas con éxito.}}",
+    "publishFailed": "Error en la publicación.",
+    "cancelled": "Horario generado cancelado.",
+    "cancelFailed": "Error al cancelar."
   }
 }

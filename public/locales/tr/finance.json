@@ -1,0 +1,285 @@
+{
+  "title": "Finans Modülü",
+  "tabs": {
+    "overview": "Genel bakış",
+    "fees": "Ücretler",
+    "incomes": "Gelirler",
+    "expenses": "Giderler"
+  },
+  "actions": {
+    "cancel": "İptal",
+    "close": "Kapat",
+    "reset": "Sıfırla",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "add": "Ekle",
+    "saving": "Kaydediliyor…",
+    "viewDetail": "Ayrıntıyı gör",
+    "ledger": "Defter",
+    "recordPayment": "Ödeme kaydet",
+    "sendReminder": "Hatırlatma gönder",
+    "categories": "Kategoriler"
+  },
+  "fields": {
+    "student": "Öğrenci",
+    "label": "Etiket",
+    "title": "Başlık",
+    "amount": "Tutar",
+    "amountDue": "Ödenecek tutar",
+    "currency": "Para birimi",
+    "method": "Yöntem",
+    "paymentMethod": "Ödeme yöntemi",
+    "status": "Durum",
+    "source": "Kaynak",
+    "category": "Kategori",
+    "date": "Tarih",
+    "dueDate": "Son ödeme tarihi",
+    "academicYear": "Akademik yıl",
+    "reference": "Referans",
+    "notes": "Notlar",
+    "description": "Açıklama",
+    "balance": "Bakiye",
+    "due": "Ödenecek",
+    "paid": "Ödendi",
+    "createdAt": "Oluşturuldu",
+    "matricule": "Öğrenci no",
+    "year": "Yıl",
+    "month": "Ay",
+    "period": "Dönem",
+    "recurring": "Yinelenen",
+    "actions": "İşlemler"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "ör. Öğrenim 2025-2026"
+  },
+  "filters": {
+    "allYears": "Tüm yıllar",
+    "allMonths": "Tüm aylar",
+    "allStatuses": "Tüm durumlar",
+    "allSources": "Tüm kaynaklar",
+    "allCategories": "Tüm kategoriler"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "Beklemede",
+      "partial": "Kısmi",
+      "paid": "Ödendi",
+      "overdue": "Gecikmiş",
+      "cancelled": "İptal edildi"
+    },
+    "expenseStatus": {
+      "pending": "Beklemede",
+      "approved": "Onaylandı",
+      "paid": "Ödendi",
+      "rejected": "Reddedildi"
+    },
+    "incomeStatus": {
+      "pending": "Beklemede",
+      "received": "Alındı",
+      "cancelled": "İptal edildi"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Kayıt ücretleri",
+      "Tuition": "Öğrenim ücreti",
+      "Course Payment": "Kurs ödemesi",
+      "Exam": "Sınav",
+      "Certification": "Sertifikasyon",
+      "Grant": "Hibe",
+      "Donation": "Bağış",
+      "Partnership": "Ortaklık",
+      "Other": "Diğer"
+    },
+    "recurringPeriod": {
+      "monthly": "Aylık",
+      "quarterly": "Üç aylık",
+      "yearly": "Yıllık"
+    },
+    "paymentMethod": {
+      "Cash": "Nakit",
+      "Mobile Money": "Mobil para",
+      "Bank Transfer": "Banka havalesi",
+      "Cheque": "Çek"
+    },
+    "months": {
+      "1": "Ocak",
+      "2": "Şubat",
+      "3": "Mart",
+      "4": "Nisan",
+      "5": "Mayıs",
+      "6": "Haziran",
+      "7": "Temmuz",
+      "8": "Ağustos",
+      "9": "Eylül",
+      "10": "Ekim",
+      "11": "Kasım",
+      "12": "Aralık"
+    }
+  },
+  "overview": {
+    "title": "Finansal genel bakış",
+    "subtitle": "Bu kampüs için gelirlere karşı giderler ve ödenmemiş öğrenci borçları.",
+    "kpi": {
+      "incomeReceived": "Alınan gelirler",
+      "expensesPaid": "Ödenen giderler",
+      "netBalance": "Net bakiye",
+      "overdueDebts": "Gecikmiş borçlar",
+      "records": "{count, plural, one {# kayıt} other {# kayıt}}",
+      "surplus": "Fazla",
+      "deficit": "Açık",
+      "studentsPastDue": "Vadesi geçen öğrenciler"
+    },
+    "shortcuts": {
+      "newFee": "Yeni ücret",
+      "newPayment": "Yeni ödeme",
+      "newIncome": "Yeni gelir",
+      "newExpense": "Yeni gider"
+    },
+    "chart": {
+      "title": "Aylık gelir ve giderler — {year}",
+      "income": "Gelir",
+      "expense": "Gider"
+    }
+  },
+  "fees": {
+    "title": "Öğrenci ücretleri",
+    "subtitle": "Borçları takip edin, ödemeleri kaydedin ve bakiye hatırlatmaları gönderin.",
+    "new": "Yeni ücret",
+    "empty": "Ücret bulunamadı. Bir öğrenci borcunu takip etmeye başlamak için bir ücret oluşturun.",
+    "confirmDelete": "«{label}» ücreti silinsin mi? Bu mantıksal bir silme işlemidir.",
+    "toast": {
+      "created": "Ücret oluşturuldu.",
+      "paymentRecorded": "Ödeme kaydedildi.",
+      "reminderSent": "Hatırlatma öğrenciye gönderildi.",
+      "reminderFailed": "Hatırlatma gönderilemedi.",
+      "deleted": "Ücret silindi.",
+      "deleteFailed": "Ücret silinemedi."
+    }
+  },
+  "feeDetail": {
+    "title": "Ücret ayrıntısı",
+    "loadError": "Ücret yüklenemedi.",
+    "payments": "Ödemeler ({count})",
+    "noPayments": "Henüz ödeme kaydedilmedi.",
+    "attachments": "Ekler",
+    "document": "Belge {index}"
+  },
+  "feeForm": {
+    "title": "Yeni ücret",
+    "creating": "Oluşturuluyor…",
+    "submit": "Ücret oluştur"
+  },
+  "payment": {
+    "title": "Ödeme kaydet",
+    "remainingBalance": "kalan bakiye",
+    "referenceLabel": "Referans / makbuz no",
+    "paymentDate": "Ödeme tarihi",
+    "recording": "Kaydediliyor…",
+    "submit": "Ödeme kaydet",
+    "failed": "Ödeme başarısız oldu. Lütfen tekrar deneyin."
+  },
+  "incomes": {
+    "title": "Gelirler",
+    "subtitle": "Kurumun tüm gelirlerini kaydedin ve takip edin.",
+    "new": "Yeni gelir",
+    "empty": "Gelir bulunamadı.",
+    "confirmDelete": "«{title}» geliri silinsin mi?",
+    "toast": {
+      "created": "Gelir oluşturuldu.",
+      "updated": "Gelir güncellendi.",
+      "deleted": "Gelir silindi.",
+      "deleteFailed": "Gelir silinemedi."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Yeni gelir",
+    "titleEdit": "Geliri düzenle",
+    "studentOptional": "Öğrenci (isteğe bağlı)",
+    "saveError": "Gelir kaydedilemedi.",
+    "submitNew": "Gelir oluştur",
+    "submitEdit": "Değişiklikleri kaydet"
+  },
+  "expenses": {
+    "title": "Giderler",
+    "subtitle": "Çıkışları kaydedin ve onay akışından geçirin.",
+    "new": "Yeni gider",
+    "empty": "Gider bulunamadı.",
+    "recurringTip": "Yinelenen ({period})",
+    "confirmDelete": "«{title}» gideri silinsin mi?",
+    "workflow": {
+      "approve": "Onayla",
+      "markPaid": "Ödendi olarak işaretle",
+      "reject": "Reddet"
+    },
+    "toast": {
+      "created": "Gider oluşturuldu.",
+      "updated": "Gider güncellendi.",
+      "approved": "Gider onaylandı.",
+      "rejected": "Gider reddedildi.",
+      "paid": "Gider ödendi.",
+      "transitionError": "Mevcut durum için işleme izin verilmiyor.",
+      "deleted": "Gider silindi.",
+      "deleteFailed": "Gider silinemedi."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Yeni gider",
+    "titleEdit": "Gideri düzenle",
+    "noCategories": "Kategori yok — önce bir tane oluşturun",
+    "lockedError": "Bu gider ödendi ve kilitli — artık düzenlenemez.",
+    "saveError": "Gider kaydedilemedi.",
+    "submitNew": "Gider oluştur",
+    "submitEdit": "Değişiklikleri kaydet"
+  },
+  "categories": {
+    "title": "Gider kategorileri",
+    "newCategory": "Yeni kategori",
+    "empty": "Henüz kategori yok.",
+    "createError": "Kategori oluşturulamadı.",
+    "deleteError": "Silinemiyor: kategori hâlâ kullanımda olabilir."
+  },
+  "ledger": {
+    "title": "Öğrenci defteri",
+    "totalDue": "Toplam ödenecek",
+    "totalPaid": "Toplam ödenen",
+    "balance": "Bakiye",
+    "debts": "Borçlar ({count})",
+    "noDebts": "Kayıtlı borç yok.",
+    "payments": "Ödemeler ({count})",
+    "noPayments": "Kayıtlı ödeme yok.",
+    "dueAndPaid": "Ödenecek {due} · Ödenen {paid}"
+  },
+  "student": {
+    "title": "Finanslarım",
+    "subtitle": "Ücretleriniz, ödemeleriniz ve ödenmemiş bakiyeniz.",
+    "kpi": {
+      "totalDue": "Toplam ödenecek",
+      "totalPaid": "Toplam ödenen",
+      "outstandingBalance": "Ödenmemiş bakiye",
+      "debtsCount": "{count, plural, one {# borç} other {# borç}}",
+      "paymentsCount": "{count, plural, one {# ödeme} other {# ödeme}}",
+      "settle": "Lütfen bakiyenizi ödeyin",
+      "allSettled": "Tümü ödendi"
+    },
+    "warning": "{amount} tutarında ödenmemiş bir bakiyeniz var. Ödemek için kampüsünüzün finans ofisiyle iletişime geçin.",
+    "myDebts": "Borçlarım ({count})",
+    "noFees": "Kayıtlı ücret yok.",
+    "myPayments": "Ödemelerim ({count})",
+    "noPayments": "Henüz ödeme kaydedilmedi."
+  },
+  "attachments": {
+    "attach": "Dosya ekle",
+    "uploading": "Yükleniyor…",
+    "hint": "Makbuzlar / faturalar — JPG, PNG, WEBP, PDF · en fazla 5 MB",
+    "invalidType": "Yalnızca JPG, PNG, WEBP veya PDF dosyalarına izin verilir.",
+    "tooLarge": "Her dosya en fazla 5 MB olmalıdır.",
+    "uploadFailed": "Yükleme başarısız. Tekrar deneyin."
+  },
+  "errors": {
+    "loadFees": "Ücretler yüklenemedi.",
+    "loadIncomes": "Gelirler yüklenemedi.",
+    "loadExpenses": "Giderler yüklenemedi.",
+    "loadLedger": "Defter yüklenemedi.",
+    "loadSummary": "Finansal özet yüklenemedi."
+  }
+}

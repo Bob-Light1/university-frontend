@@ -1,10 +1,12 @@
 /**
  * @file NotificationPreferences.jsx
- * @description Reusable panel for editing notification preferences (email / sms / push).
- * Used in all profile pages (Student, Teacher, Admin, Partner, Parent).
+ * @description Reusable panel for editing notification preferences. The keys mirror
+ * the real delivery channels honoured by the backend: in-app, email, WhatsApp.
+ * In-app is the baseline inbox — always on and not user-disableable.
+ * Used in all profile pages (Student, Teacher, Admin, Mentor, Staff, Parent).
  *
  * Props:
- *  value       { email: bool, sms: bool, push: bool }
+ *  value       { inapp: bool, email: bool, whatsapp: bool }
  *  onChange    (updatedPrefs) => void  — called immediately on toggle
  *  onSave      () => Promise           — called when user clicks Save
  *  onError     (err) => void           — called if onSave rejects (optional)
@@ -21,7 +23,7 @@ import { Notifications } from '@mui/icons-material';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 export default function NotificationPreferences({
-  value = { email: true, sms: false, push: false },
+  value = { inapp: true, email: true, whatsapp: false },
   onChange,
   onSave,
   onError,
@@ -31,14 +33,17 @@ export default function NotificationPreferences({
   const { t } = useAppTranslation('common');
   const [saving, setSaving] = useState(false);
 
+  // `locked` channels are always on and cannot be toggled (the in-app inbox is the
+  // baseline — every user always receives in-app notifications).
   const PREFS_META = [
-    { key: 'email', label: t('notifPref.email'), description: t('notifPref.emailDesc') },
-    { key: 'sms',   label: t('notifPref.sms'),   description: t('notifPref.smsDesc') },
-    { key: 'push',  label: t('notifPref.push'),  description: t('notifPref.pushDesc') },
+    { key: 'inapp',    label: t('notifPref.inapp'),    description: t('notifPref.inappDesc'),    locked: true },
+    { key: 'email',    label: t('notifPref.email'),    description: t('notifPref.emailDesc') },
+    { key: 'whatsapp', label: t('notifPref.whatsapp'), description: t('notifPref.whatsappDesc') },
   ];
 
-  const handleToggle = (key) => {
-    if (onChange) onChange({ ...value, [key]: !value[key] });
+  const handleToggle = (key, locked) => {
+    if (locked || !onChange) return;
+    onChange({ ...value, [key]: !value[key] });
   };
 
   const handleSave = async () => {
@@ -64,7 +69,7 @@ export default function NotificationPreferences({
       <Divider sx={{ mb: 2.5 }} />
 
       <Stack spacing={1.5}>
-        {PREFS_META.map(({ key, label, description }) => (
+        {PREFS_META.map(({ key, label, description, locked }) => (
           <Stack
             key={key}
             direction="row"
@@ -77,10 +82,10 @@ export default function NotificationPreferences({
               <Typography variant="caption" color="text.secondary">{description}</Typography>
             </Stack>
             <Switch
-              checked={Boolean(value[key])}
-              onChange={() => handleToggle(key)}
-              disabled={isBusy}
-              color={accentColor !== 'primary' ? 'primary' : 'primary'}
+              checked={locked ? true : Boolean(value[key])}
+              onChange={() => handleToggle(key, locked)}
+              disabled={isBusy || locked}
+              color="primary"
             />
           </Stack>
         ))}
@@ -92,7 +97,15 @@ export default function NotificationPreferences({
           onClick={handleSave}
           disabled={isBusy}
           startIcon={isBusy ? <CircularProgress size={16} color="inherit" /> : null}
-          sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 700,
+            borderRadius: 2,
+            ...(accentColor !== 'primary' && {
+              bgcolor: accentColor,
+              '&:hover': { bgcolor: accentColor, filter: 'brightness(0.92)' },
+            }),
+          }}
         >
           {isBusy ? t('notifPref.saving') : t('notifPref.save')}
         </Button>

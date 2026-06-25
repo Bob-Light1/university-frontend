@@ -1,8 +1,285 @@
 {
-  "title": "Finance",
-  "fee": { "title": "Frais de scolarité", "create": "Créer des frais", "amount": "Montant", "currency": "Devise", "dueDate": "Date d'échéance", "instalment": "Tranche", "level": "Niveau", "class": "Classe" },
-  "payment": { "title": "Paiements", "record": "Enregistrer un paiement", "method": { "title": "Mode de paiement", "cash": "Espèces", "mtnMomo": "MTN Mobile Money", "orangeMoney": "Orange Money", "bankTransfer": "Virement bancaire" }, "status": { "paid": "Payé", "partial": "Partiel", "unpaid": "Impayé", "overdue": "En retard" }, "receipt": "Reçu de paiement", "reconcile": "Rapprocher le paiement" },
-  "scholarship": { "title": "Bourses", "create": "Créer une bourse", "type": "Type", "amount": "Montant", "beneficiary": "Bénéficiaire" },
-  "dashboard": { "title": "Tableau de bord financier", "monthlyRevenue": "Recettes du mois", "forecast": "Prévisions", "latePayments": "Paiements en retard" },
-  "report": { "generate": "Générer le rapport", "export": "Exporter Excel" }
+  "title": "Module Finance",
+  "tabs": {
+    "overview": "Vue d'ensemble",
+    "fees": "Frais",
+    "incomes": "Recettes",
+    "expenses": "Dépenses"
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "reset": "Réinitialiser",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "add": "Ajouter",
+    "saving": "Enregistrement…",
+    "viewDetail": "Voir le détail",
+    "ledger": "Grand livre",
+    "recordPayment": "Enregistrer un paiement",
+    "sendReminder": "Envoyer un rappel",
+    "categories": "Catégories"
+  },
+  "fields": {
+    "student": "Étudiant",
+    "label": "Libellé",
+    "title": "Intitulé",
+    "amount": "Montant",
+    "amountDue": "Montant dû",
+    "currency": "Devise",
+    "method": "Mode",
+    "paymentMethod": "Mode de paiement",
+    "status": "Statut",
+    "source": "Source",
+    "category": "Catégorie",
+    "date": "Date",
+    "dueDate": "Date d'échéance",
+    "academicYear": "Année académique",
+    "reference": "Référence",
+    "notes": "Notes",
+    "description": "Description",
+    "balance": "Solde",
+    "due": "Dû",
+    "paid": "Payé",
+    "createdAt": "Créé le",
+    "matricule": "Matricule",
+    "year": "Année",
+    "month": "Mois",
+    "period": "Période",
+    "recurring": "Récurrent",
+    "actions": "Actions"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "ex. Scolarité 2025-2026"
+  },
+  "filters": {
+    "allYears": "Toutes les années",
+    "allMonths": "Tous les mois",
+    "allStatuses": "Tous les statuts",
+    "allSources": "Toutes les sources",
+    "allCategories": "Toutes les catégories"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "En attente",
+      "partial": "Partiel",
+      "paid": "Payé",
+      "overdue": "En retard",
+      "cancelled": "Annulé"
+    },
+    "expenseStatus": {
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "paid": "Payé",
+      "rejected": "Rejeté"
+    },
+    "incomeStatus": {
+      "pending": "En attente",
+      "received": "Reçu",
+      "cancelled": "Annulé"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Frais d'inscription",
+      "Tuition": "Scolarité",
+      "Course Payment": "Paiement de cours",
+      "Exam": "Examen",
+      "Certification": "Certification",
+      "Grant": "Subvention",
+      "Donation": "Don",
+      "Partnership": "Partenariat",
+      "Other": "Autre"
+    },
+    "recurringPeriod": {
+      "monthly": "Mensuel",
+      "quarterly": "Trimestriel",
+      "yearly": "Annuel"
+    },
+    "paymentMethod": {
+      "Cash": "Espèces",
+      "Mobile Money": "Mobile Money",
+      "Bank Transfer": "Virement bancaire",
+      "Cheque": "Chèque"
+    },
+    "months": {
+      "1": "Janvier",
+      "2": "Février",
+      "3": "Mars",
+      "4": "Avril",
+      "5": "Mai",
+      "6": "Juin",
+      "7": "Juillet",
+      "8": "Août",
+      "9": "Septembre",
+      "10": "Octobre",
+      "11": "Novembre",
+      "12": "Décembre"
+    }
+  },
+  "overview": {
+    "title": "Aperçu financier",
+    "subtitle": "Recettes et dépenses, et dettes étudiantes en cours pour ce campus.",
+    "kpi": {
+      "incomeReceived": "Recettes encaissées",
+      "expensesPaid": "Dépenses payées",
+      "netBalance": "Solde net",
+      "overdueDebts": "Dettes en retard",
+      "records": "{count, plural, one {# enregistrement} other {# enregistrements}}",
+      "surplus": "Excédent",
+      "deficit": "Déficit",
+      "studentsPastDue": "Étudiants en retard"
+    },
+    "shortcuts": {
+      "newFee": "Nouveau frais",
+      "newPayment": "Nouveau paiement",
+      "newIncome": "Nouvelle recette",
+      "newExpense": "Nouvelle dépense"
+    },
+    "chart": {
+      "title": "Recettes et dépenses mensuelles — {year}",
+      "income": "Recettes",
+      "expense": "Dépenses"
+    }
+  },
+  "fees": {
+    "title": "Frais étudiants",
+    "subtitle": "Suivez les dettes, enregistrez les paiements et envoyez des rappels de solde.",
+    "new": "Nouveau frais",
+    "empty": "Aucun frais trouvé. Créez-en un pour commencer à suivre une dette étudiante.",
+    "confirmDelete": "Supprimer le frais « {label} » ? Il s'agit d'une suppression logique.",
+    "toast": {
+      "created": "Frais créé.",
+      "paymentRecorded": "Paiement enregistré.",
+      "reminderSent": "Rappel envoyé à l'étudiant.",
+      "reminderFailed": "Échec de l'envoi du rappel.",
+      "deleted": "Frais supprimé.",
+      "deleteFailed": "Échec de la suppression du frais."
+    }
+  },
+  "feeDetail": {
+    "title": "Détail du frais",
+    "loadError": "Échec du chargement du frais.",
+    "payments": "Paiements ({count})",
+    "noPayments": "Aucun paiement enregistré pour le moment.",
+    "attachments": "Pièces jointes",
+    "document": "Document {index}"
+  },
+  "feeForm": {
+    "title": "Nouveau frais",
+    "creating": "Création…",
+    "submit": "Créer le frais"
+  },
+  "payment": {
+    "title": "Enregistrer un paiement",
+    "remainingBalance": "solde restant",
+    "referenceLabel": "Référence / n° de reçu",
+    "paymentDate": "Date de paiement",
+    "recording": "Enregistrement…",
+    "submit": "Enregistrer le paiement",
+    "failed": "Échec du paiement. Veuillez réessayer."
+  },
+  "incomes": {
+    "title": "Recettes",
+    "subtitle": "Enregistrez et suivez toutes les recettes de l'établissement.",
+    "new": "Nouvelle recette",
+    "empty": "Aucune recette trouvée.",
+    "confirmDelete": "Supprimer la recette « {title} » ?",
+    "toast": {
+      "created": "Recette créée.",
+      "updated": "Recette mise à jour.",
+      "deleted": "Recette supprimée.",
+      "deleteFailed": "Échec de la suppression de la recette."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Nouvelle recette",
+    "titleEdit": "Modifier la recette",
+    "studentOptional": "Étudiant (facultatif)",
+    "saveError": "Échec de l'enregistrement de la recette.",
+    "submitNew": "Créer la recette",
+    "submitEdit": "Enregistrer les modifications"
+  },
+  "expenses": {
+    "title": "Dépenses",
+    "subtitle": "Enregistrez les sorties et faites-les passer par le circuit d'approbation.",
+    "new": "Nouvelle dépense",
+    "empty": "Aucune dépense trouvée.",
+    "recurringTip": "Récurrent ({period})",
+    "confirmDelete": "Supprimer la dépense « {title} » ?",
+    "workflow": {
+      "approve": "Approuver",
+      "markPaid": "Marquer payé",
+      "reject": "Rejeter"
+    },
+    "toast": {
+      "created": "Dépense créée.",
+      "updated": "Dépense mise à jour.",
+      "approved": "Dépense approuvée.",
+      "rejected": "Dépense rejetée.",
+      "paid": "Dépense payée.",
+      "transitionError": "Action non autorisée pour le statut actuel.",
+      "deleted": "Dépense supprimée.",
+      "deleteFailed": "Échec de la suppression de la dépense."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Nouvelle dépense",
+    "titleEdit": "Modifier la dépense",
+    "noCategories": "Aucune catégorie — créez-en une d'abord",
+    "lockedError": "Cette dépense est payée et verrouillée — elle ne peut plus être modifiée.",
+    "saveError": "Échec de l'enregistrement de la dépense.",
+    "submitNew": "Créer la dépense",
+    "submitEdit": "Enregistrer les modifications"
+  },
+  "categories": {
+    "title": "Catégories de dépenses",
+    "newCategory": "Nouvelle catégorie",
+    "empty": "Aucune catégorie pour le moment.",
+    "createError": "Échec de la création de la catégorie.",
+    "deleteError": "Suppression impossible : la catégorie est peut-être encore utilisée."
+  },
+  "ledger": {
+    "title": "Grand livre de l'étudiant",
+    "totalDue": "Total dû",
+    "totalPaid": "Total payé",
+    "balance": "Solde",
+    "debts": "Dettes ({count})",
+    "noDebts": "Aucune dette enregistrée.",
+    "payments": "Paiements ({count})",
+    "noPayments": "Aucun paiement enregistré.",
+    "dueAndPaid": "Dû {due} · Payé {paid}"
+  },
+  "student": {
+    "title": "Mes finances",
+    "subtitle": "Vos frais, paiements et solde restant dû.",
+    "kpi": {
+      "totalDue": "Total dû",
+      "totalPaid": "Total payé",
+      "outstandingBalance": "Solde dû",
+      "debtsCount": "{count, plural, one {# dette} other {# dettes}}",
+      "paymentsCount": "{count, plural, one {# paiement} other {# paiements}}",
+      "settle": "Veuillez régler votre solde",
+      "allSettled": "Tout est réglé"
+    },
+    "warning": "Vous avez un solde dû de {amount}. Veuillez contacter le service financier de votre campus pour le régler.",
+    "myDebts": "Mes dettes ({count})",
+    "noFees": "Aucun frais enregistré.",
+    "myPayments": "Mes paiements ({count})",
+    "noPayments": "Aucun paiement enregistré pour le moment."
+  },
+  "attachments": {
+    "attach": "Joindre des fichiers",
+    "uploading": "Téléversement…",
+    "hint": "Reçus / factures — JPG, PNG, WEBP, PDF · max 5 Mo",
+    "invalidType": "Seuls les fichiers JPG, PNG, WEBP ou PDF sont autorisés.",
+    "tooLarge": "Chaque fichier doit faire 5 Mo ou moins.",
+    "uploadFailed": "Échec du téléversement. Réessayez."
+  },
+  "errors": {
+    "loadFees": "Échec du chargement des frais.",
+    "loadIncomes": "Échec du chargement des recettes.",
+    "loadExpenses": "Échec du chargement des dépenses.",
+    "loadLedger": "Échec du chargement du grand livre.",
+    "loadSummary": "Échec du chargement du résumé financier."
+  }
 }

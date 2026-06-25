@@ -1,0 +1,57 @@
+{
+  "title": "Notifiche",
+  "inbox": "Posta in arrivo",
+  "unread": "{n, plural, one{# notifica non letta} other{# notifiche non lette}}",
+  "markRead": "Segna come letta",
+  "markAllRead": "Segna tutte come lette",
+  "delete": "Elimina notifica",
+  "empty": "Nessuna notifica",
+  "loadMore": "Carica altro",
+  "loadError": "Impossibile caricare le notifiche.",
+  "retry": "Riprova",
+  "type": {
+    "announcement": "Annuncio",
+    "result": "Nuovi risultati",
+    "attendance": "Avviso presenze",
+    "payment": "Promemoria pagamento",
+    "exam": "Promemoria esame",
+    "document": "Documento condiviso",
+    "system": "Sistema"
+  },
+  "announcement": {
+    "new": "Nuovo annuncio",
+    "from": "Da",
+    "pinned": "In evidenza"
+  },
+  "alert": {
+    "absence": "Avviso assenza",
+    "latePayment": "Pagamento in ritardo",
+    "examUpcoming": "Esame imminente"
+  },
+  "log": {
+    "title": "Registro di consegna delle notifiche",
+    "subtitle": "Monitora e rilancia le consegne multicanale",
+    "searchPlaceholder": "Cerca oggetto, destinatario, modello…",
+    "channel": "Canale",
+    "statusLabel": "Stato",
+    "subjectCol": "Oggetto",
+    "recipient": "Destinatario",
+    "template": "Modello",
+    "date": "Data",
+    "attempts": "Tentativi",
+    "action": "Azione",
+    "all": "Tutti",
+    "reset": "Reimposta filtri",
+    "retry": "Rilancia consegna",
+    "inApp": "in-app",
+    "empty": "Nessuna notifica trovata",
+    "loadError": "Impossibile caricare il registro di consegna.",
+    "status": {
+      "pending": "In attesa",
+      "sent": "Inviata",
+      "failed": "Non riuscita",
+      "skipped": "Ignorata",
+      "read": "Letta"
+    }
+  }
+}

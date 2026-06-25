@@ -1,9 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Gestion des Activités d'Enseignement et de Tutorat",
-  "report": { "generate": "Générer le rapport GAET", "title": "Rapport de suivi des activités académiques", "period": "Période", "download": "Télécharger" },
-  "activity": { "title": "Activités", "planned": "Planifiée", "completed": "Réalisée", "missed": "Manquée", "rate": "Taux de réalisation" },
-  "teacher": { "load": "Charge d'enseignement", "hours": "{n, plural, one{# heure} other{# heures}}", "delivered": "Heures dispensées", "remaining": "Heures restantes" },
-  "schedule": { "generate": "Générer le planning", "constraints": "Contraintes", "conflict": "Conflit détecté", "resolve": "Résoudre" },
-  "status": { "onTrack": "Dans les délais", "delayed": "En retard", "completed": "Terminé" }
+  "subtitle": "Générateur automatique d'emploi du temps",
+  "header": {
+    "manager": "Configurez les contraintes, générez, vérifiez et publiez l'emploi du temps de votre semestre.",
+    "viewer": "Consultez les emplois du temps générés pour ce campus."
+  },
+  "context": {
+    "academicYear": "Année académique",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semestre",
+    "updated": "Mis à jour le {date}"
+  },
+  "semesterOptions": {
+    "S1": "Semestre 1",
+    "S2": "Semestre 2",
+    "Annual": "Annuel"
+  },
+  "weekday": {
+    "MO": "Lundi",
+    "TU": "Mardi",
+    "WE": "Mercredi",
+    "TH": "Jeudi",
+    "FR": "Vendredi",
+    "SA": "Samedi",
+    "SU": "Dimanche"
+  },
+  "sessionType": {
+    "LECTURE": "Cours magistral",
+    "TUTORIAL": "Travaux dirigés",
+    "PRACTICAL": "Travaux pratiques"
+  },
+  "roomType": {
+    "CLASSROOM": "Salle de classe",
+    "LAB": "Laboratoire",
+    "AMPHITHEATER": "Amphithéâtre"
+  },
+  "summary": {
+    "timeSlots": "Créneaux horaires",
+    "courses": "Cours",
+    "rooms": "Salles"
+  },
+  "status": {
+    "DRAFT": "Brouillon",
+    "GENERATING": "Génération…",
+    "GENERATED": "Généré",
+    "PARTIALLY_GENERATED": "Partiel",
+    "PUBLISHED": "Publié",
+    "FAILED": "Échec",
+    "CANCELLED": "Annulé"
+  },
+  "empty": {
+    "title": "Aucun emploi du temps configuré",
+    "body": "Remplissez le formulaire ci-dessous pour configurer les contraintes et générer l'emploi du temps de ce semestre."
+  },
+  "banner": {
+    "generatingTitle": "Génération de l'emploi du temps en cours…",
+    "generatingBody": "L'algorithme s'exécute dans un thread d'arrière-plan. Cette page se mettra à jour automatiquement à la fin.",
+    "failed": "Échec de la génération. Vérifiez que vos contraintes ne sont pas trop restrictives, puis réessayez.",
+    "retry": "Réessayer",
+    "publishedTitle": "Emploi du temps publié avec succès.",
+    "publishedOn": "Publié le {date}"
+  },
+  "tabs": {
+    "configuration": "Configuration",
+    "preview": "Aperçu",
+    "quality": "Qualité",
+    "conflicts": "Conflits"
+  },
+  "actions": {
+    "generate": "Générer l'emploi du temps",
+    "generating": "Génération…",
+    "regenerate": "Régénérer",
+    "publish": "Publier l'emploi du temps",
+    "publishing": "Publication…",
+    "cancel": "Annuler",
+    "retry": "Relancer la génération",
+    "published": "Emploi du temps publié avec succès",
+    "disabledHint": "Complétez les trois sections de contraintes avant de générer",
+    "tooltipCancel": "Abandonner et annuler l'emploi du temps généré",
+    "tooltipRegenerate": "Relancer l'algorithme avec les contraintes actuelles",
+    "tooltipPublishPartial": "Certains cours n'ont pas été placés — publier l'emploi du temps partiel",
+    "tooltipPublishFull": "Publier vers les emplois du temps des étudiants et des enseignants"
+  },
+  "conflicts": {
+    "none": "Aucun conflit détecté — toutes les contraintes strictes sont satisfaites.",
+    "detected": "{count, plural, one {# conflit détecté} other {# conflits détectés}}",
+    "day": "Jour",
+    "room": "Salle",
+    "label": "Conflit",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Double réservation d'enseignant",
+      "ROOM_DOUBLE_BOOKING": "Double réservation de salle",
+      "CLASS_DOUBLE_BOOKING": "Double réservation de classe",
+      "fallback": "Conflit"
+    },
+    "unplacedTitle": "Cours non placés ({count})",
+    "unplacedLabel": "Non placé",
+    "unplacedDefaultReason": "N'a pas pu être placé avec les contraintes actuelles"
+  },
+  "quality": {
+    "partialTitle": "Généré partiellement — {count, plural, one {# cours n'a pas pu être placé} other {# cours n'ont pas pu être placés}}.",
+    "partialBody": "Vous pouvez publier l'emploi du temps partiel ou ajuster les contraintes et régénérer.",
+    "score": "Score de qualité",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Excellent",
+    "scoreGood": "Bon",
+    "scoreNeedsReview": "À revoir",
+    "hardConstraints": "Contraintes strictes",
+    "hardConstraintsSub": "Aucun conflit d'enseignant / salle / classe",
+    "softConstraints": "Contraintes souples",
+    "softConstraintsSub": "Préférences et créneaux du matin respectés",
+    "roomUtilization": "Utilisation des salles",
+    "roomUtilizationSub": "Taux d'occupation moyen des salles",
+    "generatedIn": "Généré en {seconds} s",
+    "unplacedTitle": "Cours non placés ({count})",
+    "unplacedLabel": "Non placé",
+    "unplacedRefFallback": "Réf. : {ref}",
+    "allPlaced": "Tous les cours ont été placés avec succès — aucune violation de contrainte détectée."
+  },
+  "preview": {
+    "emptyTitle": "Aucune séance générée pour le moment",
+    "emptyBody": "Lancez la génération pour voir l'aperçu de l'emploi du temps ici",
+    "summary": "{sessions, plural, one {# séance} other {# séances}} sur {days, plural, one {# jour} other {# jours}}",
+    "dayCount": "{count, plural, one {# séance} other {# séances}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Créneaux horaires",
+      "title": "Créneaux horaires disponibles",
+      "subtitle": "Définissez les plages horaires hebdomadaires que l'algorithme peut utiliser.",
+      "add": "Ajouter un créneau",
+      "empty": "Aucun créneau défini. Cliquez sur « Ajouter un créneau » pour commencer.",
+      "day": "Jour",
+      "start": "Début (h)",
+      "end": "Fin (h)",
+      "break": "Pause",
+      "removeSlot": "Supprimer le créneau",
+      "duration": "Durée : {hours} h · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Cours",
+      "title": "Besoins en cours",
+      "subtitle": "Une entrée par combinaison classe + matière + enseignant.",
+      "add": "Ajouter un cours",
+      "empty": "Aucun cours défini. Cliquez sur « Ajouter un cours » pour créer une unité de planification.",
+      "newCourse": "Nouveau cours",
+      "hoursPerWeekShort": "{hours} h/sem",
+      "studentsShort": "{count, plural, one {# étudiant} other {# étudiants}}",
+      "remove": "Supprimer ce besoin en cours",
+      "class": "Classe",
+      "subject": "Matière",
+      "teacher": "Enseignant",
+      "sessionType": "Type de séance",
+      "hoursPerWeek": "h/sem",
+      "duration": "Durée (min)",
+      "students": "Étudiants",
+      "roomType": "Type de salle",
+      "requiresLab": "Nécessite un laboratoire",
+      "preferMorning": "Préférer le matin"
+    },
+    "rooms": {
+      "tab": "Salles",
+      "title": "Registre des salles",
+      "subtitle": "Salles physiques disponibles pour l'affectation de l'emploi du temps.",
+      "add": "Ajouter une salle",
+      "empty": "Aucune salle définie. Cliquez sur « Ajouter une salle » pour enregistrer une salle.",
+      "name": "Nom de la salle",
+      "namePlaceholder": "ex. Amphi A, Labo 201",
+      "capacity": "Capacité",
+      "type": "Type de salle",
+      "remove": "Supprimer la salle"
+    },
+    "semesterStart": {
+      "label": "Date de début du semestre",
+      "helper": "Premier jour de cours — les séances publiées débutent à cette date."
+    },
+    "teacherPrefs": {
+      "tab": "Préférences enseignants",
+      "title": "Préférences des enseignants",
+      "subtitle": "Contraintes souples optionnelles : indisponibilités, jours préférés et heures consécutives maximales.",
+      "add": "Ajouter un enseignant",
+      "empty": "Aucune préférence enseignant définie. Elles sont optionnelles et affinent l'emploi du temps généré.",
+      "newTeacher": "Nouvel enseignant",
+      "teacher": "Enseignant",
+      "remove": "Supprimer la préférence",
+      "maxConsecutive": "Heures consécutives max",
+      "maxConsecutiveHelp": "1 à 12 heures",
+      "preferredDays": "Jours préférés",
+      "unavailable": "Créneaux d'indisponibilité",
+      "addSlot": "Ajouter un créneau",
+      "noSlots": "Aucun créneau d'indisponibilité",
+      "slotStart": "Début (h)",
+      "slotEnd": "Fin (h)",
+      "day": "Jour",
+      "removeSlot": "Supprimer le créneau",
+      "slotsCount": "Indisponibilités : {count}",
+      "preferredCount": "Préférés : {count}"
+    },
+    "nav": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "save": "Enregistrer la configuration",
+    "saving": "Enregistrement…"
+  },
+  "messages": {
+    "saved": "Contraintes enregistrées avec succès.",
+    "loadFailed": "Échec du chargement des contraintes.",
+    "saveFailed": "Échec de l'enregistrement des contraintes.",
+    "generateStartFailed": "Échec du démarrage de la génération.",
+    "generatedSuccess": "Emploi du temps généré avec succès.",
+    "generatedPartial": "Emploi du temps généré partiellement — certains cours non placés. Vérifiez les conflits.",
+    "generatedFailed": "Échec de la génération. Vérifiez vos contraintes et réessayez.",
+    "noConstraintId": "Le serveur n'a pas renvoyé d'identifiant de contrainte.",
+    "previewFailed": "Échec du chargement de l'aperçu.",
+    "conflictsFailed": "Échec du chargement des conflits.",
+    "publishedCount": "{count, plural, one {# séance publiée avec succès.} other {# séances publiées avec succès.}}",
+    "publishFailed": "Échec de la publication.",
+    "cancelled": "Emploi du temps généré annulé.",
+    "cancelFailed": "Échec de l'annulation."
+  }
 }

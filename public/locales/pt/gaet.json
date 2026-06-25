@@ -1,0 +1,224 @@
+{
+  "title": "GAET",
+  "subtitle": "Gerador automático de horários",
+  "header": {
+    "manager": "Configure as restrições, gere, revise e publique o horário do seu semestre.",
+    "viewer": "Consulte os horários gerados para este campus."
+  },
+  "context": {
+    "academicYear": "Ano letivo",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semestre",
+    "updated": "Atualizado em {date}"
+  },
+  "semesterOptions": {
+    "S1": "Semestre 1",
+    "S2": "Semestre 2",
+    "Annual": "Anual"
+  },
+  "weekday": {
+    "MO": "Segunda-feira",
+    "TU": "Terça-feira",
+    "WE": "Quarta-feira",
+    "TH": "Quinta-feira",
+    "FR": "Sexta-feira",
+    "SA": "Sábado",
+    "SU": "Domingo"
+  },
+  "sessionType": {
+    "LECTURE": "Aula teórica",
+    "TUTORIAL": "Aula prática",
+    "PRACTICAL": "Laboratório"
+  },
+  "roomType": {
+    "CLASSROOM": "Sala de aula",
+    "LAB": "Laboratório",
+    "AMPHITHEATER": "Anfiteatro"
+  },
+  "summary": {
+    "timeSlots": "Faixas horárias",
+    "courses": "Cursos",
+    "rooms": "Salas"
+  },
+  "status": {
+    "DRAFT": "Rascunho",
+    "GENERATING": "Gerando…",
+    "GENERATED": "Gerado",
+    "PARTIALLY_GENERATED": "Parcial",
+    "PUBLISHED": "Publicado",
+    "FAILED": "Falhou",
+    "CANCELLED": "Cancelado"
+  },
+  "empty": {
+    "title": "Nenhum horário configurado",
+    "body": "Preencha o formulário abaixo para configurar as restrições e gerar o horário deste semestre."
+  },
+  "banner": {
+    "generatingTitle": "Geração do horário em andamento…",
+    "generatingBody": "O algoritmo está sendo executado em uma thread em segundo plano. Esta página será atualizada automaticamente ao concluir.",
+    "failed": "Falha na geração. Verifique se as suas restrições não estão sobrecarregadas e tente novamente.",
+    "retry": "Tentar novamente",
+    "publishedTitle": "Horário publicado com sucesso.",
+    "publishedOn": "Publicado em {date}"
+  },
+  "tabs": {
+    "configuration": "Configuração",
+    "preview": "Pré-visualização",
+    "quality": "Qualidade",
+    "conflicts": "Conflitos"
+  },
+  "actions": {
+    "generate": "Gerar horário",
+    "generating": "Gerando…",
+    "regenerate": "Regerar",
+    "publish": "Publicar horário",
+    "publishing": "Publicando…",
+    "cancel": "Cancelar",
+    "retry": "Tentar gerar novamente",
+    "published": "Horário publicado com sucesso",
+    "disabledHint": "Complete as três seções de restrições antes de gerar",
+    "tooltipCancel": "Descartar e cancelar o horário gerado",
+    "tooltipRegenerate": "Executar o algoritmo novamente com as restrições atuais",
+    "tooltipPublishPartial": "Alguns cursos não foram alocados — publicar horário parcial",
+    "tooltipPublishFull": "Publicar nos horários de estudantes e professores"
+  },
+  "conflicts": {
+    "none": "Nenhum conflito detectado — todas as restrições rígidas foram satisfeitas.",
+    "detected": "{count, plural, one {# conflito detectado} other {# conflitos detectados}}",
+    "day": "Dia",
+    "room": "Sala",
+    "label": "Conflito",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Reserva dupla de professor",
+      "ROOM_DOUBLE_BOOKING": "Reserva dupla de sala",
+      "CLASS_DOUBLE_BOOKING": "Reserva dupla de turma",
+      "fallback": "Conflito"
+    },
+    "unplacedTitle": "Cursos não alocados ({count})",
+    "unplacedLabel": "Não alocado",
+    "unplacedDefaultReason": "Não foi possível alocar com as restrições atuais"
+  },
+  "quality": {
+    "partialTitle": "Gerado parcialmente — {count, plural, one {# curso não pôde ser alocado} other {# cursos não puderam ser alocados}}.",
+    "partialBody": "Você pode publicar o horário parcial ou ajustar as restrições e regerar.",
+    "score": "Pontuação de qualidade",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Excelente",
+    "scoreGood": "Bom",
+    "scoreNeedsReview": "Precisa de revisão",
+    "hardConstraints": "Restrições rígidas",
+    "hardConstraintsSub": "Sem conflitos de professor / sala / turma",
+    "softConstraints": "Restrições flexíveis",
+    "softConstraintsSub": "Preferências e faixas da manhã satisfeitas",
+    "roomUtilization": "Utilização das salas",
+    "roomUtilizationSub": "Taxa média de ocupação das salas",
+    "generatedIn": "Gerado em {seconds} s",
+    "unplacedTitle": "Cursos não alocados ({count})",
+    "unplacedLabel": "Não alocado",
+    "unplacedRefFallback": "Ref.: {ref}",
+    "allPlaced": "Todos os cursos foram alocados com sucesso — nenhuma violação de restrição detectada."
+  },
+  "preview": {
+    "emptyTitle": "Nenhuma sessão gerada ainda",
+    "emptyBody": "Execute a geração para ver aqui a pré-visualização do horário",
+    "summary": "{sessions, plural, one {# sessão} other {# sessões}} em {days, plural, one {# dia} other {# dias}}",
+    "dayCount": "{count, plural, one {# sessão} other {# sessões}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Faixas horárias",
+      "title": "Faixas horárias disponíveis",
+      "subtitle": "Defina as janelas horárias semanais que o algoritmo pode usar.",
+      "add": "Adicionar faixa",
+      "empty": "Nenhuma faixa definida. Clique em «Adicionar faixa» para começar.",
+      "day": "Dia",
+      "start": "Início (h)",
+      "end": "Fim (h)",
+      "break": "Intervalo",
+      "removeSlot": "Remover faixa",
+      "duration": "Duração: {hours} h · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Cursos",
+      "title": "Requisitos de cursos",
+      "subtitle": "Uma entrada por combinação de turma + disciplina + professor.",
+      "add": "Adicionar curso",
+      "empty": "Nenhum curso definido. Clique em «Adicionar curso» para criar uma unidade de planejamento.",
+      "newCourse": "Novo curso",
+      "hoursPerWeekShort": "{hours} h/sem",
+      "studentsShort": "{count, plural, one {# estudante} other {# estudantes}}",
+      "remove": "Remover este requisito de curso",
+      "class": "Turma",
+      "subject": "Disciplina",
+      "teacher": "Professor",
+      "sessionType": "Tipo de sessão",
+      "hoursPerWeek": "h/sem",
+      "duration": "Duração (min)",
+      "students": "Estudantes",
+      "roomType": "Tipo de sala",
+      "requiresLab": "Requer laboratório",
+      "preferMorning": "Preferir a manhã"
+    },
+    "rooms": {
+      "tab": "Salas",
+      "title": "Registro de salas",
+      "subtitle": "Salas físicas disponíveis para a alocação do horário.",
+      "add": "Adicionar sala",
+      "empty": "Nenhuma sala definida. Clique em «Adicionar sala» para registrar uma sala.",
+      "name": "Nome da sala",
+      "namePlaceholder": "ex. Anfiteatro A, Lab 201",
+      "capacity": "Capacidade",
+      "type": "Tipo de sala",
+      "remove": "Remover sala"
+    },
+    "semesterStart": {
+      "label": "Data de início do semestre",
+      "helper": "Primeiro dia de aula — as sessões publicadas começam a partir desta data."
+    },
+    "teacherPrefs": {
+      "tab": "Preferências do professor",
+      "title": "Preferências dos professores",
+      "subtitle": "Restrições flexíveis opcionais: indisponibilidade, dias preferidos e horas consecutivas máximas.",
+      "add": "Adicionar professor",
+      "empty": "Nenhuma preferência de professor definida. São opcionais e refinam o horário gerado.",
+      "newTeacher": "Novo professor",
+      "teacher": "Professor",
+      "remove": "Remover preferência",
+      "maxConsecutive": "Horas consecutivas máx.",
+      "maxConsecutiveHelp": "1–12 horas",
+      "preferredDays": "Dias preferidos",
+      "unavailable": "Faixas indisponíveis",
+      "addSlot": "Adicionar faixa",
+      "noSlots": "Sem faixas indisponíveis",
+      "slotStart": "Início (h)",
+      "slotEnd": "Fim (h)",
+      "day": "Dia",
+      "removeSlot": "Remover faixa",
+      "slotsCount": "Indisponíveis: {count}",
+      "preferredCount": "Preferidos: {count}"
+    },
+    "nav": {
+      "previous": "Anterior",
+      "next": "Próximo"
+    },
+    "save": "Salvar configuração",
+    "saving": "Salvando…"
+  },
+  "messages": {
+    "saved": "Restrições salvas com sucesso.",
+    "loadFailed": "Falha ao carregar as restrições.",
+    "saveFailed": "Falha ao salvar as restrições.",
+    "generateStartFailed": "Falha ao iniciar a geração.",
+    "generatedSuccess": "Horário gerado com sucesso.",
+    "generatedPartial": "Horário gerado parcialmente — alguns cursos não alocados. Verifique os conflitos.",
+    "generatedFailed": "Falha na geração. Verifique as suas restrições e tente novamente.",
+    "noConstraintId": "O servidor não retornou um identificador de restrição.",
+    "previewFailed": "Falha ao carregar a pré-visualização.",
+    "conflictsFailed": "Falha ao carregar os conflitos.",
+    "publishedCount": "{count, plural, one {# sessão publicada com sucesso.} other {# sessões publicadas com sucesso.}}",
+    "publishFailed": "Falha na publicação.",
+    "cancelled": "Horário gerado cancelado.",
+    "cancelFailed": "Falha ao cancelar."
+  }
+}

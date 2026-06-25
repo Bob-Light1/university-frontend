@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HomeIcon               from '@mui/icons-material/Home';
 import CampaignIcon           from '@mui/icons-material/Campaign';
+import MarkEmailReadIcon      from '@mui/icons-material/MarkEmailRead';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import GroupIcon              from '@mui/icons-material/Group';
 import RecordVoiceOverIcon    from '@mui/icons-material/RecordVoiceOver';
@@ -113,9 +114,10 @@ export default function Campus() {
       ],
     },
 
-    // ── Announcements ───────────────────────────────────────────────────────
+    // ── Announcements & notification delivery log ───────────────────────────
     { type: 'divider', label: 'divider-announcements' },
-    { link: `/campus/${campusId}/notification`, label: 'Announcements', icon: CampaignIcon },
+    { link: `/campus/${campusId}/notification`,     label: 'Announcements', icon: CampaignIcon },
+    { link: `/campus/${campusId}/notification-log`, label: 'Delivery Log',  icon: MarkEmailReadIcon },
 
     // ── Always-visible bottom item ──────────────────────────────────────────
     { type: 'divider', label: 'divider-settings' },

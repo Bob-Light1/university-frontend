@@ -44,9 +44,8 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
     initialValues: {
       phone:             parent.phone             || '',
       preferredLanguage: parent.preferredLanguage || 'fr',
-      notifEmail: parent.notificationPrefs?.email ?? true,
-      notifSms:   parent.notificationPrefs?.sms   ?? false,
-      notifPush:  parent.notificationPrefs?.push  ?? false,
+      notifEmail:    parent.notificationPrefs?.email    ?? true,
+      notifWhatsapp: parent.notificationPrefs?.whatsapp ?? false,
       street:     parent.address?.street     || '',
       city:       parent.address?.city       || '',
       state:      parent.address?.state      || '',
@@ -68,9 +67,9 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
         phone:             values.phone,
         preferredLanguage: values.preferredLanguage,
         notificationPrefs: {
-          email: values.notifEmail,
-          sms:   values.notifSms,
-          push:  values.notifPush,
+          inapp:    true, // baseline inbox — always on
+          email:    values.notifEmail,
+          whatsapp: values.notifWhatsapp,
         },
         address: {
           street:     values.street     || null,
@@ -108,7 +107,7 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
-            InputProps={{ startAdornment: <Phone fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }}
+            slotProps={{ input: { startAdornment: <Phone fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> } }}
             sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
           />
         </Grid>
@@ -161,16 +160,16 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
           <Divider sx={{ mb: 1, mt: 0.5 }} />
           <Stack direction="row" spacing={2} flexWrap="wrap">
             <FormControlLabel
+              control={<Switch checked disabled />}
+              label="In-app (always on)"
+            />
+            <FormControlLabel
               control={<Switch name="notifEmail" checked={formik.values.notifEmail} onChange={formik.handleChange} />}
               label="Email"
             />
             <FormControlLabel
-              control={<Switch name="notifSms" checked={formik.values.notifSms} onChange={formik.handleChange} />}
-              label="SMS"
-            />
-            <FormControlLabel
-              control={<Switch name="notifPush" checked={formik.values.notifPush} onChange={formik.handleChange} />}
-              label="Push"
+              control={<Switch name="notifWhatsapp" checked={formik.values.notifWhatsapp} onChange={formik.handleChange} />}
+              label="WhatsApp"
             />
           </Stack>
         </Grid>
@@ -414,10 +413,10 @@ const ParentProfile = () => {
                   <Box>
                     <Typography variant="caption" color="text.secondary">Notifications</Typography>
                     <Stack direction="row" spacing={0.5} sx={{ mt: 0.25 }}>
-                      {['email', 'sms', 'push'].map((k) => (
+                      {[['inapp', 'IN-APP'], ['email', 'EMAIL'], ['whatsapp', 'WHATSAPP']].map(([k, lbl]) => (
                         <Chip
                           key={k}
-                          label={k.toUpperCase()}
+                          label={lbl}
                           size="small"
                           color={parent.notificationPrefs?.[k] ? 'primary' : 'default'}
                           variant={parent.notificationPrefs?.[k] ? 'filled' : 'outlined'}

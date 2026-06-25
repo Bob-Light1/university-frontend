@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   listExpenses,
   createExpense,
@@ -40,6 +41,7 @@ const clean = (obj) => {
 const WORKFLOW = { approve: approveExpense, reject: rejectExpense, pay: payExpense };
 
 const useExpenses = (campusId) => {
+  const { t } = useTranslation('finance');
   const [expenses,   setExpenses]   = useState([]);
   const [categories, setCategories] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 1 });
@@ -56,12 +58,12 @@ const useExpenses = (campusId) => {
       setExpenses(Array.isArray(res.data?.data) ? res.data.data : []);
       if (res.data?.pagination) setPagination((p) => ({ ...p, ...res.data.pagination }));
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load expenses.');
+      setError(err.response?.data?.message || t('errors.loadExpenses'));
       setExpenses([]);
     } finally {
       setLoading(false);
     }
-  }, [filters, campusId]);
+  }, [filters, campusId, t]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Typography, Button, Paper, Alert, Snackbar, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -16,8 +17,9 @@ import { Add, Edit, Delete, FilterListOff } from '@mui/icons-material';
 import useIncomes from '../../../hooks/useIncomes';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { StatusChip, PeriodSelector } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import {
-  INCOME_SOURCES, INCOME_STATUSES, INCOME_STATUS_LABEL, INCOME_STATUS_COLOR,
+  INCOME_SOURCES, INCOME_STATUSES, INCOME_STATUS_COLOR,
   formatMoney, formatDate,
 } from './financeConstants';
 import IncomeFormDialog from './IncomeFormDialog';
@@ -32,6 +34,8 @@ const IncomesManager = ({ campusId }) => {
     create, update, remove,
   } = useIncomes(campusId);
 
+  const { t } = useTranslation('finance');
+  const { incomeStatus: incomeStatusLabel } = useFinanceLabels();
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
   const [editing, setEditing] = useState(null);   // income object or {} for new
   const [busyId,  setBusyId]  = useState(null);
@@ -39,21 +43,21 @@ const IncomesManager = ({ campusId }) => {
   const handleSubmit = async (payload) => {
     if (editing?._id) {
       await update(editing._id, payload);
-      showSnackbar('Income updated.', 'success');
+      showSnackbar(t('incomes.toast.updated'), 'success');
     } else {
       await create(payload);
-      showSnackbar('Income created.', 'success');
+      showSnackbar(t('incomes.toast.created'), 'success');
     }
   };
 
   const handleDelete = async (income) => {
-    if (!window.confirm(`Delete the income "${income.title}"?`)) return;
+    if (!window.confirm(t('incomes.confirmDelete', { title: income.title }))) return;
     setBusyId(income._id);
     try {
       await remove(income._id);
-      showSnackbar('Income deleted.', 'success');
+      showSnackbar(t('incomes.toast.deleted'), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to delete income.', 'error');
+      showSnackbar(err.response?.data?.message || t('incomes.toast.deleteFailed'), 'error');
     } finally {
       setBusyId(null);
     }
@@ -70,33 +74,33 @@ const IncomesManager = ({ campusId }) => {
         sx={{ mb: 2.5 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={700}>Incomes</Typography>
+          <Typography variant="h5" fontWeight={700}>{t('incomes.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Record and track all institutional income.
+            {t('incomes.subtitle')}
           </Typography>
         </Box>
         <Button
           variant="contained" color="success" startIcon={<Add />} onClick={() => setEditing({})}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}
         >
-          New Income
+          {t('incomes.new')}
         </Button>
       </Stack>
 
       {/* Filters */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Source</InputLabel>
-          <Select label="Source" value={filters.source} onChange={(e) => handleFilterChange('source', e.target.value)}>
-            <MenuItem value="">All sources</MenuItem>
-            {INCOME_SOURCES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+          <InputLabel>{t('fields.source')}</InputLabel>
+          <Select label={t('fields.source')} value={filters.source} onChange={(e) => handleFilterChange('source', e.target.value)}>
+            <MenuItem value="">{t('filters.allSources')}</MenuItem>
+            {INCOME_SOURCES.map((s) => <MenuItem key={s} value={s}>{t(`enums.incomeSource.${s}`)}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel>Status</InputLabel>
-          <Select label="Status" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-            <MenuItem value="">All statuses</MenuItem>
-            {INCOME_STATUSES.map((s) => <MenuItem key={s} value={s}>{INCOME_STATUS_LABEL[s]}</MenuItem>)}
+          <InputLabel>{t('fields.status')}</InputLabel>
+          <Select label={t('fields.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+            <MenuItem value="">{t('filters.allStatuses')}</MenuItem>
+            {INCOME_STATUSES.map((s) => <MenuItem key={s} value={s}>{incomeStatusLabel[s]}</MenuItem>)}
           </Select>
         </FormControl>
         <PeriodSelector
@@ -107,7 +111,7 @@ const IncomesManager = ({ campusId }) => {
           size="small" variant="outlined" startIcon={<FilterListOff />} onClick={handleReset}
           sx={{ borderRadius: 2, textTransform: 'none', alignSelf: 'center' }}
         >
-          Reset
+          {t('actions.reset')}
         </Button>
       </Stack>
 
@@ -118,14 +122,14 @@ const IncomesManager = ({ campusId }) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Source</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Method</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.title')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.source')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.student')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.status')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -140,7 +144,7 @@ const IncomesManager = ({ campusId }) => {
             ) : incomes.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} align="center" sx={{ py: 5, color: 'text.secondary' }}>
-                  No incomes found.
+                  {t('incomes.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -156,26 +160,26 @@ const IncomesManager = ({ campusId }) => {
                         </Typography>
                       )}
                     </TableCell>
-                    <TableCell><Chip size="small" variant="outlined" label={inc.source} /></TableCell>
+                    <TableCell><Chip size="small" variant="outlined" label={t(`enums.incomeSource.${inc.source}`)} /></TableCell>
                     <TableCell align="right">
                       <Typography variant="body2" fontWeight={700} color="success.main">
                         {formatMoney(inc.amount, inc.currency)}
                       </Typography>
                     </TableCell>
-                    <TableCell>{inc.paymentMethod}</TableCell>
+                    <TableCell>{inc.paymentMethod ? t(`enums.paymentMethod.${inc.paymentMethod}`) : '—'}</TableCell>
                     <TableCell>{inc.student ? studentName(inc.student) : '—'}</TableCell>
                     <TableCell>{formatDate(inc.incomeDate)}</TableCell>
                     <TableCell>
-                      <StatusChip status={inc.status} labelMap={INCOME_STATUS_LABEL} colorMap={INCOME_STATUS_COLOR} />
+                      <StatusChip status={inc.status} labelMap={incomeStatusLabel} colorMap={INCOME_STATUS_COLOR} />
                     </TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.25} justifyContent="flex-end">
-                        <Tooltip title="Edit">
+                        <Tooltip title={t('actions.edit')}>
                           <IconButton size="small" color="primary" onClick={() => setEditing(inc)}>
                             <Edit fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Delete">
+                        <Tooltip title={t('actions.delete')}>
                           <span>
                             <IconButton size="small" color="error" disabled={busy} onClick={() => handleDelete(inc)}>
                               {busy ? <CircularProgress size={14} /> : <Delete fontSize="small" />}

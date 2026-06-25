@@ -6,6 +6,7 @@
  */
 
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, FormControl, InputLabel,
@@ -17,13 +18,14 @@ import { expenseSchema } from '../../../yupSchema/financeSchemas';
 import { CurrencySelect, PaymentMethodSelect } from './financeShared';
 import FinanceAttachments from './FinanceAttachments';
 import {
-  RECURRING_PERIODS, RECURRING_PERIOD_LABEL, DEFAULT_CURRENCY,
+  RECURRING_PERIODS, DEFAULT_CURRENCY,
 } from './financeConstants';
 
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 const toDateInput = (d) => (d ? new Date(d).toISOString().slice(0, 10) : '');
 
 const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }) => {
+  const { t } = useTranslation('finance');
   const editing = Boolean(expense?._id);
 
   const formik = useFormik({
@@ -73,8 +75,8 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
         onClose();
       } catch (err) {
         const msg = err.response?.status === 409
-          ? (err.response?.data?.message || 'This expense is paid and locked — it can no longer be edited.')
-          : (err.response?.data?.message || 'Failed to save expense.');
+          ? (err.response?.data?.message || t('expenseForm.lockedError'))
+          : (err.response?.data?.message || t('expenseForm.saveError'));
         setStatus(msg);
       } finally {
         setSubmitting(false);
@@ -94,7 +96,7 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <MoneyOff sx={{ color: 'error.main' }} />
-          <Typography variant="h6" fontWeight={700}>{editing ? 'Edit Expense' : 'New Expense'}</Typography>
+          <Typography variant="h6" fontWeight={700}>{editing ? t('expenseForm.titleEdit') : t('expenseForm.titleNew')}</Typography>
         </Stack>
       </DialogTitle>
 
@@ -103,13 +105,13 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
           {formik.status && <Typography variant="body2" color="error">{formik.status}</Typography>}
 
           <FormControl fullWidth error={Boolean(fieldError('expenseCategory'))}>
-            <InputLabel>Category *</InputLabel>
+            <InputLabel>{`${t('fields.category')} *`}</InputLabel>
             <Select
-              name="expenseCategory" label="Category *"
+              name="expenseCategory" label={`${t('fields.category')} *`}
               value={formik.values.expenseCategory} onChange={formik.handleChange}
               sx={{ borderRadius: 2 }}
             >
-              {categories.length === 0 && <MenuItem value="" disabled>No categories — create one first</MenuItem>}
+              {categories.length === 0 && <MenuItem value="" disabled>{t('expenseForm.noCategories')}</MenuItem>}
               {categories.map((c) => <MenuItem key={c._id} value={c._id}>{c.name}</MenuItem>)}
             </Select>
             {fieldError('expenseCategory') && (
@@ -118,7 +120,7 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
           </FormControl>
 
           <TextField
-            fullWidth name="title" label="Title *"
+            fullWidth name="title" label={`${t('fields.title')} *`}
             value={formik.values.title}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('title'))} helperText={fieldError('title')}
@@ -127,7 +129,7 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="amount" label="Amount *" type="number"
+              fullWidth name="amount" label={`${t('fields.amount')} *`} type="number"
               value={formik.values.amount}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('amount'))} helperText={fieldError('amount')}
@@ -138,13 +140,13 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <Box sx={{ width: '100%' }}>
-              <PaymentMethodSelect fullWidth name="paymentMethod" label="Payment method *" value={formik.values.paymentMethod} onChange={formik.handleChange} />
+              <PaymentMethodSelect fullWidth name="paymentMethod" label={`${t('fields.paymentMethod')} *`} value={formik.values.paymentMethod} onChange={formik.handleChange} />
               {fieldError('paymentMethod') && (
                 <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>{formik.errors.paymentMethod}</Typography>
               )}
             </Box>
             <TextField
-              fullWidth name="expenseDate" label="Expense date *" type="date"
+              fullWidth name="expenseDate" label={`${t('fields.date')} *`} type="date"
               value={formik.values.expenseDate}
               onChange={formik.handleChange}
               slotProps={{ inputLabel: { shrink: true } }}
@@ -156,13 +158,13 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
             <FormControlLabel
               control={<Switch name="isRecurring" checked={formik.values.isRecurring} onChange={formik.handleChange} />}
-              label="Recurring"
+              label={t('fields.recurring')}
             />
             {formik.values.isRecurring && (
               <FormControl fullWidth error={Boolean(fieldError('recurringPeriod'))}>
-                <InputLabel>Period *</InputLabel>
-                <Select name="recurringPeriod" label="Period *" value={formik.values.recurringPeriod} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
-                  {RECURRING_PERIODS.map((p) => <MenuItem key={p} value={p}>{RECURRING_PERIOD_LABEL[p]}</MenuItem>)}
+                <InputLabel>{`${t('fields.period')} *`}</InputLabel>
+                <Select name="recurringPeriod" label={`${t('fields.period')} *`} value={formik.values.recurringPeriod} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
+                  {RECURRING_PERIODS.map((p) => <MenuItem key={p} value={p}>{t(`enums.recurringPeriod.${p}`)}</MenuItem>)}
                 </Select>
                 {fieldError('recurringPeriod') && (
                   <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>{formik.errors.recurringPeriod}</Typography>
@@ -172,7 +174,7 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
           </Stack>
 
           <TextField
-            fullWidth name="reference" label="Reference"
+            fullWidth name="reference" label={t('fields.reference')}
             value={formik.values.reference}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('reference'))} helperText={fieldError('reference')}
@@ -186,7 +188,7 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
           />
 
           <TextField
-            fullWidth name="notes" label="Notes" multiline minRows={2}
+            fullWidth name="notes" label={t('fields.notes')} multiline minRows={2}
             value={formik.values.notes}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('notes'))} helperText={fieldError('notes')}
@@ -196,14 +198,14 @@ const ExpenseFormDialog = ({ open, expense, categories = [], onClose, onSubmit }
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>{t('actions.cancel')}</Button>
         <Button
           variant="contained" color="error" disabled={formik.isSubmitting}
           onClick={() => formik.handleSubmit()}
           startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <MoneyOff />}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {formik.isSubmitting ? 'Saving…' : editing ? 'Save Changes' : 'Create Expense'}
+          {formik.isSubmitting ? t('actions.saving') : editing ? t('expenseForm.submitEdit') : t('expenseForm.submitNew')}
         </Button>
       </DialogActions>
     </Dialog>

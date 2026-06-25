@@ -1,34 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Academic Activity Tracking",
-  "report": {
-    "generate": "Generate GAET Report",
-    "title": "Academic Activity Tracking Report",
-    "period": "Reporting period",
-    "download": "Download report"
+  "subtitle": "Automatischer Stundenplangenerator",
+  "header": {
+    "manager": "Konfigurieren Sie die Randbedingungen, generieren, prüfen und veröffentlichen Sie den Stundenplan Ihres Semesters.",
+    "viewer": "Sehen Sie die generierten Stundenpläne für diesen Campus an."
   },
-  "activity": {
-    "title": "Activities",
-    "planned": "Planned",
-    "completed": "Completed",
-    "missed": "Missed",
-    "rate": "Completion rate"
+  "context": {
+    "academicYear": "Studienjahr",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semester",
+    "updated": "Aktualisiert am {date}"
   },
-  "teacher": {
-    "load": "Teaching load",
-    "hours": "{n, plural, one{# hour} other{# hours}}",
-    "delivered": "Hours delivered",
-    "remaining": "Hours remaining"
+  "semesterOptions": {
+    "S1": "Semester 1",
+    "S2": "Semester 2",
+    "Annual": "Jährlich"
   },
-  "schedule": {
-    "generate": "Generate schedule",
-    "constraints": "Constraints",
-    "conflict": "Conflict detected",
-    "resolve": "Resolve"
+  "weekday": {
+    "MO": "Montag",
+    "TU": "Dienstag",
+    "WE": "Mittwoch",
+    "TH": "Donnerstag",
+    "FR": "Freitag",
+    "SA": "Samstag",
+    "SU": "Sonntag"
+  },
+  "sessionType": {
+    "LECTURE": "Vorlesung",
+    "TUTORIAL": "Übung",
+    "PRACTICAL": "Praktikum"
+  },
+  "roomType": {
+    "CLASSROOM": "Klassenraum",
+    "LAB": "Labor",
+    "AMPHITHEATER": "Hörsaal"
+  },
+  "summary": {
+    "timeSlots": "Zeitfenster",
+    "courses": "Kurse",
+    "rooms": "Räume"
   },
   "status": {
-    "onTrack": "On track",
-    "delayed": "Delayed",
-    "completed": "Completed"
+    "DRAFT": "Entwurf",
+    "GENERATING": "Wird generiert…",
+    "GENERATED": "Generiert",
+    "PARTIALLY_GENERATED": "Teilweise",
+    "PUBLISHED": "Veröffentlicht",
+    "FAILED": "Fehlgeschlagen",
+    "CANCELLED": "Abgebrochen"
+  },
+  "empty": {
+    "title": "Kein Stundenplan konfiguriert",
+    "body": "Füllen Sie das untenstehende Formular aus, um die Randbedingungen festzulegen und den Stundenplan für dieses Semester zu generieren."
+  },
+  "banner": {
+    "generatingTitle": "Stundenplangenerierung läuft…",
+    "generatingBody": "Der Algorithmus läuft in einem Hintergrund-Thread. Diese Seite wird nach Abschluss automatisch aktualisiert.",
+    "failed": "Generierung fehlgeschlagen. Prüfen Sie, ob Ihre Randbedingungen nicht überbestimmt sind, und versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
+    "publishedTitle": "Stundenplan erfolgreich veröffentlicht.",
+    "publishedOn": "Veröffentlicht am {date}"
+  },
+  "tabs": {
+    "configuration": "Konfiguration",
+    "preview": "Vorschau",
+    "quality": "Qualität",
+    "conflicts": "Konflikte"
+  },
+  "actions": {
+    "generate": "Stundenplan generieren",
+    "generating": "Wird generiert…",
+    "regenerate": "Neu generieren",
+    "publish": "Stundenplan veröffentlichen",
+    "publishing": "Wird veröffentlicht…",
+    "cancel": "Abbrechen",
+    "retry": "Generierung erneut versuchen",
+    "published": "Stundenplan erfolgreich veröffentlicht",
+    "disabledHint": "Füllen Sie alle drei Randbedingungs-Abschnitte aus, bevor Sie generieren",
+    "tooltipCancel": "Generierten Stundenplan verwerfen und abbrechen",
+    "tooltipRegenerate": "Algorithmus mit den aktuellen Randbedingungen erneut ausführen",
+    "tooltipPublishPartial": "Einige Kurse wurden nicht platziert — Teilstundenplan veröffentlichen",
+    "tooltipPublishFull": "In Studenten- und Lehrerstundenpläne veröffentlichen"
+  },
+  "conflicts": {
+    "none": "Keine Konflikte erkannt — alle harten Randbedingungen sind erfüllt.",
+    "detected": "{count, plural, one {# Konflikt erkannt} other {# Konflikte erkannt}}",
+    "day": "Tag",
+    "room": "Raum",
+    "label": "Konflikt",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Doppelbelegung Lehrkraft",
+      "ROOM_DOUBLE_BOOKING": "Doppelbelegung Raum",
+      "CLASS_DOUBLE_BOOKING": "Doppelbelegung Klasse",
+      "fallback": "Konflikt"
+    },
+    "unplacedTitle": "Nicht platzierte Kurse ({count})",
+    "unplacedLabel": "Nicht platziert",
+    "unplacedDefaultReason": "Konnte mit den aktuellen Randbedingungen nicht platziert werden"
+  },
+  "quality": {
+    "partialTitle": "Teilweise generiert — {count, plural, one {# Kurs konnte nicht platziert werden} other {# Kurse konnten nicht platziert werden}}.",
+    "partialBody": "Sie können den Teilstundenplan veröffentlichen oder die Randbedingungen anpassen und neu generieren.",
+    "score": "Qualitätsbewertung",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Ausgezeichnet",
+    "scoreGood": "Gut",
+    "scoreNeedsReview": "Überprüfung nötig",
+    "hardConstraints": "Harte Randbedingungen",
+    "hardConstraintsSub": "Keine Lehrkraft-/Raum-/Klassenkonflikte",
+    "softConstraints": "Weiche Randbedingungen",
+    "softConstraintsSub": "Präferenzen und Vormittagsfenster erfüllt",
+    "roomUtilization": "Raumauslastung",
+    "roomUtilizationSub": "Durchschnittliche Raumbelegungsrate",
+    "generatedIn": "Generiert in {seconds} s",
+    "unplacedTitle": "Nicht platzierte Kurse ({count})",
+    "unplacedLabel": "Nicht platziert",
+    "unplacedRefFallback": "Ref.: {ref}",
+    "allPlaced": "Alle Kurse erfolgreich platziert — keine Verletzung von Randbedingungen erkannt."
+  },
+  "preview": {
+    "emptyTitle": "Noch keine Sitzungen generiert",
+    "emptyBody": "Führen Sie die Generierung aus, um hier die Stundenplanvorschau zu sehen",
+    "summary": "{sessions, plural, one {# Sitzung} other {# Sitzungen}} an {days, plural, one {# Tag} other {# Tagen}}",
+    "dayCount": "{count, plural, one {# Sitzung} other {# Sitzungen}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Zeitfenster",
+      "title": "Verfügbare Zeitfenster",
+      "subtitle": "Legen Sie die wöchentlichen Zeitfenster fest, die der Algorithmus verwenden darf.",
+      "add": "Zeitfenster hinzufügen",
+      "empty": "Keine Zeitfenster definiert. Klicken Sie auf „Zeitfenster hinzufügen“, um zu beginnen.",
+      "day": "Tag",
+      "start": "Beginn (Std.)",
+      "end": "Ende (Std.)",
+      "break": "Pause",
+      "removeSlot": "Zeitfenster entfernen",
+      "duration": "Dauer: {hours} Std. · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Kurse",
+      "title": "Kursanforderungen",
+      "subtitle": "Ein Eintrag pro Kombination aus Klasse + Fach + Lehrkraft.",
+      "add": "Kurs hinzufügen",
+      "empty": "Keine Kurse definiert. Klicken Sie auf „Kurs hinzufügen“, um eine Planungseinheit zu erstellen.",
+      "newCourse": "Neuer Kurs",
+      "hoursPerWeekShort": "{hours} Std./Wo.",
+      "studentsShort": "{count, plural, one {# Studierender} other {# Studierende}}",
+      "remove": "Diese Kursanforderung entfernen",
+      "class": "Klasse",
+      "subject": "Fach",
+      "teacher": "Lehrkraft",
+      "sessionType": "Sitzungstyp",
+      "hoursPerWeek": "Std./Wo.",
+      "duration": "Dauer (Min.)",
+      "students": "Studierende",
+      "roomType": "Raumtyp",
+      "requiresLab": "Labor erforderlich",
+      "preferMorning": "Vormittag bevorzugen"
+    },
+    "rooms": {
+      "tab": "Räume",
+      "title": "Raumverzeichnis",
+      "subtitle": "Physische Räume, die für die Stundenplanzuweisung verfügbar sind.",
+      "add": "Raum hinzufügen",
+      "empty": "Keine Räume definiert. Klicken Sie auf „Raum hinzufügen“, um einen Raum zu registrieren.",
+      "name": "Raumname",
+      "namePlaceholder": "z. B. Hörsaal A, Labor 201",
+      "capacity": "Kapazität",
+      "type": "Raumtyp",
+      "remove": "Raum entfernen"
+    },
+    "semesterStart": {
+      "label": "Semesterbeginn",
+      "helper": "Erster Unterrichtstag – veröffentlichte Sitzungen beginnen ab diesem Datum."
+    },
+    "teacherPrefs": {
+      "tab": "Lehrerpräferenzen",
+      "title": "Lehrerpräferenzen",
+      "subtitle": "Optionale weiche Beschränkungen: Nichtverfügbarkeit, bevorzugte Tage und maximale aufeinanderfolgende Stunden.",
+      "add": "Lehrer hinzufügen",
+      "empty": "Keine Lehrerpräferenzen definiert. Sie sind optional und verfeinern den generierten Stundenplan.",
+      "newTeacher": "Neuer Lehrer",
+      "teacher": "Lehrer",
+      "remove": "Lehrerpräferenz entfernen",
+      "maxConsecutive": "Max. aufeinanderfolgende Stunden",
+      "maxConsecutiveHelp": "1–12 Stunden",
+      "preferredDays": "Bevorzugte Tage",
+      "unavailable": "Nicht verfügbare Zeitfenster",
+      "addSlot": "Zeitfenster hinzufügen",
+      "noSlots": "Keine nicht verfügbaren Zeitfenster",
+      "slotStart": "Beginn (h)",
+      "slotEnd": "Ende (h)",
+      "day": "Tag",
+      "removeSlot": "Zeitfenster entfernen",
+      "slotsCount": "Sperrzeiten: {count}",
+      "preferredCount": "Bevorzugt: {count}"
+    },
+    "nav": {
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "save": "Konfiguration speichern",
+    "saving": "Wird gespeichert…"
+  },
+  "messages": {
+    "saved": "Randbedingungen erfolgreich gespeichert.",
+    "loadFailed": "Laden der Randbedingungen fehlgeschlagen.",
+    "saveFailed": "Speichern der Randbedingungen fehlgeschlagen.",
+    "generateStartFailed": "Start der Generierung fehlgeschlagen.",
+    "generatedSuccess": "Stundenplan erfolgreich generiert.",
+    "generatedPartial": "Stundenplan teilweise generiert — einige Kurse nicht platziert. Prüfen Sie die Konflikte.",
+    "generatedFailed": "Generierung fehlgeschlagen. Prüfen Sie Ihre Randbedingungen und versuchen Sie es erneut.",
+    "noConstraintId": "Der Server hat keine Randbedingungs-ID zurückgegeben.",
+    "previewFailed": "Laden der Vorschau fehlgeschlagen.",
+    "conflictsFailed": "Laden der Konflikte fehlgeschlagen.",
+    "publishedCount": "{count, plural, one {# Sitzung erfolgreich veröffentlicht.} other {# Sitzungen erfolgreich veröffentlicht.}}",
+    "publishFailed": "Veröffentlichung fehlgeschlagen.",
+    "cancelled": "Generierter Stundenplan abgebrochen.",
+    "cancelFailed": "Abbrechen fehlgeschlagen."
   }
 }

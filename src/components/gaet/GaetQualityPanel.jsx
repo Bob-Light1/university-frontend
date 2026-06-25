@@ -14,6 +14,7 @@ import {
 import {
   EmojiEvents, Shield, Tune, MeetingRoom, Timer, BookmarkBorder,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 // ─── KPI CARD ────────────────────────────────────────────────────────────────
 
@@ -79,6 +80,7 @@ const MetricCard = ({ icon, label, value, sub, color, progress }) => {
 // ─── UNPLACED COURSES LIST ────────────────────────────────────────────────────
 
 const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptions, classOptions }) => {
+  const { t } = useTranslation('gaet');
   const crMap = Object.fromEntries(
     (courseRequirements ?? []).map((cr) => [String(cr._id), cr])
   );
@@ -88,7 +90,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptio
   return (
     <Box mt={2}>
       <Typography variant="subtitle2" fontWeight={700} mb={1} color="warning.dark">
-        Unplaced Courses ({unplacedCourses.length})
+        {t('quality.unplacedTitle', { count: unplacedCourses.length })}
       </Typography>
       <Stack spacing={1}>
         {unplacedCourses.map((item, idx) => {
@@ -97,7 +99,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptio
           const classLabel   = classOptions?.find((o) => o.value === String(cr?.classId ?? ''))?.label;
           const courseLabel  = subjectLabel
             ? `${subjectLabel}${classLabel ? ` — ${classLabel}` : ''}`
-            : `Ref: ${String(item.courseRequirementRef).slice(-6)}`;
+            : t('quality.unplacedRefFallback', { ref: String(item.courseRequirementRef).slice(-6) });
           return (
             <Box
               key={idx}
@@ -119,7 +121,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptio
                     </Typography>
                   )}
                 </Stack>
-                <Chip label="Unplaced" color="warning" size="small" variant="outlined" />
+                <Chip label={t('quality.unplacedLabel')} color="warning" size="small" variant="outlined" />
               </Stack>
             </Box>
           );
@@ -133,6 +135,7 @@ const UnplacedCoursesList = ({ unplacedCourses, courseRequirements, subjectOptio
 
 const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, classOptions }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
 
   if (!report) return null;
 
@@ -148,33 +151,33 @@ const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, 
   const metrics = [
     {
       icon:     <EmojiEvents />,
-      label:    'Quality Score',
-      value:    `${score} / 1000`,
-      sub:      score >= 800 ? 'Excellent' : score >= 600 ? 'Good' : 'Needs review',
+      label:    t('quality.score'),
+      value:    t('quality.scoreValue', { score }),
+      sub:      score >= 800 ? t('quality.scoreExcellent') : score >= 600 ? t('quality.scoreGood') : t('quality.scoreNeedsReview'),
       color:    scoreColor,
       progress: score / 10,
     },
     {
       icon:     <Shield />,
-      label:    'Hard Constraints',
+      label:    t('quality.hardConstraints'),
       value:    `${report.hardConstraintsSatisfied ?? 0}%`,
-      sub:      'No teacher / room / class conflicts',
+      sub:      t('quality.hardConstraintsSub'),
       color:    theme.palette.primary.main,
       progress: report.hardConstraintsSatisfied ?? 0,
     },
     {
       icon:     <Tune />,
-      label:    'Soft Constraints',
+      label:    t('quality.softConstraints'),
       value:    `${report.softConstraintsSatisfied ?? 0}%`,
-      sub:      'Preferences & morning slots satisfied',
+      sub:      t('quality.softConstraintsSub'),
       color:    theme.palette.info.main,
       progress: report.softConstraintsSatisfied ?? 0,
     },
     {
       icon:     <MeetingRoom />,
-      label:    'Room Utilization',
+      label:    t('quality.roomUtilization'),
       value:    `${report.roomUtilizationPct ?? 0}%`,
-      sub:      'Average room occupancy rate',
+      sub:      t('quality.roomUtilizationSub'),
       color:    theme.palette.secondary.main,
       progress: report.roomUtilizationPct ?? 0,
     },
@@ -186,10 +189,10 @@ const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, 
       {isPartial && (
         <Alert severity="warning" sx={{ mb: 3, borderRadius: 2 }}>
           <Typography variant="body2" fontWeight={600}>
-            Partially generated — {report.unplacedCourses?.length ?? 0} course(s) could not be placed.
+            {t('quality.partialTitle', { count: report.unplacedCourses?.length ?? 0 })}
           </Typography>
           <Typography variant="caption">
-            You may publish the partial timetable or adjust constraints and regenerate.
+            {t('quality.partialBody')}
           </Typography>
         </Alert>
       )}
@@ -209,8 +212,7 @@ const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, 
           <Stack direction="row" alignItems="center" spacing={1}>
             <Timer sx={{ fontSize: 18, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary">
-              Generated in{' '}
-              <strong>{(report.generationDurationMs / 1000).toFixed(2)}s</strong>
+              {t('quality.generatedIn', { seconds: (report.generationDurationMs / 1000).toFixed(2) })}
             </Typography>
           </Stack>
         </Box>
@@ -232,7 +234,7 @@ const GaetQualityPanel = ({ report, status, courseRequirements, subjectOptions, 
       {/* No issues */}
       {!isPartial && !report.unplacedCourses?.length && (
         <Alert severity="success" icon={<BookmarkBorder />} sx={{ mt: 2, borderRadius: 2 }}>
-          All courses successfully placed — no constraint violations detected.
+          {t('quality.allPlaced')}
         </Alert>
       )}
     </Box>

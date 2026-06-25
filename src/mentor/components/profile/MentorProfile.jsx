@@ -52,7 +52,7 @@ const passwordSchema = Yup.object({
 export default function MentorProfile() {
   const [profile,    setProfile]    = useState(null);
   const [loading,    setLoading]    = useState(true);
-  const [notifPrefs, setNotifPrefs] = useState({ email: true, sms: false, push: false });
+  const [notifPrefs, setNotifPrefs] = useState({ inapp: true, email: true, whatsapp: false });
   const [showPwd,    setShowPwd]    = useState({ current: false, newPwd: false, confirm: false });
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 

@@ -6,6 +6,9 @@
   "markAllRead": "Mark all as read",
   "delete": "Delete notification",
   "empty": "No notifications",
+  "loadMore": "Load more",
+  "loadError": "Failed to load notifications.",
+  "retry": "Retry",
   "type": {
     "announcement": "Announcement",
     "result": "New results",
@@ -24,5 +27,31 @@
     "absence": "Absence alert",
     "latePayment": "Late payment",
     "examUpcoming": "Upcoming exam"
+  },
+  "log": {
+    "title": "Notification Delivery Log",
+    "subtitle": "Track and replay multi-channel deliveries",
+    "searchPlaceholder": "Search subject, recipient, template…",
+    "channel": "Channel",
+    "statusLabel": "Status",
+    "subjectCol": "Subject",
+    "recipient": "Recipient",
+    "template": "Template",
+    "date": "Date",
+    "attempts": "Attempts",
+    "action": "Action",
+    "all": "All",
+    "reset": "Reset filters",
+    "retry": "Replay delivery",
+    "inApp": "in-app",
+    "empty": "No notifications found",
+    "loadError": "Failed to load the delivery log.",
+    "status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "failed": "Failed",
+      "skipped": "Skipped",
+      "read": "Read"
+    }
   }
 }

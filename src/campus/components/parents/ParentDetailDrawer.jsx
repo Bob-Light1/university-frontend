@@ -324,10 +324,10 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive, onRest
                     slotProps={{ primary: { variant: 'caption', color: 'text.secondary' } }}
                     secondary={
                       <Stack direction="row" spacing={0.5} flexWrap="wrap" component="span">
-                        {['email', 'sms', 'push'].map((key) => (
+                        {[['inapp', 'IN-APP'], ['email', 'EMAIL'], ['whatsapp', 'WHATSAPP']].map(([key, lbl]) => (
                           <Chip
                             key={key}
-                            label={key.toUpperCase()}
+                            label={lbl}
                             size="small"
                             color={parent.notificationPrefs[key] ? 'primary' : 'default'}
                             variant={parent.notificationPrefs[key] ? 'filled' : 'outlined'}

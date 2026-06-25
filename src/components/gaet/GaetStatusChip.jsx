@@ -6,6 +6,7 @@
  */
 
 import { Chip, CircularProgress, Box } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   EditNote,
   AutoAwesome,
@@ -16,51 +17,47 @@ import {
   Cancel,
 } from '@mui/icons-material';
 
+// Color + icon per status. Labels are resolved from the `gaet` namespace at render.
 const STATUS_CONFIG = {
   DRAFT: {
-    label: 'Draft',
     color: 'default',
     icon: <EditNote sx={{ fontSize: 16 }} />,
   },
   GENERATING: {
-    label: 'Generating…',
     color: 'info',
     icon: <CircularProgress size={14} color="inherit" />,
   },
   GENERATED: {
-    label: 'Generated',
     color: 'success',
     icon: <CheckCircle sx={{ fontSize: 16 }} />,
   },
   PARTIALLY_GENERATED: {
-    label: 'Partial',
     color: 'warning',
     icon: <Warning sx={{ fontSize: 16 }} />,
   },
   PUBLISHED: {
-    label: 'Published',
     color: 'success',
     icon: <PublishedWithChanges sx={{ fontSize: 16 }} />,
   },
   FAILED: {
-    label: 'Failed',
     color: 'error',
     icon: <ErrorOutline sx={{ fontSize: 16 }} />,
   },
   CANCELLED: {
-    label: 'Cancelled',
     color: 'default',
     icon: <Cancel sx={{ fontSize: 16 }} />,
   },
 };
 
 const GaetStatusChip = ({ status, size = 'medium', sx = {} }) => {
+  const { t } = useTranslation('gaet');
   if (!status) return null;
-  const config = STATUS_CONFIG[status] ?? { label: status, color: 'default', icon: <AutoAwesome sx={{ fontSize: 16 }} /> };
+  const config = STATUS_CONFIG[status] ?? { color: 'default', icon: <AutoAwesome sx={{ fontSize: 16 }} /> };
+  const label  = STATUS_CONFIG[status] ? t(`status.${status}`) : status;
 
   return (
     <Chip
-      label={config.label}
+      label={label}
       color={config.color}
       size={size}
       icon={

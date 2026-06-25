@@ -1,49 +1,285 @@
 {
-  "title": "Finance",
-  "fee": {
-    "title": "Tuition fees",
-    "create": "Create fee",
-    "amount": "Amount",
-    "currency": "Currency",
-    "dueDate": "Due date",
-    "instalment": "Instalment",
-    "level": "Level",
-    "class": "Class"
+  "title": "وحدة المالية",
+  "tabs": {
+    "overview": "نظرة عامة",
+    "fees": "الرسوم",
+    "incomes": "الإيرادات",
+    "expenses": "المصروفات"
+  },
+  "actions": {
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "reset": "إعادة تعيين",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "add": "إضافة",
+    "saving": "جارٍ الحفظ…",
+    "viewDetail": "عرض التفاصيل",
+    "ledger": "دفتر الحساب",
+    "recordPayment": "تسجيل دفعة",
+    "sendReminder": "إرسال تذكير",
+    "categories": "الفئات"
+  },
+  "fields": {
+    "student": "الطالب",
+    "label": "التسمية",
+    "title": "العنوان",
+    "amount": "المبلغ",
+    "amountDue": "المبلغ المستحق",
+    "currency": "العملة",
+    "method": "الطريقة",
+    "paymentMethod": "طريقة الدفع",
+    "status": "الحالة",
+    "source": "المصدر",
+    "category": "الفئة",
+    "date": "التاريخ",
+    "dueDate": "تاريخ الاستحقاق",
+    "academicYear": "السنة الدراسية",
+    "reference": "المرجع",
+    "notes": "ملاحظات",
+    "description": "الوصف",
+    "balance": "الرصيد",
+    "due": "مستحق",
+    "paid": "مدفوع",
+    "createdAt": "تاريخ الإنشاء",
+    "matricule": "رقم القيد",
+    "year": "السنة",
+    "month": "الشهر",
+    "period": "الفترة",
+    "recurring": "متكرر",
+    "actions": "الإجراءات"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "مثال: الرسوم الدراسية 2025-2026"
+  },
+  "filters": {
+    "allYears": "كل السنوات",
+    "allMonths": "كل الأشهر",
+    "allStatuses": "كل الحالات",
+    "allSources": "كل المصادر",
+    "allCategories": "كل الفئات"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "قيد الانتظار",
+      "partial": "جزئي",
+      "paid": "مدفوع",
+      "overdue": "متأخر",
+      "cancelled": "ملغى"
+    },
+    "expenseStatus": {
+      "pending": "قيد الانتظار",
+      "approved": "معتمد",
+      "paid": "مدفوع",
+      "rejected": "مرفوض"
+    },
+    "incomeStatus": {
+      "pending": "قيد الانتظار",
+      "received": "مستلم",
+      "cancelled": "ملغى"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "رسوم التسجيل",
+      "Tuition": "الرسوم الدراسية",
+      "Course Payment": "دفع الدورة",
+      "Exam": "امتحان",
+      "Certification": "شهادة",
+      "Grant": "منحة",
+      "Donation": "تبرع",
+      "Partnership": "شراكة",
+      "Other": "أخرى"
+    },
+    "recurringPeriod": {
+      "monthly": "شهري",
+      "quarterly": "ربع سنوي",
+      "yearly": "سنوي"
+    },
+    "paymentMethod": {
+      "Cash": "نقدًا",
+      "Mobile Money": "محفظة الهاتف",
+      "Bank Transfer": "تحويل بنكي",
+      "Cheque": "شيك"
+    },
+    "months": {
+      "1": "يناير",
+      "2": "فبراير",
+      "3": "مارس",
+      "4": "أبريل",
+      "5": "مايو",
+      "6": "يونيو",
+      "7": "يوليو",
+      "8": "أغسطس",
+      "9": "سبتمبر",
+      "10": "أكتوبر",
+      "11": "نوفمبر",
+      "12": "ديسمبر"
+    }
+  },
+  "overview": {
+    "title": "نظرة عامة مالية",
+    "subtitle": "الإيرادات مقابل المصروفات وديون الطلاب المستحقة لهذا الحرم الجامعي.",
+    "kpi": {
+      "incomeReceived": "الإيرادات المستلمة",
+      "expensesPaid": "المصروفات المدفوعة",
+      "netBalance": "الرصيد الصافي",
+      "overdueDebts": "الديون المتأخرة",
+      "records": "{count, plural, zero {لا سجلات} one {سجل واحد} two {سجلان} few {# سجلات} many {# سجلًا} other {# سجل}}",
+      "surplus": "فائض",
+      "deficit": "عجز",
+      "studentsPastDue": "طلاب متأخرون عن السداد"
+    },
+    "shortcuts": {
+      "newFee": "رسم جديد",
+      "newPayment": "دفعة جديدة",
+      "newIncome": "إيراد جديد",
+      "newExpense": "مصروف جديد"
+    },
+    "chart": {
+      "title": "الإيرادات والمصروفات الشهرية — {year}",
+      "income": "الإيرادات",
+      "expense": "المصروفات"
+    }
+  },
+  "fees": {
+    "title": "رسوم الطلاب",
+    "subtitle": "تتبّع الديون، وسجّل المدفوعات، وأرسل تذكيرات الرصيد.",
+    "new": "رسم جديد",
+    "empty": "لم يُعثر على رسوم. أنشئ رسمًا لبدء تتبّع دين طالب.",
+    "confirmDelete": "حذف الرسم «{label}»؟ هذا حذف منطقي.",
+    "toast": {
+      "created": "تم إنشاء الرسم.",
+      "paymentRecorded": "تم تسجيل الدفعة.",
+      "reminderSent": "تم إرسال التذكير إلى الطالب.",
+      "reminderFailed": "تعذّر إرسال التذكير.",
+      "deleted": "تم حذف الرسم.",
+      "deleteFailed": "تعذّر حذف الرسم."
+    }
+  },
+  "feeDetail": {
+    "title": "تفاصيل الرسم",
+    "loadError": "تعذّر تحميل الرسم.",
+    "payments": "المدفوعات ({count})",
+    "noPayments": "لم تُسجَّل أي دفعة بعد.",
+    "attachments": "المرفقات",
+    "document": "مستند {index}"
+  },
+  "feeForm": {
+    "title": "رسم جديد",
+    "creating": "جارٍ الإنشاء…",
+    "submit": "إنشاء الرسم"
   },
   "payment": {
-    "title": "Payments",
-    "record": "Record payment",
-    "method": {
-      "title": "Payment method",
-      "cash": "Cash",
-      "mtnMomo": "MTN Mobile Money",
-      "orangeMoney": "Orange Money",
-      "bankTransfer": "Bank transfer"
+    "title": "تسجيل دفعة",
+    "remainingBalance": "الرصيد المتبقي",
+    "referenceLabel": "المرجع / رقم الإيصال",
+    "paymentDate": "تاريخ الدفع",
+    "recording": "جارٍ التسجيل…",
+    "submit": "تسجيل الدفعة",
+    "failed": "فشل الدفع. يُرجى إعادة المحاولة."
+  },
+  "incomes": {
+    "title": "الإيرادات",
+    "subtitle": "سجّل وتتبّع جميع إيرادات المؤسسة.",
+    "new": "إيراد جديد",
+    "empty": "لم يُعثر على إيرادات.",
+    "confirmDelete": "حذف الإيراد «{title}»؟",
+    "toast": {
+      "created": "تم إنشاء الإيراد.",
+      "updated": "تم تحديث الإيراد.",
+      "deleted": "تم حذف الإيراد.",
+      "deleteFailed": "تعذّر حذف الإيراد."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "إيراد جديد",
+    "titleEdit": "تعديل الإيراد",
+    "studentOptional": "الطالب (اختياري)",
+    "saveError": "تعذّر حفظ الإيراد.",
+    "submitNew": "إنشاء الإيراد",
+    "submitEdit": "حفظ التغييرات"
+  },
+  "expenses": {
+    "title": "المصروفات",
+    "subtitle": "سجّل المدفوعات الصادرة ومرّرها عبر سير عمل الموافقة.",
+    "new": "مصروف جديد",
+    "empty": "لم يُعثر على مصروفات.",
+    "recurringTip": "متكرر ({period})",
+    "confirmDelete": "حذف المصروف «{title}»؟",
+    "workflow": {
+      "approve": "اعتماد",
+      "markPaid": "تحديد كمدفوع",
+      "reject": "رفض"
     },
-    "status": {
-      "paid": "Paid",
-      "partial": "Partial",
-      "unpaid": "Unpaid",
-      "overdue": "Overdue"
+    "toast": {
+      "created": "تم إنشاء المصروف.",
+      "updated": "تم تحديث المصروف.",
+      "approved": "تم اعتماد المصروف.",
+      "rejected": "تم رفض المصروف.",
+      "paid": "تم دفع المصروف.",
+      "transitionError": "الإجراء غير مسموح للحالة الحالية.",
+      "deleted": "تم حذف المصروف.",
+      "deleteFailed": "تعذّر حذف المصروف."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "مصروف جديد",
+    "titleEdit": "تعديل المصروف",
+    "noCategories": "لا توجد فئات — أنشئ واحدة أولًا",
+    "lockedError": "هذا المصروف مدفوع ومقفل — لم يعد بالإمكان تعديله.",
+    "saveError": "تعذّر حفظ المصروف.",
+    "submitNew": "إنشاء المصروف",
+    "submitEdit": "حفظ التغييرات"
+  },
+  "categories": {
+    "title": "فئات المصروفات",
+    "newCategory": "فئة جديدة",
+    "empty": "لا توجد فئات بعد.",
+    "createError": "تعذّر إنشاء الفئة.",
+    "deleteError": "تعذّر الحذف: قد تكون الفئة لا تزال قيد الاستخدام."
+  },
+  "ledger": {
+    "title": "دفتر حساب الطالب",
+    "totalDue": "إجمالي المستحق",
+    "totalPaid": "إجمالي المدفوع",
+    "balance": "الرصيد",
+    "debts": "الديون ({count})",
+    "noDebts": "لا توجد ديون مسجّلة.",
+    "payments": "المدفوعات ({count})",
+    "noPayments": "لا توجد مدفوعات مسجّلة.",
+    "dueAndPaid": "مستحق {due} · مدفوع {paid}"
+  },
+  "student": {
+    "title": "أموالي",
+    "subtitle": "رسومك ومدفوعاتك ورصيدك المستحق.",
+    "kpi": {
+      "totalDue": "إجمالي المستحق",
+      "totalPaid": "إجمالي المدفوع",
+      "outstandingBalance": "الرصيد المستحق",
+      "debtsCount": "{count, plural, zero {لا ديون} one {دين واحد} two {دينان} few {# ديون} many {# دينًا} other {# دين}}",
+      "paymentsCount": "{count, plural, zero {لا مدفوعات} one {دفعة واحدة} two {دفعتان} few {# دفعات} many {# دفعة} other {# دفعة}}",
+      "settle": "يُرجى تسوية رصيدك",
+      "allSettled": "تمت التسوية بالكامل"
     },
-    "receipt": "Payment receipt",
-    "reconcile": "Reconcile payment"
+    "warning": "لديك رصيد مستحق قدره {amount}. يُرجى التواصل مع مكتب المالية في حرمك الجامعي لتسويته.",
+    "myDebts": "ديوني ({count})",
+    "noFees": "لا توجد رسوم مسجّلة.",
+    "myPayments": "مدفوعاتي ({count})",
+    "noPayments": "لم تُسجَّل أي مدفوعات بعد."
   },
-  "scholarship": {
-    "title": "Scholarships",
-    "create": "Create scholarship",
-    "type": "Type",
-    "amount": "Amount",
-    "beneficiary": "Beneficiary"
+  "attachments": {
+    "attach": "إرفاق ملفات",
+    "uploading": "جارٍ الرفع…",
+    "hint": "الإيصالات / الفواتير — JPG، PNG، WEBP، PDF · بحد أقصى 5 ميغابايت",
+    "invalidType": "يُسمح فقط بملفات JPG أو PNG أو WEBP أو PDF.",
+    "tooLarge": "يجب ألا يتجاوز حجم كل ملف 5 ميغابايت.",
+    "uploadFailed": "فشل الرفع. حاول مجددًا."
   },
-  "dashboard": {
-    "title": "Financial dashboard",
-    "monthlyRevenue": "Monthly revenue",
-    "forecast": "Forecast",
-    "latePayments": "Late payments"
-  },
-  "report": {
-    "generate": "Generate report",
-    "export": "Export to Excel"
+  "errors": {
+    "loadFees": "تعذّر تحميل الرسوم.",
+    "loadIncomes": "تعذّر تحميل الإيرادات.",
+    "loadExpenses": "تعذّر تحميل المصروفات.",
+    "loadLedger": "تعذّر تحميل دفتر الحساب.",
+    "loadSummary": "تعذّر تحميل النظرة العامة المالية."
   }
 }

@@ -156,12 +156,12 @@
   },
   "notifPref": {
     "title": "通知偏好设置",
+    "inapp": "应用内",
+    "inappDesc": "收件箱中始终开启的通知",
     "email": "电子邮件",
     "emailDesc": "通过电子邮件接收通知",
-    "sms": "短信",
-    "smsDesc": "接收紧急警报短信",
-    "push": "推送",
-    "pushDesc": "应用内和浏览器推送通知",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "通过 WhatsApp 接收消息（手机）",
     "save": "保存偏好设置",
     "saving": "保存中…"
   }

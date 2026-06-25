@@ -32,7 +32,6 @@ import {
   MenuItem,
   ListItemIcon,
   Divider,
-  Badge,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -45,7 +44,6 @@ import {
 
 import MenuIcon            from '@mui/icons-material/Menu';
 import AutoAwesomeIcon     from '@mui/icons-material/AutoAwesome';
-import NotificationsIcon   from '@mui/icons-material/Notifications';
 import LogoutIcon          from '@mui/icons-material/Logout';
 import PersonIcon          from '@mui/icons-material/Person';
 import SettingsIcon        from '@mui/icons-material/Settings';
@@ -57,6 +55,7 @@ import HomeIcon            from '@mui/icons-material/Home';
 import { useAuth }             from '../hooks/useAuth';
 import { useAppTranslation }  from '../hooks/useAppTranslation';
 import { IMAGE_BASE_URL } from '../config/env';
+import NotificationBell from './notifications/NotificationBell';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -438,13 +437,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
           </Tooltip>
 
           {/* ── Notifications ── */}
-          <Tooltip title="Notifications">
-            <IconButton color="inherit" aria-label="notifications">
-              <Badge badgeContent={0} color="error" max={99}>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
+          <NotificationBell />
 
           {/* ── Profile Avatar ── */}
           <Tooltip title={displayName}>

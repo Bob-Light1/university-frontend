@@ -1,28 +1,57 @@
 {
-  "title": "Notifications",
-  "inbox": "Inbox",
-  "unread": "{n, plural, one{# unread notification} other{# unread notifications}}",
-  "markRead": "Mark as read",
-  "markAllRead": "Mark all as read",
-  "delete": "Delete notification",
-  "empty": "No notifications",
+  "title": "Notificaciones",
+  "inbox": "Bandeja de entrada",
+  "unread": "{n, plural, one{# notificación no leída} other{# notificaciones no leídas}}",
+  "markRead": "Marcar como leída",
+  "markAllRead": "Marcar todas como leídas",
+  "delete": "Eliminar notificación",
+  "empty": "Sin notificaciones",
+  "loadMore": "Cargar más",
+  "loadError": "No se pudieron cargar las notificaciones.",
+  "retry": "Reintentar",
   "type": {
-    "announcement": "Announcement",
-    "result": "New results",
-    "attendance": "Attendance alert",
-    "payment": "Payment reminder",
-    "exam": "Exam reminder",
-    "document": "Document shared",
-    "system": "System"
+    "announcement": "Anuncio",
+    "result": "Nuevos resultados",
+    "attendance": "Alerta de asistencia",
+    "payment": "Recordatorio de pago",
+    "exam": "Recordatorio de examen",
+    "document": "Documento compartido",
+    "system": "Sistema"
   },
   "announcement": {
-    "new": "New announcement",
-    "from": "From",
-    "pinned": "Pinned"
+    "new": "Nuevo anuncio",
+    "from": "De",
+    "pinned": "Fijado"
   },
   "alert": {
-    "absence": "Absence alert",
-    "latePayment": "Late payment",
-    "examUpcoming": "Upcoming exam"
+    "absence": "Alerta de ausencia",
+    "latePayment": "Pago atrasado",
+    "examUpcoming": "Examen próximo"
+  },
+  "log": {
+    "title": "Registro de entrega de notificaciones",
+    "subtitle": "Supervisa y reenvía entregas multicanal",
+    "searchPlaceholder": "Buscar asunto, destinatario, plantilla…",
+    "channel": "Canal",
+    "statusLabel": "Estado",
+    "subjectCol": "Asunto",
+    "recipient": "Destinatario",
+    "template": "Plantilla",
+    "date": "Fecha",
+    "attempts": "Intentos",
+    "action": "Acción",
+    "all": "Todos",
+    "reset": "Restablecer filtros",
+    "retry": "Reenviar entrega",
+    "inApp": "en la app",
+    "empty": "No se encontraron notificaciones",
+    "loadError": "No se pudo cargar el registro de entrega.",
+    "status": {
+      "pending": "Pendiente",
+      "sent": "Enviada",
+      "failed": "Fallida",
+      "skipped": "Omitida",
+      "read": "Leída"
+    }
   }
 }

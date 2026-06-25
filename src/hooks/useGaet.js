@@ -10,6 +10,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as gaetService from '../services/gaetService';
 
 const TERMINAL_STATUSES = new Set([
@@ -23,6 +24,8 @@ const TERMINAL_STATUSES = new Set([
 const POLL_INTERVAL_MS = 3000;
 
 const useGaet = (campusId) => {
+  const { t } = useTranslation('gaet');
+
   const [constraint,    setConstraint]    = useState(null);
   const [status,        setStatus]        = useState(null);
   const [qualityReport, setQualityReport] = useState(null);
@@ -61,12 +64,12 @@ const useGaet = (campusId) => {
       setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
       return doc;
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Failed to load constraint.');
+      setError(err.response?.data?.message ?? t('messages.loadFailed'));
       return null;
     } finally {
       setLoading(false);
     }
-  }, [campusId]);
+  }, [campusId, t]);
 
   // ─── SAVE CONSTRAINTS ────────────────────────────────────────────────────
 
@@ -83,13 +86,13 @@ const useGaet = (campusId) => {
       }
       return updated;
     } catch (err) {
-      const msg = err.response?.data?.message ?? 'Failed to save constraints.';
+      const msg = err.response?.data?.message ?? t('messages.saveFailed');
       setError(msg);
       throw new Error(msg);
     } finally {
       setSaving(false);
     }
-  }, []);
+  }, [t]);
 
   // ─── POLLING ─────────────────────────────────────────────────────────────
 
@@ -150,7 +153,7 @@ const useGaet = (campusId) => {
       const res          = await gaetService.generateSchedule({ academicYear, semester });
       const constraintId = res.data?.data?.constraintId;
       if (!constraintId) {
-        throw new Error('Server did not return a constraint ID.');
+        throw new Error(t('messages.noConstraintId'));
       }
       setStatus('GENERATING');
 
@@ -162,21 +165,21 @@ const useGaet = (campusId) => {
 
         if (!showSnackbar) return;
         if (terminalStatus === 'GENERATED') {
-          showSnackbar('Timetable generated successfully.', 'success');
+          showSnackbar(t('messages.generatedSuccess'), 'success');
         } else if (terminalStatus === 'PARTIALLY_GENERATED') {
-          showSnackbar('Timetable partially generated — some courses unplaced. Check conflicts.', 'warning');
+          showSnackbar(t('messages.generatedPartial'), 'warning');
         } else if (terminalStatus === 'FAILED') {
-          showSnackbar('Generation failed. Check your constraints and retry.', 'error');
+          showSnackbar(t('messages.generatedFailed'), 'error');
         }
       });
     } catch (err) {
-      const msg = err.response?.data?.message ?? 'Failed to start generation.';
+      const msg = err.response?.data?.message ?? t('messages.generateStartFailed');
       setError(msg);
       setGenerating(false);
       setStatus(constraint?.status ?? 'DRAFT');
       throw new Error(msg);
     }
-  }, [startPolling, constraint]);
+  }, [startPolling, constraint, t]);
 
   // ─── FETCH PREVIEW ───────────────────────────────────────────────────────
 
@@ -185,10 +188,10 @@ const useGaet = (campusId) => {
       const res = await gaetService.getPreview(constraintId);
       setPreview(res.data?.data?.sessions ?? []);
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Failed to load preview.');
+      setError(err.response?.data?.message ?? t('messages.previewFailed'));
       setPreview([]);
     }
-  }, []);
+  }, [t]);
 
   // ─── FETCH CONFLICTS ─────────────────────────────────────────────────────
 
@@ -199,10 +202,10 @@ const useGaet = (campusId) => {
         res.data?.data ?? { conflictCount: 0, conflicts: [], unplacedCourses: [] }
       );
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Failed to load conflicts.');
+      setError(err.response?.data?.message ?? t('messages.conflictsFailed'));
       setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
     }
-  }, []);
+  }, [t]);
 
   // ─── PUBLISH ─────────────────────────────────────────────────────────────
 
@@ -215,17 +218,17 @@ const useGaet = (campusId) => {
       setStatus('PUBLISHED');
       setConstraint((prev) => prev ? { ...prev, status: 'PUBLISHED' } : prev);
       if (showSnackbar)
-        showSnackbar(`${result?.published ?? 0} session(s) published successfully.`, 'success');
+        showSnackbar(t('messages.publishedCount', { count: result?.published ?? 0 }), 'success');
       return result;
     } catch (err) {
-      const msg = err.response?.data?.message ?? 'Publication failed.';
+      const msg = err.response?.data?.message ?? t('messages.publishFailed');
       setError(msg);
       if (showSnackbar) showSnackbar(msg, 'error');
       throw new Error(msg);
     } finally {
       setPublishing(false);
     }
-  }, []);
+  }, [t]);
 
   // ─── CANCEL GENERATED ────────────────────────────────────────────────────
 
@@ -238,13 +241,13 @@ const useGaet = (campusId) => {
       setQualityReport(null);
       setConflicts({ conflictCount: 0, conflicts: [], unplacedCourses: [] });
       setConstraint((prev) => prev ? { ...prev, status: 'CANCELLED' } : prev);
-      if (showSnackbar) showSnackbar('Generated timetable cancelled.', 'info');
+      if (showSnackbar) showSnackbar(t('messages.cancelled'), 'info');
     } catch (err) {
-      const msg = err.response?.data?.message ?? 'Failed to cancel.';
+      const msg = err.response?.data?.message ?? t('messages.cancelFailed');
       setError(msg);
       if (showSnackbar) showSnackbar(msg, 'error');
     }
-  }, []);
+  }, [t]);
 
   // ─── RESET LOCAL STATE ───────────────────────────────────────────────────
 

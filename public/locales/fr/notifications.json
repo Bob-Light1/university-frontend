@@ -6,7 +6,36 @@
   "markAllRead": "Tout marquer comme lu",
   "delete": "Supprimer",
   "empty": "Aucune notification",
+  "loadMore": "Charger plus",
+  "loadError": "Échec du chargement des notifications.",
+  "retry": "Réessayer",
   "type": { "announcement": "Annonce", "result": "Nouveaux résultats", "attendance": "Alerte présence", "payment": "Rappel paiement", "exam": "Rappel examen", "document": "Document partagé", "system": "Système" },
   "announcement": { "new": "Nouvelle annonce", "from": "De", "pinned": "Épinglé" },
-  "alert": { "absence": "Alerte absence", "latePayment": "Paiement en retard", "examUpcoming": "Examen à venir" }
+  "alert": { "absence": "Alerte absence", "latePayment": "Paiement en retard", "examUpcoming": "Examen à venir" },
+  "log": {
+    "title": "Journal de livraison des notifications",
+    "subtitle": "Suivre et relancer les envois multicanaux",
+    "searchPlaceholder": "Rechercher objet, destinataire, modèle…",
+    "channel": "Canal",
+    "statusLabel": "Statut",
+    "subjectCol": "Objet",
+    "recipient": "Destinataire",
+    "template": "Modèle",
+    "date": "Date",
+    "attempts": "Tentatives",
+    "action": "Action",
+    "all": "Tous",
+    "reset": "Réinitialiser les filtres",
+    "retry": "Relancer l'envoi",
+    "inApp": "in-app",
+    "empty": "Aucune notification trouvée",
+    "loadError": "Échec du chargement du journal de livraison.",
+    "status": {
+      "pending": "En attente",
+      "sent": "Envoyé",
+      "failed": "Échoué",
+      "skipped": "Ignoré",
+      "read": "Lu"
+    }
+  }
 }

@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, List, ListItem, ListItemText, IconButton,
@@ -20,6 +21,7 @@ import { expenseCategorySchema } from '../../../yupSchema/financeSchemas';
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDelete }) => {
+  const { t } = useTranslation('finance');
   const [error,  setError]  = useState(null);
   const [busyId, setBusyId] = useState(null);
 
@@ -41,7 +43,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
         await onCreate({ name: values.name.trim(), description: values.description?.trim() || undefined });
         resetForm();
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to create category.');
+        setError(err.response?.data?.message || t('categories.createError'));
       } finally {
         setSubmitting(false);
       }
@@ -54,7 +56,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
     try {
       await onDelete(cat._id);
     } catch (err) {
-      setError(err.response?.data?.message || 'Cannot delete: the category may still be in use.');
+      setError(err.response?.data?.message || t('categories.deleteError'));
     } finally {
       setBusyId(null);
     }
@@ -72,7 +74,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Category sx={{ color: 'text.secondary' }} />
-          <Typography variant="h6" fontWeight={700}>Expense Categories</Typography>
+          <Typography variant="h6" fontWeight={700}>{t('categories.title')}</Typography>
         </Stack>
       </DialogTitle>
 
@@ -83,14 +85,14 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
           {/* Create form */}
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="flex-start">
             <TextField
-              fullWidth size="small" name="name" label="New category *"
+              fullWidth size="small" name="name" label={`${t('categories.newCategory')} *`}
               value={formik.values.name}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('name'))} helperText={fieldError('name')}
               sx={ROUNDED}
             />
             <TextField
-              fullWidth size="small" name="description" label="Description"
+              fullWidth size="small" name="description" label={t('fields.description')}
               value={formik.values.description}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('description'))} helperText={fieldError('description')}
@@ -102,7 +104,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
               startIcon={formik.isSubmitting ? <CircularProgress size={14} color="inherit" /> : <Add />}
               sx={{ textTransform: 'none', borderRadius: 2, whiteSpace: 'nowrap' }}
             >
-              Add
+              {t('actions.add')}
             </Button>
           </Stack>
 
@@ -111,7 +113,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
           {/* List */}
           {categories.length === 0 ? (
             <Box sx={{ py: 3, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">No categories yet.</Typography>
+              <Typography variant="body2" color="text.secondary">{t('categories.empty')}</Typography>
             </Box>
           ) : (
             <List dense sx={{ maxHeight: 320, overflow: 'auto' }}>
@@ -133,7 +135,7 @@ const ExpenseCategoriesPanel = ({ open, categories = [], onClose, onCreate, onDe
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Close</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>{t('actions.close')}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,0 +1,57 @@
+{
+  "title": "Notificações",
+  "inbox": "Caixa de entrada",
+  "unread": "{n, plural, one{# notificação não lida} other{# notificações não lidas}}",
+  "markRead": "Marcar como lida",
+  "markAllRead": "Marcar todas como lidas",
+  "delete": "Excluir notificação",
+  "empty": "Nenhuma notificação",
+  "loadMore": "Carregar mais",
+  "loadError": "Falha ao carregar as notificações.",
+  "retry": "Tentar novamente",
+  "type": {
+    "announcement": "Anúncio",
+    "result": "Novos resultados",
+    "attendance": "Alerta de presença",
+    "payment": "Lembrete de pagamento",
+    "exam": "Lembrete de exame",
+    "document": "Documento compartilhado",
+    "system": "Sistema"
+  },
+  "announcement": {
+    "new": "Novo anúncio",
+    "from": "De",
+    "pinned": "Fixado"
+  },
+  "alert": {
+    "absence": "Alerta de ausência",
+    "latePayment": "Pagamento atrasado",
+    "examUpcoming": "Exame em breve"
+  },
+  "log": {
+    "title": "Registro de entrega de notificações",
+    "subtitle": "Acompanhe e reenvie entregas multicanais",
+    "searchPlaceholder": "Pesquisar assunto, destinatário, modelo…",
+    "channel": "Canal",
+    "statusLabel": "Status",
+    "subjectCol": "Assunto",
+    "recipient": "Destinatário",
+    "template": "Modelo",
+    "date": "Data",
+    "attempts": "Tentativas",
+    "action": "Ação",
+    "all": "Todos",
+    "reset": "Redefinir filtros",
+    "retry": "Reenviar entrega",
+    "inApp": "no app",
+    "empty": "Nenhuma notificação encontrada",
+    "loadError": "Falha ao carregar o registro de entrega.",
+    "status": {
+      "pending": "Pendente",
+      "sent": "Enviada",
+      "failed": "Falhou",
+      "skipped": "Ignorada",
+      "read": "Lida"
+    }
+  }
+}

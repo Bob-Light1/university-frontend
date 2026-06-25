@@ -13,6 +13,7 @@
  */
 
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Button, Typography, Chip, CircularProgress, Link,
 } from '@mui/material';
@@ -36,6 +37,7 @@ const fileLabel = (url) => {
 };
 
 const FinanceAttachments = ({ value = [], onChange, disabled = false }) => {
+  const { t } = useTranslation('finance');
   const [uploading, setUploading] = useState(false);
   const [error,     setError]     = useState('');
   const inputRef = useRef(null);
@@ -46,11 +48,11 @@ const FinanceAttachments = ({ value = [], onChange, disabled = false }) => {
 
     for (const f of files) {
       if (!VALID_TYPES.includes(f.type)) {
-        setError('Only JPG, PNG, WEBP or PDF files are allowed.');
+        setError(t('attachments.invalidType'));
         return;
       }
       if (f.size > MAX_BYTES) {
-        setError('Each file must be 5 MB or smaller.');
+        setError(t('attachments.tooLarge'));
         return;
       }
     }
@@ -81,7 +83,7 @@ const FinanceAttachments = ({ value = [], onChange, disabled = false }) => {
 
       onChange([...value, ...uploaded]);
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Upload failed. Try again.');
+      setError(err.response?.data?.error?.message || t('attachments.uploadFailed'));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -101,10 +103,10 @@ const FinanceAttachments = ({ value = [], onChange, disabled = false }) => {
           disabled={disabled || uploading}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          {uploading ? 'Uploading…' : 'Attach files'}
+          {uploading ? t('attachments.uploading') : t('attachments.attach')}
         </Button>
         <Typography variant="caption" color="text.secondary">
-          Receipts / invoices — JPG, PNG, WEBP, PDF · max 5 MB
+          {t('attachments.hint')}
         </Typography>
         <input
           ref={inputRef}

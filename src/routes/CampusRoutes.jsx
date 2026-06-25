@@ -38,6 +38,9 @@ const Attendance = lazy(() =>
 const Notification = lazy(() =>
   import('../campus/components/notification/Notification')
 );
+const NotificationLog = lazy(() =>
+  import('../campus/components/notification/NotificationLog')
+);
 const Document = lazy(() =>
   import('../campus/components/documents/Document')
 );
@@ -79,6 +82,7 @@ export const campusRoutes = (
     <Route path="results"       element={<Results />} />
     <Route path="attendance"    element={<Attendance />} />
     <Route path="notification"  element={<Notification />} />
+    <Route path="notification-log" element={<NotificationLog />} />
     <Route path="documents"     element={<Document />} />
     <Route path="print"         element={<Print />} />
     <Route path="partners"      element={<Partner />} />

@@ -1,0 +1,224 @@
+{
+  "title": "GAET",
+  "subtitle": "Otomatik ders programı oluşturucu",
+  "header": {
+    "manager": "Kısıtlamaları yapılandırın, dönem ders programınızı oluşturun, inceleyin ve yayınlayın.",
+    "viewer": "Bu kampüs için oluşturulan ders programlarını görüntüleyin."
+  },
+  "context": {
+    "academicYear": "Akademik yıl",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Dönem",
+    "updated": "{date} tarihinde güncellendi"
+  },
+  "semesterOptions": {
+    "S1": "1. Dönem",
+    "S2": "2. Dönem",
+    "Annual": "Yıllık"
+  },
+  "weekday": {
+    "MO": "Pazartesi",
+    "TU": "Salı",
+    "WE": "Çarşamba",
+    "TH": "Perşembe",
+    "FR": "Cuma",
+    "SA": "Cumartesi",
+    "SU": "Pazar"
+  },
+  "sessionType": {
+    "LECTURE": "Ders",
+    "TUTORIAL": "Alıştırma",
+    "PRACTICAL": "Uygulama"
+  },
+  "roomType": {
+    "CLASSROOM": "Derslik",
+    "LAB": "Laboratuvar",
+    "AMPHITHEATER": "Amfi"
+  },
+  "summary": {
+    "timeSlots": "Zaman aralıkları",
+    "courses": "Dersler",
+    "rooms": "Derslikler"
+  },
+  "status": {
+    "DRAFT": "Taslak",
+    "GENERATING": "Oluşturuluyor…",
+    "GENERATED": "Oluşturuldu",
+    "PARTIALLY_GENERATED": "Kısmi",
+    "PUBLISHED": "Yayınlandı",
+    "FAILED": "Başarısız",
+    "CANCELLED": "İptal edildi"
+  },
+  "empty": {
+    "title": "Yapılandırılmış ders programı yok",
+    "body": "Kısıtlamaları yapılandırmak ve bu dönemin ders programını oluşturmak için aşağıdaki formu doldurun."
+  },
+  "banner": {
+    "generatingTitle": "Ders programı oluşturma sürüyor…",
+    "generatingBody": "Algoritma bir arka plan iş parçacığında çalışıyor. Bu sayfa tamamlandığında otomatik olarak güncellenecek.",
+    "failed": "Oluşturma başarısız oldu. Kısıtlamalarınızın aşırı kısıtlayıcı olmadığını doğrulayın ve tekrar deneyin.",
+    "retry": "Tekrar dene",
+    "publishedTitle": "Ders programı başarıyla yayınlandı.",
+    "publishedOn": "{date} tarihinde yayınlandı"
+  },
+  "tabs": {
+    "configuration": "Yapılandırma",
+    "preview": "Önizleme",
+    "quality": "Kalite",
+    "conflicts": "Çakışmalar"
+  },
+  "actions": {
+    "generate": "Ders programı oluştur",
+    "generating": "Oluşturuluyor…",
+    "regenerate": "Yeniden oluştur",
+    "publish": "Ders programını yayınla",
+    "publishing": "Yayınlanıyor…",
+    "cancel": "İptal",
+    "retry": "Oluşturmayı tekrar dene",
+    "published": "Ders programı başarıyla yayınlandı",
+    "disabledHint": "Oluşturmadan önce üç kısıtlama bölümünü de tamamlayın",
+    "tooltipCancel": "Oluşturulan ders programını sil ve iptal et",
+    "tooltipRegenerate": "Algoritmayı mevcut kısıtlamalarla yeniden çalıştır",
+    "tooltipPublishPartial": "Bazı dersler yerleştirilemedi — kısmi ders programını yayınla",
+    "tooltipPublishFull": "Öğrenci ve öğretmen ders programlarına yayınla"
+  },
+  "conflicts": {
+    "none": "Çakışma algılanmadı — tüm katı kısıtlamalar karşılandı.",
+    "detected": "{count, plural, one {# çakışma algılandı} other {# çakışma algılandı}}",
+    "day": "Gün",
+    "room": "Derslik",
+    "label": "Çakışma",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Öğretmen çift rezervasyonu",
+      "ROOM_DOUBLE_BOOKING": "Derslik çift rezervasyonu",
+      "CLASS_DOUBLE_BOOKING": "Sınıf çift rezervasyonu",
+      "fallback": "Çakışma"
+    },
+    "unplacedTitle": "Yerleştirilmeyen dersler ({count})",
+    "unplacedLabel": "Yerleştirilmedi",
+    "unplacedDefaultReason": "Mevcut kısıtlamalarla yerleştirilemedi"
+  },
+  "quality": {
+    "partialTitle": "Kısmen oluşturuldu — {count, plural, one {# ders yerleştirilemedi} other {# ders yerleştirilemedi}}.",
+    "partialBody": "Kısmi ders programını yayınlayabilir veya kısıtlamaları ayarlayıp yeniden oluşturabilirsiniz.",
+    "score": "Kalite puanı",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Mükemmel",
+    "scoreGood": "İyi",
+    "scoreNeedsReview": "Gözden geçirilmeli",
+    "hardConstraints": "Katı kısıtlamalar",
+    "hardConstraintsSub": "Öğretmen / derslik / sınıf çakışması yok",
+    "softConstraints": "Esnek kısıtlamalar",
+    "softConstraintsSub": "Tercihler ve sabah aralıkları karşılandı",
+    "roomUtilization": "Derslik kullanımı",
+    "roomUtilizationSub": "Ortalama derslik doluluk oranı",
+    "generatedIn": "{seconds} sn'de oluşturuldu",
+    "unplacedTitle": "Yerleştirilmeyen dersler ({count})",
+    "unplacedLabel": "Yerleştirilmedi",
+    "unplacedRefFallback": "Ref.: {ref}",
+    "allPlaced": "Tüm dersler başarıyla yerleştirildi — kısıtlama ihlali algılanmadı."
+  },
+  "preview": {
+    "emptyTitle": "Henüz oturum oluşturulmadı",
+    "emptyBody": "Ders programı önizlemesini burada görmek için oluşturmayı çalıştırın",
+    "summary": "{days, plural, one {# günde} other {# günde}} {sessions, plural, one {# oturum} other {# oturum}}",
+    "dayCount": "{count, plural, one {# oturum} other {# oturum}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Zaman aralıkları",
+      "title": "Kullanılabilir zaman aralıkları",
+      "subtitle": "Algoritmanın kullanabileceği haftalık zaman pencerelerini tanımlayın.",
+      "add": "Aralık ekle",
+      "empty": "Tanımlı zaman aralığı yok. Başlamak için «Aralık ekle» düğmesine tıklayın.",
+      "day": "Gün",
+      "start": "Başlangıç (sa)",
+      "end": "Bitiş (sa)",
+      "break": "Mola",
+      "removeSlot": "Aralığı kaldır",
+      "duration": "Süre: {hours} sa · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Dersler",
+      "title": "Ders gereksinimleri",
+      "subtitle": "Sınıf + ders + öğretmen kombinasyonu başına bir kayıt.",
+      "add": "Ders ekle",
+      "empty": "Tanımlı ders yok. Bir planlama birimi oluşturmak için «Ders ekle» düğmesine tıklayın.",
+      "newCourse": "Yeni ders",
+      "hoursPerWeekShort": "{hours} sa/hafta",
+      "studentsShort": "{count, plural, one {# öğrenci} other {# öğrenci}}",
+      "remove": "Bu ders gereksinimini kaldır",
+      "class": "Sınıf",
+      "subject": "Ders",
+      "teacher": "Öğretmen",
+      "sessionType": "Oturum türü",
+      "hoursPerWeek": "sa/hafta",
+      "duration": "Süre (dk)",
+      "students": "Öğrenciler",
+      "roomType": "Derslik türü",
+      "requiresLab": "Laboratuvar gerektirir",
+      "preferMorning": "Sabahı tercih et"
+    },
+    "rooms": {
+      "tab": "Derslikler",
+      "title": "Derslik kaydı",
+      "subtitle": "Ders programı tahsisi için kullanılabilir fiziksel derslikler.",
+      "add": "Derslik ekle",
+      "empty": "Tanımlı derslik yok. Bir derslik kaydetmek için «Derslik ekle» düğmesine tıklayın.",
+      "name": "Derslik adı",
+      "namePlaceholder": "örn. Amfi A, Lab 201",
+      "capacity": "Kapasite",
+      "type": "Derslik türü",
+      "remove": "Dersliği kaldır"
+    },
+    "semesterStart": {
+      "label": "Dönem Başlangıç Tarihi",
+      "helper": "İlk ders günü — yayınlanan oturumlar bu tarihten itibaren başlar."
+    },
+    "teacherPrefs": {
+      "tab": "Öğretmen Tercihleri",
+      "title": "Öğretmen Tercihleri",
+      "subtitle": "İsteğe bağlı esnek kısıtlamalar: uygun olmama, tercih edilen günler ve maksimum ardışık saatler.",
+      "add": "Öğretmen Ekle",
+      "empty": "Öğretmen tercihi tanımlanmadı. Bunlar isteğe bağlıdır ve oluşturulan ders programını iyileştirir.",
+      "newTeacher": "Yeni öğretmen",
+      "teacher": "Öğretmen",
+      "remove": "Tercihi kaldır",
+      "maxConsecutive": "Maks. ardışık saat",
+      "maxConsecutiveHelp": "1–12 saat",
+      "preferredDays": "Tercih edilen günler",
+      "unavailable": "Uygun olmayan zaman dilimleri",
+      "addSlot": "Zaman dilimi ekle",
+      "noSlots": "Uygun olmayan zaman dilimi yok",
+      "slotStart": "Başlangıç (s)",
+      "slotEnd": "Bitiş (s)",
+      "day": "Gün",
+      "removeSlot": "Zaman dilimini kaldır",
+      "slotsCount": "Uygun değil: {count}",
+      "preferredCount": "Tercih edilen: {count}"
+    },
+    "nav": {
+      "previous": "Önceki",
+      "next": "Sonraki"
+    },
+    "save": "Yapılandırmayı kaydet",
+    "saving": "Kaydediliyor…"
+  },
+  "messages": {
+    "saved": "Kısıtlamalar başarıyla kaydedildi.",
+    "loadFailed": "Kısıtlamalar yüklenemedi.",
+    "saveFailed": "Kısıtlamalar kaydedilemedi.",
+    "generateStartFailed": "Oluşturma başlatılamadı.",
+    "generatedSuccess": "Ders programı başarıyla oluşturuldu.",
+    "generatedPartial": "Ders programı kısmen oluşturuldu — bazı dersler yerleştirilmedi. Çakışmaları kontrol edin.",
+    "generatedFailed": "Oluşturma başarısız oldu. Kısıtlamalarınızı kontrol edip tekrar deneyin.",
+    "noConstraintId": "Sunucu bir kısıtlama tanımlayıcısı döndürmedi.",
+    "previewFailed": "Önizleme yüklenemedi.",
+    "conflictsFailed": "Çakışmalar yüklenemedi.",
+    "publishedCount": "{count, plural, one {# oturum başarıyla yayınlandı.} other {# oturum başarıyla yayınlandı.}}",
+    "publishFailed": "Yayınlama başarısız oldu.",
+    "cancelled": "Oluşturulan ders programı iptal edildi.",
+    "cancelFailed": "İptal edilemedi."
+  }
+}

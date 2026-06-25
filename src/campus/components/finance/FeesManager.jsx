@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Typography, Button, Paper, Alert, Snackbar,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -22,8 +23,9 @@ import {
 import useFees from '../../../hooks/useFees';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { StatusChip } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import {
-  FEE_STATUSES, FEE_STATUS_LABEL, FEE_STATUS_COLOR, formatMoney, formatDate,
+  FEE_STATUSES, FEE_STATUS_COLOR, formatMoney, formatDate,
 } from './financeConstants';
 import FeeFormDialog from './FeeFormDialog';
 import PaymentDialog from './PaymentDialog';
@@ -42,6 +44,8 @@ const FeesManager = ({ campusId }) => {
     create, pay, remind, remove,
   } = useFees(campusId);
 
+  const { t } = useTranslation('finance');
+  const { feeStatus: feeStatusLabel } = useFinanceLabels();
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [formOpen,   setFormOpen]   = useState(false);
@@ -53,34 +57,34 @@ const FeesManager = ({ campusId }) => {
   // ─── Mutations ────────────────────────────────────────────────────────────────
   const handleCreate = async (data) => {
     await create(data);
-    showSnackbar('Fee created.', 'success');
+    showSnackbar(t('fees.toast.created'), 'success');
   };
 
   const handlePay = async (data) => {
     await pay(payFee._id, data);    // throws → PaymentDialog surfaces the 409/retry
-    showSnackbar('Payment recorded.', 'success');
+    showSnackbar(t('fees.toast.paymentRecorded'), 'success');
   };
 
   const handleRemind = async (fee) => {
     setBusyId(fee._id);
     try {
       await remind(fee._id);
-      showSnackbar('Reminder sent to the student.', 'success');
+      showSnackbar(t('fees.toast.reminderSent'), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to send reminder.', 'error');
+      showSnackbar(err.response?.data?.message || t('fees.toast.reminderFailed'), 'error');
     } finally {
       setBusyId(null);
     }
   };
 
   const handleDelete = async (fee) => {
-    if (!window.confirm(`Delete the fee "${fee.label}"? This is a soft delete.`)) return;
+    if (!window.confirm(t('fees.confirmDelete', { label: fee.label }))) return;
     setBusyId(fee._id);
     try {
       await remove(fee._id);
-      showSnackbar('Fee deleted.', 'success');
+      showSnackbar(t('fees.toast.deleted'), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to delete fee.', 'error');
+      showSnackbar(err.response?.data?.message || t('fees.toast.deleteFailed'), 'error');
     } finally {
       setBusyId(null);
     }
@@ -98,30 +102,30 @@ const FeesManager = ({ campusId }) => {
         sx={{ mb: 2.5 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={700}>Student Fees</Typography>
+          <Typography variant="h5" fontWeight={700}>{t('fees.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Track debts, record payments and send balance reminders.
+            {t('fees.subtitle')}
           </Typography>
         </Box>
         <Button
           variant="contained" startIcon={<Add />} onClick={() => setFormOpen(true)}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}
         >
-          New Fee
+          {t('fees.new')}
         </Button>
       </Stack>
 
       {/* Filters */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
-          <Select label="Status" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-            <MenuItem value="">All statuses</MenuItem>
-            {FEE_STATUSES.map((s) => <MenuItem key={s} value={s}>{FEE_STATUS_LABEL[s]}</MenuItem>)}
+          <InputLabel>{t('fields.status')}</InputLabel>
+          <Select label={t('fields.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+            <MenuItem value="">{t('filters.allStatuses')}</MenuItem>
+            {FEE_STATUSES.map((s) => <MenuItem key={s} value={s}>{feeStatusLabel[s]}</MenuItem>)}
           </Select>
         </FormControl>
         <TextField
-          size="small" label="Academic year" placeholder="2025-2026"
+          size="small" label={t('fields.academicYear')} placeholder={t('placeholders.academicYear')}
           value={filters.academicYear}
           onChange={(e) => handleFilterChange('academicYear', e.target.value)}
           sx={{ minWidth: 150 }}
@@ -130,7 +134,7 @@ const FeesManager = ({ campusId }) => {
           size="small" variant="outlined" startIcon={<FilterListOff />} onClick={handleReset}
           sx={{ borderRadius: 2, textTransform: 'none', alignSelf: 'center' }}
         >
-          Reset
+          {t('actions.reset')}
         </Button>
       </Stack>
 
@@ -141,14 +145,14 @@ const FeesManager = ({ campusId }) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Label</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Due</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Paid</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Balance</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Due date</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.student')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.label')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.due')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.paid')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.balance')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.status')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{t('fields.dueDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -163,7 +167,7 @@ const FeesManager = ({ campusId }) => {
             ) : fees.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} align="center" sx={{ py: 5, color: 'text.secondary' }}>
-                  No fees found. Create one to start tracking a student debt.
+                  {t('fees.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -194,17 +198,17 @@ const FeesManager = ({ campusId }) => {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <StatusChip status={fee.status} labelMap={FEE_STATUS_LABEL} colorMap={FEE_STATUS_COLOR} />
+                      <StatusChip status={fee.status} labelMap={feeStatusLabel} colorMap={FEE_STATUS_COLOR} />
                     </TableCell>
                     <TableCell>{formatDate(fee.dueDate)}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.25} justifyContent="flex-end">
-                        <Tooltip title="View detail">
+                        <Tooltip title={t('actions.viewDetail')}>
                           <IconButton size="small" color="default" onClick={() => setDetailId(fee._id)}>
                             <Visibility fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Ledger">
+                        <Tooltip title={t('actions.ledger')}>
                           <IconButton
                             size="small" color="primary"
                             onClick={() => setLedger({ studentId: fee.student?._id, name: studentName(fee.student) })}
@@ -213,14 +217,14 @@ const FeesManager = ({ campusId }) => {
                           </IconButton>
                         </Tooltip>
                         {canPay && (
-                          <Tooltip title="Record payment">
+                          <Tooltip title={t('actions.recordPayment')}>
                             <IconButton size="small" color="success" onClick={() => setPayFee(fee)}>
                               <Payment fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         )}
                         {balanceOf(fee) > 0 && fee.status !== 'cancelled' && (
-                          <Tooltip title="Send reminder">
+                          <Tooltip title={t('actions.sendReminder')}>
                             <span>
                               <IconButton size="small" color="warning" disabled={busy} onClick={() => handleRemind(fee)}>
                                 {busy ? <CircularProgress size={14} /> : <NotificationsActive fontSize="small" />}
@@ -228,7 +232,7 @@ const FeesManager = ({ campusId }) => {
                             </span>
                           </Tooltip>
                         )}
-                        <Tooltip title="Delete">
+                        <Tooltip title={t('actions.delete')}>
                           <span>
                             <IconButton size="small" color="error" disabled={busy} onClick={() => handleDelete(fee)}>
                               <Delete fontSize="small" />

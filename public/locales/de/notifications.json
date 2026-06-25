@@ -1,28 +1,57 @@
 {
-  "title": "Notifications",
-  "inbox": "Inbox",
-  "unread": "{n, plural, one{# unread notification} other{# unread notifications}}",
-  "markRead": "Mark as read",
-  "markAllRead": "Mark all as read",
-  "delete": "Delete notification",
-  "empty": "No notifications",
+  "title": "Benachrichtigungen",
+  "inbox": "Posteingang",
+  "unread": "{n, plural, one{# ungelesene Benachrichtigung} other{# ungelesene Benachrichtigungen}}",
+  "markRead": "Als gelesen markieren",
+  "markAllRead": "Alle als gelesen markieren",
+  "delete": "Benachrichtigung löschen",
+  "empty": "Keine Benachrichtigungen",
+  "loadMore": "Mehr laden",
+  "loadError": "Benachrichtigungen konnten nicht geladen werden.",
+  "retry": "Erneut versuchen",
   "type": {
-    "announcement": "Announcement",
-    "result": "New results",
-    "attendance": "Attendance alert",
-    "payment": "Payment reminder",
-    "exam": "Exam reminder",
-    "document": "Document shared",
+    "announcement": "Ankündigung",
+    "result": "Neue Ergebnisse",
+    "attendance": "Anwesenheitswarnung",
+    "payment": "Zahlungserinnerung",
+    "exam": "Prüfungserinnerung",
+    "document": "Geteiltes Dokument",
     "system": "System"
   },
   "announcement": {
-    "new": "New announcement",
-    "from": "From",
-    "pinned": "Pinned"
+    "new": "Neue Ankündigung",
+    "from": "Von",
+    "pinned": "Angeheftet"
   },
   "alert": {
-    "absence": "Absence alert",
-    "latePayment": "Late payment",
-    "examUpcoming": "Upcoming exam"
+    "absence": "Abwesenheitswarnung",
+    "latePayment": "Überfällige Zahlung",
+    "examUpcoming": "Bevorstehende Prüfung"
+  },
+  "log": {
+    "title": "Zustellungsprotokoll der Benachrichtigungen",
+    "subtitle": "Mehrkanal-Zustellungen verfolgen und erneut senden",
+    "searchPlaceholder": "Betreff, Empfänger, Vorlage suchen…",
+    "channel": "Kanal",
+    "statusLabel": "Status",
+    "subjectCol": "Betreff",
+    "recipient": "Empfänger",
+    "template": "Vorlage",
+    "date": "Datum",
+    "attempts": "Versuche",
+    "action": "Aktion",
+    "all": "Alle",
+    "reset": "Filter zurücksetzen",
+    "retry": "Zustellung erneut senden",
+    "inApp": "In-App",
+    "empty": "Keine Benachrichtigungen gefunden",
+    "loadError": "Zustellungsprotokoll konnte nicht geladen werden.",
+    "status": {
+      "pending": "Ausstehend",
+      "sent": "Gesendet",
+      "failed": "Fehlgeschlagen",
+      "skipped": "Übersprungen",
+      "read": "Gelesen"
+    }
   }
 }

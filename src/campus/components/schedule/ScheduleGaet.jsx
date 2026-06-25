@@ -32,6 +32,7 @@ import {
   EmojiEvents,
 } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import useGaet          from '../../../hooks/useGaet';
 import useFormSnackbar  from '../../../hooks/useFormSnackBar';
@@ -61,33 +62,45 @@ const currentAcademicYear = () => {
 
 // ─── GENERATING PROGRESS BANNER ──────────────────────────────────────────────
 
-const GeneratingBanner = () => (
-  <Alert
-    severity="info"
-    icon={<Schedule />}
-    sx={{ borderRadius: 2, mb: 2 }}
-  >
-    <Stack spacing={0.75}>
-      <Typography variant="body2" fontWeight={700}>
-        Timetable generation in progress…
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        The algorithm is running in a background thread. This page will update automatically when complete.
-      </Typography>
-      <LinearProgress color="info" sx={{ borderRadius: 1, mt: 1 }} />
-    </Stack>
-  </Alert>
-);
+const GeneratingBanner = () => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Alert
+      severity="info"
+      icon={<Schedule />}
+      sx={{ borderRadius: 2, mb: 2 }}
+    >
+      <Stack spacing={0.75}>
+        <Typography variant="body2" fontWeight={700}>
+          {t('banner.generatingTitle')}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {t('banner.generatingBody')}
+        </Typography>
+        <LinearProgress color="info" sx={{ borderRadius: 1, mt: 1 }} />
+      </Stack>
+    </Alert>
+  );
+};
 
 // ─── CONFLICT PANEL ──────────────────────────────────────────────────────────
 
+// Sessions may start/end on a fractional hour (e.g. 9.5 → "09:30").
+const fmtHour = (h) => {
+  if (h === undefined || h === null) return '—';
+  const hh = Math.floor(h);
+  const mm = Math.round((h - hh) * 60);
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+};
+
 const ConflictsPanel = ({ conflicts }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
 
   if (!conflicts.conflictCount && !conflicts.unplacedCourses?.length) {
     return (
       <Alert severity="success" icon={<CheckCircleOutline />} sx={{ borderRadius: 2 }}>
-        No conflicts detected — all hard constraints satisfied.
+        {t('conflicts.none')}
       </Alert>
     );
   }
@@ -97,7 +110,7 @@ const ConflictsPanel = ({ conflicts }) => {
       {conflicts.conflictCount > 0 && (
         <Alert severity="error" sx={{ borderRadius: 2 }}>
           <Typography variant="body2" fontWeight={700}>
-            {conflicts.conflictCount} conflict{conflicts.conflictCount !== 1 ? 's' : ''} detected
+            {t('conflicts.detected', { count: conflicts.conflictCount })}
           </Typography>
         </Alert>
       )}
@@ -115,20 +128,20 @@ const ConflictsPanel = ({ conflicts }) => {
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
             <Stack spacing={0.5} flex={1}>
               <Typography variant="body2" fontWeight={700} color="error.main">
-                {c.type ?? 'Conflict'}
+                {c.type ? t(`conflicts.types.${c.type}`, { defaultValue: c.type }) : t('conflicts.types.fallback')}
               </Typography>
               {c.day && (
                 <Typography variant="caption" color="text.secondary">
-                  Day: {c.day} &nbsp;·&nbsp; {c.startHour}:00 – {c.endHour}:00
+                  {t('conflicts.day')}: {t(`weekday.${c.day}`, { defaultValue: c.day })} &nbsp;·&nbsp; {fmtHour(c.startHour)} – {fmtHour(c.endHour)}
                 </Typography>
               )}
-              {c.message && (
+              {c.roomName && (
                 <Typography variant="caption" color="text.secondary">
-                  {c.message}
+                  {t('conflicts.room')}: {c.roomName}
                 </Typography>
               )}
             </Stack>
-            <Chip label="Conflict" color="error" size="small" variant="outlined" />
+            <Chip label={t('conflicts.label')} color="error" size="small" variant="outlined" />
           </Stack>
         </Paper>
       ))}
@@ -136,7 +149,7 @@ const ConflictsPanel = ({ conflicts }) => {
       {conflicts.unplacedCourses?.length > 0 && (
         <Box>
           <Typography variant="subtitle2" fontWeight={700} mb={1} color="warning.dark">
-            Unplaced Courses ({conflicts.unplacedCourses.length})
+            {t('conflicts.unplacedTitle', { count: conflicts.unplacedCourses.length })}
           </Typography>
           <Stack spacing={1}>
             {conflicts.unplacedCourses.map((item, idx) => (
@@ -151,9 +164,9 @@ const ConflictsPanel = ({ conflicts }) => {
               >
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Typography variant="caption" color="text.secondary">
-                    {item.reason ?? 'Could not be placed with current constraints'}
+                    {item.reason ?? t('conflicts.unplacedDefaultReason')}
                   </Typography>
-                  <Chip label="Unplaced" color="warning" size="small" variant="outlined" />
+                  <Chip label={t('conflicts.unplacedLabel')} color="warning" size="small" variant="outlined" />
                 </Stack>
               </Paper>
             ))}
@@ -168,6 +181,7 @@ const ConflictsPanel = ({ conflicts }) => {
 
 const EmptyState = () => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
   return (
     <Box
       sx={{
@@ -188,10 +202,10 @@ const EmptyState = () => {
         <AutoAwesome sx={{ fontSize: 36, color: 'primary.main' }} />
       </Avatar>
       <Typography variant="h5" fontWeight={800} mb={1}>
-        No timetable configured
+        {t('empty.title')}
       </Typography>
       <Typography variant="body2" color="text.secondary" maxWidth={420} mx="auto">
-        Fill in the form below to configure constraints and generate the timetable for this semester.
+        {t('empty.body')}
       </Typography>
     </Box>
   );
@@ -200,15 +214,16 @@ const EmptyState = () => {
 // ─── KPI SUMMARY STRIP ───────────────────────────────────────────────────────
 
 const ConstraintSummary = ({ constraint }) => {
+  const { t } = useTranslation('gaet');
   if (!constraint) return null;
   const slots   = constraint.timeSlots?.length          ?? 0;
   const courses = constraint.courseRequirements?.length  ?? 0;
   const rooms   = constraint.roomRegistry?.length        ?? 0;
 
   const items = [
-    { label: 'Time Slots',  value: slots,   color: '#1976d2' },
-    { label: 'Courses',     value: courses, color: '#2e7d32' },
-    { label: 'Rooms',       value: rooms,   color: '#7b1fa2' },
+    { label: t('summary.timeSlots'), value: slots,   color: '#1976d2' },
+    { label: t('summary.courses'),   value: courses, color: '#2e7d32' },
+    { label: t('summary.rooms'),     value: rooms,   color: '#7b1fa2' },
   ];
 
   return (
@@ -234,8 +249,21 @@ const ScheduleGaet = () => {
   const { campusId } = useParams();
   const { user }     = useAuth();
   const theme        = useTheme();
+  const { t, i18n }  = useTranslation('gaet');
 
   const canWrite = user?.role === 'CAMPUS_MANAGER';
+
+  // Localized semester options (values stay sourced from the schema).
+  const semesterOptions = useMemo(
+    () => SEMESTER_OPTIONS.map((o) => ({ value: o.value, label: t(`semesterOptions.${o.value}`) })),
+    [t]
+  );
+
+  // Date formatter following the active UI language.
+  const formatDate = useCallback(
+    (value, options) => new Date(value).toLocaleDateString(i18n.language, options),
+    [i18n.language]
+  );
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
@@ -277,9 +305,21 @@ const ScheduleGaet = () => {
   useEffect(() => {
     if (academicYear && semester) {
       loadConstraint(academicYear, semester);
-      setActiveTab(0);
     }
   }, [academicYear, semester, loadConstraint]);
+
+  // Switch academic context: reload happens via the effect above; reset to the
+  // Configuration tab here (in the event handler, not the effect) so the tab
+  // change does not trigger a cascading render.
+  const handleAcademicYearChange = useCallback((value) => {
+    setAcademicYear(value);
+    setActiveTab(0);
+  }, []);
+
+  const handleSemesterChange = useCallback((value) => {
+    setSemester(value);
+    setActiveTab(0);
+  }, []);
 
   // Fetch preview and conflicts when status becomes terminal
   useEffect(() => {
@@ -296,11 +336,11 @@ const ScheduleGaet = () => {
   const handleSave = useCallback(async (formValues) => {
     try {
       await saveConstraints({ academicYear, semester, ...formValues });
-      showSnackbar('Constraints saved successfully.', 'success');
+      showSnackbar(t('messages.saved'), 'success');
     } catch (err) {
       showSnackbar(err.message, 'error');
     }
-  }, [saveConstraints, academicYear, semester, showSnackbar]);
+  }, [saveConstraints, academicYear, semester, showSnackbar, t]);
 
   const handleGenerate = useCallback(async () => {
     try {
@@ -332,23 +372,27 @@ const ScheduleGaet = () => {
 
   const tabs = [
     {
-      label: 'Configuration',
+      key:   'configuration',
+      label: t('tabs.configuration'),
       icon:  <AutoAwesome sx={{ fontSize: 18 }} />,
       show:  true,
     },
     {
-      label:  'Preview',
+      key:    'preview',
+      label:  t('tabs.preview'),
       icon:   <CalendarMonth sx={{ fontSize: 18 }} />,
       show:   hasResult,
       badge:  hasResult ? preview.length : 0,
     },
     {
-      label:  'Quality',
+      key:    'quality',
+      label:  t('tabs.quality'),
       icon:   <EmojiEvents sx={{ fontSize: 18 }} />,
       show:   hasResult && Boolean(qualityReport),
     },
     {
-      label:  'Conflicts',
+      key:    'conflicts',
+      label:  t('tabs.conflicts'),
       icon:   <WarningAmber sx={{ fontSize: 18 }} />,
       show:   hasResult,
       badge:  conflicts?.conflictCount > 0 ? conflicts.conflictCount : 0,
@@ -381,18 +425,16 @@ const ScheduleGaet = () => {
             </Avatar>
             <Box>
               <Typography variant="h4" fontWeight={800} lineHeight={1.2}>
-                GAET
+                {t('title')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Automatic Timetable Generator
+                {t('subtitle')}
               </Typography>
             </Box>
             {status && <GaetStatusChip status={status} />}
           </Stack>
           <Typography variant="body2" color="text.secondary" mt={0.5}>
-            {canWrite
-              ? 'Configure constraints, generate, review and publish your semester timetable.'
-              : 'View generated timetables for this campus.'}
+            {canWrite ? t('header.manager') : t('header.viewer')}
           </Typography>
         </Box>
 
@@ -401,7 +443,7 @@ const ScheduleGaet = () => {
           <GaetGenerateButton
             status={status}
             disabled={!constraint?.courseRequirements?.length || !constraint?.timeSlots?.length || !constraint?.roomRegistry?.length}
-            disabledMsg="Complete all three constraint sections before generating"
+            disabledMsg={t('actions.disabledHint')}
             publishing={publishing}
             onGenerate={handleGenerate}
             onPublish={handlePublish}
@@ -417,22 +459,22 @@ const ScheduleGaet = () => {
             <TextField
               fullWidth
               size="small"
-              label="Academic Year"
+              label={t('context.academicYear')}
               value={academicYear}
-              onChange={(e) => setAcademicYear(e.target.value)}
-              placeholder="2024-2025"
+              onChange={(e) => handleAcademicYearChange(e.target.value)}
+              placeholder={t('context.academicYearPlaceholder')}
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <FormControl fullWidth size="small">
-              <InputLabel>Semester</InputLabel>
+              <InputLabel>{t('context.semester')}</InputLabel>
               <Select
                 value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-                label="Semester"
+                onChange={(e) => handleSemesterChange(e.target.value)}
+                label={t('context.semester')}
               >
-                {SEMESTER_OPTIONS.map((o) => (
+                {semesterOptions.map((o) => (
                   <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
                 ))}
               </Select>
@@ -447,8 +489,10 @@ const ScheduleGaet = () => {
               <ConstraintSummary constraint={constraint} />
               {constraint?.updatedAt && (
                 <Typography variant="caption" color="text.disabled" noWrap>
-                  Updated {new Date(constraint.updatedAt).toLocaleDateString('en-GB', {
-                    day: '2-digit', month: 'short', year: 'numeric',
+                  {t('context.updated', {
+                    date: formatDate(constraint.updatedAt, {
+                      day: '2-digit', month: 'short', year: 'numeric',
+                    }),
                   })}
                 </Typography>
               )}
@@ -474,11 +518,11 @@ const ScheduleGaet = () => {
           sx={{ mb: 2, borderRadius: 2 }}
           action={
             <Button size="small" startIcon={<Refresh />} onClick={handleGenerate} sx={{ textTransform: 'none' }}>
-              Retry
+              {t('banner.retry')}
             </Button>
           }
         >
-          Generation failed. Verify that your constraints are not over-constrained and retry.
+          {t('banner.failed')}
         </Alert>
       )}
 
@@ -490,13 +534,14 @@ const ScheduleGaet = () => {
           sx={{ mb: 2, borderRadius: 2 }}
         >
           <Typography variant="body2" fontWeight={600}>
-            Timetable published successfully.
+            {t('banner.publishedTitle')}
           </Typography>
           {constraint?.publishedAt && (
             <Typography variant="caption">
-              Published on{' '}
-              {new Date(constraint.publishedAt).toLocaleDateString('en-GB', {
-                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+              {t('banner.publishedOn', {
+                date: formatDate(constraint.publishedAt, {
+                  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                }),
               })}
             </Typography>
           )}
@@ -540,7 +585,7 @@ const ScheduleGaet = () => {
           >
             {visibleTabs.map((tab) => (
               <Tab
-                key={tab.label}
+                key={tab.key}
                 label={
                   <Stack direction="row" alignItems="center" spacing={0.75}>
                     {tab.icon}
@@ -560,7 +605,7 @@ const ScheduleGaet = () => {
           </Tabs>
 
           {/* Tab 0: Configuration */}
-          {visibleTabs[safeActiveTab]?.label === 'Configuration' && (
+          {visibleTabs[safeActiveTab]?.key === 'configuration' && (
             <GaetConstraintForm
               initialData={constraint}
               academicYear={academicYear}
@@ -575,7 +620,7 @@ const ScheduleGaet = () => {
           )}
 
           {/* Tab 1: Preview */}
-          {visibleTabs[safeActiveTab]?.label === 'Preview' && (
+          {visibleTabs[safeActiveTab]?.key === 'preview' && (
             <GaetWeeklyPreview
               sessions={preview}
               courseRequirements={constraint?.courseRequirements}
@@ -586,7 +631,7 @@ const ScheduleGaet = () => {
           )}
 
           {/* Tab 2: Quality */}
-          {visibleTabs[safeActiveTab]?.label === 'Quality' && (
+          {visibleTabs[safeActiveTab]?.key === 'quality' && (
             <GaetQualityPanel
               report={qualityReport}
               status={status}
@@ -597,7 +642,7 @@ const ScheduleGaet = () => {
           )}
 
           {/* Tab 3: Conflicts */}
-          {visibleTabs[safeActiveTab]?.label === 'Conflicts' && (
+          {visibleTabs[safeActiveTab]?.key === 'conflicts' && (
             <ConflictsPanel conflicts={conflicts} />
           )}
         </>

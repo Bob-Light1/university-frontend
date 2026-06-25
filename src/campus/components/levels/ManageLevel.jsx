@@ -23,11 +23,11 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Unarchive as UnarchiveIcon,
 } from '@mui/icons-material';
 
 import { Formik, Form } from 'formik';
-import axios from 'axios';
-import { API_BASE_URL } from '../../../config/env';
+import api from '../../../api/axiosInstance';
 import { createLevelSchema } from '../../../yupSchema/createLevelSchema';
 
 const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
@@ -44,18 +44,13 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
 
   const isEditMode = Boolean(editingLevel);
 
-  const getAuthHeader = () => ({
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    },
-  });
-
   /* ---------------- FETCH ---------------- */
+  // Include archived levels so they can be displayed and restored.
   const fetchLevels = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await axios.get(`${API_BASE_URL}/level`, getAuthHeader());
+      const res = await api.get('/level', { params: { includeArchived: true } });
       setLevels(res.data?.data || []);
     } catch {
       setErrorMsg('Impossible de charger les niveaux');
@@ -72,17 +67,9 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
       if (isEditMode) {
-        await axios.put(
-          `${API_BASE_URL}/level/update/${editingLevel._id}`,
-          values,
-          getAuthHeader()
-        );
+        await api.put(`/level/update/${editingLevel._id}`, values);
       } else {
-        await axios.post(
-          `${API_BASE_URL}/level`,
-          values,
-          getAuthHeader()
-        );
+        await api.post('/level', values);
       }
 
       resetForm();
@@ -90,26 +77,33 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
       await fetchLevels();
       onLevelsUpdated?.();
     } catch (e) {
-      setErrorMsg("Échec de l'opération");
+      setErrorMsg(e?.response?.data?.message || "Échec de l'opération");
     } finally {
       setSubmitting(false);
     }
   };
 
-  /* ---------------- SOFT DELETE ---------------- */
+  /* ---------------- ARCHIVE (soft delete) ---------------- */
   const handleArchive = async (level) => {
     if (!window.confirm('Archiver ce niveau ?')) return;
 
     try {
-      await axios.put(
-        `${API_BASE_URL}/level/update/${level._id}`,
-        { status: 'archived' },
-        getAuthHeader()
-      );
+      await api.delete(`/level/delete/${level._id}`);
       await fetchLevels();
       onLevelsUpdated?.();
-    } catch {
-      setErrorMsg('Impossible d’archiver le niveau');
+    } catch (e) {
+      setErrorMsg(e?.response?.data?.message || 'Impossible d’archiver le niveau');
+    }
+  };
+
+  /* ---------------- RESTORE ---------------- */
+  const handleRestore = async (level) => {
+    try {
+      await api.patch(`/level/${level._id}/restore`);
+      await fetchLevels();
+      onLevelsUpdated?.();
+    } catch (e) {
+      setErrorMsg(e?.response?.data?.message || 'Impossible de restaurer le niveau');
     }
   };
 
@@ -265,21 +259,33 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Archiver">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleArchive(lvl)}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                    {lvl.status === 'archived' ? (
+                      <Tooltip title="Restaurer">
+                        <IconButton
+                          size="small"
+                          color="success"
+                          onClick={() => handleRestore(lvl)}
+                        >
+                          <UnarchiveIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Archiver">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleArchive(lvl)}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </>
                 }
               >
                 <ListItemText
                   primary={`${lvl.name} (${lvl.code})`}
-                  secondary={lvl.type}
+                  secondary={lvl.status === 'archived' ? `${lvl.type} · archivé` : lvl.type}
                   sx={{
                     opacity: lvl.status === 'archived' ? 0.5 : 1,
                   }}

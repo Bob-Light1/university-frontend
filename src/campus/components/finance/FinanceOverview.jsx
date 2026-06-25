@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Typography, Button, Paper, Alert, useTheme,
 } from '@mui/material';
@@ -30,6 +31,7 @@ import { listFees } from '../../../services/financeService';
 
 const FinanceOverview = ({ campusId, onNavigate }) => {
   const theme = useTheme();
+  const { t } = useTranslation('finance');
   const { period, setPeriod, summary, monthly, loading, error } = useFinanceSummary(campusId);
   const [overdueCount, setOverdueCount] = useState(null);
 
@@ -47,40 +49,40 @@ const FinanceOverview = ({ campusId, onNavigate }) => {
   const net = summary.net ?? 0;
   const kpis = [
     {
-      label: 'Income received',
+      label: t('overview.kpi.incomeReceived'),
       value: formatMoney(summary.income?.total ?? 0),
       icon: <TrendingUp sx={{ fontSize: 28 }} />,
       color: theme.palette.success.main,
-      subtitle: `${summary.income?.count ?? 0} record(s)`,
+      subtitle: t('overview.kpi.records', { count: summary.income?.count ?? 0 }),
     },
     {
-      label: 'Expenses paid',
+      label: t('overview.kpi.expensesPaid'),
       value: formatMoney(summary.expense?.total ?? 0),
       icon: <TrendingDown sx={{ fontSize: 28 }} />,
       color: theme.palette.error.main,
-      subtitle: `${summary.expense?.count ?? 0} record(s)`,
+      subtitle: t('overview.kpi.records', { count: summary.expense?.count ?? 0 }),
     },
     {
-      label: 'Net balance',
+      label: t('overview.kpi.netBalance'),
       value: formatMoney(net),
       icon: <AccountBalance sx={{ fontSize: 28 }} />,
       color: net >= 0 ? theme.palette.primary.main : theme.palette.warning.main,
-      subtitle: net >= 0 ? 'Surplus' : 'Deficit',
+      subtitle: net >= 0 ? t('overview.kpi.surplus') : t('overview.kpi.deficit'),
     },
     {
-      label: 'Overdue debts',
+      label: t('overview.kpi.overdueDebts'),
       value: overdueCount ?? '—',
       icon: <WarningAmber sx={{ fontSize: 28 }} />,
       color: theme.palette.warning.main,
-      subtitle: 'Students past due',
+      subtitle: t('overview.kpi.studentsPastDue'),
     },
   ];
 
   const SHORTCUTS = [
-    { label: 'New fee',     icon: <AddCard />,     tab: 1, color: theme.palette.info.main },
-    { label: 'New payment', icon: <Payment />,     tab: 1, color: theme.palette.info.dark },
-    { label: 'New income',  icon: <ReceiptLong />, tab: 2, color: theme.palette.success.main },
-    { label: 'New expense', icon: <MoneyOff />,    tab: 3, color: theme.palette.error.main },
+    { label: t('overview.shortcuts.newFee'),     icon: <AddCard />,     tab: 1, color: theme.palette.info.main },
+    { label: t('overview.shortcuts.newPayment'), icon: <Payment />,     tab: 1, color: theme.palette.info.dark },
+    { label: t('overview.shortcuts.newIncome'),  icon: <ReceiptLong />, tab: 2, color: theme.palette.success.main },
+    { label: t('overview.shortcuts.newExpense'), icon: <MoneyOff />,    tab: 3, color: theme.palette.error.main },
   ];
 
   return (
@@ -94,9 +96,9 @@ const FinanceOverview = ({ campusId, onNavigate }) => {
         sx={{ mb: 2.5 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={700}>Financial Overview</Typography>
+          <Typography variant="h5" fontWeight={700}>{t('overview.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Income vs expenses and outstanding student debts for this campus.
+            {t('overview.subtitle')}
           </Typography>
         </Box>
         <PeriodSelector year={period.year} month={period.month} onChange={handlePeriod} />
@@ -127,18 +129,18 @@ const FinanceOverview = ({ campusId, onNavigate }) => {
       {/* Monthly chart */}
       <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 2 }}>
         <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
-          Monthly income vs expenses — {period.year || '—'}
+          {t('overview.chart.title', { year: period.year || '—' })}
         </Typography>
         <Box sx={{ width: '100%', height: 320 }}>
           <ResponsiveContainer>
             <BarChart data={monthly} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="month" fontSize={12} />
+              <XAxis dataKey="month" fontSize={12} tickFormatter={(m) => t(`enums.months.${m}`).slice(0, 3)} />
               <YAxis fontSize={12} width={70} tickFormatter={(v) => v.toLocaleString()} />
-              <RTooltip formatter={(v) => formatMoney(v)} />
+              <RTooltip formatter={(v) => formatMoney(v)} labelFormatter={(m) => t(`enums.months.${m}`)} />
               <Legend />
-              <Bar dataKey="income"  name="Income"  fill={theme.palette.success.main} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expense" name="Expense" fill={theme.palette.error.main}   radius={[4, 4, 0, 0]} />
+              <Bar dataKey="income"  name={t('overview.chart.income')}  fill={theme.palette.success.main} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="expense" name={t('overview.chart.expense')} fill={theme.palette.error.main}   radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Box>

@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   listFees,
   createFee,
@@ -35,6 +36,7 @@ const clean = (obj) => {
 };
 
 const useFees = (campusId) => {
+  const { t } = useTranslation('finance');
   const [fees,       setFees]       = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 1 });
   const [filters,    setFilters]    = useState(DEFAULT_FILTERS);
@@ -49,12 +51,12 @@ const useFees = (campusId) => {
       setFees(Array.isArray(res.data?.data) ? res.data.data : []);
       if (res.data?.pagination) setPagination((p) => ({ ...p, ...res.data.pagination }));
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load fees.');
+      setError(err.response?.data?.message || t('errors.loadFees'));
       setFees([]);
     } finally {
       setLoading(false);
     }
-  }, [filters, campusId]);
+  }, [filters, campusId, t]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

@@ -22,19 +22,11 @@ import {
 import {
   School, Person, MeetingRoom, AccessTime,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
 const ORDERED_DAYS = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-
-const DAY_LABELS = {
-  MO: 'Monday', TU: 'Tuesday', WE: 'Wednesday',
-  TH: 'Thursday', FR: 'Friday', SA: 'Saturday', SU: 'Sunday',
-};
-
-const DAY_SHORT = {
-  MO: 'Mon', TU: 'Tue', WE: 'Wed', TH: 'Thu', FR: 'Fri', SA: 'Sat', SU: 'Sun',
-};
 
 const SESSION_TYPE_COLOR = {
   LECTURE:   '#1976d2',
@@ -42,16 +34,19 @@ const SESSION_TYPE_COLOR = {
   PRACTICAL: '#e65100',
 };
 
-const SESSION_TYPE_LABEL = {
-  LECTURE: 'Lecture', TUTORIAL: 'Tutorial', PRACTICAL: 'Practical',
+// Sessions may end on a fractional hour (e.g. a 90-min session → 9.5 → "09:30").
+const formatHour = (h) => {
+  if (h === undefined || h === null) return '—';
+  const hh = Math.floor(h);
+  const mm = Math.round((h - hh) * 60);
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
 };
-
-const formatHour = (h) => `${String(Math.floor(h)).padStart(2, '0')}:00`;
 
 // ─── SESSION CARD ─────────────────────────────────────────────────────────────
 
 const SessionCard = ({ session, courseReq, subjectOptions, teacherOptions, classOptions }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
 
   const subject = subjectOptions?.find((o) => o.value === String(courseReq?.subjectId ?? ''))?.label ?? '—';
   const teacher = teacherOptions?.find((o) => o.value === String(courseReq?.teacherId ?? ''))?.label ?? '—';
@@ -80,7 +75,7 @@ const SessionCard = ({ session, courseReq, subjectOptions, teacherOptions, class
             {subject}
           </Typography>
           <Chip
-            label={SESSION_TYPE_LABEL[type]}
+            label={t(`sessionType.${type}`)}
             size="small"
             sx={{
               bgcolor: alpha(color, 0.12),
@@ -132,6 +127,7 @@ const SessionCard = ({ session, courseReq, subjectOptions, teacherOptions, class
 
 const DayColumn = ({ day, sessions, crMap, subjectOptions, teacherOptions, classOptions }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
   return (
     <Paper
       variant="outlined"
@@ -147,10 +143,10 @@ const DayColumn = ({ day, sessions, crMap, subjectOptions, teacherOptions, class
         }}
       >
         <Typography variant="subtitle2" fontWeight={800} color="primary.main">
-          {DAY_LABELS[day]}
+          {t(`weekday.${day}`)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {sessions.length} session{sessions.length !== 1 ? 's' : ''}
+          {t('preview.dayCount', { count: sessions.length })}
         </Typography>
       </Box>
 
@@ -174,6 +170,7 @@ const DayColumn = ({ day, sessions, crMap, subjectOptions, teacherOptions, class
 // ─── STATS BAR ───────────────────────────────────────────────────────────────
 
 const StatsBar = ({ sessions }) => {
+  const { t } = useTranslation('gaet');
   const counts = sessions.reduce((acc, s) => {
     const type = s._cr?.sessionType ?? 'LECTURE';
     acc[type] = (acc[type] ?? 0) + 1;
@@ -191,7 +188,7 @@ const StatsBar = ({ sessions }) => {
             }}
           />
           <Typography variant="caption" fontWeight={600}>
-            {count} {SESSION_TYPE_LABEL[type] ?? type}
+            {t('preview.statCount', { count, type: t(`sessionType.${type}`, { defaultValue: type }) })}
           </Typography>
         </Stack>
       ))}
@@ -201,28 +198,32 @@ const StatsBar = ({ sessions }) => {
 
 // ─── EMPTY STATE ─────────────────────────────────────────────────────────────
 
-const EmptyPreview = () => (
-  <Box
-    sx={{
-      textAlign: 'center', py: 8, borderRadius: 3,
-      border: '2px dashed', borderColor: 'divider',
-    }}
-  >
-    <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: alpha('#1976d2', 0.08), width: 64, height: 64 }}>
-      <School sx={{ fontSize: 32, color: 'primary.main' }} />
-    </Avatar>
-    <Typography variant="h6" fontWeight={700} mb={1}>
-      No sessions generated yet
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      Run generation to see the timetable preview here
-    </Typography>
-  </Box>
-);
+const EmptyPreview = () => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Box
+      sx={{
+        textAlign: 'center', py: 8, borderRadius: 3,
+        border: '2px dashed', borderColor: 'divider',
+      }}
+    >
+      <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: alpha('#1976d2', 0.08), width: 64, height: 64 }}>
+        <School sx={{ fontSize: 32, color: 'primary.main' }} />
+      </Avatar>
+      <Typography variant="h6" fontWeight={700} mb={1}>
+        {t('preview.emptyTitle')}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {t('preview.emptyBody')}
+      </Typography>
+    </Box>
+  );
+};
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 
 const GaetWeeklyPreview = ({ sessions = [], courseRequirements = [], subjectOptions = [], teacherOptions = [], classOptions = [] }) => {
+  const { t } = useTranslation('gaet');
   // Build courseRequirement lookup map
   const crMap = useMemo(
     () => Object.fromEntries((courseRequirements ?? []).map((cr) => [String(cr._id), cr])),
@@ -265,7 +266,7 @@ const GaetWeeklyPreview = ({ sessions = [], courseRequirements = [], subjectOpti
         spacing={1}
       >
         <Typography variant="h6" fontWeight={700}>
-          {sessions.length} session{sessions.length !== 1 ? 's' : ''} across {activeDays.length} day{activeDays.length !== 1 ? 's' : ''}
+          {t('preview.summary', { sessions: sessions.length, days: activeDays.length })}
         </Typography>
         <StatsBar sessions={enrichedSessions} />
       </Stack>

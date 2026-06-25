@@ -7,6 +7,7 @@
  * Route: /student/finance
  */
 
+import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Typography, Paper, Alert, Divider, Chip,
   Table, TableHead, TableRow, TableCell, TableBody,
@@ -17,46 +18,49 @@ import { AccountBalanceWallet, WarningAmber } from '@mui/icons-material';
 import KPICards from '../../../components/shared/KpiCard';
 import useStudentLedger from '../../../hooks/useStudentLedger';
 import { StatusChip } from '../../../campus/components/finance/financeShared';
+import { useFinanceLabels } from '../../../campus/components/finance/useFinanceLabels';
 import {
-  FEE_STATUS_LABEL, FEE_STATUS_COLOR, formatMoney, formatDate,
+  FEE_STATUS_COLOR, formatMoney, formatDate,
 } from '../../../campus/components/finance/financeConstants';
 
 const StudentFinance = () => {
   const theme = useTheme();
+  const { t } = useTranslation('finance');
+  const { feeStatus: feeStatusLabel } = useFinanceLabels();
   const { ledger, loading, error } = useStudentLedger({ mine: true });
   const { fees = [], payments = [], totals = {} } = ledger;
 
   const balance = totals.balance ?? 0;
   const kpis = [
     {
-      label: 'Total due',
+      label: t('student.kpi.totalDue'),
       value: formatMoney(totals.totalDue ?? 0),
       icon: <AccountBalanceWallet sx={{ fontSize: 28 }} />,
       color: theme.palette.primary.main,
-      subtitle: `${fees.length} debt(s)`,
+      subtitle: t('student.kpi.debtsCount', { count: fees.length }),
     },
     {
-      label: 'Total paid',
+      label: t('student.kpi.totalPaid'),
       value: formatMoney(totals.totalPaid ?? 0),
       icon: <AccountBalanceWallet sx={{ fontSize: 28 }} />,
       color: theme.palette.success.main,
-      subtitle: `${payments.length} payment(s)`,
+      subtitle: t('student.kpi.paymentsCount', { count: payments.length }),
     },
     {
-      label: 'Outstanding balance',
+      label: t('student.kpi.outstandingBalance'),
       value: formatMoney(balance),
       icon: <WarningAmber sx={{ fontSize: 28 }} />,
       color: balance > 0 ? theme.palette.error.main : theme.palette.success.main,
-      subtitle: balance > 0 ? 'Please settle your balance' : 'All settled',
+      subtitle: balance > 0 ? t('student.kpi.settle') : t('student.kpi.allSettled'),
     },
   ];
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       <Box sx={{ mb: 2.5 }}>
-        <Typography variant="h5" fontWeight={700}>My Finance</Typography>
+        <Typography variant="h5" fontWeight={700}>{t('student.title')}</Typography>
         <Typography variant="body2" color="text.secondary">
-          Your fees, payments and outstanding balance.
+          {t('student.subtitle')}
         </Typography>
       </Box>
 
@@ -70,28 +74,27 @@ const StudentFinance = () => {
 
           {balance > 0 && (
             <Alert severity="warning" sx={{ borderRadius: 2 }}>
-              You have an outstanding balance of <strong>{formatMoney(balance)}</strong>.
-              Please contact your campus finance office to settle it.
+              {t('student.warning', { amount: formatMoney(balance) })}
             </Alert>
           )}
 
           {/* Debts */}
           <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 2 }}>
             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
-              My Debts ({fees.length})
+              {t('student.myDebts', { count: fees.length })}
             </Typography>
             {fees.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">No fees on record.</Typography>
+              <Typography variant="body2" color="text.secondary">{t('student.noFees')}</Typography>
             ) : (
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Label</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Due</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Paid</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Balance</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Due date</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.label')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.due')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.paid')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.balance')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.dueDate')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.status')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -113,7 +116,7 @@ const StudentFinance = () => {
                       </TableCell>
                       <TableCell>{formatDate(f.dueDate)}</TableCell>
                       <TableCell>
-                        <StatusChip status={f.status} labelMap={FEE_STATUS_LABEL} colorMap={FEE_STATUS_COLOR} />
+                        <StatusChip status={f.status} labelMap={feeStatusLabel} colorMap={FEE_STATUS_COLOR} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -127,18 +130,18 @@ const StudentFinance = () => {
           {/* Payments */}
           <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 2 }}>
             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
-              My Payments ({payments.length})
+              {t('student.myPayments', { count: payments.length })}
             </Typography>
             {payments.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">No payments recorded yet.</Typography>
+              <Typography variant="body2" color="text.secondary">{t('student.noPayments')}</Typography>
             ) : (
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Method</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Reference</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('fields.reference')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -146,7 +149,7 @@ const StudentFinance = () => {
                     <TableRow key={p._id} hover>
                       <TableCell>{formatDate(p.paidAt)}</TableCell>
                       <TableCell align="right">{formatMoney(p.amount, p.currency)}</TableCell>
-                      <TableCell><Chip size="small" variant="outlined" label={p.method} /></TableCell>
+                      <TableCell><Chip size="small" variant="outlined" label={p.method ? t(`enums.paymentMethod.${p.method}`) : '—'} /></TableCell>
                       <TableCell>
                         <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
                           {p.reference || '—'}

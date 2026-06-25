@@ -156,12 +156,12 @@
   },
   "notifPref": {
     "title": "Préférences de notifications",
+    "inapp": "Dans l'application",
+    "inappDesc": "Notifications toujours actives dans votre boîte de réception",
     "email": "E-mail",
     "emailDesc": "Recevoir des notifications par e-mail",
-    "sms": "SMS",
-    "smsDesc": "Recevoir des SMS pour les alertes urgentes",
-    "push": "Push",
-    "pushDesc": "Notifications push dans l'application et le navigateur",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Recevoir des messages sur WhatsApp (mobile)",
     "save": "Enregistrer les préférences",
     "saving": "Enregistrement…"
   }

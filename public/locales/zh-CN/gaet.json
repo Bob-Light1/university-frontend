@@ -1,34 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Academic Activity Tracking",
-  "report": {
-    "generate": "Generate GAET Report",
-    "title": "Academic Activity Tracking Report",
-    "period": "Reporting period",
-    "download": "Download report"
+  "subtitle": "自动课程表生成器",
+  "header": {
+    "manager": "配置约束条件，生成、审阅并发布您本学期的课程表。",
+    "viewer": "查看本校区已生成的课程表。"
   },
-  "activity": {
-    "title": "Activities",
-    "planned": "Planned",
-    "completed": "Completed",
-    "missed": "Missed",
-    "rate": "Completion rate"
+  "context": {
+    "academicYear": "学年",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "学期",
+    "updated": "更新于 {date}"
   },
-  "teacher": {
-    "load": "Teaching load",
-    "hours": "{n, plural, one{# hour} other{# hours}}",
-    "delivered": "Hours delivered",
-    "remaining": "Hours remaining"
+  "semesterOptions": {
+    "S1": "第一学期",
+    "S2": "第二学期",
+    "Annual": "全年"
   },
-  "schedule": {
-    "generate": "Generate schedule",
-    "constraints": "Constraints",
-    "conflict": "Conflict detected",
-    "resolve": "Resolve"
+  "weekday": {
+    "MO": "星期一",
+    "TU": "星期二",
+    "WE": "星期三",
+    "TH": "星期四",
+    "FR": "星期五",
+    "SA": "星期六",
+    "SU": "星期日"
+  },
+  "sessionType": {
+    "LECTURE": "讲授课",
+    "TUTORIAL": "辅导课",
+    "PRACTICAL": "实践课"
+  },
+  "roomType": {
+    "CLASSROOM": "教室",
+    "LAB": "实验室",
+    "AMPHITHEATER": "阶梯教室"
+  },
+  "summary": {
+    "timeSlots": "时间段",
+    "courses": "课程",
+    "rooms": "教室"
   },
   "status": {
-    "onTrack": "On track",
-    "delayed": "Delayed",
-    "completed": "Completed"
+    "DRAFT": "草稿",
+    "GENERATING": "生成中…",
+    "GENERATED": "已生成",
+    "PARTIALLY_GENERATED": "部分生成",
+    "PUBLISHED": "已发布",
+    "FAILED": "失败",
+    "CANCELLED": "已取消"
+  },
+  "empty": {
+    "title": "尚未配置课程表",
+    "body": "请填写下方表单以配置约束条件并生成本学期的课程表。"
+  },
+  "banner": {
+    "generatingTitle": "正在生成课程表…",
+    "generatingBody": "算法正在后台线程中运行。完成后本页面将自动更新。",
+    "failed": "生成失败。请确认您的约束条件没有过于严苛，然后重试。",
+    "retry": "重试",
+    "publishedTitle": "课程表发布成功。",
+    "publishedOn": "发布于 {date}"
+  },
+  "tabs": {
+    "configuration": "配置",
+    "preview": "预览",
+    "quality": "质量",
+    "conflicts": "冲突"
+  },
+  "actions": {
+    "generate": "生成课程表",
+    "generating": "生成中…",
+    "regenerate": "重新生成",
+    "publish": "发布课程表",
+    "publishing": "发布中…",
+    "cancel": "取消",
+    "retry": "重新生成",
+    "published": "课程表发布成功",
+    "disabledHint": "生成前请完成全部三个约束部分",
+    "tooltipCancel": "放弃并取消已生成的课程表",
+    "tooltipRegenerate": "使用当前约束条件重新运行算法",
+    "tooltipPublishPartial": "部分课程未排入 — 发布部分课程表",
+    "tooltipPublishFull": "发布到学生和教师课程表"
+  },
+  "conflicts": {
+    "none": "未检测到冲突 — 所有硬约束均已满足。",
+    "detected": "{count, plural, other {检测到 # 个冲突}}",
+    "day": "日期",
+    "room": "教室",
+    "label": "冲突",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "教师重复占用",
+      "ROOM_DOUBLE_BOOKING": "教室重复占用",
+      "CLASS_DOUBLE_BOOKING": "班级重复占用",
+      "fallback": "冲突"
+    },
+    "unplacedTitle": "未排入的课程（{count}）",
+    "unplacedLabel": "未排入",
+    "unplacedDefaultReason": "在当前约束条件下无法排入"
+  },
+  "quality": {
+    "partialTitle": "部分生成 — {count, plural, other {有 # 门课程无法排入}}。",
+    "partialBody": "您可以发布部分课程表，或调整约束条件后重新生成。",
+    "score": "质量评分",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "优秀",
+    "scoreGood": "良好",
+    "scoreNeedsReview": "需要复核",
+    "hardConstraints": "硬约束",
+    "hardConstraintsSub": "无教师 / 教室 / 班级冲突",
+    "softConstraints": "软约束",
+    "softConstraintsSub": "已满足偏好及上午时段",
+    "roomUtilization": "教室利用率",
+    "roomUtilizationSub": "教室平均占用率",
+    "generatedIn": "用时 {seconds} 秒生成",
+    "unplacedTitle": "未排入的课程（{count}）",
+    "unplacedLabel": "未排入",
+    "unplacedRefFallback": "编号：{ref}",
+    "allPlaced": "所有课程均已成功排入 — 未检测到约束违反。"
+  },
+  "preview": {
+    "emptyTitle": "尚未生成任何课次",
+    "emptyBody": "运行生成后即可在此查看课程表预览",
+    "summary": "{days, plural, other {# 天内}}共 {sessions, plural, other {# 个课次}}",
+    "dayCount": "{count, plural, other {# 个课次}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "时间段",
+      "title": "可用时间段",
+      "subtitle": "定义算法可使用的每周时间窗口。",
+      "add": "添加时间段",
+      "empty": "尚未定义时间段。点击“添加时间段”开始。",
+      "day": "日期",
+      "start": "开始（时）",
+      "end": "结束（时）",
+      "break": "休息",
+      "removeSlot": "删除时间段",
+      "duration": "时长：{hours} 小时 · {start} – {end}"
+    },
+    "courses": {
+      "tab": "课程",
+      "title": "课程需求",
+      "subtitle": "每个班级 + 科目 + 教师组合对应一条记录。",
+      "add": "添加课程",
+      "empty": "尚未定义课程。点击“添加课程”以创建一个排课单元。",
+      "newCourse": "新课程",
+      "hoursPerWeekShort": "{hours} 小时/周",
+      "studentsShort": "{count, plural, other {# 名学生}}",
+      "remove": "删除该课程需求",
+      "class": "班级",
+      "subject": "科目",
+      "teacher": "教师",
+      "sessionType": "课次类型",
+      "hoursPerWeek": "小时/周",
+      "duration": "时长（分钟）",
+      "students": "学生",
+      "roomType": "教室类型",
+      "requiresLab": "需要实验室",
+      "preferMorning": "偏好上午"
+    },
+    "rooms": {
+      "tab": "教室",
+      "title": "教室登记",
+      "subtitle": "可用于课程表分配的实体教室。",
+      "add": "添加教室",
+      "empty": "尚未定义教室。点击“添加教室”以登记一间教室。",
+      "name": "教室名称",
+      "namePlaceholder": "例如：阶梯教室 A、实验室 201",
+      "capacity": "容量",
+      "type": "教室类型",
+      "remove": "删除教室"
+    },
+    "semesterStart": {
+      "label": "学期开始日期",
+      "helper": "第一个上课日——已发布的课程从此日期开始。"
+    },
+    "teacherPrefs": {
+      "tab": "教师偏好",
+      "title": "教师偏好",
+      "subtitle": "可选的软约束：不可用时段、偏好日期和最大连续课时。",
+      "add": "添加教师",
+      "empty": "未定义教师偏好。这些为可选项，可优化生成的课表。",
+      "newTeacher": "新教师",
+      "teacher": "教师",
+      "remove": "移除教师偏好",
+      "maxConsecutive": "最大连续课时",
+      "maxConsecutiveHelp": "1–12 小时",
+      "preferredDays": "偏好日期",
+      "unavailable": "不可用时段",
+      "addSlot": "添加时段",
+      "noSlots": "无不可用时段",
+      "slotStart": "开始（时）",
+      "slotEnd": "结束（时）",
+      "day": "日期",
+      "removeSlot": "移除时段",
+      "slotsCount": "不可用：{count}",
+      "preferredCount": "偏好：{count}"
+    },
+    "nav": {
+      "previous": "上一步",
+      "next": "下一步"
+    },
+    "save": "保存配置",
+    "saving": "保存中…"
+  },
+  "messages": {
+    "saved": "约束条件保存成功。",
+    "loadFailed": "加载约束条件失败。",
+    "saveFailed": "保存约束条件失败。",
+    "generateStartFailed": "启动生成失败。",
+    "generatedSuccess": "课程表生成成功。",
+    "generatedPartial": "课程表部分生成 — 部分课程未排入。请检查冲突。",
+    "generatedFailed": "生成失败。请检查约束条件后重试。",
+    "noConstraintId": "服务器未返回约束标识符。",
+    "previewFailed": "加载预览失败。",
+    "conflictsFailed": "加载冲突失败。",
+    "publishedCount": "{count, plural, other {成功发布 # 个课次。}}",
+    "publishFailed": "发布失败。",
+    "cancelled": "已取消生成的课程表。",
+    "cancelFailed": "取消失败。"
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   listIncomes,
   createIncome,
@@ -32,6 +33,7 @@ const clean = (obj) => {
 };
 
 const useIncomes = (campusId) => {
+  const { t } = useTranslation('finance');
   const [incomes,    setIncomes]    = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 1 });
   const [filters,    setFilters]    = useState(DEFAULT_FILTERS);
@@ -46,12 +48,12 @@ const useIncomes = (campusId) => {
       setIncomes(Array.isArray(res.data?.data) ? res.data.data : []);
       if (res.data?.pagination) setPagination((p) => ({ ...p, ...res.data.pagination }));
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load incomes.');
+      setError(err.response?.data?.message || t('errors.loadIncomes'));
       setIncomes([]);
     } finally {
       setLoading(false);
     }
-  }, [filters, campusId]);
+  }, [filters, campusId, t]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

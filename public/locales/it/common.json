@@ -1,0 +1,13 @@
+{
+  "notifPref": {
+    "title": "Preferenze di notifica",
+    "inapp": "In-app",
+    "inappDesc": "Notifiche sempre attive nella tua posta in arrivo",
+    "email": "E-mail",
+    "emailDesc": "Ricevi notifiche via e-mail",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Ricevi messaggi su WhatsApp (mobile)",
+    "save": "Salva preferenze",
+    "saving": "Salvataggio…"
+  }
+}

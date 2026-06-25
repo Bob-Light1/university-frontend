@@ -5,6 +5,7 @@
  */
 
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, FormControl, InputLabel,
@@ -14,15 +15,18 @@ import { ReceiptLong } from '@mui/icons-material';
 
 import { incomeSchema } from '../../../yupSchema/financeSchemas';
 import { CurrencySelect, PaymentMethodSelect, StudentPicker } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import FinanceAttachments from './FinanceAttachments';
 import {
-  INCOME_SOURCES, INCOME_STATUSES, INCOME_STATUS_LABEL, DEFAULT_CURRENCY,
+  INCOME_SOURCES, INCOME_STATUSES, DEFAULT_CURRENCY,
 } from './financeConstants';
 
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 const toDateInput = (d) => (d ? new Date(d).toISOString().slice(0, 10) : '');
 
 const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
+  const { t } = useTranslation('finance');
+  const { incomeStatus: incomeStatusLabel } = useFinanceLabels();
   const editing = Boolean(income?._id);
 
   const formik = useFormik({
@@ -74,7 +78,7 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
         await onSubmit(payload);
         onClose();
       } catch (err) {
-        setStatus(err.response?.data?.message || 'Failed to save income.');
+        setStatus(err.response?.data?.message || t('incomeForm.saveError'));
       } finally {
         setSubmitting(false);
       }
@@ -93,7 +97,7 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <ReceiptLong sx={{ color: 'success.main' }} />
-          <Typography variant="h6" fontWeight={700}>{editing ? 'Edit Income' : 'New Income'}</Typography>
+          <Typography variant="h6" fontWeight={700}>{editing ? t('incomeForm.titleEdit') : t('incomeForm.titleNew')}</Typography>
         </Stack>
       </DialogTitle>
 
@@ -104,7 +108,7 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
           )}
 
           <TextField
-            fullWidth name="title" label="Title *"
+            fullWidth name="title" label={`${t('fields.title')} *`}
             value={formik.values.title}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('title'))} helperText={fieldError('title')}
@@ -113,25 +117,25 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <FormControl fullWidth error={Boolean(fieldError('source'))}>
-              <InputLabel>Source *</InputLabel>
-              <Select name="source" label="Source *" value={formik.values.source} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
-                {INCOME_SOURCES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              <InputLabel>{`${t('fields.source')} *`}</InputLabel>
+              <Select name="source" label={`${t('fields.source')} *`} value={formik.values.source} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
+                {INCOME_SOURCES.map((s) => <MenuItem key={s} value={s}>{t(`enums.incomeSource.${s}`)}</MenuItem>)}
               </Select>
               {fieldError('source') && (
                 <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>{formik.errors.source}</Typography>
               )}
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select name="status" label="Status" value={formik.values.status} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
-                {INCOME_STATUSES.map((s) => <MenuItem key={s} value={s}>{INCOME_STATUS_LABEL[s]}</MenuItem>)}
+              <InputLabel>{t('fields.status')}</InputLabel>
+              <Select name="status" label={t('fields.status')} value={formik.values.status} onChange={formik.handleChange} sx={{ borderRadius: 2 }}>
+                {INCOME_STATUSES.map((s) => <MenuItem key={s} value={s}>{incomeStatusLabel[s]}</MenuItem>)}
               </Select>
             </FormControl>
           </Stack>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="amount" label="Amount *" type="number"
+              fullWidth name="amount" label={`${t('fields.amount')} *`} type="number"
               value={formik.values.amount}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('amount'))} helperText={fieldError('amount')}
@@ -142,13 +146,13 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <Box sx={{ width: '100%' }}>
-              <PaymentMethodSelect fullWidth name="paymentMethod" label="Payment method *" value={formik.values.paymentMethod} onChange={formik.handleChange} />
+              <PaymentMethodSelect fullWidth name="paymentMethod" label={`${t('fields.paymentMethod')} *`} value={formik.values.paymentMethod} onChange={formik.handleChange} />
               {fieldError('paymentMethod') && (
                 <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>{formik.errors.paymentMethod}</Typography>
               )}
             </Box>
             <TextField
-              fullWidth name="incomeDate" label="Income date *" type="date"
+              fullWidth name="incomeDate" label={`${t('fields.date')} *`} type="date"
               value={formik.values.incomeDate}
               onChange={formik.handleChange}
               slotProps={{ inputLabel: { shrink: true } }}
@@ -160,12 +164,12 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
           <StudentPicker
             value={formik.values.student}
             campusId={campusId}
-            label="Student (optional)"
+            label={t('incomeForm.studentOptional')}
             onChange={(v) => formik.setFieldValue('student', v)}
           />
 
           <TextField
-            fullWidth name="reference" label="Reference"
+            fullWidth name="reference" label={t('fields.reference')}
             value={formik.values.reference}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('reference'))} helperText={fieldError('reference')}
@@ -179,7 +183,7 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
           />
 
           <TextField
-            fullWidth name="notes" label="Notes" multiline minRows={2}
+            fullWidth name="notes" label={t('fields.notes')} multiline minRows={2}
             value={formik.values.notes}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('notes'))} helperText={fieldError('notes')}
@@ -189,14 +193,14 @@ const IncomeFormDialog = ({ open, income, campusId, onClose, onSubmit }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>{t('actions.cancel')}</Button>
         <Button
           variant="contained" color="success" disabled={formik.isSubmitting}
           onClick={() => formik.handleSubmit()}
           startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <ReceiptLong />}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {formik.isSubmitting ? 'Saving…' : editing ? 'Save Changes' : 'Create Income'}
+          {formik.isSubmitting ? t('actions.saving') : editing ? t('incomeForm.submitEdit') : t('incomeForm.submitNew')}
         </Button>
       </DialogActions>
     </Dialog>

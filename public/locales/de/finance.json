@@ -1,49 +1,285 @@
 {
-  "title": "Finance",
-  "fee": {
-    "title": "Tuition fees",
-    "create": "Create fee",
-    "amount": "Amount",
-    "currency": "Currency",
-    "dueDate": "Due date",
-    "instalment": "Instalment",
-    "level": "Level",
-    "class": "Class"
+  "title": "Finanzmodul",
+  "tabs": {
+    "overview": "Übersicht",
+    "fees": "Gebühren",
+    "incomes": "Einnahmen",
+    "expenses": "Ausgaben"
+  },
+  "actions": {
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "reset": "Zurücksetzen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "add": "Hinzufügen",
+    "saving": "Wird gespeichert…",
+    "viewDetail": "Details anzeigen",
+    "ledger": "Kontobuch",
+    "recordPayment": "Zahlung erfassen",
+    "sendReminder": "Erinnerung senden",
+    "categories": "Kategorien"
+  },
+  "fields": {
+    "student": "Studierende:r",
+    "label": "Bezeichnung",
+    "title": "Titel",
+    "amount": "Betrag",
+    "amountDue": "Fälliger Betrag",
+    "currency": "Währung",
+    "method": "Methode",
+    "paymentMethod": "Zahlungsmethode",
+    "status": "Status",
+    "source": "Quelle",
+    "category": "Kategorie",
+    "date": "Datum",
+    "dueDate": "Fälligkeitsdatum",
+    "academicYear": "Studienjahr",
+    "reference": "Referenz",
+    "notes": "Notizen",
+    "description": "Beschreibung",
+    "balance": "Saldo",
+    "due": "Fällig",
+    "paid": "Bezahlt",
+    "createdAt": "Erstellt",
+    "matricule": "Matrikelnummer",
+    "year": "Jahr",
+    "month": "Monat",
+    "period": "Zeitraum",
+    "recurring": "Wiederkehrend",
+    "actions": "Aktionen"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "z. B. Studiengebühren 2025-2026"
+  },
+  "filters": {
+    "allYears": "Alle Jahre",
+    "allMonths": "Alle Monate",
+    "allStatuses": "Alle Status",
+    "allSources": "Alle Quellen",
+    "allCategories": "Alle Kategorien"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "Ausstehend",
+      "partial": "Teilweise",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig",
+      "cancelled": "Storniert"
+    },
+    "expenseStatus": {
+      "pending": "Ausstehend",
+      "approved": "Genehmigt",
+      "paid": "Bezahlt",
+      "rejected": "Abgelehnt"
+    },
+    "incomeStatus": {
+      "pending": "Ausstehend",
+      "received": "Erhalten",
+      "cancelled": "Storniert"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Einschreibegebühren",
+      "Tuition": "Studiengebühren",
+      "Course Payment": "Kurszahlung",
+      "Exam": "Prüfung",
+      "Certification": "Zertifizierung",
+      "Grant": "Zuschuss",
+      "Donation": "Spende",
+      "Partnership": "Partnerschaft",
+      "Other": "Sonstiges"
+    },
+    "recurringPeriod": {
+      "monthly": "Monatlich",
+      "quarterly": "Vierteljährlich",
+      "yearly": "Jährlich"
+    },
+    "paymentMethod": {
+      "Cash": "Bargeld",
+      "Mobile Money": "Mobile Money",
+      "Bank Transfer": "Banküberweisung",
+      "Cheque": "Scheck"
+    },
+    "months": {
+      "1": "Januar",
+      "2": "Februar",
+      "3": "März",
+      "4": "April",
+      "5": "Mai",
+      "6": "Juni",
+      "7": "Juli",
+      "8": "August",
+      "9": "September",
+      "10": "Oktober",
+      "11": "November",
+      "12": "Dezember"
+    }
+  },
+  "overview": {
+    "title": "Finanzübersicht",
+    "subtitle": "Einnahmen gegenüber Ausgaben und offene Studierendenschulden für diesen Campus.",
+    "kpi": {
+      "incomeReceived": "Erhaltene Einnahmen",
+      "expensesPaid": "Bezahlte Ausgaben",
+      "netBalance": "Nettosaldo",
+      "overdueDebts": "Überfällige Schulden",
+      "records": "{count, plural, one {# Eintrag} other {# Einträge}}",
+      "surplus": "Überschuss",
+      "deficit": "Defizit",
+      "studentsPastDue": "Studierende im Zahlungsverzug"
+    },
+    "shortcuts": {
+      "newFee": "Neue Gebühr",
+      "newPayment": "Neue Zahlung",
+      "newIncome": "Neue Einnahme",
+      "newExpense": "Neue Ausgabe"
+    },
+    "chart": {
+      "title": "Monatliche Einnahmen und Ausgaben — {year}",
+      "income": "Einnahmen",
+      "expense": "Ausgaben"
+    }
+  },
+  "fees": {
+    "title": "Studierendengebühren",
+    "subtitle": "Schulden verfolgen, Zahlungen erfassen und Saldoerinnerungen senden.",
+    "new": "Neue Gebühr",
+    "empty": "Keine Gebühren gefunden. Erstellen Sie eine, um eine Studierendenschuld zu verfolgen.",
+    "confirmDelete": "Gebühr „{label}“ löschen? Dies ist eine logische Löschung.",
+    "toast": {
+      "created": "Gebühr erstellt.",
+      "paymentRecorded": "Zahlung erfasst.",
+      "reminderSent": "Erinnerung an die:den Studierende:n gesendet.",
+      "reminderFailed": "Erinnerung konnte nicht gesendet werden.",
+      "deleted": "Gebühr gelöscht.",
+      "deleteFailed": "Gebühr konnte nicht gelöscht werden."
+    }
+  },
+  "feeDetail": {
+    "title": "Gebührendetails",
+    "loadError": "Gebühr konnte nicht geladen werden.",
+    "payments": "Zahlungen ({count})",
+    "noPayments": "Noch keine Zahlung erfasst.",
+    "attachments": "Anhänge",
+    "document": "Dokument {index}"
+  },
+  "feeForm": {
+    "title": "Neue Gebühr",
+    "creating": "Wird erstellt…",
+    "submit": "Gebühr erstellen"
   },
   "payment": {
-    "title": "Payments",
-    "record": "Record payment",
-    "method": {
-      "title": "Payment method",
-      "cash": "Cash",
-      "mtnMomo": "MTN Mobile Money",
-      "orangeMoney": "Orange Money",
-      "bankTransfer": "Bank transfer"
+    "title": "Zahlung erfassen",
+    "remainingBalance": "Restsaldo",
+    "referenceLabel": "Referenz / Beleg-Nr.",
+    "paymentDate": "Zahlungsdatum",
+    "recording": "Wird erfasst…",
+    "submit": "Zahlung erfassen",
+    "failed": "Zahlung fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "incomes": {
+    "title": "Einnahmen",
+    "subtitle": "Erfassen und verfolgen Sie alle Einnahmen der Einrichtung.",
+    "new": "Neue Einnahme",
+    "empty": "Keine Einnahmen gefunden.",
+    "confirmDelete": "Einnahme „{title}“ löschen?",
+    "toast": {
+      "created": "Einnahme erstellt.",
+      "updated": "Einnahme aktualisiert.",
+      "deleted": "Einnahme gelöscht.",
+      "deleteFailed": "Einnahme konnte nicht gelöscht werden."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Neue Einnahme",
+    "titleEdit": "Einnahme bearbeiten",
+    "studentOptional": "Studierende:r (optional)",
+    "saveError": "Einnahme konnte nicht gespeichert werden.",
+    "submitNew": "Einnahme erstellen",
+    "submitEdit": "Änderungen speichern"
+  },
+  "expenses": {
+    "title": "Ausgaben",
+    "subtitle": "Erfassen Sie Abflüsse und leiten Sie sie durch den Genehmigungsprozess.",
+    "new": "Neue Ausgabe",
+    "empty": "Keine Ausgaben gefunden.",
+    "recurringTip": "Wiederkehrend ({period})",
+    "confirmDelete": "Ausgabe „{title}“ löschen?",
+    "workflow": {
+      "approve": "Genehmigen",
+      "markPaid": "Als bezahlt markieren",
+      "reject": "Ablehnen"
     },
-    "status": {
-      "paid": "Paid",
-      "partial": "Partial",
-      "unpaid": "Unpaid",
-      "overdue": "Overdue"
+    "toast": {
+      "created": "Ausgabe erstellt.",
+      "updated": "Ausgabe aktualisiert.",
+      "approved": "Ausgabe genehmigt.",
+      "rejected": "Ausgabe abgelehnt.",
+      "paid": "Ausgabe bezahlt.",
+      "transitionError": "Aktion für den aktuellen Status nicht zulässig.",
+      "deleted": "Ausgabe gelöscht.",
+      "deleteFailed": "Ausgabe konnte nicht gelöscht werden."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Neue Ausgabe",
+    "titleEdit": "Ausgabe bearbeiten",
+    "noCategories": "Keine Kategorien — erstellen Sie zuerst eine",
+    "lockedError": "Diese Ausgabe ist bezahlt und gesperrt — sie kann nicht mehr bearbeitet werden.",
+    "saveError": "Ausgabe konnte nicht gespeichert werden.",
+    "submitNew": "Ausgabe erstellen",
+    "submitEdit": "Änderungen speichern"
+  },
+  "categories": {
+    "title": "Ausgabenkategorien",
+    "newCategory": "Neue Kategorie",
+    "empty": "Noch keine Kategorien.",
+    "createError": "Kategorie konnte nicht erstellt werden.",
+    "deleteError": "Löschen nicht möglich: Die Kategorie wird möglicherweise noch verwendet."
+  },
+  "ledger": {
+    "title": "Kontobuch der:des Studierenden",
+    "totalDue": "Gesamt fällig",
+    "totalPaid": "Gesamt bezahlt",
+    "balance": "Saldo",
+    "debts": "Schulden ({count})",
+    "noDebts": "Keine Schulden erfasst.",
+    "payments": "Zahlungen ({count})",
+    "noPayments": "Keine Zahlungen erfasst.",
+    "dueAndPaid": "Fällig {due} · Bezahlt {paid}"
+  },
+  "student": {
+    "title": "Meine Finanzen",
+    "subtitle": "Ihre Gebühren, Zahlungen und der offene Saldo.",
+    "kpi": {
+      "totalDue": "Gesamt fällig",
+      "totalPaid": "Gesamt bezahlt",
+      "outstandingBalance": "Offener Saldo",
+      "debtsCount": "{count, plural, one {# Schuld} other {# Schulden}}",
+      "paymentsCount": "{count, plural, one {# Zahlung} other {# Zahlungen}}",
+      "settle": "Bitte begleichen Sie Ihren Saldo",
+      "allSettled": "Alles beglichen"
     },
-    "receipt": "Payment receipt",
-    "reconcile": "Reconcile payment"
+    "warning": "Sie haben einen offenen Saldo von {amount}. Bitte wenden Sie sich an das Finanzbüro Ihres Campus, um ihn zu begleichen.",
+    "myDebts": "Meine Schulden ({count})",
+    "noFees": "Keine Gebühren vorhanden.",
+    "myPayments": "Meine Zahlungen ({count})",
+    "noPayments": "Noch keine Zahlungen erfasst."
   },
-  "scholarship": {
-    "title": "Scholarships",
-    "create": "Create scholarship",
-    "type": "Type",
-    "amount": "Amount",
-    "beneficiary": "Beneficiary"
+  "attachments": {
+    "attach": "Dateien anhängen",
+    "uploading": "Wird hochgeladen…",
+    "hint": "Belege / Rechnungen — JPG, PNG, WEBP, PDF · max. 5 MB",
+    "invalidType": "Nur JPG-, PNG-, WEBP- oder PDF-Dateien sind zulässig.",
+    "tooLarge": "Jede Datei darf höchstens 5 MB groß sein.",
+    "uploadFailed": "Upload fehlgeschlagen. Erneut versuchen."
   },
-  "dashboard": {
-    "title": "Financial dashboard",
-    "monthlyRevenue": "Monthly revenue",
-    "forecast": "Forecast",
-    "latePayments": "Late payments"
-  },
-  "report": {
-    "generate": "Generate report",
-    "export": "Export to Excel"
+  "errors": {
+    "loadFees": "Gebühren konnten nicht geladen werden.",
+    "loadIncomes": "Einnahmen konnten nicht geladen werden.",
+    "loadExpenses": "Ausgaben konnten nicht geladen werden.",
+    "loadLedger": "Kontobuch konnte nicht geladen werden.",
+    "loadSummary": "Finanzübersicht konnte nicht geladen werden."
   }
 }

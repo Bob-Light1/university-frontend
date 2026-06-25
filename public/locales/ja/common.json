@@ -1,0 +1,13 @@
+{
+  "notifPref": {
+    "title": "通知設定",
+    "inapp": "アプリ内",
+    "inappDesc": "受信トレイで常に有効な通知",
+    "email": "メール",
+    "emailDesc": "メールで通知を受け取る",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "WhatsApp（モバイル）でメッセージを受け取る",
+    "save": "設定を保存",
+    "saving": "保存中…"
+  }
+}

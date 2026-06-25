@@ -9,12 +9,14 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSummary } from '../services/financeService';
 import { MONTHS } from '../campus/components/finance/financeConstants';
 
 const EMPTY = { income: { total: 0, count: 0 }, expense: { total: 0, count: 0 }, net: 0 };
 
 const useFinanceSummary = (campusId, initialYear = new Date().getFullYear()) => {
+  const { t } = useTranslation('finance');
   const [period,         setPeriod]         = useState({ year: initialYear, month: '' });
   const [summary,        setSummary]        = useState(EMPTY);
   const [monthly,        setMonthly]        = useState([]);
@@ -37,12 +39,12 @@ const useFinanceSummary = (campusId, initialYear = new Date().getFullYear()) => 
       const res = await getSummary(baseParams());
       setSummary(res.data?.data ?? EMPTY);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load the financial summary.');
+      setError(err.response?.data?.message || t('errors.loadSummary'));
       setSummary(EMPTY);
     } finally {
       setLoading(false);
     }
-  }, [baseParams]);
+  }, [baseParams, t]);
 
   useEffect(() => { fetchSummary(); }, [fetchSummary]);
 
@@ -60,7 +62,8 @@ const useFinanceSummary = (campusId, initialYear = new Date().getFullYear()) => 
       );
       setMonthly(
         results.map((r, i) => ({
-          month:   MONTHS[i].label.slice(0, 3),
+          // Numeric month (1-12); the chart translates it at render time.
+          month:   MONTHS[i].value,
           income:  r.income?.total ?? 0,
           expense: r.expense?.total ?? 0,
           net:     r.net ?? 0,

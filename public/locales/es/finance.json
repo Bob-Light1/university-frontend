@@ -1,49 +1,285 @@
 {
-  "title": "Finance",
-  "fee": {
-    "title": "Tuition fees",
-    "create": "Create fee",
-    "amount": "Amount",
-    "currency": "Currency",
-    "dueDate": "Due date",
-    "instalment": "Instalment",
-    "level": "Level",
-    "class": "Class"
+  "title": "Módulo de Finanzas",
+  "tabs": {
+    "overview": "Resumen",
+    "fees": "Cuotas",
+    "incomes": "Ingresos",
+    "expenses": "Gastos"
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "reset": "Restablecer",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Añadir",
+    "saving": "Guardando…",
+    "viewDetail": "Ver detalle",
+    "ledger": "Libro mayor",
+    "recordPayment": "Registrar pago",
+    "sendReminder": "Enviar recordatorio",
+    "categories": "Categorías"
+  },
+  "fields": {
+    "student": "Estudiante",
+    "label": "Etiqueta",
+    "title": "Título",
+    "amount": "Importe",
+    "amountDue": "Importe adeudado",
+    "currency": "Moneda",
+    "method": "Método",
+    "paymentMethod": "Método de pago",
+    "status": "Estado",
+    "source": "Origen",
+    "category": "Categoría",
+    "date": "Fecha",
+    "dueDate": "Fecha de vencimiento",
+    "academicYear": "Año académico",
+    "reference": "Referencia",
+    "notes": "Notas",
+    "description": "Descripción",
+    "balance": "Saldo",
+    "due": "Adeudado",
+    "paid": "Pagado",
+    "createdAt": "Creado",
+    "matricule": "Matrícula",
+    "year": "Año",
+    "month": "Mes",
+    "period": "Período",
+    "recurring": "Recurrente",
+    "actions": "Acciones"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "p. ej. Matrícula 2025-2026"
+  },
+  "filters": {
+    "allYears": "Todos los años",
+    "allMonths": "Todos los meses",
+    "allStatuses": "Todos los estados",
+    "allSources": "Todos los orígenes",
+    "allCategories": "Todas las categorías"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "Pendiente",
+      "partial": "Parcial",
+      "paid": "Pagado",
+      "overdue": "Vencido",
+      "cancelled": "Cancelado"
+    },
+    "expenseStatus": {
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "paid": "Pagado",
+      "rejected": "Rechazado"
+    },
+    "incomeStatus": {
+      "pending": "Pendiente",
+      "received": "Recibido",
+      "cancelled": "Cancelado"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Cuotas de inscripción",
+      "Tuition": "Matrícula",
+      "Course Payment": "Pago de curso",
+      "Exam": "Examen",
+      "Certification": "Certificación",
+      "Grant": "Subvención",
+      "Donation": "Donación",
+      "Partnership": "Asociación",
+      "Other": "Otro"
+    },
+    "recurringPeriod": {
+      "monthly": "Mensual",
+      "quarterly": "Trimestral",
+      "yearly": "Anual"
+    },
+    "paymentMethod": {
+      "Cash": "Efectivo",
+      "Mobile Money": "Dinero móvil",
+      "Bank Transfer": "Transferencia bancaria",
+      "Cheque": "Cheque"
+    },
+    "months": {
+      "1": "Enero",
+      "2": "Febrero",
+      "3": "Marzo",
+      "4": "Abril",
+      "5": "Mayo",
+      "6": "Junio",
+      "7": "Julio",
+      "8": "Agosto",
+      "9": "Septiembre",
+      "10": "Octubre",
+      "11": "Noviembre",
+      "12": "Diciembre"
+    }
+  },
+  "overview": {
+    "title": "Resumen financiero",
+    "subtitle": "Ingresos frente a gastos y deudas pendientes de los estudiantes de este campus.",
+    "kpi": {
+      "incomeReceived": "Ingresos recibidos",
+      "expensesPaid": "Gastos pagados",
+      "netBalance": "Saldo neto",
+      "overdueDebts": "Deudas vencidas",
+      "records": "{count, plural, one {# registro} other {# registros}}",
+      "surplus": "Superávit",
+      "deficit": "Déficit",
+      "studentsPastDue": "Estudiantes con pagos vencidos"
+    },
+    "shortcuts": {
+      "newFee": "Nueva cuota",
+      "newPayment": "Nuevo pago",
+      "newIncome": "Nuevo ingreso",
+      "newExpense": "Nuevo gasto"
+    },
+    "chart": {
+      "title": "Ingresos y gastos mensuales — {year}",
+      "income": "Ingresos",
+      "expense": "Gastos"
+    }
+  },
+  "fees": {
+    "title": "Cuotas de estudiantes",
+    "subtitle": "Haga seguimiento de deudas, registre pagos y envíe recordatorios de saldo.",
+    "new": "Nueva cuota",
+    "empty": "No se encontraron cuotas. Cree una para comenzar a seguir la deuda de un estudiante.",
+    "confirmDelete": "¿Eliminar la cuota «{label}»? Es una eliminación lógica.",
+    "toast": {
+      "created": "Cuota creada.",
+      "paymentRecorded": "Pago registrado.",
+      "reminderSent": "Recordatorio enviado al estudiante.",
+      "reminderFailed": "Error al enviar el recordatorio.",
+      "deleted": "Cuota eliminada.",
+      "deleteFailed": "Error al eliminar la cuota."
+    }
+  },
+  "feeDetail": {
+    "title": "Detalle de la cuota",
+    "loadError": "Error al cargar la cuota.",
+    "payments": "Pagos ({count})",
+    "noPayments": "Aún no hay pagos registrados.",
+    "attachments": "Adjuntos",
+    "document": "Documento {index}"
+  },
+  "feeForm": {
+    "title": "Nueva cuota",
+    "creating": "Creando…",
+    "submit": "Crear cuota"
   },
   "payment": {
-    "title": "Payments",
-    "record": "Record payment",
-    "method": {
-      "title": "Payment method",
-      "cash": "Cash",
-      "mtnMomo": "MTN Mobile Money",
-      "orangeMoney": "Orange Money",
-      "bankTransfer": "Bank transfer"
+    "title": "Registrar pago",
+    "remainingBalance": "saldo restante",
+    "referenceLabel": "Referencia / n.º de recibo",
+    "paymentDate": "Fecha de pago",
+    "recording": "Registrando…",
+    "submit": "Registrar pago",
+    "failed": "Error en el pago. Vuelva a intentarlo."
+  },
+  "incomes": {
+    "title": "Ingresos",
+    "subtitle": "Registre y haga seguimiento de todos los ingresos de la institución.",
+    "new": "Nuevo ingreso",
+    "empty": "No se encontraron ingresos.",
+    "confirmDelete": "¿Eliminar el ingreso «{title}»?",
+    "toast": {
+      "created": "Ingreso creado.",
+      "updated": "Ingreso actualizado.",
+      "deleted": "Ingreso eliminado.",
+      "deleteFailed": "Error al eliminar el ingreso."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Nuevo ingreso",
+    "titleEdit": "Editar ingreso",
+    "studentOptional": "Estudiante (opcional)",
+    "saveError": "Error al guardar el ingreso.",
+    "submitNew": "Crear ingreso",
+    "submitEdit": "Guardar cambios"
+  },
+  "expenses": {
+    "title": "Gastos",
+    "subtitle": "Registre las salidas y hágalas pasar por el flujo de aprobación.",
+    "new": "Nuevo gasto",
+    "empty": "No se encontraron gastos.",
+    "recurringTip": "Recurrente ({period})",
+    "confirmDelete": "¿Eliminar el gasto «{title}»?",
+    "workflow": {
+      "approve": "Aprobar",
+      "markPaid": "Marcar pagado",
+      "reject": "Rechazar"
     },
-    "status": {
-      "paid": "Paid",
-      "partial": "Partial",
-      "unpaid": "Unpaid",
-      "overdue": "Overdue"
+    "toast": {
+      "created": "Gasto creado.",
+      "updated": "Gasto actualizado.",
+      "approved": "Gasto aprobado.",
+      "rejected": "Gasto rechazado.",
+      "paid": "Gasto pagado.",
+      "transitionError": "Acción no permitida para el estado actual.",
+      "deleted": "Gasto eliminado.",
+      "deleteFailed": "Error al eliminar el gasto."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Nuevo gasto",
+    "titleEdit": "Editar gasto",
+    "noCategories": "Sin categorías — cree una primero",
+    "lockedError": "Este gasto está pagado y bloqueado — ya no se puede editar.",
+    "saveError": "Error al guardar el gasto.",
+    "submitNew": "Crear gasto",
+    "submitEdit": "Guardar cambios"
+  },
+  "categories": {
+    "title": "Categorías de gastos",
+    "newCategory": "Nueva categoría",
+    "empty": "Aún no hay categorías.",
+    "createError": "Error al crear la categoría.",
+    "deleteError": "No se puede eliminar: la categoría puede seguir en uso."
+  },
+  "ledger": {
+    "title": "Libro mayor del estudiante",
+    "totalDue": "Total adeudado",
+    "totalPaid": "Total pagado",
+    "balance": "Saldo",
+    "debts": "Deudas ({count})",
+    "noDebts": "No hay deudas registradas.",
+    "payments": "Pagos ({count})",
+    "noPayments": "No hay pagos registrados.",
+    "dueAndPaid": "Adeudado {due} · Pagado {paid}"
+  },
+  "student": {
+    "title": "Mis finanzas",
+    "subtitle": "Sus cuotas, pagos y saldo pendiente.",
+    "kpi": {
+      "totalDue": "Total adeudado",
+      "totalPaid": "Total pagado",
+      "outstandingBalance": "Saldo pendiente",
+      "debtsCount": "{count, plural, one {# deuda} other {# deudas}}",
+      "paymentsCount": "{count, plural, one {# pago} other {# pagos}}",
+      "settle": "Por favor, liquide su saldo",
+      "allSettled": "Todo saldado"
     },
-    "receipt": "Payment receipt",
-    "reconcile": "Reconcile payment"
+    "warning": "Tiene un saldo pendiente de {amount}. Póngase en contacto con la oficina de finanzas de su campus para liquidarlo.",
+    "myDebts": "Mis deudas ({count})",
+    "noFees": "No hay cuotas registradas.",
+    "myPayments": "Mis pagos ({count})",
+    "noPayments": "Aún no hay pagos registrados."
   },
-  "scholarship": {
-    "title": "Scholarships",
-    "create": "Create scholarship",
-    "type": "Type",
-    "amount": "Amount",
-    "beneficiary": "Beneficiary"
+  "attachments": {
+    "attach": "Adjuntar archivos",
+    "uploading": "Subiendo…",
+    "hint": "Recibos / facturas — JPG, PNG, WEBP, PDF · máx. 5 MB",
+    "invalidType": "Solo se permiten archivos JPG, PNG, WEBP o PDF.",
+    "tooLarge": "Cada archivo debe pesar 5 MB o menos.",
+    "uploadFailed": "Error al subir. Inténtelo de nuevo."
   },
-  "dashboard": {
-    "title": "Financial dashboard",
-    "monthlyRevenue": "Monthly revenue",
-    "forecast": "Forecast",
-    "latePayments": "Late payments"
-  },
-  "report": {
-    "generate": "Generate report",
-    "export": "Export to Excel"
+  "errors": {
+    "loadFees": "Error al cargar las cuotas.",
+    "loadIncomes": "Error al cargar los ingresos.",
+    "loadExpenses": "Error al cargar los gastos.",
+    "loadLedger": "Error al cargar el libro mayor.",
+    "loadSummary": "Error al cargar el resumen financiero."
   }
 }

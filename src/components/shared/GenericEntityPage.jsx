@@ -674,6 +674,7 @@ const GenericEntityPage = ({
             onEdit={() => { setIsDrawerOpen(false); handleOpenFormModal(viewEntity); }}
             onArchive={canArchiveRestore ? () => { setIsDrawerOpen(false); handleArchive(viewEntity._id); } : null}
             onRestore={canArchiveRestore ? () => { setIsDrawerOpen(false); handleRestore(viewEntity._id); } : null}
+            onRefresh={() => { fetchEntities(); fetchKPIs(); }}
           />
         )}
       </Drawer>

@@ -6,6 +6,7 @@
  * Read-only. Opened from a fee row in FeesManager.
  */
 
+import { useTranslation } from 'react-i18next';
 import {
   Drawer, Box, Stack, Typography, IconButton, Divider, Chip,
   Table, TableHead, TableRow, TableCell, TableBody, Paper,
@@ -15,8 +16,9 @@ import { Close, AccountBalanceWallet } from '@mui/icons-material';
 
 import useStudentLedger from '../../../hooks/useStudentLedger';
 import { StatusChip } from './financeShared';
+import { useFinanceLabels } from './useFinanceLabels';
 import {
-  FEE_STATUS_LABEL, FEE_STATUS_COLOR, formatMoney, formatDate,
+  FEE_STATUS_COLOR, formatMoney, formatDate,
 } from './financeConstants';
 
 const TotalCard = ({ label, value, color }) => (
@@ -27,6 +29,8 @@ const TotalCard = ({ label, value, color }) => (
 );
 
 const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }) => {
+  const { t } = useTranslation('finance');
+  const { feeStatus: feeStatusLabel } = useFinanceLabels();
   const { ledger, loading, error } = useStudentLedger({ studentId, campusId });
   const { fees = [], payments = [], totals = {} } = ledger;
 
@@ -43,7 +47,7 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
           <Stack direction="row" alignItems="center" spacing={1.5}>
             <AccountBalanceWallet color="primary" />
             <Box>
-              <Typography variant="h6" fontWeight={700}>Student Ledger</Typography>
+              <Typography variant="h6" fontWeight={700}>{t('ledger.title')}</Typography>
               {studentName && (
                 <Typography variant="body2" color="text.secondary">{studentName}</Typography>
               )}
@@ -62,25 +66,25 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
           <Stack spacing={3}>
             {/* Totals */}
             <Stack direction="row" spacing={1.5}>
-              <TotalCard label="Total due"  value={formatMoney(totals.totalDue ?? 0)}  color="text.primary" />
-              <TotalCard label="Total paid" value={formatMoney(totals.totalPaid ?? 0)} color="success.main" />
-              <TotalCard label="Balance"    value={formatMoney(totals.balance ?? 0)}   color={(totals.balance ?? 0) > 0 ? 'error.main' : 'success.main'} />
+              <TotalCard label={t('ledger.totalDue')}  value={formatMoney(totals.totalDue ?? 0)}  color="text.primary" />
+              <TotalCard label={t('ledger.totalPaid')} value={formatMoney(totals.totalPaid ?? 0)} color="success.main" />
+              <TotalCard label={t('ledger.balance')}    value={formatMoney(totals.balance ?? 0)}   color={(totals.balance ?? 0) > 0 ? 'error.main' : 'success.main'} />
             </Stack>
 
             {/* Debts */}
             <Box>
               <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Debts ({fees.length})
+                {t('ledger.debts', { count: fees.length })}
               </Typography>
               {fees.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">No debts recorded.</Typography>
+                <Typography variant="body2" color="text.secondary">{t('ledger.noDebts')}</Typography>
               ) : (
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 700 }}>Label</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }} align="right">Balance</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.label')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.balance')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.status')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -89,14 +93,14 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
                         <TableCell>
                           <Typography variant="body2">{f.label}</Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Due {formatMoney(f.amountDue, f.currency)} · Paid {formatMoney(f.amountPaid, f.currency)}
+                            {t('ledger.dueAndPaid', { due: formatMoney(f.amountDue, f.currency), paid: formatMoney(f.amountPaid, f.currency) })}
                           </Typography>
                         </TableCell>
                         <TableCell align="right">
                           {formatMoney(Math.max(0, (f.amountDue ?? 0) - (f.amountPaid ?? 0)), f.currency)}
                         </TableCell>
                         <TableCell>
-                          <StatusChip status={f.status} labelMap={FEE_STATUS_LABEL} colorMap={FEE_STATUS_COLOR} />
+                          <StatusChip status={f.status} labelMap={feeStatusLabel} colorMap={FEE_STATUS_COLOR} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -110,17 +114,17 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
             {/* Payments */}
             <Box>
               <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Payments ({payments.length})
+                {t('ledger.payments', { count: payments.length })}
               </Typography>
               {payments.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">No payments recorded.</Typography>
+                <Typography variant="body2" color="text.secondary">{t('ledger.noPayments')}</Typography>
               ) : (
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }} align="right">Amount</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>Method</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -128,7 +132,7 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
                       <TableRow key={p._id} hover>
                         <TableCell>{formatDate(p.paidAt)}</TableCell>
                         <TableCell align="right">{formatMoney(p.amount, p.currency)}</TableCell>
-                        <TableCell><Chip size="small" variant="outlined" label={p.method} /></TableCell>
+                        <TableCell><Chip size="small" variant="outlined" label={p.method ? t(`enums.paymentMethod.${p.method}`) : '—'} /></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

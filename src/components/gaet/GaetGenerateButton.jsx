@@ -12,107 +12,123 @@
  */
 
 import {
-  Stack, Button, CircularProgress, Tooltip, Alert, Typography,
+  Stack, Button, CircularProgress, Tooltip, Typography,
 } from '@mui/material';
 import {
   PlayArrow, Refresh, CloudUpload, Cancel, CheckCircle, ErrorOutline,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 // ─── STATUS ACTIONS ──────────────────────────────────────────────────────────
 
-const GenerateButton = ({ onGenerate, disabled }) => (
-  <Button
-    variant="contained"
-    color="primary"
-    startIcon={<PlayArrow />}
-    onClick={onGenerate}
-    disabled={disabled}
-    sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3 }}
-  >
-    Generate Timetable
-  </Button>
-);
-
-const GeneratingState = () => (
-  <Button
-    variant="contained"
-    color="info"
-    disabled
-    startIcon={<CircularProgress size={16} color="inherit" />}
-    sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3, minWidth: 200 }}
-  >
-    Generating…
-  </Button>
-);
-
-const GeneratedActions = ({ status, onPublish, onRegenerate, onCancel, publishing }) => (
-  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-    <Tooltip title="Discard and cancel the generated timetable">
-      <Button
-        variant="outlined"
-        color="error"
-        startIcon={<Cancel />}
-        onClick={onCancel}
-        sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2 }}
-      >
-        Cancel
-      </Button>
-    </Tooltip>
-    <Tooltip title="Run the algorithm again with current constraints">
-      <Button
-        variant="outlined"
-        color="primary"
-        startIcon={<Refresh />}
-        onClick={onRegenerate}
-        sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2 }}
-      >
-        Regenerate
-      </Button>
-    </Tooltip>
-    <Tooltip
-      title={
-        status === 'PARTIALLY_GENERATED'
-          ? 'Some courses were not placed — publish partial timetable'
-          : 'Publish to StudentSchedule and TeacherSchedule'
-      }
-    >
-      <Button
-        variant="contained"
-        color={status === 'PARTIALLY_GENERATED' ? 'warning' : 'success'}
-        startIcon={publishing ? <CircularProgress size={16} color="inherit" /> : <CloudUpload />}
-        onClick={onPublish}
-        disabled={publishing}
-        sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3 }}
-      >
-        {publishing ? 'Publishing…' : 'Publish Timetable'}
-      </Button>
-    </Tooltip>
-  </Stack>
-);
-
-const PublishedState = () => (
-  <Stack direction="row" alignItems="center" spacing={1}>
-    <CheckCircle color="success" />
-    <Typography variant="body2" fontWeight={700} color="success.main">
-      Timetable published successfully
-    </Typography>
-  </Stack>
-);
-
-const FailedActions = ({ onRetry }) => (
-  <Stack direction="row" spacing={1.5} alignItems="center">
-    <ErrorOutline color="error" />
+const GenerateButton = ({ onGenerate, disabled }) => {
+  const { t } = useTranslation('gaet');
+  return (
     <Button
       variant="contained"
-      color="error"
-      startIcon={<Refresh />}
-      onClick={onRetry}
-      sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2 }}
+      color="primary"
+      startIcon={<PlayArrow />}
+      onClick={onGenerate}
+      disabled={disabled}
+      sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3 }}
     >
-      Retry Generation
+      {t('actions.generate')}
     </Button>
-  </Stack>
-);
+  );
+};
+
+const GeneratingState = () => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Button
+      variant="contained"
+      color="info"
+      disabled
+      startIcon={<CircularProgress size={16} color="inherit" />}
+      sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3, minWidth: 200 }}
+    >
+      {t('actions.generating')}
+    </Button>
+  );
+};
+
+const GeneratedActions = ({ status, onPublish, onRegenerate, onCancel, publishing }) => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+      <Tooltip title={t('actions.tooltipCancel')}>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<Cancel />}
+          onClick={onCancel}
+          sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2 }}
+        >
+          {t('actions.cancel')}
+        </Button>
+      </Tooltip>
+      <Tooltip title={t('actions.tooltipRegenerate')}>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<Refresh />}
+          onClick={onRegenerate}
+          sx={{ fontWeight: 600, textTransform: 'none', borderRadius: 2 }}
+        >
+          {t('actions.regenerate')}
+        </Button>
+      </Tooltip>
+      <Tooltip
+        title={
+          status === 'PARTIALLY_GENERATED'
+            ? t('actions.tooltipPublishPartial')
+            : t('actions.tooltipPublishFull')
+        }
+      >
+        <Button
+          variant="contained"
+          color={status === 'PARTIALLY_GENERATED' ? 'warning' : 'success'}
+          startIcon={publishing ? <CircularProgress size={16} color="inherit" /> : <CloudUpload />}
+          onClick={onPublish}
+          disabled={publishing}
+          sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2, px: 3 }}
+        >
+          {publishing ? t('actions.publishing') : t('actions.publish')}
+        </Button>
+      </Tooltip>
+    </Stack>
+  );
+};
+
+const PublishedState = () => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <CheckCircle color="success" />
+      <Typography variant="body2" fontWeight={700} color="success.main">
+        {t('actions.published')}
+      </Typography>
+    </Stack>
+  );
+};
+
+const FailedActions = ({ onRetry }) => {
+  const { t } = useTranslation('gaet');
+  return (
+    <Stack direction="row" spacing={1.5} alignItems="center">
+      <ErrorOutline color="error" />
+      <Button
+        variant="contained"
+        color="error"
+        startIcon={<Refresh />}
+        onClick={onRetry}
+        sx={{ fontWeight: 700, textTransform: 'none', borderRadius: 2 }}
+      >
+        {t('actions.retry')}
+      </Button>
+    </Stack>
+  );
+};
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 

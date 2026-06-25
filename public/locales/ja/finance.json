@@ -1,0 +1,285 @@
+{
+  "title": "財務モジュール",
+  "tabs": {
+    "overview": "概要",
+    "fees": "学費",
+    "incomes": "収入",
+    "expenses": "支出"
+  },
+  "actions": {
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "reset": "リセット",
+    "edit": "編集",
+    "delete": "削除",
+    "add": "追加",
+    "saving": "保存中…",
+    "viewDetail": "詳細を表示",
+    "ledger": "元帳",
+    "recordPayment": "支払いを記録",
+    "sendReminder": "リマインダーを送信",
+    "categories": "カテゴリ"
+  },
+  "fields": {
+    "student": "学生",
+    "label": "ラベル",
+    "title": "タイトル",
+    "amount": "金額",
+    "amountDue": "請求額",
+    "currency": "通貨",
+    "method": "方法",
+    "paymentMethod": "支払い方法",
+    "status": "ステータス",
+    "source": "ソース",
+    "category": "カテゴリ",
+    "date": "日付",
+    "dueDate": "支払期日",
+    "academicYear": "学年度",
+    "reference": "参照番号",
+    "notes": "メモ",
+    "description": "説明",
+    "balance": "残高",
+    "due": "請求",
+    "paid": "支払済み",
+    "createdAt": "作成日",
+    "matricule": "学籍番号",
+    "year": "年",
+    "month": "月",
+    "period": "期間",
+    "recurring": "定期",
+    "actions": "操作"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "例: 授業料 2025-2026"
+  },
+  "filters": {
+    "allYears": "すべての年",
+    "allMonths": "すべての月",
+    "allStatuses": "すべてのステータス",
+    "allSources": "すべてのソース",
+    "allCategories": "すべてのカテゴリ"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "保留中",
+      "partial": "一部支払い",
+      "paid": "支払済み",
+      "overdue": "延滞",
+      "cancelled": "キャンセル済み"
+    },
+    "expenseStatus": {
+      "pending": "保留中",
+      "approved": "承認済み",
+      "paid": "支払済み",
+      "rejected": "却下"
+    },
+    "incomeStatus": {
+      "pending": "保留中",
+      "received": "受領済み",
+      "cancelled": "キャンセル済み"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "入学金",
+      "Tuition": "授業料",
+      "Course Payment": "講座料",
+      "Exam": "試験",
+      "Certification": "認定",
+      "Grant": "助成金",
+      "Donation": "寄付",
+      "Partnership": "提携",
+      "Other": "その他"
+    },
+    "recurringPeriod": {
+      "monthly": "毎月",
+      "quarterly": "四半期ごと",
+      "yearly": "毎年"
+    },
+    "paymentMethod": {
+      "Cash": "現金",
+      "Mobile Money": "モバイルマネー",
+      "Bank Transfer": "銀行振込",
+      "Cheque": "小切手"
+    },
+    "months": {
+      "1": "1月",
+      "2": "2月",
+      "3": "3月",
+      "4": "4月",
+      "5": "5月",
+      "6": "6月",
+      "7": "7月",
+      "8": "8月",
+      "9": "9月",
+      "10": "10月",
+      "11": "11月",
+      "12": "12月"
+    }
+  },
+  "overview": {
+    "title": "財務概要",
+    "subtitle": "このキャンパスの収支および学生の未払い債務。",
+    "kpi": {
+      "incomeReceived": "受領した収入",
+      "expensesPaid": "支払った支出",
+      "netBalance": "純残高",
+      "overdueDebts": "延滞債務",
+      "records": "{count, plural, other {# 件}}",
+      "surplus": "黒字",
+      "deficit": "赤字",
+      "studentsPastDue": "延滞中の学生"
+    },
+    "shortcuts": {
+      "newFee": "新規学費",
+      "newPayment": "新規支払い",
+      "newIncome": "新規収入",
+      "newExpense": "新規支出"
+    },
+    "chart": {
+      "title": "月次収支 — {year}",
+      "income": "収入",
+      "expense": "支出"
+    }
+  },
+  "fees": {
+    "title": "学生の学費",
+    "subtitle": "債務を追跡し、支払いを記録し、残高リマインダーを送信します。",
+    "new": "新規学費",
+    "empty": "学費が見つかりません。作成して学生の債務追跡を開始してください。",
+    "confirmDelete": "学費「{label}」を削除しますか？これはソフト削除です。",
+    "toast": {
+      "created": "学費を作成しました。",
+      "paymentRecorded": "支払いを記録しました。",
+      "reminderSent": "学生にリマインダーを送信しました。",
+      "reminderFailed": "リマインダーの送信に失敗しました。",
+      "deleted": "学費を削除しました。",
+      "deleteFailed": "学費の削除に失敗しました。"
+    }
+  },
+  "feeDetail": {
+    "title": "学費の詳細",
+    "loadError": "学費の読み込みに失敗しました。",
+    "payments": "支払い ({count})",
+    "noPayments": "まだ支払いが記録されていません。",
+    "attachments": "添付ファイル",
+    "document": "ドキュメント {index}"
+  },
+  "feeForm": {
+    "title": "新規学費",
+    "creating": "作成中…",
+    "submit": "学費を作成"
+  },
+  "payment": {
+    "title": "支払いを記録",
+    "remainingBalance": "残高",
+    "referenceLabel": "参照番号 / 領収書番号",
+    "paymentDate": "支払日",
+    "recording": "記録中…",
+    "submit": "支払いを記録",
+    "failed": "支払いに失敗しました。再試行してください。"
+  },
+  "incomes": {
+    "title": "収入",
+    "subtitle": "すべての機関収入を記録・追跡します。",
+    "new": "新規収入",
+    "empty": "収入が見つかりません。",
+    "confirmDelete": "収入「{title}」を削除しますか？",
+    "toast": {
+      "created": "収入を作成しました。",
+      "updated": "収入を更新しました。",
+      "deleted": "収入を削除しました。",
+      "deleteFailed": "収入の削除に失敗しました。"
+    }
+  },
+  "incomeForm": {
+    "titleNew": "新規収入",
+    "titleEdit": "収入を編集",
+    "studentOptional": "学生（任意）",
+    "saveError": "収入の保存に失敗しました。",
+    "submitNew": "収入を作成",
+    "submitEdit": "変更を保存"
+  },
+  "expenses": {
+    "title": "支出",
+    "subtitle": "支出を記録し、承認ワークフローを通します。",
+    "new": "新規支出",
+    "empty": "支出が見つかりません。",
+    "recurringTip": "定期 ({period})",
+    "confirmDelete": "支出「{title}」を削除しますか？",
+    "workflow": {
+      "approve": "承認",
+      "markPaid": "支払済みにする",
+      "reject": "却下"
+    },
+    "toast": {
+      "created": "支出を作成しました。",
+      "updated": "支出を更新しました。",
+      "approved": "支出を承認しました。",
+      "rejected": "支出を却下しました。",
+      "paid": "支出を支払いました。",
+      "transitionError": "現在のステータスではこの操作は許可されていません。",
+      "deleted": "支出を削除しました。",
+      "deleteFailed": "支出の削除に失敗しました。"
+    }
+  },
+  "expenseForm": {
+    "titleNew": "新規支出",
+    "titleEdit": "支出を編集",
+    "noCategories": "カテゴリがありません — 先に作成してください",
+    "lockedError": "この支出は支払済みでロックされており、編集できません。",
+    "saveError": "支出の保存に失敗しました。",
+    "submitNew": "支出を作成",
+    "submitEdit": "変更を保存"
+  },
+  "categories": {
+    "title": "支出カテゴリ",
+    "newCategory": "新規カテゴリ",
+    "empty": "カテゴリがまだありません。",
+    "createError": "カテゴリの作成に失敗しました。",
+    "deleteError": "削除できません：カテゴリがまだ使用中の可能性があります。"
+  },
+  "ledger": {
+    "title": "学生元帳",
+    "totalDue": "請求合計",
+    "totalPaid": "支払合計",
+    "balance": "残高",
+    "debts": "債務 ({count})",
+    "noDebts": "債務は記録されていません。",
+    "payments": "支払い ({count})",
+    "noPayments": "支払いは記録されていません。",
+    "dueAndPaid": "請求 {due} · 支払 {paid}"
+  },
+  "student": {
+    "title": "マイファイナンス",
+    "subtitle": "あなたの学費、支払い、未払い残高。",
+    "kpi": {
+      "totalDue": "請求合計",
+      "totalPaid": "支払合計",
+      "outstandingBalance": "未払い残高",
+      "debtsCount": "{count, plural, other {# 件の債務}}",
+      "paymentsCount": "{count, plural, other {# 件の支払い}}",
+      "settle": "残高を清算してください",
+      "allSettled": "すべて清算済み"
+    },
+    "warning": "{amount} の未払い残高があります。キャンパスの財務窓口に連絡して清算してください。",
+    "myDebts": "私の債務 ({count})",
+    "noFees": "学費の記録はありません。",
+    "myPayments": "私の支払い ({count})",
+    "noPayments": "まだ支払いが記録されていません。"
+  },
+  "attachments": {
+    "attach": "ファイルを添付",
+    "uploading": "アップロード中…",
+    "hint": "領収書 / 請求書 — JPG, PNG, WEBP, PDF · 最大 5 MB",
+    "invalidType": "JPG、PNG、WEBP、PDF ファイルのみ許可されています。",
+    "tooLarge": "各ファイルは 5 MB 以下である必要があります。",
+    "uploadFailed": "アップロードに失敗しました。再試行してください。"
+  },
+  "errors": {
+    "loadFees": "学費の読み込みに失敗しました。",
+    "loadIncomes": "収入の読み込みに失敗しました。",
+    "loadExpenses": "支出の読み込みに失敗しました。",
+    "loadLedger": "元帳の読み込みに失敗しました。",
+    "loadSummary": "財務サマリーの読み込みに失敗しました。"
+  }
+}

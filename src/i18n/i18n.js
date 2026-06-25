@@ -5,7 +5,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import ICU from 'i18next-icu';
 import { setLocale } from 'yup';
 
-export const SUPPORTED_LANGUAGES = ['en', 'fr', 'es', 'ar', 'zh-CN', 'de'];
+export const SUPPORTED_LANGUAGES = ['en', 'fr', 'es', 'ar', 'zh-CN', 'de', 'pt', 'it', 'ru', 'ja'];
 export const RTL_LANGUAGES        = ['ar'];
 export const DEFAULT_LANG         = 'en';
 
@@ -23,6 +23,10 @@ export const LANGUAGE_META = {
   ar:      { nativeName: 'العربية',    flagCode: 'SA', rtl: true },
   'zh-CN': { nativeName: '中文',        flagCode: 'CN' },
   de:      { nativeName: 'Deutsch',    flagCode: 'DE' },
+  pt:      { nativeName: 'Português',  flagCode: 'PT' },
+  it:      { nativeName: 'Italiano',   flagCode: 'IT' },
+  ru:      { nativeName: 'Русский',    flagCode: 'RU' },
+  ja:      { nativeName: '日本語',      flagCode: 'JP' },
 };
 
 i18n

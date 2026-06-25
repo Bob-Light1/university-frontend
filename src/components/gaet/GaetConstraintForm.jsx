@@ -23,14 +23,21 @@ import {
 import {
   Add, Delete, AccessTime, School, MeetingRoom,
   ExpandMore, Save,
-  WbSunny, Science,
+  WbSunny, Science, Person, EventBusy,
 } from '@mui/icons-material';
 import { useFormik, FormikProvider } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   gaetConstraintSchema,
-  WEEKDAY_OPTIONS, SESSION_TYPE_OPTIONS, ROOM_TYPE_OPTIONS, SEMESTER_OPTIONS,
+  WEEKDAY_OPTIONS, SESSION_TYPE_OPTIONS, ROOM_TYPE_OPTIONS,
   defaultTimeSlot, defaultCourseRequirement, defaultRoom,
+  defaultTeacherPreference, defaultUnavailableSlot,
 } from '../../yupSchema/gaetSchema';
+
+// Builds localized { value, label } option arrays from the schema's value lists.
+// The schema stays the single source of truth for *values*; labels come from i18n.
+const localizeOptions = (options, t, prefix) =>
+  options.map((o) => ({ value: o.value, label: t(`${prefix}.${o.value}`) }));
 
 // ─── SESSION TYPE COLORS ─────────────────────────────────────────────────────
 
@@ -42,7 +49,7 @@ const SESSION_COLOR = {
 
 // ─── SMALL SHARED FIELD COMPONENTS ───────────────────────────────────────────
 
-const MuiSelect = ({ id, label, value, onChange, options, error, helperText, size = 'small', required }) => (
+const MuiSelect = ({ label, value, onChange, options, error, helperText, size = 'small', required }) => (
   <FormControl fullWidth size={size} error={error} required={required}>
     <InputLabel>{label}</InputLabel>
     <Select value={value} onChange={onChange} label={label}>
@@ -58,7 +65,9 @@ const MuiSelect = ({ id, label, value, onChange, options, error, helperText, siz
 
 const TimeSlotsSection = ({ formik }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
   const slots = formik.values.timeSlots ?? [];
+  const weekdayOptions = localizeOptions(WEEKDAY_OPTIONS, t, 'weekday');
 
   const addSlot = () =>
     formik.setFieldValue('timeSlots', [...slots, defaultTimeSlot()]);
@@ -79,10 +88,10 @@ const TimeSlotsSection = ({ formik }) => {
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Stack spacing={0.25}>
           <Typography variant="subtitle2" fontWeight={700}>
-            Available Time Slots
+            {t('form.timeSlots.title')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Define the weekly time windows the algorithm may use.
+            {t('form.timeSlots.subtitle')}
           </Typography>
         </Stack>
         <Button
@@ -92,7 +101,7 @@ const TimeSlotsSection = ({ formik }) => {
           onClick={addSlot}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Add Slot
+          {t('form.timeSlots.add')}
         </Button>
       </Stack>
 
@@ -111,7 +120,7 @@ const TimeSlotsSection = ({ formik }) => {
         >
           <AccessTime sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
-            No time slots defined. Click "Add Slot" to start.
+            {t('form.timeSlots.empty')}
           </Typography>
         </Paper>
       ) : (
@@ -128,17 +137,17 @@ const TimeSlotsSection = ({ formik }) => {
                 <Grid container spacing={2} alignItems="center">
                   <Grid size={{ xs: 12, sm: 3 }}>
                     <MuiSelect
-                      label="Day"
+                      label={t('form.timeSlots.day')}
                       value={slot.day}
                       onChange={(e) => setSlotField(idx, 'day', e.target.value)}
-                      options={WEEKDAY_OPTIONS}
+                      options={weekdayOptions}
                       error={tch?.day && Boolean(err?.day)}
                       helperText={tch?.day && err?.day}
                     />
                   </Grid>
                   <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
-                      fullWidth size="small" type="number" label="Start (h)"
+                      fullWidth size="small" type="number" label={t('form.timeSlots.start')}
                       value={slot.startHour}
                       onChange={(e) => setSlotField(idx, 'startHour', Number(e.target.value))}
                       slotProps={{ htmlInput: { min: 0, max: 23 } }}
@@ -148,7 +157,7 @@ const TimeSlotsSection = ({ formik }) => {
                   </Grid>
                   <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
-                      fullWidth size="small" type="number" label="End (h)"
+                      fullWidth size="small" type="number" label={t('form.timeSlots.end')}
                       value={slot.endHour}
                       onChange={(e) => setSlotField(idx, 'endHour', Number(e.target.value))}
                       slotProps={{ htmlInput: { min: 1, max: 24 } }}
@@ -167,13 +176,13 @@ const TimeSlotsSection = ({ formik }) => {
                       }
                       label={
                         <Typography variant="body2">
-                          Break {slot.isBreak && <Chip label="Break" size="small" color="warning" sx={{ ml: 0.5 }} />}
+                          {t('form.timeSlots.break')} {slot.isBreak && <Chip label={t('form.timeSlots.break')} size="small" color="warning" sx={{ ml: 0.5 }} />}
                         </Typography>
                       }
                     />
                   </Grid>
                   <Grid size={{ xs: 4, sm: 2 }} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Tooltip title="Remove slot">
+                    <Tooltip title={t('form.timeSlots.removeSlot')}>
                       <IconButton size="small" color="error" onClick={() => removeSlot(idx)}>
                         <Delete fontSize="small" />
                       </IconButton>
@@ -184,8 +193,11 @@ const TimeSlotsSection = ({ formik }) => {
                 {/* Duration display */}
                 {!slot.isBreak && slot.endHour > slot.startHour && (
                   <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                    Duration: {(slot.endHour - slot.startHour)}h &nbsp;·&nbsp;
-                    {String(slot.startHour).padStart(2, '0')}:00 – {String(slot.endHour).padStart(2, '0')}:00
+                    {t('form.timeSlots.duration', {
+                      hours: slot.endHour - slot.startHour,
+                      start: `${String(slot.startHour).padStart(2, '0')}:00`,
+                      end:   `${String(slot.endHour).padStart(2, '0')}:00`,
+                    })}
                   </Typography>
                 )}
               </Paper>
@@ -201,9 +213,12 @@ const TimeSlotsSection = ({ formik }) => {
 
 const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptions }) => {
   const theme   = useTheme();
+  const { t }   = useTranslation('gaet');
   const err     = formik.errors?.courseRequirements?.[idx];
   const tch     = formik.touched?.courseRequirements?.[idx];
   const color   = SESSION_COLOR[cr.sessionType] ?? theme.palette.primary.main;
+  const sessionTypeOptions = localizeOptions(SESSION_TYPE_OPTIONS, t, 'sessionType');
+  const roomTypeOptions    = localizeOptions(ROOM_TYPE_OPTIONS, t, 'roomType');
 
   const set = (field, value) => {
     const updated = (formik.values.courseRequirements ?? []).map((c, i) =>
@@ -219,7 +234,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
     );
 
   const label = (() => {
-    const subj = subjectOptions?.find((o) => o.value === cr.subjectId)?.label ?? 'New course';
+    const subj = subjectOptions?.find((o) => o.value === cr.subjectId)?.label ?? t('form.courses.newCourse');
     const cls  = classOptions?.find((o) => o.value === cr.classId)?.label;
     return cls ? `${subj} — ${cls}` : subj;
   })();
@@ -242,24 +257,24 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
             <Stack direction="row" spacing={1} mt={0.25}>
               {cr.sessionType && (
                 <Chip
-                  label={cr.sessionType}
+                  label={t(`sessionType.${cr.sessionType}`, { defaultValue: cr.sessionType })}
                   size="small"
                   sx={{ bgcolor: alpha(color, 0.12), color, fontWeight: 600, fontSize: '0.65rem', height: 18 }}
                 />
               )}
               {cr.hoursPerWeek > 0 && (
                 <Typography variant="caption" color="text.secondary">
-                  {cr.hoursPerWeek}h/week
+                  {t('form.courses.hoursPerWeekShort', { hours: cr.hoursPerWeek })}
                 </Typography>
               )}
               {cr.studentCount > 0 && (
                 <Typography variant="caption" color="text.secondary">
-                  {cr.studentCount} students
+                  {t('form.courses.studentsShort', { count: cr.studentCount })}
                 </Typography>
               )}
             </Stack>
           </Box>
-          <Tooltip title="Remove this course requirement">
+          <Tooltip title={t('form.courses.remove')}>
             <IconButton
               size="small" color="error"
               onClick={(e) => { e.stopPropagation(); remove(); }}
@@ -276,7 +291,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Class */}
           <Grid size={{ xs: 12, sm: 4 }}>
             <MuiSelect
-              label="Class *"
+              label={`${t('form.courses.class')} *`}
               value={cr.classId}
               onChange={(e) => set('classId', e.target.value)}
               options={classOptions}
@@ -288,7 +303,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Subject */}
           <Grid size={{ xs: 12, sm: 4 }}>
             <MuiSelect
-              label="Subject *"
+              label={`${t('form.courses.subject')} *`}
               value={cr.subjectId}
               onChange={(e) => set('subjectId', e.target.value)}
               options={subjectOptions}
@@ -300,7 +315,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Teacher */}
           <Grid size={{ xs: 12, sm: 4 }}>
             <MuiSelect
-              label="Teacher *"
+              label={`${t('form.courses.teacher')} *`}
               value={cr.teacherId}
               onChange={(e) => set('teacherId', e.target.value)}
               options={teacherOptions}
@@ -312,17 +327,17 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Session Type */}
           <Grid size={{ xs: 12, sm: 3 }}>
             <MuiSelect
-              label="Session Type *"
+              label={`${t('form.courses.sessionType')} *`}
               value={cr.sessionType}
               onChange={(e) => set('sessionType', e.target.value)}
-              options={SESSION_TYPE_OPTIONS}
+              options={sessionTypeOptions}
               required
             />
           </Grid>
           {/* Hours/week */}
           <Grid size={{ xs: 6, sm: 2 }}>
             <TextField
-              fullWidth size="small" type="number" label="h/week *"
+              fullWidth size="small" type="number" label={`${t('form.courses.hoursPerWeek')} *`}
               value={cr.hoursPerWeek}
               onChange={(e) => set('hoursPerWeek', Number(e.target.value))}
               slotProps={{ htmlInput: { min: 1, max: 40 } }}
@@ -333,7 +348,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Session Duration */}
           <Grid size={{ xs: 6, sm: 2 }}>
             <TextField
-              fullWidth size="small" type="number" label="Duration (min)"
+              fullWidth size="small" type="number" label={t('form.courses.duration')}
               value={cr.sessionDuration}
               onChange={(e) => set('sessionDuration', Number(e.target.value))}
               slotProps={{ htmlInput: { min: 30, max: 480 } }}
@@ -342,7 +357,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Student Count */}
           <Grid size={{ xs: 6, sm: 2 }}>
             <TextField
-              fullWidth size="small" type="number" label="Students *"
+              fullWidth size="small" type="number" label={`${t('form.courses.students')} *`}
               value={cr.studentCount}
               onChange={(e) => set('studentCount', Number(e.target.value))}
               slotProps={{ htmlInput: { min: 1 } }}
@@ -353,10 +368,10 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
           {/* Room Type */}
           <Grid size={{ xs: 12, sm: 3 }}>
             <MuiSelect
-              label="Room Type"
+              label={t('form.courses.roomType')}
               value={cr.roomType}
               onChange={(e) => set('roomType', e.target.value)}
-              options={ROOM_TYPE_OPTIONS}
+              options={roomTypeOptions}
             />
           </Grid>
           {/* Toggles */}
@@ -373,7 +388,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
                 label={
                   <Stack direction="row" alignItems="center" spacing={0.5}>
                     <Science sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="body2">Requires Lab</Typography>
+                    <Typography variant="body2">{t('form.courses.requiresLab')}</Typography>
                   </Stack>
                 }
               />
@@ -388,7 +403,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
                 label={
                   <Stack direction="row" alignItems="center" spacing={0.5}>
                     <WbSunny sx={{ fontSize: 16, color: '#f59e0b' }} />
-                    <Typography variant="body2">Prefer Morning</Typography>
+                    <Typography variant="body2">{t('form.courses.preferMorning')}</Typography>
                   </Stack>
                 }
               />
@@ -402,6 +417,7 @@ const CourseRow = ({ idx, cr, formik, teacherOptions, classOptions, subjectOptio
 
 const CoursesSection = ({ formik, teacherOptions, classOptions, subjectOptions }) => {
   const theme   = useTheme();
+  const { t }   = useTranslation('gaet');
   const courses = formik.values.courseRequirements ?? [];
 
   const addCourse = () =>
@@ -416,20 +432,20 @@ const CoursesSection = ({ formik, teacherOptions, classOptions, subjectOptions }
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Stack spacing={0.25}>
           <Typography variant="subtitle2" fontWeight={700}>
-            Course Requirements
+            {t('form.courses.title')}
             {courses.length > 0 && (
               <Chip label={courses.length} size="small" color="primary" sx={{ ml: 1 }} />
             )}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            One entry per class + subject + teacher combination.
+            {t('form.courses.subtitle')}
           </Typography>
         </Stack>
         <Button
           startIcon={<Add />} variant="outlined" size="small" onClick={addCourse}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Add Course
+          {t('form.courses.add')}
         </Button>
       </Stack>
 
@@ -448,7 +464,7 @@ const CoursesSection = ({ formik, teacherOptions, classOptions, subjectOptions }
         >
           <School sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
-            No courses defined. Click "Add Course" to create a planning unit.
+            {t('form.courses.empty')}
           </Typography>
         </Paper>
       ) : (
@@ -474,7 +490,9 @@ const CoursesSection = ({ formik, teacherOptions, classOptions, subjectOptions }
 
 const RoomsSection = ({ formik }) => {
   const theme = useTheme();
+  const { t } = useTranslation('gaet');
   const rooms = formik.values.roomRegistry ?? [];
+  const roomTypeOptions = localizeOptions(ROOM_TYPE_OPTIONS, t, 'roomType');
 
   const addRoom = () =>
     formik.setFieldValue('roomRegistry', [...rooms, defaultRoom()]);
@@ -495,20 +513,20 @@ const RoomsSection = ({ formik }) => {
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Stack spacing={0.25}>
           <Typography variant="subtitle2" fontWeight={700}>
-            Room Registry
+            {t('form.rooms.title')}
             {rooms.length > 0 && (
               <Chip label={rooms.length} size="small" color="secondary" sx={{ ml: 1 }} />
             )}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Physical rooms available for timetable allocation.
+            {t('form.rooms.subtitle')}
           </Typography>
         </Stack>
         <Button
           startIcon={<Add />} variant="outlined" size="small" onClick={addRoom}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Add Room
+          {t('form.rooms.add')}
         </Button>
       </Stack>
 
@@ -527,7 +545,7 @@ const RoomsSection = ({ formik }) => {
         >
           <MeetingRoom sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
-            No rooms defined. Click "Add Room" to register a room.
+            {t('form.rooms.empty')}
           </Typography>
         </Paper>
       ) : (
@@ -540,17 +558,17 @@ const RoomsSection = ({ formik }) => {
                 <Grid container spacing={2} alignItems="center">
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField
-                      fullWidth size="small" label="Room Name *"
+                      fullWidth size="small" label={`${t('form.rooms.name')} *`}
                       value={room.name}
                       onChange={(e) => setRoomField(idx, 'name', e.target.value)}
-                      placeholder="e.g. Amphi A, Lab 201"
+                      placeholder={t('form.rooms.namePlaceholder')}
                       error={tch?.name && Boolean(err?.name)}
                       helperText={tch?.name && err?.name}
                     />
                   </Grid>
                   <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
-                      fullWidth size="small" type="number" label="Capacity *"
+                      fullWidth size="small" type="number" label={`${t('form.rooms.capacity')} *`}
                       value={room.capacity}
                       onChange={(e) => setRoomField(idx, 'capacity', Number(e.target.value))}
                       slotProps={{ htmlInput: { min: 1 } }}
@@ -560,14 +578,14 @@ const RoomsSection = ({ formik }) => {
                   </Grid>
                   <Grid size={{ xs: 6, sm: 4 }}>
                     <MuiSelect
-                      label="Room Type"
+                      label={t('form.rooms.type')}
                       value={room.type}
                       onChange={(e) => setRoomField(idx, 'type', e.target.value)}
-                      options={ROOM_TYPE_OPTIONS}
+                      options={roomTypeOptions}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-                    <Tooltip title="Remove room">
+                    <Tooltip title={t('form.rooms.remove')}>
                       <IconButton size="small" color="error" onClick={() => removeRoom(idx)}>
                         <Delete fontSize="small" />
                       </IconButton>
@@ -578,6 +596,260 @@ const RoomsSection = ({ formik }) => {
             );
           })}
         </Stack>
+      )}
+    </Box>
+  );
+};
+
+// ─── SECTION 4: TEACHER PREFERENCES ──────────────────────────────────────────
+
+const TeacherPrefRow = ({ idx, pref, formik, teacherOptions }) => {
+  const { t } = useTranslation('gaet');
+  const err   = formik.errors?.teacherPreferences?.[idx];
+  const tch   = formik.touched?.teacherPreferences?.[idx];
+  const weekdayOptions = localizeOptions(WEEKDAY_OPTIONS, t, 'weekday');
+
+  const setField = (field, value) => {
+    const updated = (formik.values.teacherPreferences ?? []).map((p, i) =>
+      i === idx ? { ...p, [field]: value } : p
+    );
+    formik.setFieldValue('teacherPreferences', updated);
+  };
+
+  const remove = () =>
+    formik.setFieldValue(
+      'teacherPreferences',
+      (formik.values.teacherPreferences ?? []).filter((_, i) => i !== idx)
+    );
+
+  const slots      = pref.unavailableSlots ?? [];
+  const addSlot    = () => setField('unavailableSlots', [...slots, defaultUnavailableSlot()]);
+  const removeSlot = (j) => setField('unavailableSlots', slots.filter((_, i) => i !== j));
+  const setSlot    = (j, field, value) =>
+    setField('unavailableSlots', slots.map((s, i) => (i === j ? { ...s, [field]: value } : s)));
+
+  const togglePreferredDay = (day) => {
+    const current = pref.preferredDays ?? [];
+    setField('preferredDays', current.includes(day)
+      ? current.filter((d) => d !== day)
+      : [...current, day]);
+  };
+
+  const teacherLabel =
+    teacherOptions?.find((o) => o.value === pref.teacherId)?.label ?? t('form.teacherPrefs.newTeacher');
+
+  return (
+    <Accordion
+      variant="outlined"
+      sx={{ borderRadius: '12px !important', mb: 1, '&:before': { display: 'none' } }}
+    >
+      <AccordionSummary expandIcon={<ExpandMore />} sx={{ borderRadius: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1.5} flex={1} mr={1}>
+          <Person sx={{ color: 'primary.main' }} />
+          <Box flex={1}>
+            <Typography variant="body2" fontWeight={700} noWrap>{teacherLabel}</Typography>
+            <Stack direction="row" spacing={1.5} mt={0.25}>
+              {slots.length > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  {t('form.teacherPrefs.slotsCount', { count: slots.length })}
+                </Typography>
+              )}
+              {(pref.preferredDays?.length ?? 0) > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  {t('form.teacherPrefs.preferredCount', { count: pref.preferredDays.length })}
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+          <Tooltip title={t('form.teacherPrefs.remove')}>
+            <IconButton
+              size="small" color="error"
+              onClick={(e) => { e.stopPropagation(); remove(); }}
+            >
+              <Delete fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </AccordionSummary>
+
+      <AccordionDetails sx={{ pt: 0 }}>
+        <Divider sx={{ mb: 2 }} />
+        <Grid container spacing={2}>
+          {/* Teacher */}
+          <Grid size={{ xs: 12, sm: 7 }}>
+            <MuiSelect
+              label={`${t('form.teacherPrefs.teacher')} *`}
+              value={pref.teacherId}
+              onChange={(e) => setField('teacherId', e.target.value)}
+              options={teacherOptions}
+              error={tch?.teacherId && Boolean(err?.teacherId)}
+              helperText={tch?.teacherId && err?.teacherId}
+              required
+            />
+          </Grid>
+          {/* Max consecutive hours */}
+          <Grid size={{ xs: 12, sm: 5 }}>
+            <TextField
+              fullWidth size="small" type="number"
+              label={t('form.teacherPrefs.maxConsecutive')}
+              value={pref.maxConsecutiveHours}
+              onChange={(e) => setField('maxConsecutiveHours', Number(e.target.value))}
+              slotProps={{ htmlInput: { min: 1, max: 12 } }}
+              error={tch?.maxConsecutiveHours && Boolean(err?.maxConsecutiveHours)}
+              helperText={(tch?.maxConsecutiveHours && err?.maxConsecutiveHours) || t('form.teacherPrefs.maxConsecutiveHelp')}
+            />
+          </Grid>
+
+          {/* Preferred days */}
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              {t('form.teacherPrefs.preferredDays')}
+            </Typography>
+            <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap mt={0.5}>
+              {weekdayOptions.map((d) => {
+                const active = (pref.preferredDays ?? []).includes(d.value);
+                return (
+                  <Chip
+                    key={d.value}
+                    label={d.label}
+                    size="small"
+                    color={active ? 'primary' : 'default'}
+                    variant={active ? 'filled' : 'outlined'}
+                    onClick={() => togglePreferredDay(d.value)}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                );
+              })}
+            </Stack>
+          </Grid>
+
+          {/* Unavailable slots */}
+          <Grid size={{ xs: 12 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <EventBusy sx={{ fontSize: 16, color: 'error.main' }} />
+                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                  {t('form.teacherPrefs.unavailable')}
+                </Typography>
+              </Stack>
+              <Button startIcon={<Add />} size="small" onClick={addSlot} sx={{ textTransform: 'none' }}>
+                {t('form.teacherPrefs.addSlot')}
+              </Button>
+            </Stack>
+            {slots.length === 0 ? (
+              <Typography variant="caption" color="text.disabled">
+                {t('form.teacherPrefs.noSlots')}
+              </Typography>
+            ) : (
+              <Stack spacing={1}>
+                {slots.map((slot, j) => {
+                  const sErr = err?.unavailableSlots?.[j];
+                  const sTch = tch?.unavailableSlots?.[j];
+                  return (
+                    <Grid container spacing={1} key={j} alignItems="center">
+                      <Grid size={{ xs: 12, sm: 4 }}>
+                        <MuiSelect
+                          label={t('form.teacherPrefs.day')}
+                          value={slot.day}
+                          onChange={(e) => setSlot(j, 'day', e.target.value)}
+                          options={weekdayOptions}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 5, sm: 3 }}>
+                        <TextField
+                          fullWidth size="small" type="number" label={t('form.teacherPrefs.slotStart')}
+                          value={slot.startHour}
+                          onChange={(e) => setSlot(j, 'startHour', Number(e.target.value))}
+                          slotProps={{ htmlInput: { min: 0, max: 23 } }}
+                          error={sTch?.startHour && Boolean(sErr?.startHour)}
+                          helperText={sTch?.startHour && sErr?.startHour}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 5, sm: 3 }}>
+                        <TextField
+                          fullWidth size="small" type="number" label={t('form.teacherPrefs.slotEnd')}
+                          value={slot.endHour}
+                          onChange={(e) => setSlot(j, 'endHour', Number(e.target.value))}
+                          slotProps={{ htmlInput: { min: 1, max: 24 } }}
+                          error={sTch?.endHour && Boolean(sErr?.endHour)}
+                          helperText={sTch?.endHour && sErr?.endHour}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 2, sm: 2 }} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Tooltip title={t('form.teacherPrefs.removeSlot')}>
+                          <IconButton size="small" color="error" onClick={() => removeSlot(j)}>
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
+                  );
+                })}
+              </Stack>
+            )}
+          </Grid>
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
+  );
+};
+
+const TeacherPreferencesSection = ({ formik, teacherOptions }) => {
+  const theme = useTheme();
+  const { t } = useTranslation('gaet');
+  const prefs = formik.values.teacherPreferences ?? [];
+
+  const addPref = () =>
+    formik.setFieldValue('teacherPreferences', [...prefs, defaultTeacherPreference()]);
+
+  return (
+    <Box>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Stack spacing={0.25}>
+          <Typography variant="subtitle2" fontWeight={700}>
+            {t('form.teacherPrefs.title')}
+            {prefs.length > 0 && (
+              <Chip label={prefs.length} size="small" color="primary" sx={{ ml: 1 }} />
+            )}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {t('form.teacherPrefs.subtitle')}
+          </Typography>
+        </Stack>
+        <Button
+          startIcon={<Add />} variant="outlined" size="small" onClick={addPref}
+          sx={{ textTransform: 'none', borderRadius: 2 }}
+        >
+          {t('form.teacherPrefs.add')}
+        </Button>
+      </Stack>
+
+      {prefs.length === 0 ? (
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 3, textAlign: 'center', borderRadius: 2,
+            bgcolor: alpha(theme.palette.primary.main, 0.03),
+            borderStyle: 'dashed',
+          }}
+        >
+          <Person sx={{ fontSize: 40, color: 'text.disabled', mb: 1 }} />
+          <Typography variant="body2" color="text.secondary">
+            {t('form.teacherPrefs.empty')}
+          </Typography>
+        </Paper>
+      ) : (
+        <Box>
+          {prefs.map((pref, idx) => (
+            <TeacherPrefRow
+              key={pref._id ?? `tp-${idx}`}
+              idx={idx}
+              pref={pref}
+              formik={formik}
+              teacherOptions={teacherOptions}
+            />
+          ))}
+        </Box>
       )}
     </Box>
   );
@@ -610,12 +882,18 @@ const GaetConstraintForm = ({
   saving  = false,
   readOnly = false,
 }) => {
+  const { t } = useTranslation('gaet');
   const [activeTab, setActiveTab] = useState(0);
+
+  // Backend returns semesterStartDate as an ISO datetime; <input type="date">
+  // needs a plain YYYY-MM-DD value.
+  const toDateInput = (v) => (v ? String(v).slice(0, 10) : '');
 
   const formik = useFormik({
     initialValues: {
       academicYear:       academicYear || initialData?.academicYear || '',
       semester:           semester     || initialData?.semester     || 'S1',
+      semesterStartDate:  toDateInput(initialData?.semesterStartDate),
       timeSlots:          initialData?.timeSlots          ?? [],
       courseRequirements: initialData?.courseRequirements ?? [],
       roomRegistry:       initialData?.roomRegistry       ?? [],
@@ -627,6 +905,7 @@ const GaetConstraintForm = ({
       onSave({
         academicYear: values.academicYear,
         semester:     values.semester,
+        semesterStartDate:  values.semesterStartDate || null,
         timeSlots:          values.timeSlots,
         courseRequirements: values.courseRequirements,
         roomRegistry:       values.roomRegistry,
@@ -639,14 +918,39 @@ const GaetConstraintForm = ({
   const slotCount   = formik.values.timeSlots?.length          ?? 0;
   const courseCount = formik.values.courseRequirements?.length  ?? 0;
   const roomCount   = formik.values.roomRegistry?.length        ?? 0;
+  const prefCount   = formik.values.teacherPreferences?.length  ?? 0;
 
   const slotError   = formik.submitCount > 0 && formik.errors.timeSlots;
   const courseError = formik.submitCount > 0 && formik.errors.courseRequirements;
   const roomError   = formik.submitCount > 0 && formik.errors.roomRegistry;
+  const prefError   = formik.submitCount > 0 && formik.errors.teacherPreferences;
+
+  const LAST_TAB = 3;
 
   return (
     <FormikProvider value={formik}>
       <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+        {/* Semester start date — anchors published sessions to the academic calendar */}
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid size={{ xs: 12, sm: 5, md: 4 }}>
+            <TextField
+              fullWidth
+              size="small"
+              type="date"
+              label={t('form.semesterStart.label')}
+              value={formik.values.semesterStartDate}
+              onChange={(e) => formik.setFieldValue('semesterStartDate', e.target.value)}
+              onBlur={() => formik.setFieldTouched('semesterStartDate', true)}
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={formik.touched.semesterStartDate && Boolean(formik.errors.semesterStartDate)}
+              helperText={
+                (formik.touched.semesterStartDate && formik.errors.semesterStartDate) ||
+                t('form.semesterStart.helper')
+              }
+            />
+          </Grid>
+        </Grid>
+
         {/* Tabs navigation */}
         <Tabs
           value={activeTab}
@@ -663,7 +967,7 @@ const GaetConstraintForm = ({
             label={
               <Stack direction="row" alignItems="center" spacing={0.75}>
                 <AccessTime sx={{ fontSize: 18 }} />
-                <span>Time Slots</span>
+                <span>{t('form.timeSlots.tab')}</span>
                 {slotCount > 0 && (
                   <Chip label={slotCount} size="small" color={slotError ? 'error' : 'primary'} sx={{ height: 18, fontSize: '0.65rem' }} />
                 )}
@@ -674,7 +978,7 @@ const GaetConstraintForm = ({
             label={
               <Stack direction="row" alignItems="center" spacing={0.75}>
                 <School sx={{ fontSize: 18 }} />
-                <span>Courses</span>
+                <span>{t('form.courses.tab')}</span>
                 {courseCount > 0 && (
                   <Chip label={courseCount} size="small" color={courseError ? 'error' : 'primary'} sx={{ height: 18, fontSize: '0.65rem' }} />
                 )}
@@ -685,9 +989,20 @@ const GaetConstraintForm = ({
             label={
               <Stack direction="row" alignItems="center" spacing={0.75}>
                 <MeetingRoom sx={{ fontSize: 18 }} />
-                <span>Rooms</span>
+                <span>{t('form.rooms.tab')}</span>
                 {roomCount > 0 && (
                   <Chip label={roomCount} size="small" color={roomError ? 'error' : 'secondary'} sx={{ height: 18, fontSize: '0.65rem' }} />
+                )}
+              </Stack>
+            }
+          />
+          <Tab
+            label={
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                <Person sx={{ fontSize: 18 }} />
+                <span>{t('form.teacherPrefs.tab')}</span>
+                {prefCount > 0 && (
+                  <Chip label={prefCount} size="small" color={prefError ? 'error' : 'primary'} sx={{ height: 18, fontSize: '0.65rem' }} />
                 )}
               </Stack>
             }
@@ -706,6 +1021,9 @@ const GaetConstraintForm = ({
             />
           )}
           {activeTab === 2 && <RoomsSection formik={formik} />}
+          {activeTab === 3 && (
+            <TeacherPreferencesSection formik={formik} teacherOptions={teacherOptions} />
+          )}
         </Box>
 
         {/* Navigation helper */}
@@ -721,20 +1039,20 @@ const GaetConstraintForm = ({
               <Button
                 variant="text"
                 size="small"
-                onClick={() => setActiveTab((t) => t - 1)}
+                onClick={() => setActiveTab((prev) => prev - 1)}
                 sx={{ textTransform: 'none' }}
               >
-                ← Previous
+                ← {t('form.nav.previous')}
               </Button>
             )}
-            {activeTab < 2 && (
+            {activeTab < LAST_TAB && (
               <Button
                 variant="text"
                 size="small"
-                onClick={() => setActiveTab((t) => t + 1)}
+                onClick={() => setActiveTab((prev) => prev + 1)}
                 sx={{ textTransform: 'none' }}
               >
-                Next →
+                {t('form.nav.next')} →
               </Button>
             )}
           </Stack>
@@ -750,7 +1068,7 @@ const GaetConstraintForm = ({
                 width: { xs: '100%', sm: 'auto' },
               }}
             >
-              {saving ? 'Saving…' : 'Save Configuration'}
+              {saving ? t('form.saving') : t('form.save')}
             </Button>
           )}
         </Stack>

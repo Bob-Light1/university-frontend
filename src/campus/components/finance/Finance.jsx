@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box, Tabs, Tab, Typography, Stack, useTheme,
 } from '@mui/material';
@@ -28,13 +29,14 @@ import ExpensesManager from './ExpensesManager';
 export default function Finance() {
   const theme = useTheme();
   const { campusId } = useParams();
+  const { t } = useTranslation('finance');
   const [tab, setTab] = useState(0);
 
   const TABS = [
-    { label: 'Overview', icon: <Dashboard    sx={{ fontSize: 18 }} />, color: theme.palette.primary.main },
-    { label: 'Fees',     icon: <ReceiptLong  sx={{ fontSize: 18 }} />, color: theme.palette.info.main    },
-    { label: 'Incomes',  icon: <Payments     sx={{ fontSize: 18 }} />, color: theme.palette.success.main },
-    { label: 'Expenses', icon: <MoneyOff     sx={{ fontSize: 18 }} />, color: theme.palette.error.main   },
+    { label: t('tabs.overview'), icon: <Dashboard    sx={{ fontSize: 18 }} />, color: theme.palette.primary.main },
+    { label: t('tabs.fees'),     icon: <ReceiptLong  sx={{ fontSize: 18 }} />, color: theme.palette.info.main    },
+    { label: t('tabs.incomes'),  icon: <Payments     sx={{ fontSize: 18 }} />, color: theme.palette.success.main },
+    { label: t('tabs.expenses'), icon: <MoneyOff     sx={{ fontSize: 18 }} />, color: theme.palette.error.main   },
   ];
 
   return (
@@ -44,7 +46,7 @@ export default function Finance() {
         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 0.5 }}>
           <AccountBalanceWallet sx={{ color: theme.palette.primary.main, fontSize: 22 }} />
           <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.primary.main }}>
-            Finance Module
+            {t('title')}
           </Typography>
         </Stack>
 

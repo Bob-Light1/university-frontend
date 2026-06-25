@@ -1,0 +1,57 @@
+{
+  "title": "通知",
+  "inbox": "受信トレイ",
+  "unread": "{n, plural, other{未読の通知 # 件}}",
+  "markRead": "既読にする",
+  "markAllRead": "すべて既読にする",
+  "delete": "通知を削除",
+  "empty": "通知はありません",
+  "loadMore": "もっと読み込む",
+  "loadError": "通知の読み込みに失敗しました。",
+  "retry": "再試行",
+  "type": {
+    "announcement": "お知らせ",
+    "result": "新しい成績",
+    "attendance": "出欠アラート",
+    "payment": "支払いリマインダー",
+    "exam": "試験リマインダー",
+    "document": "共有ドキュメント",
+    "system": "システム"
+  },
+  "announcement": {
+    "new": "新しいお知らせ",
+    "from": "差出人",
+    "pinned": "固定"
+  },
+  "alert": {
+    "absence": "欠席アラート",
+    "latePayment": "支払い遅延",
+    "examUpcoming": "まもなく試験"
+  },
+  "log": {
+    "title": "通知配信ログ",
+    "subtitle": "マルチチャネル配信の追跡と再送",
+    "searchPlaceholder": "件名、宛先、テンプレートを検索…",
+    "channel": "チャネル",
+    "statusLabel": "ステータス",
+    "subjectCol": "件名",
+    "recipient": "宛先",
+    "template": "テンプレート",
+    "date": "日付",
+    "attempts": "試行回数",
+    "action": "操作",
+    "all": "すべて",
+    "reset": "フィルターをリセット",
+    "retry": "配信を再送",
+    "inApp": "アプリ内",
+    "empty": "通知が見つかりません",
+    "loadError": "配信ログの読み込みに失敗しました。",
+    "status": {
+      "pending": "保留中",
+      "sent": "送信済み",
+      "failed": "失敗",
+      "skipped": "スキップ",
+      "read": "既読"
+    }
+  }
+}

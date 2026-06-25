@@ -1,0 +1,224 @@
+{
+  "title": "GAET",
+  "subtitle": "Generatore automatico di orari",
+  "header": {
+    "manager": "Configura i vincoli, genera, verifica e pubblica l'orario del tuo semestre.",
+    "viewer": "Consulta gli orari generati per questo campus."
+  },
+  "context": {
+    "academicYear": "Anno accademico",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "Semestre",
+    "updated": "Aggiornato il {date}"
+  },
+  "semesterOptions": {
+    "S1": "Semestre 1",
+    "S2": "Semestre 2",
+    "Annual": "Annuale"
+  },
+  "weekday": {
+    "MO": "Lunedì",
+    "TU": "Martedì",
+    "WE": "Mercoledì",
+    "TH": "Giovedì",
+    "FR": "Venerdì",
+    "SA": "Sabato",
+    "SU": "Domenica"
+  },
+  "sessionType": {
+    "LECTURE": "Lezione",
+    "TUTORIAL": "Esercitazione",
+    "PRACTICAL": "Laboratorio"
+  },
+  "roomType": {
+    "CLASSROOM": "Aula",
+    "LAB": "Laboratorio",
+    "AMPHITHEATER": "Aula magna"
+  },
+  "summary": {
+    "timeSlots": "Fasce orarie",
+    "courses": "Corsi",
+    "rooms": "Aule"
+  },
+  "status": {
+    "DRAFT": "Bozza",
+    "GENERATING": "Generazione…",
+    "GENERATED": "Generato",
+    "PARTIALLY_GENERATED": "Parziale",
+    "PUBLISHED": "Pubblicato",
+    "FAILED": "Non riuscito",
+    "CANCELLED": "Annullato"
+  },
+  "empty": {
+    "title": "Nessun orario configurato",
+    "body": "Compila il modulo qui sotto per configurare i vincoli e generare l'orario di questo semestre."
+  },
+  "banner": {
+    "generatingTitle": "Generazione dell'orario in corso…",
+    "generatingBody": "L'algoritmo è in esecuzione in un thread in background. Questa pagina si aggiornerà automaticamente al termine.",
+    "failed": "Generazione non riuscita. Verifica che i tuoi vincoli non siano troppo restrittivi e riprova.",
+    "retry": "Riprova",
+    "publishedTitle": "Orario pubblicato con successo.",
+    "publishedOn": "Pubblicato il {date}"
+  },
+  "tabs": {
+    "configuration": "Configurazione",
+    "preview": "Anteprima",
+    "quality": "Qualità",
+    "conflicts": "Conflitti"
+  },
+  "actions": {
+    "generate": "Genera orario",
+    "generating": "Generazione…",
+    "regenerate": "Rigenera",
+    "publish": "Pubblica orario",
+    "publishing": "Pubblicazione…",
+    "cancel": "Annulla",
+    "retry": "Riprova la generazione",
+    "published": "Orario pubblicato con successo",
+    "disabledHint": "Completa tutte e tre le sezioni dei vincoli prima di generare",
+    "tooltipCancel": "Scarta e annulla l'orario generato",
+    "tooltipRegenerate": "Esegui di nuovo l'algoritmo con i vincoli attuali",
+    "tooltipPublishPartial": "Alcuni corsi non sono stati collocati — pubblica l'orario parziale",
+    "tooltipPublishFull": "Pubblica negli orari di studenti e docenti"
+  },
+  "conflicts": {
+    "none": "Nessun conflitto rilevato — tutti i vincoli rigidi sono soddisfatti.",
+    "detected": "{count, plural, one {# conflitto rilevato} other {# conflitti rilevati}}",
+    "day": "Giorno",
+    "room": "Aula",
+    "label": "Conflitto",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "Doppia prenotazione docente",
+      "ROOM_DOUBLE_BOOKING": "Doppia prenotazione aula",
+      "CLASS_DOUBLE_BOOKING": "Doppia prenotazione classe",
+      "fallback": "Conflitto"
+    },
+    "unplacedTitle": "Corsi non collocati ({count})",
+    "unplacedLabel": "Non collocato",
+    "unplacedDefaultReason": "Impossibile collocare con i vincoli attuali"
+  },
+  "quality": {
+    "partialTitle": "Generato parzialmente — {count, plural, one {# corso non è stato collocato} other {# corsi non sono stati collocati}}.",
+    "partialBody": "Puoi pubblicare l'orario parziale oppure modificare i vincoli e rigenerare.",
+    "score": "Punteggio di qualità",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "Eccellente",
+    "scoreGood": "Buono",
+    "scoreNeedsReview": "Da rivedere",
+    "hardConstraints": "Vincoli rigidi",
+    "hardConstraintsSub": "Nessun conflitto di docente / aula / classe",
+    "softConstraints": "Vincoli flessibili",
+    "softConstraintsSub": "Preferenze e fasce mattutine soddisfatte",
+    "roomUtilization": "Utilizzo delle aule",
+    "roomUtilizationSub": "Tasso medio di occupazione delle aule",
+    "generatedIn": "Generato in {seconds} s",
+    "unplacedTitle": "Corsi non collocati ({count})",
+    "unplacedLabel": "Non collocato",
+    "unplacedRefFallback": "Rif.: {ref}",
+    "allPlaced": "Tutti i corsi sono stati collocati con successo — nessuna violazione di vincoli rilevata."
+  },
+  "preview": {
+    "emptyTitle": "Nessuna sessione ancora generata",
+    "emptyBody": "Esegui la generazione per vedere qui l'anteprima dell'orario",
+    "summary": "{sessions, plural, one {# sessione} other {# sessioni}} su {days, plural, one {# giorno} other {# giorni}}",
+    "dayCount": "{count, plural, one {# sessione} other {# sessioni}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "Fasce orarie",
+      "title": "Fasce orarie disponibili",
+      "subtitle": "Definisci le finestre orarie settimanali che l'algoritmo può utilizzare.",
+      "add": "Aggiungi fascia",
+      "empty": "Nessuna fascia definita. Clicca su «Aggiungi fascia» per iniziare.",
+      "day": "Giorno",
+      "start": "Inizio (h)",
+      "end": "Fine (h)",
+      "break": "Pausa",
+      "removeSlot": "Rimuovi fascia",
+      "duration": "Durata: {hours} h · {start} – {end}"
+    },
+    "courses": {
+      "tab": "Corsi",
+      "title": "Requisiti dei corsi",
+      "subtitle": "Una voce per combinazione di classe + materia + docente.",
+      "add": "Aggiungi corso",
+      "empty": "Nessun corso definito. Clicca su «Aggiungi corso» per creare un'unità di pianificazione.",
+      "newCourse": "Nuovo corso",
+      "hoursPerWeekShort": "{hours} h/sett",
+      "studentsShort": "{count, plural, one {# studente} other {# studenti}}",
+      "remove": "Rimuovi questo requisito di corso",
+      "class": "Classe",
+      "subject": "Materia",
+      "teacher": "Docente",
+      "sessionType": "Tipo di sessione",
+      "hoursPerWeek": "h/sett",
+      "duration": "Durata (min)",
+      "students": "Studenti",
+      "roomType": "Tipo di aula",
+      "requiresLab": "Richiede laboratorio",
+      "preferMorning": "Preferire la mattina"
+    },
+    "rooms": {
+      "tab": "Aule",
+      "title": "Registro delle aule",
+      "subtitle": "Aule fisiche disponibili per l'assegnazione dell'orario.",
+      "add": "Aggiungi aula",
+      "empty": "Nessuna aula definita. Clicca su «Aggiungi aula» per registrare un'aula.",
+      "name": "Nome dell'aula",
+      "namePlaceholder": "es. Aula Magna A, Lab 201",
+      "capacity": "Capienza",
+      "type": "Tipo di aula",
+      "remove": "Rimuovi aula"
+    },
+    "semesterStart": {
+      "label": "Data di inizio semestre",
+      "helper": "Primo giorno di lezione: le sessioni pubblicate iniziano da questa data."
+    },
+    "teacherPrefs": {
+      "tab": "Preferenze docenti",
+      "title": "Preferenze dei docenti",
+      "subtitle": "Vincoli flessibili opzionali: indisponibilità, giorni preferiti e ore consecutive massime.",
+      "add": "Aggiungi docente",
+      "empty": "Nessuna preferenza dei docenti definita. Sono facoltative e affinano l'orario generato.",
+      "newTeacher": "Nuovo docente",
+      "teacher": "Docente",
+      "remove": "Rimuovi preferenza",
+      "maxConsecutive": "Ore consecutive max",
+      "maxConsecutiveHelp": "1–12 ore",
+      "preferredDays": "Giorni preferiti",
+      "unavailable": "Fasce non disponibili",
+      "addSlot": "Aggiungi fascia",
+      "noSlots": "Nessuna fascia non disponibile",
+      "slotStart": "Inizio (h)",
+      "slotEnd": "Fine (h)",
+      "day": "Giorno",
+      "removeSlot": "Rimuovi fascia",
+      "slotsCount": "Non disponibili: {count}",
+      "preferredCount": "Preferiti: {count}"
+    },
+    "nav": {
+      "previous": "Precedente",
+      "next": "Successivo"
+    },
+    "save": "Salva configurazione",
+    "saving": "Salvataggio…"
+  },
+  "messages": {
+    "saved": "Vincoli salvati con successo.",
+    "loadFailed": "Impossibile caricare i vincoli.",
+    "saveFailed": "Impossibile salvare i vincoli.",
+    "generateStartFailed": "Impossibile avviare la generazione.",
+    "generatedSuccess": "Orario generato con successo.",
+    "generatedPartial": "Orario generato parzialmente — alcuni corsi non collocati. Controlla i conflitti.",
+    "generatedFailed": "Generazione non riuscita. Controlla i tuoi vincoli e riprova.",
+    "noConstraintId": "Il server non ha restituito un identificatore di vincolo.",
+    "previewFailed": "Impossibile caricare l'anteprima.",
+    "conflictsFailed": "Impossibile caricare i conflitti.",
+    "publishedCount": "{count, plural, one {# sessione pubblicata con successo.} other {# sessioni pubblicate con successo.}}",
+    "publishFailed": "Pubblicazione non riuscita.",
+    "cancelled": "Orario generato annullato.",
+    "cancelFailed": "Annullamento non riuscito."
+  }
+}

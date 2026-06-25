@@ -1,28 +1,57 @@
 {
-  "title": "Notifications",
-  "inbox": "Inbox",
-  "unread": "{n, plural, one{# unread notification} other{# unread notifications}}",
-  "markRead": "Mark as read",
-  "markAllRead": "Mark all as read",
-  "delete": "Delete notification",
-  "empty": "No notifications",
+  "title": "通知",
+  "inbox": "收件箱",
+  "unread": "{n, plural, other{# 条未读通知}}",
+  "markRead": "标记为已读",
+  "markAllRead": "全部标记为已读",
+  "delete": "删除通知",
+  "empty": "暂无通知",
+  "loadMore": "加载更多",
+  "loadError": "加载通知失败。",
+  "retry": "重试",
   "type": {
-    "announcement": "Announcement",
-    "result": "New results",
-    "attendance": "Attendance alert",
-    "payment": "Payment reminder",
-    "exam": "Exam reminder",
-    "document": "Document shared",
-    "system": "System"
+    "announcement": "公告",
+    "result": "新成绩",
+    "attendance": "考勤提醒",
+    "payment": "付款提醒",
+    "exam": "考试提醒",
+    "document": "共享文档",
+    "system": "系统"
   },
   "announcement": {
-    "new": "New announcement",
-    "from": "From",
-    "pinned": "Pinned"
+    "new": "新公告",
+    "from": "来自",
+    "pinned": "置顶"
   },
   "alert": {
-    "absence": "Absence alert",
-    "latePayment": "Late payment",
-    "examUpcoming": "Upcoming exam"
+    "absence": "缺勤提醒",
+    "latePayment": "逾期付款",
+    "examUpcoming": "即将到来的考试"
+  },
+  "log": {
+    "title": "通知发送日志",
+    "subtitle": "跟踪并重新发送多渠道投递",
+    "searchPlaceholder": "搜索主题、收件人、模板…",
+    "channel": "渠道",
+    "statusLabel": "状态",
+    "subjectCol": "主题",
+    "recipient": "收件人",
+    "template": "模板",
+    "date": "日期",
+    "attempts": "尝试次数",
+    "action": "操作",
+    "all": "全部",
+    "reset": "重置筛选",
+    "retry": "重新发送",
+    "inApp": "应用内",
+    "empty": "未找到通知",
+    "loadError": "加载发送日志失败。",
+    "status": {
+      "pending": "待处理",
+      "sent": "已发送",
+      "failed": "失败",
+      "skipped": "已跳过",
+      "read": "已读"
+    }
   }
 }

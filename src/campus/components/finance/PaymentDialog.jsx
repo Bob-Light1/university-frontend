@@ -10,6 +10,7 @@
 
 import { useMemo } from 'react';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, Alert, Box,
@@ -23,6 +24,7 @@ import { formatMoney } from './financeConstants';
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
+  const { t } = useTranslation('finance');
   const balance = useMemo(
     () => Math.max(0, (fee?.amountDue ?? 0) - (fee?.amountPaid ?? 0)),
     [fee],
@@ -59,7 +61,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
       } catch (err) {
         // 400/409 with a concurrency or overpay message → keep the dialog open
         // with a clear, actionable error (the parent re-fetches the fee).
-        setStatus(err.response?.data?.message || 'Payment failed. Please retry.');
+        setStatus(err.response?.data?.message || t('payment.failed'));
       } finally {
         setSubmitting(false);
       }
@@ -78,7 +80,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Payment sx={{ color: 'success.main' }} />
-          <Typography variant="h6" fontWeight={700}>Record Payment</Typography>
+          <Typography variant="h6" fontWeight={700}>{t('payment.title')}</Typography>
         </Stack>
       </DialogTitle>
 
@@ -87,7 +89,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
           {fee && (
             <Alert severity="info" sx={{ borderRadius: 2 }}>
               <Typography variant="body2">
-                <strong>{fee.label}</strong> — remaining balance:{' '}
+                <strong>{fee.label}</strong> — {t('payment.remainingBalance')}:{' '}
                 <strong>{formatMoney(balance, fee.currency)}</strong>
               </Typography>
             </Alert>
@@ -101,7 +103,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="amount" label="Amount *" type="number"
+              fullWidth name="amount" label={`${t('fields.amount')} *`} type="number"
               value={formik.values.amount}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('amount'))} helperText={fieldError('amount')}
@@ -123,14 +125,14 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="reference" label="Reference / receipt #"
+              fullWidth name="reference" label={t('payment.referenceLabel')}
               value={formik.values.reference}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('reference'))} helperText={fieldError('reference')}
               sx={ROUNDED}
             />
             <TextField
-              fullWidth name="paidAt" label="Payment date" type="date"
+              fullWidth name="paidAt" label={t('payment.paymentDate')} type="date"
               value={formik.values.paidAt}
               onChange={formik.handleChange}
               slotProps={{ inputLabel: { shrink: true } }}
@@ -139,7 +141,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
           </Stack>
 
           <TextField
-            fullWidth name="notes" label="Notes" multiline minRows={2}
+            fullWidth name="notes" label={t('fields.notes')} multiline minRows={2}
             value={formik.values.notes}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('notes'))} helperText={fieldError('notes')}
@@ -149,7 +151,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>{t('actions.cancel')}</Button>
         <Button
           variant="contained" color="success"
           disabled={formik.isSubmitting || balance <= 0}
@@ -157,7 +159,7 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
           startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Payment />}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {formik.isSubmitting ? 'Recording…' : 'Record Payment'}
+          {formik.isSubmitting ? t('payment.recording') : t('payment.submit')}
         </Button>
       </DialogActions>
     </Dialog>

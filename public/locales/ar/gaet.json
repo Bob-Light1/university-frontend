@@ -1,34 +1,224 @@
 {
   "title": "GAET",
-  "fullTitle": "Academic Activity Tracking",
-  "report": {
-    "generate": "Generate GAET Report",
-    "title": "Academic Activity Tracking Report",
-    "period": "Reporting period",
-    "download": "Download report"
+  "subtitle": "مولّد الجداول الدراسية التلقائي",
+  "header": {
+    "manager": "اضبط القيود، ثم أنشئ جدول الفصل الدراسي وراجعه وانشره.",
+    "viewer": "اعرض الجداول الدراسية المُنشأة لهذا الحرم الجامعي."
   },
-  "activity": {
-    "title": "Activities",
-    "planned": "Planned",
-    "completed": "Completed",
-    "missed": "Missed",
-    "rate": "Completion rate"
+  "context": {
+    "academicYear": "السنة الدراسية",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "الفصل الدراسي",
+    "updated": "حُدّث في {date}"
   },
-  "teacher": {
-    "load": "Teaching load",
-    "hours": "{n, plural, one{# hour} other{# hours}}",
-    "delivered": "Hours delivered",
-    "remaining": "Hours remaining"
+  "semesterOptions": {
+    "S1": "الفصل الأول",
+    "S2": "الفصل الثاني",
+    "Annual": "سنوي"
   },
-  "schedule": {
-    "generate": "Generate schedule",
-    "constraints": "Constraints",
-    "conflict": "Conflict detected",
-    "resolve": "Resolve"
+  "weekday": {
+    "MO": "الإثنين",
+    "TU": "الثلاثاء",
+    "WE": "الأربعاء",
+    "TH": "الخميس",
+    "FR": "الجمعة",
+    "SA": "السبت",
+    "SU": "الأحد"
+  },
+  "sessionType": {
+    "LECTURE": "محاضرة",
+    "TUTORIAL": "حصة تطبيقية",
+    "PRACTICAL": "حصة عملية"
+  },
+  "roomType": {
+    "CLASSROOM": "قاعة دراسية",
+    "LAB": "مختبر",
+    "AMPHITHEATER": "مدرّج"
+  },
+  "summary": {
+    "timeSlots": "الفترات الزمنية",
+    "courses": "المقررات",
+    "rooms": "القاعات"
   },
   "status": {
-    "onTrack": "On track",
-    "delayed": "Delayed",
-    "completed": "Completed"
+    "DRAFT": "مسودة",
+    "GENERATING": "جارٍ الإنشاء…",
+    "GENERATED": "تم الإنشاء",
+    "PARTIALLY_GENERATED": "جزئي",
+    "PUBLISHED": "منشور",
+    "FAILED": "فشل",
+    "CANCELLED": "ملغى"
+  },
+  "empty": {
+    "title": "لا يوجد جدول دراسي مُهيّأ",
+    "body": "املأ النموذج أدناه لضبط القيود وإنشاء الجدول الدراسي لهذا الفصل."
+  },
+  "banner": {
+    "generatingTitle": "جارٍ إنشاء الجدول الدراسي…",
+    "generatingBody": "تعمل الخوارزمية في خيط معالجة في الخلفية. ستُحدَّث هذه الصفحة تلقائيًا عند الانتهاء.",
+    "failed": "فشل الإنشاء. تحقق من أن قيودك ليست مفرطة في التقييد ثم أعد المحاولة.",
+    "retry": "إعادة المحاولة",
+    "publishedTitle": "تم نشر الجدول الدراسي بنجاح.",
+    "publishedOn": "نُشر في {date}"
+  },
+  "tabs": {
+    "configuration": "الإعداد",
+    "preview": "المعاينة",
+    "quality": "الجودة",
+    "conflicts": "التعارضات"
+  },
+  "actions": {
+    "generate": "إنشاء الجدول الدراسي",
+    "generating": "جارٍ الإنشاء…",
+    "regenerate": "إعادة الإنشاء",
+    "publish": "نشر الجدول الدراسي",
+    "publishing": "جارٍ النشر…",
+    "cancel": "إلغاء",
+    "retry": "إعادة الإنشاء",
+    "published": "تم نشر الجدول الدراسي بنجاح",
+    "disabledHint": "أكمل أقسام القيود الثلاثة جميعها قبل الإنشاء",
+    "tooltipCancel": "تجاهل الجدول المُنشأ وإلغاؤه",
+    "tooltipRegenerate": "إعادة تشغيل الخوارزمية بالقيود الحالية",
+    "tooltipPublishPartial": "لم يتم وضع بعض المقررات — انشر الجدول الجزئي",
+    "tooltipPublishFull": "النشر إلى جداول الطلاب والمعلمين"
+  },
+  "conflicts": {
+    "none": "لم يُكتشف أي تعارض — تم استيفاء جميع القيود الصارمة.",
+    "detected": "{count, plural, one {تم اكتشاف تعارض واحد} other {تم اكتشاف # تعارضات}}",
+    "day": "اليوم",
+    "room": "القاعة",
+    "label": "تعارض",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "حجز مزدوج للمعلم",
+      "ROOM_DOUBLE_BOOKING": "حجز مزدوج للقاعة",
+      "CLASS_DOUBLE_BOOKING": "حجز مزدوج للصف",
+      "fallback": "تعارض"
+    },
+    "unplacedTitle": "مقررات لم تُوضع ({count})",
+    "unplacedLabel": "لم يُوضع",
+    "unplacedDefaultReason": "تعذّر وضعه بالقيود الحالية"
+  },
+  "quality": {
+    "partialTitle": "أُنشئ جزئيًا — {count, plural, one {تعذّر وضع مقرر واحد} other {تعذّر وضع # مقررات}}.",
+    "partialBody": "يمكنك نشر الجدول الجزئي أو تعديل القيود وإعادة الإنشاء.",
+    "score": "درجة الجودة",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "ممتاز",
+    "scoreGood": "جيد",
+    "scoreNeedsReview": "يحتاج إلى مراجعة",
+    "hardConstraints": "القيود الصارمة",
+    "hardConstraintsSub": "لا توجد تعارضات معلم / قاعة / صف",
+    "softConstraints": "القيود المرنة",
+    "softConstraintsSub": "تم استيفاء التفضيلات وفترات الصباح",
+    "roomUtilization": "استغلال القاعات",
+    "roomUtilizationSub": "متوسط معدل إشغال القاعات",
+    "generatedIn": "أُنشئ خلال {seconds} ث",
+    "unplacedTitle": "مقررات لم تُوضع ({count})",
+    "unplacedLabel": "لم يُوضع",
+    "unplacedRefFallback": "المرجع: {ref}",
+    "allPlaced": "تم وضع جميع المقررات بنجاح — لم يُكتشف أي انتهاك للقيود."
+  },
+  "preview": {
+    "emptyTitle": "لم تُنشأ أي حصة بعد",
+    "emptyBody": "شغّل الإنشاء لرؤية معاينة الجدول الدراسي هنا",
+    "summary": "{sessions, plural, one {حصة واحدة} other {# حصص}} على مدى {days, plural, one {يوم واحد} other {# أيام}}",
+    "dayCount": "{count, plural, one {حصة واحدة} other {# حصص}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "الفترات الزمنية",
+      "title": "الفترات الزمنية المتاحة",
+      "subtitle": "حدّد النوافذ الزمنية الأسبوعية التي يمكن للخوارزمية استخدامها.",
+      "add": "إضافة فترة",
+      "empty": "لا توجد فترات محددة. انقر على «إضافة فترة» للبدء.",
+      "day": "اليوم",
+      "start": "البداية (ساعة)",
+      "end": "النهاية (ساعة)",
+      "break": "استراحة",
+      "removeSlot": "إزالة الفترة",
+      "duration": "المدة: {hours} ساعة · {start} – {end}"
+    },
+    "courses": {
+      "tab": "المقررات",
+      "title": "متطلبات المقررات",
+      "subtitle": "إدخال واحد لكل مجموعة صف + مادة + معلم.",
+      "add": "إضافة مقرر",
+      "empty": "لا توجد مقررات محددة. انقر على «إضافة مقرر» لإنشاء وحدة تخطيط.",
+      "newCourse": "مقرر جديد",
+      "hoursPerWeekShort": "{hours} ساعة/أسبوع",
+      "studentsShort": "{count, plural, one {طالب واحد} other {# طلاب}}",
+      "remove": "إزالة متطلب المقرر هذا",
+      "class": "الصف",
+      "subject": "المادة",
+      "teacher": "المعلم",
+      "sessionType": "نوع الحصة",
+      "hoursPerWeek": "ساعة/أسبوع",
+      "duration": "المدة (دقيقة)",
+      "students": "الطلاب",
+      "roomType": "نوع القاعة",
+      "requiresLab": "يتطلب مختبرًا",
+      "preferMorning": "تفضيل الصباح"
+    },
+    "rooms": {
+      "tab": "القاعات",
+      "title": "سجل القاعات",
+      "subtitle": "القاعات الفعلية المتاحة لتخصيص الجدول الدراسي.",
+      "add": "إضافة قاعة",
+      "empty": "لا توجد قاعات محددة. انقر على «إضافة قاعة» لتسجيل قاعة.",
+      "name": "اسم القاعة",
+      "namePlaceholder": "مثال: مدرّج A، مختبر 201",
+      "capacity": "السعة",
+      "type": "نوع القاعة",
+      "remove": "إزالة القاعة"
+    },
+    "semesterStart": {
+      "label": "تاريخ بداية الفصل الدراسي",
+      "helper": "أول يوم دراسي — تبدأ الجلسات المنشورة من هذا التاريخ."
+    },
+    "teacherPrefs": {
+      "tab": "تفضيلات المعلم",
+      "title": "تفضيلات المعلمين",
+      "subtitle": "قيود مرنة اختيارية: عدم التوفر، الأيام المفضلة والحد الأقصى للساعات المتتالية.",
+      "add": "إضافة معلم",
+      "empty": "لم يتم تحديد تفضيلات المعلم. وهي اختيارية وتحسّن الجدول الزمني الناتج.",
+      "newTeacher": "معلم جديد",
+      "teacher": "المعلم",
+      "remove": "إزالة تفضيل المعلم",
+      "maxConsecutive": "الحد الأقصى للساعات المتتالية",
+      "maxConsecutiveHelp": "1–12 ساعة",
+      "preferredDays": "الأيام المفضلة",
+      "unavailable": "الفترات غير المتاحة",
+      "addSlot": "إضافة فترة",
+      "noSlots": "لا توجد فترات غير متاحة",
+      "slotStart": "البداية (س)",
+      "slotEnd": "النهاية (س)",
+      "day": "اليوم",
+      "removeSlot": "إزالة الفترة",
+      "slotsCount": "غير متاح: {count}",
+      "preferredCount": "مفضل: {count}"
+    },
+    "nav": {
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "save": "حفظ الإعداد",
+    "saving": "جارٍ الحفظ…"
+  },
+  "messages": {
+    "saved": "تم حفظ القيود بنجاح.",
+    "loadFailed": "فشل تحميل القيود.",
+    "saveFailed": "فشل حفظ القيود.",
+    "generateStartFailed": "فشل بدء الإنشاء.",
+    "generatedSuccess": "تم إنشاء الجدول الدراسي بنجاح.",
+    "generatedPartial": "أُنشئ الجدول الدراسي جزئيًا — لم تُوضع بعض المقررات. تحقق من التعارضات.",
+    "generatedFailed": "فشل الإنشاء. تحقق من قيودك وأعد المحاولة.",
+    "noConstraintId": "لم يُرجع الخادم معرّف قيد.",
+    "previewFailed": "فشل تحميل المعاينة.",
+    "conflictsFailed": "فشل تحميل التعارضات.",
+    "publishedCount": "{count, plural, one {تم نشر حصة واحدة بنجاح.} other {تم نشر # حصص بنجاح.}}",
+    "publishFailed": "فشل النشر.",
+    "cancelled": "أُلغي الجدول الدراسي المُنشأ.",
+    "cancelFailed": "فشل الإلغاء."
   }
 }

@@ -1,0 +1,285 @@
+{
+  "title": "Modulo Finanze",
+  "tabs": {
+    "overview": "Panoramica",
+    "fees": "Rette",
+    "incomes": "Entrate",
+    "expenses": "Spese"
+  },
+  "actions": {
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "reset": "Reimposta",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "add": "Aggiungi",
+    "saving": "Salvataggio…",
+    "viewDetail": "Vedi dettaglio",
+    "ledger": "Mastro",
+    "recordPayment": "Registra pagamento",
+    "sendReminder": "Invia promemoria",
+    "categories": "Categorie"
+  },
+  "fields": {
+    "student": "Studente",
+    "label": "Etichetta",
+    "title": "Titolo",
+    "amount": "Importo",
+    "amountDue": "Importo dovuto",
+    "currency": "Valuta",
+    "method": "Metodo",
+    "paymentMethod": "Metodo di pagamento",
+    "status": "Stato",
+    "source": "Origine",
+    "category": "Categoria",
+    "date": "Data",
+    "dueDate": "Data di scadenza",
+    "academicYear": "Anno accademico",
+    "reference": "Riferimento",
+    "notes": "Note",
+    "description": "Descrizione",
+    "balance": "Saldo",
+    "due": "Dovuto",
+    "paid": "Pagato",
+    "createdAt": "Creato",
+    "matricule": "Matricola",
+    "year": "Anno",
+    "month": "Mese",
+    "period": "Periodo",
+    "recurring": "Ricorrente",
+    "actions": "Azioni"
+  },
+  "placeholders": {
+    "academicYear": "2025-2026",
+    "feeLabel": "es. Retta 2025-2026"
+  },
+  "filters": {
+    "allYears": "Tutti gli anni",
+    "allMonths": "Tutti i mesi",
+    "allStatuses": "Tutti gli stati",
+    "allSources": "Tutte le origini",
+    "allCategories": "Tutte le categorie"
+  },
+  "enums": {
+    "feeStatus": {
+      "pending": "In attesa",
+      "partial": "Parziale",
+      "paid": "Pagato",
+      "overdue": "Scaduto",
+      "cancelled": "Annullato"
+    },
+    "expenseStatus": {
+      "pending": "In attesa",
+      "approved": "Approvato",
+      "paid": "Pagato",
+      "rejected": "Rifiutato"
+    },
+    "incomeStatus": {
+      "pending": "In attesa",
+      "received": "Ricevuto",
+      "cancelled": "Annullato"
+    },
+    "incomeSource": {
+      "Enrollment Fees": "Tasse di iscrizione",
+      "Tuition": "Retta",
+      "Course Payment": "Pagamento del corso",
+      "Exam": "Esame",
+      "Certification": "Certificazione",
+      "Grant": "Sovvenzione",
+      "Donation": "Donazione",
+      "Partnership": "Partenariato",
+      "Other": "Altro"
+    },
+    "recurringPeriod": {
+      "monthly": "Mensile",
+      "quarterly": "Trimestrale",
+      "yearly": "Annuale"
+    },
+    "paymentMethod": {
+      "Cash": "Contanti",
+      "Mobile Money": "Mobile Money",
+      "Bank Transfer": "Bonifico bancario",
+      "Cheque": "Assegno"
+    },
+    "months": {
+      "1": "Gennaio",
+      "2": "Febbraio",
+      "3": "Marzo",
+      "4": "Aprile",
+      "5": "Maggio",
+      "6": "Giugno",
+      "7": "Luglio",
+      "8": "Agosto",
+      "9": "Settembre",
+      "10": "Ottobre",
+      "11": "Novembre",
+      "12": "Dicembre"
+    }
+  },
+  "overview": {
+    "title": "Panoramica finanziaria",
+    "subtitle": "Entrate e spese e debiti studenteschi in sospeso per questo campus.",
+    "kpi": {
+      "incomeReceived": "Entrate incassate",
+      "expensesPaid": "Spese pagate",
+      "netBalance": "Saldo netto",
+      "overdueDebts": "Debiti scaduti",
+      "records": "{count, plural, one {# record} other {# record}}",
+      "surplus": "Avanzo",
+      "deficit": "Disavanzo",
+      "studentsPastDue": "Studenti in ritardo"
+    },
+    "shortcuts": {
+      "newFee": "Nuova retta",
+      "newPayment": "Nuovo pagamento",
+      "newIncome": "Nuova entrata",
+      "newExpense": "Nuova spesa"
+    },
+    "chart": {
+      "title": "Entrate e spese mensili — {year}",
+      "income": "Entrate",
+      "expense": "Spese"
+    }
+  },
+  "fees": {
+    "title": "Rette degli studenti",
+    "subtitle": "Monitora i debiti, registra i pagamenti e invia promemoria di saldo.",
+    "new": "Nuova retta",
+    "empty": "Nessuna retta trovata. Creane una per iniziare a monitorare il debito di uno studente.",
+    "confirmDelete": "Eliminare la retta «{label}»? Si tratta di un'eliminazione logica.",
+    "toast": {
+      "created": "Retta creata.",
+      "paymentRecorded": "Pagamento registrato.",
+      "reminderSent": "Promemoria inviato allo studente.",
+      "reminderFailed": "Impossibile inviare il promemoria.",
+      "deleted": "Retta eliminata.",
+      "deleteFailed": "Impossibile eliminare la retta."
+    }
+  },
+  "feeDetail": {
+    "title": "Dettaglio retta",
+    "loadError": "Impossibile caricare la retta.",
+    "payments": "Pagamenti ({count})",
+    "noPayments": "Nessun pagamento ancora registrato.",
+    "attachments": "Allegati",
+    "document": "Documento {index}"
+  },
+  "feeForm": {
+    "title": "Nuova retta",
+    "creating": "Creazione…",
+    "submit": "Crea retta"
+  },
+  "payment": {
+    "title": "Registra pagamento",
+    "remainingBalance": "saldo residuo",
+    "referenceLabel": "Riferimento / n. ricevuta",
+    "paymentDate": "Data di pagamento",
+    "recording": "Registrazione…",
+    "submit": "Registra pagamento",
+    "failed": "Pagamento non riuscito. Riprova."
+  },
+  "incomes": {
+    "title": "Entrate",
+    "subtitle": "Registra e monitora tutte le entrate dell'istituzione.",
+    "new": "Nuova entrata",
+    "empty": "Nessuna entrata trovata.",
+    "confirmDelete": "Eliminare l'entrata «{title}»?",
+    "toast": {
+      "created": "Entrata creata.",
+      "updated": "Entrata aggiornata.",
+      "deleted": "Entrata eliminata.",
+      "deleteFailed": "Impossibile eliminare l'entrata."
+    }
+  },
+  "incomeForm": {
+    "titleNew": "Nuova entrata",
+    "titleEdit": "Modifica entrata",
+    "studentOptional": "Studente (facoltativo)",
+    "saveError": "Impossibile salvare l'entrata.",
+    "submitNew": "Crea entrata",
+    "submitEdit": "Salva modifiche"
+  },
+  "expenses": {
+    "title": "Spese",
+    "subtitle": "Registra le uscite e falle passare attraverso il flusso di approvazione.",
+    "new": "Nuova spesa",
+    "empty": "Nessuna spesa trovata.",
+    "recurringTip": "Ricorrente ({period})",
+    "confirmDelete": "Eliminare la spesa «{title}»?",
+    "workflow": {
+      "approve": "Approva",
+      "markPaid": "Segna come pagata",
+      "reject": "Rifiuta"
+    },
+    "toast": {
+      "created": "Spesa creata.",
+      "updated": "Spesa aggiornata.",
+      "approved": "Spesa approvata.",
+      "rejected": "Spesa rifiutata.",
+      "paid": "Spesa pagata.",
+      "transitionError": "Azione non consentita per lo stato attuale.",
+      "deleted": "Spesa eliminata.",
+      "deleteFailed": "Impossibile eliminare la spesa."
+    }
+  },
+  "expenseForm": {
+    "titleNew": "Nuova spesa",
+    "titleEdit": "Modifica spesa",
+    "noCategories": "Nessuna categoria — creane una prima",
+    "lockedError": "Questa spesa è pagata e bloccata — non può più essere modificata.",
+    "saveError": "Impossibile salvare la spesa.",
+    "submitNew": "Crea spesa",
+    "submitEdit": "Salva modifiche"
+  },
+  "categories": {
+    "title": "Categorie di spesa",
+    "newCategory": "Nuova categoria",
+    "empty": "Nessuna categoria ancora.",
+    "createError": "Impossibile creare la categoria.",
+    "deleteError": "Impossibile eliminare: la categoria potrebbe essere ancora in uso."
+  },
+  "ledger": {
+    "title": "Mastro dello studente",
+    "totalDue": "Totale dovuto",
+    "totalPaid": "Totale pagato",
+    "balance": "Saldo",
+    "debts": "Debiti ({count})",
+    "noDebts": "Nessun debito registrato.",
+    "payments": "Pagamenti ({count})",
+    "noPayments": "Nessun pagamento registrato.",
+    "dueAndPaid": "Dovuto {due} · Pagato {paid}"
+  },
+  "student": {
+    "title": "Le mie finanze",
+    "subtitle": "Le tue rette, i pagamenti e il saldo in sospeso.",
+    "kpi": {
+      "totalDue": "Totale dovuto",
+      "totalPaid": "Totale pagato",
+      "outstandingBalance": "Saldo in sospeso",
+      "debtsCount": "{count, plural, one {# debito} other {# debiti}}",
+      "paymentsCount": "{count, plural, one {# pagamento} other {# pagamenti}}",
+      "settle": "Salda il tuo saldo",
+      "allSettled": "Tutto saldato"
+    },
+    "warning": "Hai un saldo in sospeso di {amount}. Contatta l'ufficio finanziario del tuo campus per saldarlo.",
+    "myDebts": "I miei debiti ({count})",
+    "noFees": "Nessuna retta registrata.",
+    "myPayments": "I miei pagamenti ({count})",
+    "noPayments": "Nessun pagamento ancora registrato."
+  },
+  "attachments": {
+    "attach": "Allega file",
+    "uploading": "Caricamento…",
+    "hint": "Ricevute / fatture — JPG, PNG, WEBP, PDF · max 5 MB",
+    "invalidType": "Sono consentiti solo file JPG, PNG, WEBP o PDF.",
+    "tooLarge": "Ogni file deve essere di 5 MB o meno.",
+    "uploadFailed": "Caricamento non riuscito. Riprova."
+  },
+  "errors": {
+    "loadFees": "Impossibile caricare le rette.",
+    "loadIncomes": "Impossibile caricare le entrate.",
+    "loadExpenses": "Impossibile caricare le spese.",
+    "loadLedger": "Impossibile caricare il mastro.",
+    "loadSummary": "Impossibile caricare il riepilogo finanziario."
+  }
+}

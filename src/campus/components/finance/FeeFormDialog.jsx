@@ -5,6 +5,7 @@
  */
 
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, Box,
@@ -18,6 +19,7 @@ import { DEFAULT_CURRENCY } from './financeConstants';
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
+  const { t } = useTranslation('finance');
   const formik = useFormik({
     initialValues: {
       student: null,        // selected student object (picker)
@@ -76,7 +78,7 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
       <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <AddCard sx={{ color: 'info.main' }} />
-          <Typography variant="h6" fontWeight={700}>New Fee</Typography>
+          <Typography variant="h6" fontWeight={700}>{t('feeForm.title')}</Typography>
         </Stack>
       </DialogTitle>
 
@@ -96,8 +98,8 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
           </Box>
 
           <TextField
-            fullWidth name="label" label="Label *"
-            placeholder="e.g. Tuition 2025-2026"
+            fullWidth name="label" label={`${t('fields.label')} *`}
+            placeholder={t('placeholders.feeLabel')}
             value={formik.values.label}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('label'))} helperText={fieldError('label')}
@@ -106,7 +108,7 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="amountDue" label="Amount due *" type="number"
+              fullWidth name="amountDue" label={`${t('fields.amountDue')} *`} type="number"
               value={formik.values.amountDue}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('amountDue'))} helperText={fieldError('amountDue')}
@@ -121,15 +123,15 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              fullWidth name="academicYear" label="Academic year"
-              placeholder="2025-2026"
+              fullWidth name="academicYear" label={t('fields.academicYear')}
+              placeholder={t('placeholders.academicYear')}
               value={formik.values.academicYear}
               onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={Boolean(fieldError('academicYear'))} helperText={fieldError('academicYear')}
               sx={ROUNDED}
             />
             <TextField
-              fullWidth name="dueDate" label="Due date" type="date"
+              fullWidth name="dueDate" label={t('fields.dueDate')} type="date"
               value={formik.values.dueDate}
               onChange={formik.handleChange}
               slotProps={{ inputLabel: { shrink: true } }}
@@ -138,7 +140,7 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
           </Stack>
 
           <TextField
-            fullWidth name="notes" label="Notes" multiline minRows={2}
+            fullWidth name="notes" label={t('fields.notes')} multiline minRows={2}
             value={formik.values.notes}
             onChange={formik.handleChange} onBlur={formik.handleBlur}
             error={Boolean(fieldError('notes'))} helperText={fieldError('notes')}
@@ -148,14 +150,14 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={handleClose} sx={{ textTransform: 'none' }}>{t('actions.cancel')}</Button>
         <Button
           variant="contained" disabled={formik.isSubmitting}
           onClick={() => formik.handleSubmit()}
           startIcon={formik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <AddCard />}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {formik.isSubmitting ? 'Creating…' : 'Create Fee'}
+          {formik.isSubmitting ? t('feeForm.creating') : t('feeForm.submit')}
         </Button>
       </DialogActions>
     </Dialog>

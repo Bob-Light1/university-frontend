@@ -1,28 +1,57 @@
 {
-  "title": "Notifications",
-  "inbox": "Inbox",
-  "unread": "{n, plural, one{# unread notification} other{# unread notifications}}",
-  "markRead": "Mark as read",
-  "markAllRead": "Mark all as read",
-  "delete": "Delete notification",
-  "empty": "No notifications",
+  "title": "الإشعارات",
+  "inbox": "صندوق الوارد",
+  "unread": "{n, plural, zero{# إشعار غير مقروء} one{# إشعار غير مقروء} two{# إشعاران غير مقروءين} few{# إشعارات غير مقروءة} many{# إشعارًا غير مقروء} other{# إشعار غير مقروء}}",
+  "markRead": "وضع علامة مقروء",
+  "markAllRead": "تعليم الكل كمقروء",
+  "delete": "حذف الإشعار",
+  "empty": "لا توجد إشعارات",
+  "loadMore": "تحميل المزيد",
+  "loadError": "فشل تحميل الإشعارات.",
+  "retry": "إعادة المحاولة",
   "type": {
-    "announcement": "Announcement",
-    "result": "New results",
-    "attendance": "Attendance alert",
-    "payment": "Payment reminder",
-    "exam": "Exam reminder",
-    "document": "Document shared",
-    "system": "System"
+    "announcement": "إعلان",
+    "result": "نتائج جديدة",
+    "attendance": "تنبيه الحضور",
+    "payment": "تذكير بالدفع",
+    "exam": "تذكير بالامتحان",
+    "document": "مستند مشترك",
+    "system": "النظام"
   },
   "announcement": {
-    "new": "New announcement",
-    "from": "From",
-    "pinned": "Pinned"
+    "new": "إعلان جديد",
+    "from": "من",
+    "pinned": "مثبّت"
   },
   "alert": {
-    "absence": "Absence alert",
-    "latePayment": "Late payment",
-    "examUpcoming": "Upcoming exam"
+    "absence": "تنبيه غياب",
+    "latePayment": "دفعة متأخرة",
+    "examUpcoming": "امتحان قادم"
+  },
+  "log": {
+    "title": "سجل تسليم الإشعارات",
+    "subtitle": "تتبّع عمليات التسليم متعددة القنوات وإعادة إرسالها",
+    "searchPlaceholder": "ابحث عن الموضوع أو المستلِم أو القالب…",
+    "channel": "القناة",
+    "statusLabel": "الحالة",
+    "subjectCol": "الموضوع",
+    "recipient": "المستلِم",
+    "template": "القالب",
+    "date": "التاريخ",
+    "attempts": "المحاولات",
+    "action": "الإجراء",
+    "all": "الكل",
+    "reset": "إعادة تعيين عوامل التصفية",
+    "retry": "إعادة إرسال التسليم",
+    "inApp": "داخل التطبيق",
+    "empty": "لم يتم العثور على إشعارات",
+    "loadError": "فشل تحميل سجل التسليم.",
+    "status": {
+      "pending": "قيد الانتظار",
+      "sent": "تم الإرسال",
+      "failed": "فشل",
+      "skipped": "تم التخطي",
+      "read": "مقروء"
+    }
   }
 }

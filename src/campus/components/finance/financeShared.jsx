@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Chip, FormControl, InputLabel, Select, MenuItem, Stack,
   Autocomplete, TextField, CircularProgress,
@@ -35,51 +36,62 @@ export const StatusChip = ({ status, labelMap = {}, colorMap = {}, size = 'small
 );
 
 // ─── Currency select ──────────────────────────────────────────────────────────────
-export const CurrencySelect = ({ value, onChange, name = 'currency', label = 'Currency', size = 'small', fullWidth = false }) => (
-  <FormControl size={size} fullWidth={fullWidth} sx={fullWidth ? undefined : SX_SELECT}>
-    <InputLabel>{label}</InputLabel>
-    <Select name={name} label={label} value={value ?? ''} onChange={onChange} sx={{ borderRadius: 2 }}>
-      {CURRENCIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-    </Select>
-  </FormControl>
-);
+export const CurrencySelect = ({ value, onChange, name = 'currency', label, size = 'small', fullWidth = false }) => {
+  const { t } = useTranslation('finance');
+  const resolvedLabel = label ?? t('fields.currency');
+  return (
+    <FormControl size={size} fullWidth={fullWidth} sx={fullWidth ? undefined : SX_SELECT}>
+      <InputLabel>{resolvedLabel}</InputLabel>
+      <Select name={name} label={resolvedLabel} value={value ?? ''} onChange={onChange} sx={{ borderRadius: 2 }}>
+        {CURRENCIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+      </Select>
+    </FormControl>
+  );
+};
 
 // ─── Payment-method select ────────────────────────────────────────────────────────
-export const PaymentMethodSelect = ({ value, onChange, name = 'method', label = 'Method', size = 'small', fullWidth = false }) => (
-  <FormControl size={size} fullWidth={fullWidth} sx={fullWidth ? undefined : SX_SELECT}>
-    <InputLabel>{label}</InputLabel>
-    <Select name={name} label={label} value={value ?? ''} onChange={onChange} sx={{ borderRadius: 2 }}>
-      {PAYMENT_METHODS.map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
-    </Select>
-  </FormControl>
-);
+export const PaymentMethodSelect = ({ value, onChange, name = 'method', label, size = 'small', fullWidth = false }) => {
+  const { t } = useTranslation('finance');
+  const resolvedLabel = label ?? t('fields.method');
+  return (
+    <FormControl size={size} fullWidth={fullWidth} sx={fullWidth ? undefined : SX_SELECT}>
+      <InputLabel>{resolvedLabel}</InputLabel>
+      <Select name={name} label={resolvedLabel} value={value ?? ''} onChange={onChange} sx={{ borderRadius: 2 }}>
+        {PAYMENT_METHODS.map((m) => <MenuItem key={m} value={m}>{t(`enums.paymentMethod.${m}`)}</MenuItem>)}
+      </Select>
+    </FormControl>
+  );
+};
 
 // ─── Period (year + month) selector ───────────────────────────────────────────────
 /**
  * @param {{ year, month, onChange, showMonth? }} props
  *   onChange(key, value) — key is 'year' | 'month'; '' clears.
  */
-export const PeriodSelector = ({ year, month, onChange, showMonth = true }) => (
-  <Stack direction="row" spacing={1.5} flexWrap="wrap">
-    <FormControl size="small" sx={SX_SELECT}>
-      <InputLabel>Year</InputLabel>
-      <Select label="Year" value={year ?? ''} onChange={(e) => onChange('year', e.target.value)}>
-        <MenuItem value="">All years</MenuItem>
-        {recentYears().map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-      </Select>
-    </FormControl>
-
-    {showMonth && (
+export const PeriodSelector = ({ year, month, onChange, showMonth = true }) => {
+  const { t } = useTranslation('finance');
+  return (
+    <Stack direction="row" spacing={1.5} flexWrap="wrap">
       <FormControl size="small" sx={SX_SELECT}>
-        <InputLabel>Month</InputLabel>
-        <Select label="Month" value={month ?? ''} onChange={(e) => onChange('month', e.target.value)}>
-          <MenuItem value="">All months</MenuItem>
-          {MONTHS.map((m) => <MenuItem key={m.value} value={m.value}>{m.label}</MenuItem>)}
+        <InputLabel>{t('fields.year')}</InputLabel>
+        <Select label={t('fields.year')} value={year ?? ''} onChange={(e) => onChange('year', e.target.value)}>
+          <MenuItem value="">{t('filters.allYears')}</MenuItem>
+          {recentYears().map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
         </Select>
       </FormControl>
-    )}
-  </Stack>
-);
+
+      {showMonth && (
+        <FormControl size="small" sx={SX_SELECT}>
+          <InputLabel>{t('fields.month')}</InputLabel>
+          <Select label={t('fields.month')} value={month ?? ''} onChange={(e) => onChange('month', e.target.value)}>
+            <MenuItem value="">{t('filters.allMonths')}</MenuItem>
+            {MONTHS.map((m) => <MenuItem key={m.value} value={m.value}>{t(`enums.months.${m.value}`)}</MenuItem>)}
+          </Select>
+        </FormControl>
+      )}
+    </Stack>
+  );
+};
 
 // ─── Async student picker ─────────────────────────────────────────────────────────
 const studentLabel = (s) =>
@@ -90,7 +102,9 @@ const studentLabel = (s) =>
  * @param {{ value, onChange, campusId?, label?, size? }} props
  *   value/onChange manage the selected student object (or null).
  */
-export const StudentPicker = ({ value, onChange, campusId, label = 'Student', size = 'small' }) => {
+export const StudentPicker = ({ value, onChange, campusId, label, size = 'small' }) => {
+  const { t } = useTranslation('finance');
+  const resolvedLabel = label ?? t('fields.student');
   const [input,   setInput]   = useState('');
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -133,7 +147,7 @@ export const StudentPicker = ({ value, onChange, campusId, label = 'Student', si
       renderInput={(params) => (
         <TextField
           {...params}
-          label={label}
+          label={resolvedLabel}
           slotProps={{
             input: {
               ...params.InputProps,
