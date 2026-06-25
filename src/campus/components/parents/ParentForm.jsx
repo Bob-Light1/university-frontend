@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  Grid, Button, CircularProgress, Collapse,
+  Grid, Button, CircularProgress,
   Stack, Snackbar, Alert,
   useTheme, useMediaQuery, Box, Chip, Typography,
 } from '@mui/material';
@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 
 import { createParentSchema }         from '../../../yupSchema/createParentSchema';
 import { createParent, updateParent } from '../../../services/parentService';
+import ActivationResultDialog          from '../common/ActivationResultDialog';
 import useRelatedData                  from '../../../hooks/useRelatedData';
 import useFormSnackbar                 from '../../../hooks/useFormSnackBar';
 import useImagePreview                 from '../../../hooks/useImagePreview';
@@ -26,7 +27,6 @@ import {
   FormTextField,
   FormSelectField,
   FormDateField,
-  FormPasswordField,
   CampusField,
 } from '../../../components/form/FormFields';
 import PhoneInput from '../../../components/shared/PhoneInput';
@@ -190,6 +190,7 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
   const isEdit       = !!initialData;
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+  const [activationResult, setActivationResult] = useState(null);
   const { preview, file: imageFile, accept: acceptImage, remove: removeImage } =
     useImagePreview(initialData?.profileImage);
 
@@ -240,10 +241,12 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
           await updateParent(initialData._id, formData);
           onSuccess?.('Parent updated successfully');
         } else {
-          await createParent(formData);
-          onSuccess?.('Parent account created successfully');
+          const res = await createParent(formData);
           resetForm();
           removeImage();
+          const activation = res?.data?.data?.activation;
+          if (activation) setActivationResult(activation);
+          else onSuccess?.('Parent account created successfully');
         }
       } catch (err) {
         console.error('ParentForm submit error:', err);
@@ -336,13 +339,8 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
             />
           </Grid>
 
-          <Collapse in={!isEdit} sx={{ width: '100%' }}>
-            <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-              <Grid size={{ xs: 12 }}>
-                <FormPasswordField formik={formik} />
-              </Grid>
-            </Grid>
-          </Collapse>
+          {/* No password field: the parent sets their own via the activation
+              flow (see ActivationResultDialog shown after creation). */}
 
           {/* ── Linked Children ───────────────────────────────────────── */}
           <FormSection title="Linked Children" subtitle="(select the parent's child(ren) — max 10)" />
@@ -436,6 +434,15 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <ActivationResultDialog
+        open={!!activationResult}
+        activation={activationResult}
+        onClose={() => {
+          setActivationResult(null);
+          onSuccess?.('Parent account created successfully');
+        }}
+      />
     </>
   );
 };

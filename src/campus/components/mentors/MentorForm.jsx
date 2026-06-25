@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Grid, Button, CircularProgress, Collapse,
+  Grid, Button, CircularProgress,
   Stack, Alert, Box, useTheme, useMediaQuery,
 } from '@mui/material';
 import {
@@ -13,11 +13,12 @@ import * as Yup from 'yup';
 import { createMentor, updateMentor } from '../../../services/mentorService';
 import PhoneInput           from '../../../components/shared/PhoneInput';
 import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
-import { yupPhone, yupPassword } from '../../../utils/validationRules';
+import { yupPhone } from '../../../utils/validationRules';
 import FormSection          from '../../../components/form/FormSection';
 import {
-  FormTextField, FormPasswordField,
+  FormTextField,
 } from '../../../components/form/FormFields';
+import ActivationResultDialog from '../common/ActivationResultDialog';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -30,7 +31,6 @@ const createSchema = Yup.object({
   email:          Yup.string().email('Invalid email').notRequired(),
   phone:          yupPhone(false),
   specialization: Yup.string().max(200).notRequired(),
-  password:       yupPassword(),
 });
 
 const editSchema = Yup.object({
@@ -53,6 +53,7 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
 
   const [apiError,     setApiError]     = useState('');
   const [profileImage, setProfileImage] = useState(mentor?.profileImage ?? null);
+  const [activationResult, setActivationResult] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -73,14 +74,18 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
         if (!payload.email)          delete payload.email;
         if (!payload.phone)          delete payload.phone;
         if (!payload.specialization) delete payload.specialization;
-        if (isEdit)                  delete payload.password;
+        delete payload.password; // Account activation: user sets their own password.
         if (profileImage)            payload.profileImage = profileImage;
 
-        isEdit
-          ? await updateMentor(mentor._id, payload)
-          : await createMentor(payload);
-
-        onSuccess(`Mentor ${isEdit ? 'updated' : 'created'} successfully`);
+        if (isEdit) {
+          await updateMentor(mentor._id, payload);
+          onSuccess('Mentor updated successfully');
+        } else {
+          const res = await createMentor(payload);
+          const activation = res?.data?.data?.activation;
+          if (activation) setActivationResult(activation);
+          else onSuccess('Mentor created successfully');
+        }
       } catch (err) {
         setApiError(err.response?.data?.message || 'Operation failed.');
       } finally {
@@ -90,6 +95,7 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
   });
 
   return (
+    <>
     <form onSubmit={formik.handleSubmit} noValidate>
       <Grid container spacing={3}>
 
@@ -155,15 +161,8 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
           />
         </Grid>
 
-        {/* ── Security — password only on create ────────────────────────────── */}
-        <Collapse in={!isEdit} sx={{ width: '100%' }}>
-          <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-            <FormSection title="Security" />
-            <Grid size={{ xs: 12 }}>
-              <FormPasswordField formik={formik} />
-            </Grid>
-          </Grid>
-        </Collapse>
+        {/* No password field: the mentor sets their own via the activation
+            flow (see ActivationResultDialog shown after creation). */}
 
         {/* ── Actions ───────────────────────────────────────────────────────── */}
         <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
@@ -197,5 +196,15 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
 
       </Grid>
     </form>
+
+    <ActivationResultDialog
+      open={!!activationResult}
+      activation={activationResult}
+      onClose={() => {
+        setActivationResult(null);
+        onSuccess('Mentor created successfully');
+      }}
+    />
+    </>
   );
 }

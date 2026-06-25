@@ -1,23 +1,25 @@
 import * as Yup from 'yup';
 import {
-  yupEmail, yupPassword, yupPhone, yupName, yupUsername, yupDateOfBirth,
+  yupEmail, yupPhone, yupName, yupUsername, yupDateOfBirth,
 } from '../utils/validationRules';
 
 /**
- * @param {boolean} isEdit - true lors de l'édition d'un enseignant existant
+ * Teacher create/edit validation. Password is never set here (account
+ * activation lets the user choose their own).
  */
-export const createTeacherSchema = (isEdit = false) =>
+export const createTeacherSchema = () =>
   Yup.object().shape({
     // ── Informations personnelles ─────────────────────────────────────────────
 
     firstName: yupName({ label: 'First name' }),
     lastName:  yupName({ label: 'Last name'  }),
 
-    email:    yupEmail(),
+    email:    yupEmail({ required: false }),
     username: yupUsername(true),
     phone:    yupPhone(true),
 
-    password: yupPassword({ isEdit }),
+    // Account activation: the user sets their own password — never set here.
+    password: Yup.string().notRequired(),
 
     gender: Yup.string()
       .oneOf(['male', 'female', 'other'], 'Please select a valid gender')

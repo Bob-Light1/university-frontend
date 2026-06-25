@@ -1,12 +1,13 @@
 import * as Yup from 'yup';
 import {
-  yupEmail, yupPassword, yupPhone, yupName, yupUsername, yupDateOfBirth,
+  yupEmail, yupPhone, yupName, yupUsername, yupDateOfBirth,
 } from '../utils/validationRules';
 
 /**
- * @param {boolean} isEdit - true lors de l'édition d'un étudiant existant
+ * Student create/edit validation. Password is never set here (account
+ * activation lets the user choose their own).
  */
-export const createStudentSchema = (isEdit = false) =>
+export const createStudentSchema = () =>
   Yup.object().shape({
     // ── Affectation académique ────────────────────────────────────────────────
 
@@ -18,7 +19,7 @@ export const createStudentSchema = (isEdit = false) =>
     firstName: yupName({ label: 'First name' }),
     lastName:  yupName({ label: 'Last name'  }),
 
-    username: yupUsername(false), // optionnel pour les étudiants
+    username: yupUsername(true), // required: the backend model enforces a unique username (login + activation identity)
 
     gender: Yup.string()
       .oneOf(['male', 'female'], 'Please select a valid gender')
@@ -36,8 +37,9 @@ export const createStudentSchema = (isEdit = false) =>
     dateOfBirth: yupDateOfBirth({ minAge: 10, maxAge: 80 }),
 
     // ── Mot de passe ──────────────────────────────────────────────────────────
+    // Account activation: the user sets their own password — never set here.
 
-    password: yupPassword({ isEdit }),
+    password: Yup.string().notRequired(),
 
     // ── Matricule (auto-généré si omis) ───────────────────────────────────────
 

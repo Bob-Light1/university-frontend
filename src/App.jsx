@@ -11,7 +11,8 @@ import { clientRoutes } from './routes/ClientRoutes';
 import { teacherRoutes } from './routes/TeacherRoutes';
 import { mentorRoutes }  from './routes/MentorRoutes';
 import { staffRoutes }   from './routes/StaffRoutes';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+import Loader from './components/Loader';
 import { adminRoutes }    from './routes/AdminRoutes';
 import { directorRoutes } from './routes/DirectorRoutes';
 
@@ -23,6 +24,7 @@ const Parent  = lazy(() => import('../src/parent/Parent'));
 const Partner = lazy(() => import('../src/partner/Partner'));
 const Mentor  = lazy(() => import('../src/mentor/Mentor'));
 const Staff   = lazy(() => import('../src/staff/Staff'));
+const ActivateAccount = lazy(() => import('../src/client/components/activate/ActivateAccount'));
 
 
 
@@ -49,6 +51,16 @@ function App() {
       <Routes>
         {/* Public client routes */}
         {clientRoutes}
+
+        {/* Public account activation (link mode + offline code mode) */}
+        <Route
+          path="/activate"
+          element={<Suspense fallback={<Loader />}><ActivateAccount /></Suspense>}
+        />
+        <Route
+          path="/activate/:token"
+          element={<Suspense fallback={<Loader />}><ActivateAccount /></Suspense>}
+        />
 
         {/* Admin routes (public login + admin dashboard) */}
         {adminRoutes}

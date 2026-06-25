@@ -1,22 +1,24 @@
 import * as Yup from 'yup';
 import {
-  yupEmail, yupPassword, yupPhone, yupName, yupDateOfBirth,
+  yupEmail, yupPhone, yupName, yupDateOfBirth,
 } from '../utils/validationRules';
 
 /**
- * @param {boolean} isEdit - true lors de l'édition d'un parent existant
+ * Parent create/edit validation. Password is never set here (account
+ * activation lets the user choose their own).
  */
-export const createParentSchema = (isEdit = false) =>
+export const createParentSchema = () =>
   Yup.object().shape({
     // ── Informations personnelles ─────────────────────────────────────────────
 
     firstName: yupName({ label: 'First name' }),
     lastName:  yupName({ label: 'Last name'  }),
 
-    email: yupEmail(),
+    email: yupEmail({ required: false }),
     phone: yupPhone(true),
 
-    password: yupPassword({ isEdit }),
+    // Account activation: the user sets their own password — never set here.
+    password: Yup.string().notRequired(),
 
     gender: Yup.string()
       .oneOf(['male', 'female'], 'Please select a valid gender')

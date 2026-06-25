@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Grid, Button, CircularProgress, Collapse,
+  Grid, Button, CircularProgress,
   Stack, Snackbar, Alert,
   useTheme, useMediaQuery,
   Box, Chip, Typography, Tooltip,
@@ -20,6 +20,7 @@ import { useParams } from 'react-router-dom';
 
 import { createTeacherSchema }   from '../../../yupSchema/createTeacherSchema';
 import { createTeacher, updateTeacher } from '../../../services/teacherService';
+import ActivationResultDialog     from '../common/ActivationResultDialog';
 import useRelatedData             from '../../../hooks/useRelatedData';
 import useFormSnackbar            from '../../../hooks/useFormSnackBar';
 import useImagePreview            from '../../../hooks/useImagePreview';
@@ -29,7 +30,7 @@ import ProfileImageUpload from '../../../components/form/ProfileImageUpload';
 import FormSection        from '../../../components/form/FormSection';
 import {
   FormTextField, FormDateField,
-  FormSelectField, FormPasswordField, CampusField,
+  FormSelectField, CampusField,
 } from '../../../components/form/FormFields';
 import PhoneInput from '../../../components/shared/PhoneInput';
 
@@ -354,6 +355,7 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
   const isEdit        = !!initialData;
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+  const [activationResult, setActivationResult] = useState(null);
   const { preview, file: imageFile, accept: acceptImage, remove: removeImage } =
     useImagePreview(initialData?.profileImage);
 
@@ -406,10 +408,12 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
           await updateTeacher(initialData._id, formData);
           onSuccess?.('Teacher updated successfully');
         } else {
-          await createTeacher(formData);
-          onSuccess?.('Teacher created successfully');
+          const res = await createTeacher(formData);
           resetForm();
           removeImage();
+          const activation = res?.data?.data?.activation;
+          if (activation) setActivationResult(activation);
+          else onSuccess?.('Teacher created successfully');
         }
       } catch (err) {
         console.error('TeacherForm submit error:', err);
@@ -539,13 +543,8 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
             />
           </Grid>
 
-          <Collapse in={!isEdit} sx={{ width: '100%' }}>
-            <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-              <Grid size={{ xs: 12 }}>
-                <FormPasswordField formik={formik} />
-              </Grid>
-            </Grid>
-          </Collapse>
+          {/* No password field: the teacher sets their own via the activation
+              flow (see ActivationResultDialog shown after creation). */}
 
           {/* ── Professional information ───────────────────────────────── */}
           <FormSection title="Professional Information" />
@@ -679,6 +678,15 @@ const TeacherForm = ({ initialData, onSuccess, onCancel }) => {
       </form>
 
       <FormSnackbar snackbar={snackbar} onClose={closeSnackbar} theme={theme} />
+
+      <ActivationResultDialog
+        open={!!activationResult}
+        activation={activationResult}
+        onClose={() => {
+          setActivationResult(null);
+          onSuccess?.('Teacher created successfully');
+        }}
+      />
     </>
   );
 };

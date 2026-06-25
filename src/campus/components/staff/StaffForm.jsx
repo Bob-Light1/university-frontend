@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  Grid, Button, CircularProgress, Collapse,
+  Grid, Button, CircularProgress,
   Stack, Alert, Box, useTheme, useMediaQuery,
 } from '@mui/material';
 import {
@@ -15,11 +15,12 @@ import api                  from '../../../api/axiosInstance';
 import { createStaff, updateStaff } from '../../../services/staffService';
 import PhoneInput           from '../../../components/shared/PhoneInput';
 import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
-import { yupPhone, yupPassword } from '../../../utils/validationRules';
+import { yupPhone } from '../../../utils/validationRules';
 import FormSection          from '../../../components/form/FormSection';
 import {
-  FormTextField, FormSelectField, FormPasswordField,
+  FormTextField, FormSelectField,
 } from '../../../components/form/FormFields';
+import ActivationResultDialog from '../common/ActivationResultDialog';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
@@ -32,7 +33,6 @@ const createSchema = Yup.object({
     .required(),
   email:        Yup.string().email().notRequired(),
   phone:        yupPhone(false),
-  password:     yupPassword(),
   subRole:      Yup.string().notRequired(),
   neighborhood: Yup.string().max(100).notRequired(),
 });
@@ -61,6 +61,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   const [roles,        setRoles]        = useState([]);
   const [apiError,     setApiError]     = useState('');
   const [profileImage, setProfileImage] = useState(staff?.profileImage ?? null);
+  const [activationResult, setActivationResult] = useState(null);
 
   useEffect(() => {
     api.get('/staff-roles', { params: { campusId, isActive: 'true', limit: 100 } })
@@ -96,14 +97,18 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         if (!payload.email)   delete payload.email;
         if (!payload.phone)   delete payload.phone;
         if (!payload.subRole) delete payload.subRole;
-        if (isEdit)           delete payload.password;
+        delete payload.password; // Account activation: user sets their own password.
         if (profileImage)     payload.profileImage = profileImage;
 
-        isEdit
-          ? await updateStaff(staff._id, payload)
-          : await createStaff(payload);
-
-        onSuccess(t(isEdit ? 'staff:form.updatedSuccess' : 'staff:form.createdSuccess'));
+        if (isEdit) {
+          await updateStaff(staff._id, payload);
+          onSuccess(t('staff:form.updatedSuccess'));
+        } else {
+          const res = await createStaff(payload);
+          const activation = res?.data?.data?.activation;
+          if (activation) setActivationResult(activation);
+          else onSuccess(t('staff:form.createdSuccess'));
+        }
       } catch (err) {
         setApiError(err.response?.data?.message || t('staff:form.failed'));
       } finally {
@@ -113,6 +118,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   });
 
   return (
+    <>
     <form onSubmit={formik.handleSubmit} noValidate>
       <Grid container spacing={3}>
 
@@ -190,15 +196,8 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           />
         </Grid>
 
-        {/* ── Security — password only on create ────────────────────────────── */}
-        <Collapse in={!isEdit} sx={{ width: '100%' }}>
-          <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-            <FormSection title={t('staff:form.security')} />
-            <Grid size={{ xs: 12 }}>
-              <FormPasswordField formik={formik} />
-            </Grid>
-          </Grid>
-        </Collapse>
+        {/* No password field: the staff member sets their own via the
+            activation flow (see ActivationResultDialog shown after creation). */}
 
         {/* ── Actions ───────────────────────────────────────────────────────── */}
         <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
@@ -236,5 +235,15 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
 
       </Grid>
     </form>
+
+    <ActivationResultDialog
+      open={!!activationResult}
+      activation={activationResult}
+      onClose={() => {
+        setActivationResult(null);
+        onSuccess(t('staff:form.createdSuccess'));
+      }}
+    />
+    </>
   );
 }

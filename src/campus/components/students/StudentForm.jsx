@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Grid, Button, CircularProgress, Collapse,
+  Grid, Button, CircularProgress,
   Stack, Snackbar, Alert,
   useTheme, useMediaQuery,
 } from '@mui/material';
@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 
 import { createStudentSchema }   from '../../../yupSchema/createStudentSchema';
 import { createStudent, updateStudent } from '../../../services/studentService';
+import ActivationResultDialog     from '../common/ActivationResultDialog';
 import useRelatedData             from '../../../hooks/useRelatedData';
 import useFormSnackbar            from '../../../hooks/useFormSnackBar';
 import useImagePreview            from '../../../hooks/useImagePreview';
@@ -24,7 +25,7 @@ import ProfileImageUpload from '../../../components/form/ProfileImageUpload';
 import FormSection        from '../../../components/form/FormSection';
 import {
   FormTextField, FormDateField,
-  FormSelectField, FormPasswordField, CampusField,
+  FormSelectField, CampusField,
 } from '../../../components/form/FormFields';
 import PhoneInput from '../../../components/shared/PhoneInput';
 
@@ -163,6 +164,7 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
   const isEdit       = !!initialData;
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+  const [activationResult, setActivationResult] = useState(null);
   const { preview, file: imageFile, accept: acceptImage, remove: removeImage } =
     useImagePreview(initialData?.profileImage);
 
@@ -208,10 +210,17 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
           await updateStudent(initialData._id, formData);
           onSuccess?.('Student updated successfully');
         } else {
-          await createStudent(formData);
-          onSuccess?.('Student created successfully');
+          const res = await createStudent(formData);
           resetForm();
           removeImage();
+          const activation = res?.data?.data?.activation;
+          if (activation) {
+            // Keep the dialog open so the admin can copy the link/code before
+            // the parent closes the form (onSuccess fires on dialog close).
+            setActivationResult(activation);
+          } else {
+            onSuccess?.('Student created successfully');
+          }
         }
       } catch (err) {
         console.error('StudentForm submit error:', err);
@@ -304,13 +313,8 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
             />
           </Grid>
 
-          <Collapse in={!isEdit} sx={{ width: '100%' }}>
-            <Grid container spacing={3} sx={{ pl: 3, pr: 3 }}>
-              <Grid size={{ xs: 12 }}>
-                <FormPasswordField formik={formik} />
-              </Grid>
-            </Grid>
-          </Collapse>
+          {/* No password field: the student sets their own via the activation
+              flow (see ActivationResultDialog shown after creation). */}
 
           {/* ── Academic assignment ───────────────────────────────────────── */}
           <FormSection title="Academic Assignment" />
@@ -388,6 +392,15 @@ const StudentForm = ({ initialData, onSuccess, onCancel }) => {
       </form>
 
       <FormSnackbar snackbar={snackbar} onClose={closeSnackbar} theme={theme} />
+
+      <ActivationResultDialog
+        open={!!activationResult}
+        activation={activationResult}
+        onClose={() => {
+          setActivationResult(null);
+          onSuccess?.('Student created successfully');
+        }}
+      />
     </>
   );
 };
