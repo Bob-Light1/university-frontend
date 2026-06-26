@@ -52,7 +52,7 @@ const configSchema = Yup.object({
     then:      (s) => s.min(0).max(100).required('Percentage is required'),
     otherwise: (s) => s.notRequired(),
   }),
-  currency: Yup.string().notRequired(),
+  defaultCurrency: Yup.string().notRequired(),
 });
 
 // ─── Commission Config Dialog ─────────────────────────────────────────────────
@@ -62,10 +62,10 @@ const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
 
   const formik = useFormik({
     initialValues: {
-      ruleType:    config?.ruleType    ?? 'FIXED',
-      fixedAmount: config?.fixedAmount ?? '',
-      percentage:  config?.percentage  ?? '',
-      currency:    config?.currency    ?? 'XAF',
+      ruleType:        config?.ruleType        ?? 'FIXED',
+      fixedAmount:     config?.fixedAmount     ?? '',
+      percentage:      config?.percentage      ?? '',
+      defaultCurrency: config?.defaultCurrency ?? 'XAF',
     },
     validationSchema: configSchema,
     validateOnBlur:   true,
@@ -145,9 +145,9 @@ const CommissionConfigDialog = ({ open, config, onClose, onSave }) => {
           <FormControl fullWidth>
             <InputLabel>Currency</InputLabel>
             <Select
-              name="currency"
+              name="defaultCurrency"
               label="Currency"
-              value={formik.values.currency}
+              value={formik.values.defaultCurrency}
               onChange={formik.handleChange}
               sx={{ borderRadius: 2 }}
             >
@@ -451,8 +451,8 @@ const CommissionManager = () => {
           </Typography>
         </Box>
         <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: 'flex-end', sm: 'auto' } }}>
-          <Tooltip title={commissionConfig
-            ? `Config: ${commissionConfig.ruleType} — ${commissionConfig.ruleType === 'FIXED' ? `${commissionConfig.fixedAmount} ${commissionConfig.currency}` : `${commissionConfig.percentage}%`}`
+          <Tooltip title={commissionConfig?.ruleType
+            ? `Config: ${commissionConfig.ruleType} — ${commissionConfig.ruleType === 'FIXED' ? `${commissionConfig.fixedAmount} ${commissionConfig.defaultCurrency}` : `${commissionConfig.percentage}%`}`
             : 'No commission config set'}>
             <Button
               size="small"
@@ -484,7 +484,7 @@ const CommissionManager = () => {
       )}
 
       {/* No config warning */}
-      {!configLoading && !commissionConfig && (
+      {!configLoading && !commissionConfig?.ruleType && (
         <Alert
           severity="warning"
           sx={{ mb: 2, borderRadius: 2 }}

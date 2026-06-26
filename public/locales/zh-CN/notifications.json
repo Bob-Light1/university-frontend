@@ -48,6 +48,7 @@
     "loadError": "加载发送日志失败。",
     "status": {
       "pending": "待处理",
+      "sending": "发送中…",
       "sent": "已发送",
       "failed": "失败",
       "skipped": "已跳过",

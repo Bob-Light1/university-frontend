@@ -48,6 +48,7 @@
     "loadError": "配信ログの読み込みに失敗しました。",
     "status": {
       "pending": "保留中",
+      "sending": "送信中…",
       "sent": "送信済み",
       "failed": "失敗",
       "skipped": "スキップ",

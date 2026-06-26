@@ -32,7 +32,7 @@ const profileSchema = Yup.object({
   bio:          Yup.string().max(500, 'Max 500 characters').notRequired(),
   phone:        yupPhone(false),
   organization: Yup.string().max(100).notRequired(),
-  gender:       Yup.string().oneOf(['male', 'female', '']).notRequired(),
+  gender:       Yup.string().oneOf(['male', 'female', 'other', '']).notRequired(),
 });
 
 const passwordSchema = Yup.object({
@@ -193,6 +193,7 @@ export default function PartnerProfile() {
                 <MenuItem value="">Prefer not to say</MenuItem>
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
+                <MenuItem value="other">Other</MenuItem>
               </Select>
             </FormControl>
 

@@ -48,6 +48,7 @@
     "loadError": "Falha ao carregar o registro de entrega.",
     "status": {
       "pending": "Pendente",
+      "sending": "Enviando…",
       "sent": "Enviada",
       "failed": "Falhou",
       "skipped": "Ignorada",

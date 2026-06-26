@@ -37,7 +37,7 @@ const LANGUAGE_OPTIONS = [
 
 // ─── Profile Edit Form ────────────────────────────────────────────────────────
 
-const ProfileForm = ({ parent, onSaved, onCancel }) => {
+const ProfileForm = ({ parent, onSaved, onCancel, onError }) => {
   const theme = useTheme();
 
   const formik = useFormik({
@@ -80,8 +80,12 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
         },
       };
 
-      await updateMyProfile(payload);
-      onSaved();
+      try {
+        await updateMyProfile(payload);
+        onSaved();
+      } catch (err) {
+        onError?.(err.response?.data?.message || 'Failed to update profile.');
+      }
     },
   });
 
@@ -198,7 +202,7 @@ const ProfileForm = ({ parent, onSaved, onCancel }) => {
 
 // ─── Password Change Form ─────────────────────────────────────────────────────
 
-const PasswordForm = ({ onSaved, onCancel }) => {
+const PasswordForm = ({ onSaved, onCancel, onError }) => {
   const theme = useTheme();
 
   const formik = useFormik({
@@ -223,12 +227,16 @@ const PasswordForm = ({ onSaved, onCancel }) => {
     validateOnBlur:   true,
 
     onSubmit: async (values, { resetForm }) => {
-      await changeMyPassword({
-        currentPassword: values.currentPassword,
-        newPassword:     values.newPassword,
-      });
-      onSaved();
-      resetForm();
+      try {
+        await changeMyPassword({
+          currentPassword: values.currentPassword,
+          newPassword:     values.newPassword,
+        });
+        onSaved();
+        resetForm();
+      } catch (err) {
+        onError?.(err.response?.data?.message || 'Failed to update password.');
+      }
     },
   });
 
@@ -473,6 +481,7 @@ const ParentProfile = () => {
                 showSnack('Profile updated successfully.');
                 fetchProfile();
               }}
+              onError={(msg) => showSnack(msg, 'error')}
               onCancel={() => setEditMode(false)}
             />
           </Box>
@@ -492,6 +501,7 @@ const ParentProfile = () => {
                 setPwdMode(false);
                 showSnack('Password updated successfully.');
               }}
+              onError={(msg) => showSnack(msg, 'error')}
               onCancel={() => setPwdMode(false)}
             />
           </Box>

@@ -48,6 +48,7 @@
     "loadError": "Zustellungsprotokoll konnte nicht geladen werden.",
     "status": {
       "pending": "Ausstehend",
+      "sending": "Wird gesendet…",
       "sent": "Gesendet",
       "failed": "Fehlgeschlagen",
       "skipped": "Übersprungen",

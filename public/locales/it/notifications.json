@@ -48,6 +48,7 @@
     "loadError": "Impossibile caricare il registro di consegna.",
     "status": {
       "pending": "In attesa",
+      "sending": "Invio in corso…",
       "sent": "Inviata",
       "failed": "Non riuscita",
       "skipped": "Ignorata",

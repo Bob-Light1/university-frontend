@@ -84,7 +84,16 @@ export default function PartnerDashboard() {
       .finally(() => setProfileLoading(false));
 
     getMyDashboard()
-      .then((r) => setDashboard(r.data?.data ?? r.data))
+      .then((r) => {
+        // Backend shape: { kpis: {...}, recentLeads, recentCommissions }.
+        // Flatten kpis to the root so the cards below can read them directly.
+        const d = r.data?.data ?? r.data ?? {};
+        setDashboard({
+          ...(d.kpis ?? {}),
+          recentLeads:       d.recentLeads ?? [],
+          recentCommissions: d.recentCommissions ?? [],
+        });
+      })
       .catch(() => setError('Failed to load dashboard data.'))
       .finally(() => setDashboardLoading(false));
   }, []);

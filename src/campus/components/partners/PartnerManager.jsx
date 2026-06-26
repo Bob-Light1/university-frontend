@@ -243,6 +243,7 @@ const PartnerManager = () => {
         loading={loading}
         pagination={pagination}
         onPageChange={setPage}
+        onLimitChange={(limit) => handleFilterChange('limit', limit)}
         onView={handleOpenView}
         onEdit={handleOpenEdit}
         onToggleStatus={handleToggleStatus}

@@ -54,7 +54,17 @@ const useCommission = () => {
       const res = await listCommissions(params);
       const raw = res.data;
       setCommissions(Array.isArray(raw?.data) ? raw.data : []);
-      if (raw?.kpis)       setKpis(raw.kpis);
+      // Backend nests the status summary in pagination.summary:
+      // { pending: { count, totalAmount }, validated: {...}, paid: {...}, ... }.
+      const summary = raw?.pagination?.summary ?? {};
+      setKpis({
+        pending:   summary.pending?.count    ?? 0,
+        validated: summary.validated?.count  ?? 0,
+        paid:      summary.paid?.count       ?? 0,
+        disputed:  summary.disputed?.count   ?? 0,
+        cancelled: summary.cancelled?.count  ?? 0,
+        totalPaid: summary.paid?.totalAmount ?? 0,
+      });
       if (raw?.pagination) setPagination((p) => ({ ...p, ...raw.pagination }));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load commissions.');
@@ -72,7 +82,10 @@ const useCommission = () => {
     setConfigLoading(true);
     try {
       const res = await getCommissionConfig();
-      setCommissionConfig(res.data?.data ?? res.data);
+      // Backend shape: { campusId, campusName, commissionConfig }.
+      // Expose the inner commissionConfig (or null when no rule is set yet).
+      const payload = res.data?.data ?? res.data;
+      setCommissionConfig(payload?.commissionConfig ?? null);
     } catch {
       // Config may not be set yet — not a hard failure
     } finally {

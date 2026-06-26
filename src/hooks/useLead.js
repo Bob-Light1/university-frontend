@@ -51,7 +51,9 @@ const useLead = () => {
       const res = await listLeads(params);
       const raw = res.data;
       setLeads(Array.isArray(raw?.data) ? raw.data : []);
-      if (raw?.kpis)       setKpis(raw.kpis);
+      // Backend returns flat per-status counts in pagination.summary:
+      // { new, contacted, dossier_submitted, admitted, enrolled, rejected, abandoned }.
+      setKpis(raw?.pagination?.summary ?? {});
       if (raw?.pagination) setPagination((p) => ({ ...p, ...raw.pagination }));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load leads.');

@@ -1,0 +1,224 @@
+{
+  "title": "GAET",
+  "subtitle": "自動時間割ジェネレーター",
+  "header": {
+    "manager": "制約を設定し、学期の時間割を生成・確認・公開します。",
+    "viewer": "このキャンパスの生成された時間割を表示します。"
+  },
+  "context": {
+    "academicYear": "学年度",
+    "academicYearPlaceholder": "2024-2025",
+    "semester": "学期",
+    "updated": "更新 {date}"
+  },
+  "semesterOptions": {
+    "S1": "第1学期",
+    "S2": "第2学期",
+    "Annual": "通年"
+  },
+  "weekday": {
+    "MO": "月曜日",
+    "TU": "火曜日",
+    "WE": "水曜日",
+    "TH": "木曜日",
+    "FR": "金曜日",
+    "SA": "土曜日",
+    "SU": "日曜日"
+  },
+  "sessionType": {
+    "LECTURE": "講義",
+    "TUTORIAL": "演習",
+    "PRACTICAL": "実習"
+  },
+  "roomType": {
+    "CLASSROOM": "教室",
+    "LAB": "実験室",
+    "AMPHITHEATER": "大講堂"
+  },
+  "summary": {
+    "timeSlots": "時間枠",
+    "courses": "講座",
+    "rooms": "部屋"
+  },
+  "status": {
+    "DRAFT": "下書き",
+    "GENERATING": "生成中…",
+    "GENERATED": "生成済み",
+    "PARTIALLY_GENERATED": "一部",
+    "PUBLISHED": "公開済み",
+    "FAILED": "失敗",
+    "CANCELLED": "キャンセル済み"
+  },
+  "empty": {
+    "title": "時間割が設定されていません",
+    "body": "下のフォームに入力して制約を設定し、この学期の時間割を生成してください。"
+  },
+  "banner": {
+    "generatingTitle": "時間割を生成中…",
+    "generatingBody": "アルゴリズムがバックグラウンドスレッドで実行中です。完了すると、このページは自動的に更新されます。",
+    "failed": "生成に失敗しました。制約が過剰でないか確認して再試行してください。",
+    "retry": "再試行",
+    "publishedTitle": "時間割が正常に公開されました。",
+    "publishedOn": "{date} に公開"
+  },
+  "tabs": {
+    "configuration": "設定",
+    "preview": "プレビュー",
+    "quality": "品質",
+    "conflicts": "競合"
+  },
+  "actions": {
+    "generate": "時間割を生成",
+    "generating": "生成中…",
+    "regenerate": "再生成",
+    "publish": "時間割を公開",
+    "publishing": "公開中…",
+    "cancel": "キャンセル",
+    "retry": "生成を再試行",
+    "published": "時間割が正常に公開されました",
+    "disabledHint": "生成する前に3つの制約セクションすべてを完了してください",
+    "tooltipCancel": "生成された時間割を破棄してキャンセル",
+    "tooltipRegenerate": "現在の制約でアルゴリズムを再実行",
+    "tooltipPublishPartial": "一部の講座が配置されていません — 部分的な時間割を公開",
+    "tooltipPublishFull": "StudentSchedule と TeacherSchedule に公開"
+  },
+  "conflicts": {
+    "none": "競合は検出されませんでした — すべてのハード制約を満たしています。",
+    "detected": "{count, plural, other {# 件の競合を検出}}",
+    "day": "曜日",
+    "room": "部屋",
+    "label": "競合",
+    "types": {
+      "TEACHER_DOUBLE_BOOKING": "教員の重複予約",
+      "ROOM_DOUBLE_BOOKING": "部屋の重複予約",
+      "CLASS_DOUBLE_BOOKING": "クラスの重複予約",
+      "fallback": "競合"
+    },
+    "unplacedTitle": "未配置の講座 ({count})",
+    "unplacedLabel": "未配置",
+    "unplacedDefaultReason": "現在の制約では配置できませんでした"
+  },
+  "quality": {
+    "partialTitle": "一部生成 — {count, plural, other {# 件の講座を配置できませんでした}}。",
+    "partialBody": "部分的な時間割を公開するか、制約を調整して再生成できます。",
+    "score": "品質スコア",
+    "scoreValue": "{score} / 1000",
+    "scoreExcellent": "優秀",
+    "scoreGood": "良好",
+    "scoreNeedsReview": "要確認",
+    "hardConstraints": "ハード制約",
+    "hardConstraintsSub": "教員・部屋・クラスの競合なし",
+    "softConstraints": "ソフト制約",
+    "softConstraintsSub": "希望および午前枠を満たしている",
+    "roomUtilization": "部屋の使用率",
+    "roomUtilizationSub": "平均部屋占有率",
+    "generatedIn": "{seconds}秒で生成",
+    "unplacedTitle": "未配置の講座 ({count})",
+    "unplacedLabel": "未配置",
+    "unplacedRefFallback": "参照: {ref}",
+    "allPlaced": "すべての講座が正常に配置されました — 制約違反は検出されませんでした。"
+  },
+  "preview": {
+    "emptyTitle": "まだセッションが生成されていません",
+    "emptyBody": "生成を実行すると、ここに時間割プレビューが表示されます",
+    "summary": "{sessions, plural, other {# セッション}}（{days, plural, other {# 日}}間）",
+    "dayCount": "{count, plural, other {# セッション}}",
+    "statCount": "{count} {type}"
+  },
+  "form": {
+    "timeSlots": {
+      "tab": "時間枠",
+      "title": "利用可能な時間枠",
+      "subtitle": "アルゴリズムが使用できる週間の時間帯を定義します。",
+      "add": "枠を追加",
+      "empty": "時間枠が定義されていません。「枠を追加」をクリックして開始してください。",
+      "day": "曜日",
+      "start": "開始 (時)",
+      "end": "終了 (時)",
+      "break": "休憩",
+      "removeSlot": "枠を削除",
+      "duration": "所要時間: {hours}時間 · {start} – {end}"
+    },
+    "courses": {
+      "tab": "講座",
+      "title": "講座要件",
+      "subtitle": "クラス + 科目 + 教員の組み合わせごとに1エントリ。",
+      "add": "講座を追加",
+      "empty": "講座が定義されていません。「講座を追加」をクリックして計画単位を作成してください。",
+      "newCourse": "新規講座",
+      "hoursPerWeekShort": "{hours}時間/週",
+      "studentsShort": "{count, plural, other {# 名の学生}}",
+      "remove": "この講座要件を削除",
+      "class": "クラス",
+      "subject": "科目",
+      "teacher": "教員",
+      "sessionType": "セッション種別",
+      "hoursPerWeek": "時間/週",
+      "duration": "所要時間 (分)",
+      "students": "学生",
+      "roomType": "部屋種別",
+      "requiresLab": "実験室が必要",
+      "preferMorning": "午前を優先"
+    },
+    "rooms": {
+      "tab": "部屋",
+      "title": "部屋登録",
+      "subtitle": "時間割割り当てに利用可能な物理的な部屋。",
+      "add": "部屋を追加",
+      "empty": "部屋が定義されていません。「部屋を追加」をクリックして部屋を登録してください。",
+      "name": "部屋名",
+      "namePlaceholder": "例: 大講堂A、実験室201",
+      "capacity": "収容人数",
+      "type": "部屋種別",
+      "remove": "部屋を削除"
+    },
+    "semesterStart": {
+      "label": "学期開始日",
+      "helper": "最初の授業日 — 公開されたセッションはこの日から始まります。"
+    },
+    "teacherPrefs": {
+      "tab": "教員の希望",
+      "title": "教員の希望",
+      "subtitle": "任意のソフト制約：利用不可、希望曜日、最大連続時間。",
+      "add": "教員を追加",
+      "empty": "教員の希望が定義されていません。これらは任意で、生成された時間割を調整します。",
+      "newTeacher": "新規教員",
+      "teacher": "教員",
+      "remove": "教員の希望を削除",
+      "maxConsecutive": "最大連続時間",
+      "maxConsecutiveHelp": "1〜12時間",
+      "preferredDays": "希望曜日",
+      "unavailable": "利用不可の枠",
+      "addSlot": "枠を追加",
+      "noSlots": "利用不可の枠はありません",
+      "slotStart": "開始 (時)",
+      "slotEnd": "終了 (時)",
+      "day": "曜日",
+      "removeSlot": "枠を削除",
+      "slotsCount": "利用不可: {count}",
+      "preferredCount": "希望: {count}"
+    },
+    "nav": {
+      "previous": "前へ",
+      "next": "次へ"
+    },
+    "save": "設定を保存",
+    "saving": "保存中…"
+  },
+  "messages": {
+    "saved": "制約が正常に保存されました。",
+    "loadFailed": "制約の読み込みに失敗しました。",
+    "saveFailed": "制約の保存に失敗しました。",
+    "generateStartFailed": "生成の開始に失敗しました。",
+    "generatedSuccess": "時間割が正常に生成されました。",
+    "generatedPartial": "時間割が一部生成されました — 一部の講座が未配置です。競合を確認してください。",
+    "generatedFailed": "生成に失敗しました。制約を確認して再試行してください。",
+    "noConstraintId": "サーバーが制約IDを返しませんでした。",
+    "previewFailed": "プレビューの読み込みに失敗しました。",
+    "conflictsFailed": "競合の読み込みに失敗しました。",
+    "publishedCount": "{count, plural, other {# 件のセッションが正常に公開されました。}}",
+    "publishFailed": "公開に失敗しました。",
+    "cancelled": "生成された時間割をキャンセルしました。",
+    "cancelFailed": "キャンセルに失敗しました。"
+  }
+}

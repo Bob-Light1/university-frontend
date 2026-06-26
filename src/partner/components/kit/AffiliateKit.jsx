@@ -74,14 +74,17 @@ export default function AffiliateKit() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (type = 'qr') => {
     setDownloading(true);
     try {
-      const res = await downloadMyKit('qr');
-      const url = URL.createObjectURL(new Blob([res.data]));
+      const res = await downloadMyKit(type);
+      const isPdf = type === 'pdf';
+      const url = URL.createObjectURL(
+        new Blob([res.data], isPdf ? { type: 'application/pdf' } : undefined),
+      );
       const a   = document.createElement('a');
       a.href    = url;
-      a.download = `qr_${profile?.partnerCode ?? 'kit'}.png`;
+      a.download = `${isPdf ? 'flyer' : 'qr'}_${profile?.partnerCode ?? 'kit'}.${isPdf ? 'pdf' : 'png'}`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
@@ -160,18 +163,29 @@ export default function AffiliateKit() {
                 Prospects can scan it with their phone camera.
               </Typography>
 
-              <Button
-                variant="contained"
-                startIcon={downloading ? <CircularProgress size={16} color="inherit" /> : <Download />}
-                onClick={handleDownload}
-                disabled={!qrUrl || downloading}
-                sx={{
-                  textTransform: 'none', fontWeight: 700, borderRadius: 2, alignSelf: 'flex-start',
-                  background: BRAND_GRADIENT_BTN,
-                }}
-              >
-                {downloading ? 'Downloading…' : 'Download QR Code'}
-              </Button>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                <Button
+                  variant="contained"
+                  startIcon={downloading ? <CircularProgress size={16} color="inherit" /> : <Download />}
+                  onClick={() => handleDownload('qr')}
+                  disabled={!qrUrl || downloading}
+                  sx={{
+                    textTransform: 'none', fontWeight: 700, borderRadius: 2, alignSelf: 'flex-start',
+                    background: BRAND_GRADIENT_BTN,
+                  }}
+                >
+                  {downloading ? 'Downloading…' : 'Download QR Code'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<Download />}
+                  onClick={() => handleDownload('pdf')}
+                  disabled={!profile?.referralLink || downloading}
+                  sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, alignSelf: 'flex-start' }}
+                >
+                  Download Flyer (PDF)
+                </Button>
+              </Stack>
             </Stack>
           </Stack>
         </Paper>

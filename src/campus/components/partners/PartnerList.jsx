@@ -160,7 +160,7 @@ const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRes
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const PartnerList = ({
-  partners, loading, pagination, onPageChange,
+  partners, loading, pagination, onPageChange, onLimitChange,
   onView, onEdit, onToggleStatus, onArchive, onRestore,
   onOpenCreate,
 }) => {
@@ -391,7 +391,9 @@ const PartnerList = ({
         rowsPerPage={limit}
         rowsPerPageOptions={[10, 20, 50]}
         onPageChange={(_, newPage) => onPageChange(newPage + 1)}
-        onRowsPerPageChange={() => {}}
+        onRowsPerPageChange={
+          onLimitChange ? (e) => onLimitChange(parseInt(e.target.value, 10)) : undefined
+        }
       />
     </Box>
   );

@@ -39,13 +39,14 @@ import { fDateTime } from '../../../utils/dateFormat';
 const LIMIT = 15;
 
 const CHANNELS = ['inapp', 'email', 'whatsapp'];
-const STATUSES = ['pending', 'sent', 'failed', 'skipped', 'read'];
+const STATUSES = ['pending', 'sending', 'sent', 'failed', 'skipped', 'read'];
 
 // Status → MUI palette colour.
 const STATUS_COLOR = {
   sent:    'success',
   read:    'info',
   pending: 'warning',
+  sending: 'info',
   failed:  'error',
   skipped: 'default',
 };
@@ -57,9 +58,10 @@ const CHANNEL_ICON = {
   whatsapp: ChatIcon,
 };
 
-// A row is replayable only for an external channel that hasn't been delivered.
+// A row is replayable only for an external channel that hasn't been delivered and
+// is not already in flight (`sending` is a transient worker-claim state).
 const isRetryable = (row) =>
-  row.channel !== 'inapp' && !['sent', 'read'].includes(row.status);
+  row.channel !== 'inapp' && !['sent', 'read', 'sending'].includes(row.status);
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 

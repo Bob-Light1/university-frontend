@@ -32,6 +32,7 @@
     "loadError": "Échec du chargement du journal de livraison.",
     "status": {
       "pending": "En attente",
+      "sending": "Envoi en cours…",
       "sent": "Envoyé",
       "failed": "Échoué",
       "skipped": "Ignoré",

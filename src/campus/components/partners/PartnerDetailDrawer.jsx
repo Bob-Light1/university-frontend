@@ -352,6 +352,27 @@ const PartnerDetailDrawer = ({
                 </List>
               </Box>
             )}
+
+            {/* Commission override */}
+            <Box>
+              <Typography variant="overline" color="primary" fontWeight={700} sx={{ fontSize: '0.75rem' }}>
+                Commission Override
+              </Typography>
+              <Divider sx={{ mb: 1, mt: 0.3 }} />
+              <List disablePadding>
+                <DetailItem
+                  icon={<AttachMoney color="action" fontSize="small" />}
+                  primary="Rule"
+                  secondary={
+                    partner.commissionConfig?.ruleType
+                      ? partner.commissionConfig.ruleType === 'PERCENTAGE'
+                        ? `${partner.commissionConfig.percentage}% of tuition`
+                        : `${partner.commissionConfig.fixedAmount?.toLocaleString()} ${partner.commissionConfig.currency ?? 'XAF'} (fixed)`
+                      : 'Uses campus default'
+                  }
+                />
+              </List>
+            </Box>
           </Stack>
         )}
 
@@ -435,15 +456,15 @@ const PartnerDetailDrawer = ({
             ) : commSummary ? (
               <>
                 <Stack direction="row" spacing={1.5} flexWrap="wrap">
-                  <KpiBox label="Pending"   value={commSummary.pending   ?? 0} color="warning.main"  />
-                  <KpiBox label="Validated" value={commSummary.validated ?? 0} color="info.main"     />
-                  <KpiBox label="Paid"      value={commSummary.paid      ?? 0} color="success.main"  />
+                  <KpiBox label="Pending"   value={commSummary.commissions?.pending?.count   ?? 0} color="warning.main"  />
+                  <KpiBox label="Validated" value={commSummary.commissions?.validated?.count ?? 0} color="info.main"     />
+                  <KpiBox label="Paid"      value={commSummary.commissions?.paid?.count      ?? 0} color="success.main"  />
                 </Stack>
-                {(commSummary.totalAmount != null) && (
+                {(commSummary.commissions?.paid?.totalAmount != null) && (
                   <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                    <Typography variant="caption" color="text.secondary">Total Amount</Typography>
+                    <Typography variant="caption" color="text.secondary">Total Paid</Typography>
                     <Typography variant="h6" fontWeight={700} color="success.main">
-                      {commSummary.totalAmount?.toLocaleString()} {commSummary.currency ?? 'XAF'}
+                      {commSummary.commissions.paid.totalAmount?.toLocaleString()} XAF
                     </Typography>
                   </Paper>
                 )}

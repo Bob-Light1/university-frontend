@@ -473,7 +473,7 @@ const LeadPipeline = () => {
         rowsPerPage={pagination.limit}
         rowsPerPageOptions={[10, 25, 50]}
         onPageChange={(_, p) => setPage(p + 1)}
-        onRowsPerPageChange={() => {}}
+        onRowsPerPageChange={(e) => handleFilterChange('limit', parseInt(e.target.value, 10))}
       />
 
       {/* Detail Drawer */}

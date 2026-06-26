@@ -229,7 +229,7 @@ const ParentForm = ({ initialData, onSuccess, onCancel }) => {
       // Normalize children[] to an array of string IDs
       children: (initialData?.children || []).map((c) => c._id ?? c),
     },
-    validationSchema: createParentSchema(isEdit),
+    validationSchema: createParentSchema(),
     validateOnChange: true,
     validateOnBlur:   true,
 

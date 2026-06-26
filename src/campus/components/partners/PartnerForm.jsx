@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import {
   Business, Person, School, Handshake,
-  EmojiEvents, AccountTree,
+  EmojiEvents, AccountTree, AttachMoney,
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -67,11 +67,19 @@ const TIER_OPTIONS = [
 const GENDER_OPTIONS = [
   { value: 'male',   label: 'Male'   },
   { value: 'female', label: 'Female' },
+  { value: 'other',  label: 'Other'  },
 ];
 
 const COMMISSION_TYPE_OPTIONS = [
   { value: 'FIXED',      label: 'Fixed Amount' },
   { value: 'PERCENTAGE', label: 'Percentage'   },
+];
+
+// Per-partner commission override — empty value means "fall back to campus rule".
+const COMMISSION_RULE_OPTIONS = [
+  { value: '',           label: 'Use campus default' },
+  { value: 'FIXED',      label: 'Fixed Amount'        },
+  { value: 'PERCENTAGE', label: 'Percentage of tuition' },
 ];
 
 const CURRENCY_OPTIONS = [
@@ -103,7 +111,7 @@ const buildSchema = (isEdit) => Yup.object({
   bio:            Yup.string().max(500).notRequired(),
   tier:           Yup.string().oneOf(['bronze', 'silver', 'gold', 'platinum']).notRequired(),
   organization:   Yup.string().max(100).notRequired(),
-  gender:         Yup.string().oneOf(['male', 'female', '']).notRequired(),
+  gender:         Yup.string().oneOf(['male', 'female', 'other', '']).notRequired(),
   convention: Yup.object({
     startDate: Yup.date()
       .transform((v, o) => (o === '' || o == null ? null : v))
@@ -119,6 +127,26 @@ const buildSchema = (isEdit) => Yup.object({
           ? schema.min(d, 'End date must be after start date')
           : schema;
       }),
+  }).notRequired(),
+  commissionConfig: Yup.object({
+    ruleType: Yup.string().oneOf(['FIXED', 'PERCENTAGE', '']).notRequired(),
+    fixedAmount: Yup.number()
+      .transform((v, o) => (o === '' || o == null ? null : v))
+      .nullable()
+      .when('ruleType', {
+        is:        'FIXED',
+        then:      (s) => s.min(0, 'Amount must be ≥ 0').required('Amount is required'),
+        otherwise: (s) => s.notRequired(),
+      }),
+    percentage: Yup.number()
+      .transform((v, o) => (o === '' || o == null ? null : v))
+      .nullable()
+      .when('ruleType', {
+        is:        'PERCENTAGE',
+        then:      (s) => s.min(0, 'Min 0').max(100, 'Max 100').required('Percentage is required'),
+        otherwise: (s) => s.notRequired(),
+      }),
+    currency: Yup.string().notRequired(),
   }).notRequired(),
 });
 
@@ -145,6 +173,12 @@ const buildInitialValues = (partner) => ({
     commissionValue: partner?.convention?.commissionValue         ?? '',
     currency:        partner?.convention?.currency                ?? 'XAF',
     notes:           partner?.convention?.notes                   ?? '',
+  },
+  commissionConfig: {
+    ruleType:    partner?.commissionConfig?.ruleType    ?? '',
+    fixedAmount: partner?.commissionConfig?.fixedAmount ?? '',
+    percentage:  partner?.commissionConfig?.percentage  ?? '',
+    currency:    partner?.commissionConfig?.currency    ?? 'XAF',
   },
 });
 
@@ -173,6 +207,10 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
         const conv = payload.convention;
         if (!conv.startDate && !conv.endDate && !conv.commissionType) {
           delete payload.convention;
+        }
+        // No override rule selected → clear it (engine falls back to campus config).
+        if (!payload.commissionConfig?.ruleType) {
+          payload.commissionConfig = null;
         }
         const res = isEdit
           ? await updatePartner(partner._id, payload)
@@ -206,6 +244,15 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
     touched:      formik.touched.convention ?? {},
     handleChange: (e) => formik.setFieldValue(`convention.${e.target.name}`, e.target.value),
     handleBlur:   (e) => formik.setFieldTouched(`convention.${e.target.name}`, true),
+  };
+
+  // Proxy for the per-partner commission override nested fields.
+  const ccFormik = {
+    values:       formik.values.commissionConfig,
+    errors:       formik.errors.commissionConfig  ?? {},
+    touched:      formik.touched.commissionConfig ?? {},
+    handleChange: (e) => formik.setFieldValue(`commissionConfig.${e.target.name}`, e.target.value),
+    handleBlur:   (e) => formik.setFieldTouched(`commissionConfig.${e.target.name}`, true),
   };
 
   return (
@@ -347,6 +394,33 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
                     <FormSelectField formik={convFormik} name="currency"        label="Currency"            options={CURRENCY_OPTIONS} />
                   </Stack>
                   <FormTextField formik={convFormik} name="notes" label="Notes" multiline rows={2} />
+                </Stack>
+              </FormSection>
+
+              {/* ── Commission Override (optional) ───────────────────────────── */}
+              <FormSection title="Commission Override (optional)" icon={<AttachMoney color="action" />} collapsible>
+                <Stack spacing={2}>
+                  <Typography variant="caption" color="text.secondary">
+                    Leave on “Use campus default” to apply this campus's commission rule.
+                    Set a rule here only to override it for this specific partner.
+                  </Typography>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormSelectField
+                      formik={ccFormik}
+                      name="ruleType"
+                      label="Commission Rule"
+                      options={COMMISSION_RULE_OPTIONS}
+                    />
+                    {ccFormik.values.ruleType === 'FIXED' && (
+                      <FormTextField formik={ccFormik} name="fixedAmount" label="Fixed Amount *" type="number" />
+                    )}
+                    {ccFormik.values.ruleType === 'PERCENTAGE' && (
+                      <FormTextField formik={ccFormik} name="percentage" label="Percentage (0–100) *" type="number" />
+                    )}
+                    {ccFormik.values.ruleType && (
+                      <FormSelectField formik={ccFormik} name="currency" label="Currency" options={CURRENCY_OPTIONS} />
+                    )}
+                  </Stack>
                 </Stack>
               </FormSection>
 

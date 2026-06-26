@@ -72,7 +72,7 @@ export const getCommissionConfig = () =>
 /**
  * PUT /partners/commission-config
  * Update the campus commission configuration (ADMIN + CAMPUS_MANAGER only).
- * @param {{ ruleType: 'FIXED'|'PERCENTAGE', fixedAmount?: number, percentage?: number, currency?: string }} data
+ * @param {{ ruleType: 'FIXED'|'PERCENTAGE', fixedAmount?: number, percentage?: number, defaultCurrency?: string }} data
  */
 export const updateCommissionConfig = (data) =>
   api.put('/partners/commission-config', data);
