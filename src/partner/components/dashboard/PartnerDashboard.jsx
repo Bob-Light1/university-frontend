@@ -17,7 +17,7 @@ import {
 import {
   ContentCopy, TrendingUp, People, AttachMoney,
   HourglassEmpty, EmojiEvents, CheckCircle, Paid,
-  ArrowForwardIos,
+  ArrowForwardIos, QrCode2, Link as LinkIcon, Keyboard, Public,
 } from '@mui/icons-material';
 
 import { useTheme } from '@mui/material/styles';
@@ -90,6 +90,7 @@ export default function PartnerDashboard() {
         const d = r.data?.data ?? r.data ?? {};
         setDashboard({
           ...(d.kpis ?? {}),
+          sourceBreakdown:   d.sourceBreakdown ?? [],
           recentLeads:       d.recentLeads ?? [],
           recentCommissions: d.recentCommissions ?? [],
         });
@@ -109,6 +110,23 @@ export default function PartnerDashboard() {
   };
 
   const tierColor = TIER_COLOR[profile?.tier] ?? TIER_COLOR.silver;
+
+  // Top-of-funnel referral traffic (counters incremented on each /r/{code} hit).
+  const referralStats = profile?.referralStats ?? {};
+  const qrScans    = referralStats.qrScans    ?? 0;
+  const linkClicks = referralStats.linkClicks ?? 0;
+  const totalHits  = qrScans + linkClicks;
+
+  // Lead conversions broken down by attribution source (from the dashboard API).
+  const SOURCE_META = {
+    qr_code:       { label: 'QR scan',     icon: <QrCode2 fontSize="small" />,  color: theme.palette.secondary.main },
+    referral_link: { label: 'Shared link', icon: <LinkIcon fontSize="small" />, color: theme.palette.info.main },
+    manual_code:   { label: 'Manual code', icon: <Keyboard fontSize="small" />, color: theme.palette.warning.main },
+    direct:        { label: 'Direct',      icon: <Public fontSize="small" />,   color: theme.palette.text.secondary },
+  };
+  const sourceBreakdown = (dashboard?.sourceBreakdown ?? [])
+    .filter((s) => SOURCE_META[s.source])
+    .sort((a, b) => b.total - a.total);
 
   const conversionRate = dashboard?.conversionRate != null
     ? `${Math.round(dashboard.conversionRate)}%`
@@ -225,6 +243,84 @@ export default function PartnerDashboard() {
           </Grid>
         ))}
       </Grid>
+
+      {/* ── Referral performance (QR vs link) ──────────────────────────────────── */}
+      {(totalHits > 0 || sourceBreakdown.length > 0) && (
+        <Paper variant="outlined" sx={{ borderRadius: 3, mb: 3, p: 2.5 }}>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 0.5 }}>
+            Referral performance
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            How visitors reach you, and how each channel converts.
+          </Typography>
+
+          <Grid container spacing={2} sx={{ mt: 0.5 }}>
+            {/* Traffic: scans vs clicks */}
+            <Grid item xs={12} md={5}>
+              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                Link traffic
+              </Typography>
+              <Stack direction="row" spacing={1.5} sx={{ mt: 1 }}>
+                <Box sx={{ flex: 1, p: 1.5, borderRadius: 2, bgcolor: `${theme.palette.secondary.main}14` }}>
+                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: theme.palette.secondary.main }}>
+                    <QrCode2 fontSize="small" />
+                    <Typography variant="caption" fontWeight={700}>QR scans</Typography>
+                  </Stack>
+                  <Typography variant="h5" fontWeight={900} sx={{ color: theme.palette.secondary.main }}>{qrScans}</Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 1.5, borderRadius: 2, bgcolor: `${theme.palette.info.main}14` }}>
+                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: theme.palette.info.main }}>
+                    <LinkIcon fontSize="small" />
+                    <Typography variant="caption" fontWeight={700}>Link clicks</Typography>
+                  </Stack>
+                  <Typography variant="h5" fontWeight={900} sx={{ color: theme.palette.info.main }}>{linkClicks}</Typography>
+                </Box>
+              </Stack>
+              <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
+                {totalHits} total visit{totalHits === 1 ? '' : 's'} to your link
+              </Typography>
+            </Grid>
+
+            {/* Conversions by source */}
+            <Grid item xs={12} md={7}>
+              <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                Leads by source
+              </Typography>
+              {sourceBreakdown.length > 0 ? (
+                <Stack spacing={1} sx={{ mt: 1 }}>
+                  {sourceBreakdown.map((s) => {
+                    const meta = SOURCE_META[s.source];
+                    const rate = s.total > 0 ? Math.round((s.enrolled / s.total) * 100) : 0;
+                    return (
+                      <Stack key={s.source} direction="row" alignItems="center" spacing={1}>
+                        <Box sx={{ color: meta.color, display: 'flex' }}>{meta.icon}</Box>
+                        <Typography variant="body2" sx={{ minWidth: 92 }}>{meta.label}</Typography>
+                        <Box sx={{ flex: 1 }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={rate}
+                            sx={{
+                              height: 6, borderRadius: 3, bgcolor: `${meta.color}22`,
+                              '& .MuiLinearProgress-bar': { bgcolor: meta.color, borderRadius: 3 },
+                            }}
+                          />
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ minWidth: 120, textAlign: 'right' }}>
+                          {s.enrolled}/{s.total} enrolled ({rate}%)
+                        </Typography>
+                      </Stack>
+                    );
+                  })}
+                </Stack>
+              ) : (
+                <Typography variant="body2" color="text.disabled" sx={{ mt: 1 }}>
+                  No leads attributed yet.
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
 
       {/* ── Recent Leads ───────────────────────────────────────────────────────── */}
       {dashboard?.recentLeads?.length > 0 && (

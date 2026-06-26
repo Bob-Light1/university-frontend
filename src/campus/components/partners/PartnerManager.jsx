@@ -32,7 +32,7 @@ const PartnerManager = () => {
   const {
     partners, pagination, filters, loading, error,
     fetch, handleFilterChange, handleReset, setPage,
-    changeStatus, removePartner, unarchivePartner, refreshQR, downloadCSV,
+    changeStatus, removePartner, unarchivePartner, downloadCSV,
   } = usePartner();
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
@@ -153,15 +153,6 @@ const PartnerManager = () => {
     }
   };
 
-  const handleRegenerateQR = async (id) => {
-    try {
-      await refreshQR(id);
-      showSnackbar('QR code regenerated.', 'success');
-    } catch {
-      showSnackbar('Failed to regenerate QR code.', 'error');
-    }
-  };
-
   const handleDownloadCSV = async () => {
     try {
       await downloadCSV();
@@ -275,7 +266,6 @@ const PartnerManager = () => {
           onToggleStatus={handleToggleStatus}
           onArchive={(p) => handleAskArchive(p)}
           onRestore={(p) => handleAskRestore(p)}
-          onRegenerateQR={handleRegenerateQR}
         />
       </Drawer>
 

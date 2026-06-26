@@ -7,14 +7,13 @@
  *   1. Leads       — lead KPIs from computed partner stats
  *   2. Commissions — commission summary via getCommissionSummary()
  *   3. Kit         — QR code + referral link + download
- *   4. Settings    — status, regenerate QR, archive
+ *   4. Settings    — status, archive
  *
  * @param {Object|null} entity     - Partner document (with totalLeads, totalConverted)
  * @param {Function}    onClose
  * @param {Function}    onEdit
  * @param {Function}    onToggleStatus
  * @param {Function}    onArchive
- * @param {Function}    onRegenerateQR
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -27,12 +26,12 @@ import {
 import {
   Close, Edit, Email, Phone, Domain, Badge,
   ContentCopy, Download, QrCode2, Block, CheckCircle,
-  Delete, Refresh, TrendingUp, People, AttachMoney,
+  Delete, TrendingUp, People, AttachMoney,
   EmojiEvents, Business, School, LinkOutlined,
 } from '@mui/icons-material';
 
 import { getCommissionSummary, downloadKit, getPartnerLeads } from '../../../services/partnerService';
-import { IMAGE_BASE_URL } from '../../../config/env';
+import { API_BASE_URL } from '../../../config/env';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import {
   BRAND_GRADIENT, BRAND_GRADIENT_BTN,
@@ -76,7 +75,6 @@ const PartnerDetailDrawer = ({
   onEdit,
   onToggleStatus,
   onArchive,
-  onRegenerateQR,
 }) => {
   const [tab,            setTab]            = useState(0);
   const [commSummary,    setCommSummary]    = useState(null);
@@ -129,11 +127,9 @@ const PartnerDetailDrawer = ({
   const totalConverted = partner.totalConverted ?? 0;
   const conversion   = totalLeads > 0 ? Math.round((totalConverted / totalLeads) * 100) : 0;
 
-  // QR image URL (dev: local uploads; prod: Cloudinary-hosted if starts with http)
-  const qrUrl = partner.qrCodeFileName
-    ? partner.qrCodeFileName.startsWith('http')
-      ? partner.qrCodeFileName
-      : `${IMAGE_BASE_URL}/uploads/${partner.schoolCampus}/partners/qr/${partner.qrCodeFileName}`
+  // QR image — generated on the fly by the public endpoint from the partnerCode.
+  const qrUrl = partner.partnerCode
+    ? `${API_BASE_URL}/partners/public/qr/${encodeURIComponent(partner.partnerCode)}`
     : null;
 
   const handleCopyLink = () => {
@@ -579,22 +575,6 @@ const PartnerDetailDrawer = ({
                   </Button>
                 ))}
               </Stack>
-            </Paper>
-
-            {/* Regenerate QR */}
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                QR Code
-              </Typography>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<Refresh />}
-                onClick={() => onRegenerateQR(partner._id)}
-                sx={{ textTransform: 'none', borderRadius: 2 }}
-              >
-                Regenerate QR Code
-              </Button>
             </Paper>
 
             {/* Archive */}

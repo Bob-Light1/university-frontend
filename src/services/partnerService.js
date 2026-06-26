@@ -5,7 +5,7 @@
  * Aligned with backend router: /api/partners (partner.router.js)
  *
  * Three groups of endpoints:
- *   1. Public (no auth)           — login, forgot/reset password, pre-register, resolveCode
+ *   1. Public (no auth)           — login, forgot/reset password, pre-register
  *   2. Partner self-service       — PARTNER role (portal: /me/*)
  *   3. Campus Manager CRUD        — ADMIN, DIRECTOR, CAMPUS_MANAGER
  */
@@ -43,14 +43,6 @@ export const resetPassword = (token, data) =>
  */
 export const publicPreRegister = (data) =>
   api.post('/partners/public/pre-register', data);
-
-/**
- * GET /partners/public/resolve/:code
- * Resolve a partnerCode → campus branding (no auth).
- * @param {string} code
- */
-export const resolveCode = (code) =>
-  api.get(`/partners/public/resolve/${code}`);
 
 // ─── PARTNER SELF-SERVICE (PORTAL) ───────────────────────────────────────────
 
@@ -190,14 +182,6 @@ export const archivePartner = (id) =>
  */
 export const restorePartner = (id) =>
   api.patch(`/partners/${id}/restore`);
-
-/**
- * POST /partners/:id/qr-code
- * Regenerate QR code for a partner.
- * @param {string} id
- */
-export const regenerateQR = (id) =>
-  api.post(`/partners/${id}/qr-code`);
 
 /**
  * GET /partners/:id/kit

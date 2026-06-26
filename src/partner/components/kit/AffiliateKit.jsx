@@ -3,7 +3,7 @@
  * @description Partner portal — affiliate kit page.
  *
  * Shows QR code, referral link (copy), WhatsApp message template, and download button.
- * The QR file URL is constructed from IMAGE_BASE_URL + campusId + qrCodeFileName.
+ * The QR is served live by the public endpoint GET /partners/public/qr/:code.
  */
 
 import { useState, useEffect } from 'react';
@@ -19,7 +19,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { getMe, downloadMyKit } from '../../../services/partnerService';
-import { IMAGE_BASE_URL }       from '../../../config/env';
+import { API_BASE_URL }         from '../../../config/env';
 import useFormSnackbar           from '../../../hooks/useFormSnackBar';
 import {
   BRAND_ORANGE, BRAND_GRADIENT_BTN,
@@ -52,18 +52,16 @@ export default function AffiliateKit() {
     );
   }
 
-  const qrUrl = profile?.qrCodeFileName
-    ? profile.qrCodeFileName.startsWith('http')
-      ? profile.qrCodeFileName
-      : `${IMAGE_BASE_URL}/uploads/${profile.schoolCampus}/partners/qr/${profile.qrCodeFileName}`
+  const qrUrl = profile?.partnerCode
+    ? `${API_BASE_URL}/partners/public/qr/${encodeURIComponent(profile.partnerCode)}`
     : null;
 
   const whatsappMsg = profile?.referralLink
-    ? `Bonjour ! Je vous invite à vous pré-inscrire dans notre établissement. Utilisez mon lien personnalisé pour commencer votre dossier : ${profile.referralLink}\n\nCode partenaire : ${profile.partnerCode ?? ''}`
+    ? `Hi! I'd like to invite you to pre-register at our institution. Use my personalized link to start your application: ${profile.referralLink}\n\nPartner code: ${profile.partnerCode ?? ''}`
     : '';
 
   const smsMsg = profile?.referralLink
-    ? `Inscrivez-vous via mon lien : ${profile.referralLink} Code: ${profile.partnerCode ?? ''}`
+    ? `Register via my link: ${profile.referralLink} Code: ${profile.partnerCode ?? ''}`
     : '';
   const smsCharCount = smsMsg.length;
   const smsSplits    = Math.ceil(smsCharCount / 160);

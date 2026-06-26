@@ -55,7 +55,8 @@ export const clientRoutes = (
         }
       />
 
-      {/* Public partner pre-registration — /register?ref=PARTNER_CODE */}
+      {/* Legacy partner pre-registration — /register?ref=PARTNER_CODE now
+          redirects to the public portal short link /r/{CODE} (funnel consolidated). */}
       <Route
         path="register"
         element={

@@ -16,7 +16,6 @@ import {
   togglePartnerStatus,
   archivePartner,
   restorePartner,
-  regenerateQR,
   exportPartners,
 } from '../services/partnerService';
 
@@ -108,12 +107,6 @@ const usePartner = () => {
     return res.data;
   }, [fetch]);
 
-  const refreshQR = useCallback(async (id) => {
-    const res = await regenerateQR(id);
-    await fetch();
-    return res.data;
-  }, [fetch]);
-
   const downloadCSV = useCallback(async () => {
     const res = await exportPartners();
     const url = URL.createObjectURL(new Blob([res.data]));
@@ -146,7 +139,6 @@ const usePartner = () => {
     changeStatus,
     removePartner,
     unarchivePartner,
-    refreshQR,
     downloadCSV,
   };
 };
