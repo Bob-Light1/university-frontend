@@ -162,8 +162,10 @@ const ChildResults = () => {
             onChange={(e) => { setFilters((f) => ({ ...f, semester: e.target.value })); setPage(0); }}
           >
             <MenuItem value="">All</MenuItem>
-            {['1', '2', '3'].map((s) => (
-              <MenuItem key={s} value={s}>Semester {s}</MenuItem>
+            {/* Values MUST match the backend SEMESTER enum (S1/S2/Annual);
+                sending 1/2/3 silently returned zero results. */}
+            {[['S1', 'Semester 1'], ['S2', 'Semester 2'], ['Annual', 'Annual']].map(([v, l]) => (
+              <MenuItem key={v} value={v}>{l}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -213,7 +215,7 @@ const ChildResults = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {r.academicYear} {r.semester ? `· S${r.semester}` : ''}
+                        {r.academicYear} {r.semester ? `· ${r.semester}` : ''}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
@@ -222,11 +224,13 @@ const ChildResults = () => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      {r.gradeBand ? (
+                      {/* gradeBand is an object snapshot ({ letterGrade, label, … }) —
+                          render its letterGrade, never the object itself. */}
+                      {r.gradeBand?.letterGrade ? (
                         <Chip
-                          label={r.gradeBand}
+                          label={r.gradeBand.letterGrade}
                           size="small"
-                          color={GRADE_COLOR[r.gradeBand] || 'default'}
+                          color={GRADE_COLOR[r.gradeBand.letterGrade] || 'default'}
                           sx={{ fontWeight: 700, minWidth: 30 }}
                         />
                       ) : '—'}

@@ -120,9 +120,10 @@ const ResultTeacher = () => {
           api.get(`/class/teacher/${teacherId}`),
 
           // GET /subject — buildCampusFilter(TEACHER) → { schoolCampus: user.campusId }
-          // isActive=true excludes archived subjects.
+          // teacher=teacherId restricts to subjects this teacher actually teaches,
+          // so the picker can't offer a subject the backend will reject (422).
           // Response: sendPaginated → { success, message, data: Subject[], pagination }
-          api.get('/subject', { params: { limit: 100, isActive: true } }),
+          api.get('/subject', { params: { limit: 100, teacher: teacherId } }),
 
           // GET /results/grading-scales — campus-scoped by backend
           listGradingScales(),

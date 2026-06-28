@@ -201,7 +201,10 @@ const useResult = (mode = 'manager', contextParams = {}) => {
   const bulkCreate = useCallback(async (data) => {
     const res = await bulkCreateResults(data);
     await fetch();
-    return res.data;
+    // Return the inner payload ({ inserted, skipped, errors }) — BulkResultForm
+    // reads those keys directly. Returning the full envelope (res.data) left
+    // result.skipped undefined, so partial-failure summaries were never shown.
+    return res.data?.data ?? res.data;
   }, [fetch]);
 
   // Workflow actions

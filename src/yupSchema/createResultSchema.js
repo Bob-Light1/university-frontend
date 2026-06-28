@@ -290,9 +290,11 @@ export const bulkCreateResultSchema = Yup.object({
   semester:        Yup.string().oneOf(SEMESTER).required('Semester is required'),
   evaluationType:  Yup.string().oneOf(EVALUATION_TYPE).required('Evaluation type is required'),
   evaluationTitle: Yup.string().trim().min(2).max(200).required('Evaluation title is required'),
-  class:           objectId('Class'),
-  subject:         objectId('Subject'),
-  teacher:         objectId('Teacher'),
+  // Field names mirror the backend POST /results/bulk contract exactly
+  // (classId/subjectId/teacherId/results) — not class/subject/teacher/entries.
+  classId:         objectId('Class'),
+  subjectId:       objectId('Subject'),
+  teacherId:       objectId('Teacher'),
 
   maxScore: Yup.number()
     .min(1, 'Max score must be at least 1')
@@ -302,10 +304,10 @@ export const bulkCreateResultSchema = Yup.object({
   examDate:    Yup.date().typeError('Invalid date').max(new Date(), 'Exam date cannot be in the future').nullable().default(null),
   examPeriod:  Yup.string().oneOf(EXAM_PERIOD).nullable().default(null),
 
-  entries: Yup.array()
+  results: Yup.array()
     .of(bulkResultEntrySchema)
     .min(1, 'At least one result entry is required')
-    .required('Entries are required'),
+    .required('Results are required'),
 });
 
 // ─── CLASS MANAGER REMARKS SCHEMA ────────────────────────────────────────────

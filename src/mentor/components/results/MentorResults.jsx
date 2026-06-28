@@ -151,9 +151,12 @@ export default function MentorResults() {
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
-                          {r.grade && (
+                          {/* The Result model has no `grade` field — derive the
+                              displayed grade from the gradeBand snapshot, falling
+                              back to the normalized /20 score. */}
+                          {(r.gradeBand?.letterGrade ?? r.normalizedScore) != null && (
                             <Chip
-                              label={r.grade}
+                              label={r.gradeBand?.letterGrade ?? r.normalizedScore}
                               size="small"
                               sx={{ bgcolor: gc.bg, color: gc.color, fontWeight: 700 }}
                             />

@@ -146,25 +146,31 @@ const TranscriptCard = ({ transcript, onSign, signing }) => {
         </Box>
       </Stack>
 
-      {/* Grade summary if available */}
-      {transcript.averageGrade != null && (
+      {/* Grade summary if available.
+          Field names MUST match the FinalTranscript model: generalAverage /
+          classRank / classTotal / generalAppreciation — the previous
+          averageGrade/rank/appreciation never existed, so this whole block
+          (including the computed average) was permanently hidden. */}
+      {transcript.generalAverage != null && (
         <>
           <Divider sx={{ my: 1.5 }} />
           <Stack direction="row" spacing={3}>
             <Box>
               <Typography variant="caption" color="text.secondary">Average</Typography>
-              <Typography variant="h6" fontWeight={700}>{transcript.averageGrade?.toFixed(2)}</Typography>
+              <Typography variant="h6" fontWeight={700}>{transcript.generalAverage?.toFixed(2)}</Typography>
             </Box>
-            {transcript.rank != null && (
+            {transcript.classRank != null && (
               <Box>
                 <Typography variant="caption" color="text.secondary">Class Rank</Typography>
-                <Typography variant="h6" fontWeight={700}>#{transcript.rank}</Typography>
+                <Typography variant="h6" fontWeight={700}>
+                  #{transcript.classRank}{transcript.classTotal ? ` / ${transcript.classTotal}` : ''}
+                </Typography>
               </Box>
             )}
-            {transcript.appreciation && (
+            {transcript.generalAppreciation && (
               <Box>
                 <Typography variant="caption" color="text.secondary">Appreciation</Typography>
-                <Typography variant="body2" fontWeight={600}>{transcript.appreciation}</Typography>
+                <Typography variant="body2" fontWeight={600}>{transcript.generalAppreciation}</Typography>
               </Box>
             )}
           </Stack>
