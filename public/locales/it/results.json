@@ -1,0 +1,65 @@
+{
+  "title": "Risultati",
+  "grade": {
+    "title": "Voti",
+    "enter": "Inserisci voti",
+    "edit": "Modifica voto",
+    "subject": "Materia",
+    "score": "Punteggio",
+    "outOf": "su",
+    "average": "Media",
+    "rank": "Posizione",
+    "coefficient": "Coefficiente",
+    "weighted": "Media ponderata",
+    "format": {
+      "FRACTION": "Frazione (es. 15/20)",
+      "PERCENT": "Percentuale (es. 75%)",
+      "LETTER": "Voto in lettere (es. A+)",
+      "GPA": "GPA (es. 3,75/4,0)"
+    }
+  },
+  "status": {
+    "draft": "Bozza",
+    "submitted": "Inviato",
+    "published": "Pubblicato"
+  },
+  "transcript": {
+    "title": "Certificato degli esami",
+    "official": "Certificato ufficiale",
+    "semester": "Semestre",
+    "academicYear": "Anno accademico",
+    "generate": "Genera certificato",
+    "download": "Scarica certificato",
+    "signature": "Firma del genitore"
+  },
+  "bulletin": {
+    "title": "Pagella",
+    "generate": "Genera pagella",
+    "batch": "Stampa in blocco",
+    "class": "Pagelle della classe"
+  },
+  "workflow": {
+    "submit": "Invia per revisione",
+    "publish": "Pubblica risultati",
+    "unpublish": "Annulla pubblicazione"
+  },
+  "noResults": "Nessun risultato trovato.",
+  "filterStudent": "Filtra per studente o materia…",
+  "evaluationType": {
+    "CC": "CC",
+    "EXAM": "Esame",
+    "RETAKE": "Recupero",
+    "PROJECT": "Progetto",
+    "PRACTICAL": "Prova pratica",
+    "allTypes": "Tutti i tipi"
+  },
+  "allYears": "Tutti gli anni",
+  "col": {
+    "student": "Studente",
+    "subject": "Materia",
+    "evaluation": "Valutazione",
+    "semester": "Semestre",
+    "score": "Punteggio",
+    "outOf20": "/ 20"
+  }
+}

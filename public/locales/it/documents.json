@@ -1,0 +1,66 @@
+{
+  "title": "Documenti",
+  "upload": "Carica documento",
+  "download": "Scarica",
+  "view": "Visualizza documento",
+  "delete": "Elimina documento",
+  "type": {
+    "title": "Tipo di documento",
+    "transcript": "Certificato degli esami",
+    "certificate": "Certificato",
+    "report": "Rapporto",
+    "contract": "Contratto",
+    "id": "Documento d'identità",
+    "diploma": "Diploma",
+    "other": "Altro"
+  },
+  "status": {
+    "draft": "Bozza",
+    "published": "Pubblicato",
+    "archived": "Archiviato",
+    "locked": "Bloccato"
+  },
+  "version": {
+    "title": "Versione",
+    "history": "Cronologia versioni",
+    "current": "Versione attuale"
+  },
+  "qr": {
+    "generate": "Genera codice QR",
+    "verify": "Verifica autenticità",
+    "verified": "Documento verificato"
+  },
+  "share": {
+    "link": "Condividi link",
+    "expires": "Scade tra"
+  },
+  "retention": {
+    "policy": "Criterio di conservazione",
+    "expiresOn": "Scade il"
+  },
+  "noDocuments": "Nessun documento trovato.",
+  "searchPlaceholder": "Cerca titolo o descrizione…",
+  "category": {
+    "ADMINISTRATIVE": "Amministrativo",
+    "ACADEMIC": "Accademico",
+    "FINANCIAL": "Finanziario",
+    "LEGAL": "Legale",
+    "GENERAL": "Generale",
+    "allCategories": "Tutte le categorie"
+  },
+  "staffType": {
+    "NOTICE": "Avviso",
+    "REPORT": "Rapporto",
+    "FORM": "Modulo",
+    "CERTIFICATE": "Certificato",
+    "CIRCULAR": "Circolare",
+    "allTypes": "Tutti i tipi"
+  },
+  "col": {
+    "title": "Titolo",
+    "type": "Tipo",
+    "category": "Categoria",
+    "tags": "Tag",
+    "date": "Data"
+  }
+}

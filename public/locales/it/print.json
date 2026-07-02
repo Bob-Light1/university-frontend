@@ -1,0 +1,49 @@
+{
+  "title": "Stampa e PDF",
+  "preview": "Anteprima",
+  "print": "Stampa",
+  "download": "Scarica PDF",
+  "batch": "Stampa in blocco",
+  "bulletin": {
+    "title": "Pagella",
+    "byClass": "Stampa per classe",
+    "individual": "Pagella individuale",
+    "semester": "Semestre"
+  },
+  "transcript": {
+    "title": "Certificato degli esami",
+    "official": "Certificato ufficiale",
+    "student": "Studente"
+  },
+  "attendance": {
+    "sheet": "Registro presenze",
+    "monthly": "Rapporto mensile"
+  },
+  "certificate": {
+    "enrollment": "Certificato di iscrizione",
+    "completion": "Certificato di completamento"
+  },
+  "header": {
+    "institution": "Istituto",
+    "academicYear": "Anno accademico",
+    "generatedOn": "Generato il",
+    "page": "Pagina {current} di {total}"
+  },
+  "footer": {
+    "confidential": "Documento riservato",
+    "verified": "Verificato con codice QR"
+  },
+  "center": {
+    "title": "Centro stampa",
+    "subtitle": "Vai a un modulo e usa la funzione di stampa del browser (Ctrl+P / Cmd+P).",
+    "info": "Per stampare un rapporto, apri il modulo corrispondente, applica i filtri e premi Ctrl+P (o Cmd+P su Mac). Tutte le tabelle sono ottimizzate per la stampa.",
+    "available": "Moduli disponibili"
+  },
+  "module": {
+    "results": "Stampa i risultati accademici pubblicati per gli studenti del tuo campus.",
+    "students": "Stampa l'elenco degli studenti del campus con matricola e classe.",
+    "attendance": "Stampa i registri delle presenze filtrati per intervallo di date o classe.",
+    "examinations": "Stampa gli orari e gli elenchi delle sessioni d'esame.",
+    "documents": "Stampa i documenti istituzionali pubblicati nel tuo campus."
+  }
+}

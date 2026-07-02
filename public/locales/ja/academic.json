@@ -1,0 +1,107 @@
+{
+  "student": {
+    "title": "学生",
+    "create": "学生を作成",
+    "edit": "学生を編集",
+    "detail": "学生の詳細",
+    "list": "学生一覧",
+    "firstName": "名",
+    "lastName": "姓",
+    "matricule": "学籍番号",
+    "class": "クラス",
+    "level": "レベル",
+    "department": "学科",
+    "campus": "キャンパス",
+    "status": {
+      "active": "有効",
+      "inactive": "無効",
+      "archived": "アーカイブ済み"
+    },
+    "gender": {
+      "male": "男性",
+      "female": "女性"
+    },
+    "import": "学生をインポート",
+    "export": "学生をエクスポート"
+  },
+  "teacher": {
+    "title": "教員",
+    "create": "教員を作成",
+    "edit": "教員を編集",
+    "list": "教員一覧",
+    "firstName": "名",
+    "lastName": "姓",
+    "speciality": "専門分野",
+    "department": "学科",
+    "subjects": "科目",
+    "import": "教員をインポート"
+  },
+  "class": {
+    "title": "クラス",
+    "create": "クラスを作成",
+    "edit": "クラスを編集",
+    "list": "クラス一覧",
+    "name": "クラス名",
+    "level": "レベル",
+    "capacity": "定員",
+    "mainTeacher": "担任教員"
+  },
+  "subject": {
+    "title": "科目",
+    "create": "科目を作成",
+    "edit": "科目を編集",
+    "name": "科目名",
+    "coefficient": "係数",
+    "type": "種類",
+    "types": {
+      "CM": "講義 (CM)",
+      "TD": "演習 (TD)",
+      "TP": "実習 (TP)"
+    },
+    "status": {
+      "draft": "下書き",
+      "pending": "承認待ち",
+      "approved": "承認済み",
+      "archived": "アーカイブ済み"
+    }
+  },
+  "level": {
+    "title": "レベル",
+    "create": "レベルを作成",
+    "name": "レベル名"
+  },
+  "department": {
+    "title": "学科",
+    "create": "学科を作成",
+    "name": "学科名"
+  },
+  "campus": {
+    "name": "キャンパス名",
+    "manager": "管理者",
+    "city": "市区町村",
+    "country": "国"
+  },
+  "mentor": {
+    "title": "メンター",
+    "create": "メンターを追加",
+    "edit": "メンターを編集",
+    "list": "メンター一覧",
+    "assignStudents": {
+      "title": "学生を割り当て",
+      "manage": "管理",
+      "modeLabel": "割り当てモード",
+      "selectClasses": "クラスを選択",
+      "noClasses": "このキャンパスに有効なクラスが見つかりません。",
+      "mode": {
+        "add": "追加",
+        "remove": "削除",
+        "replace": "すべて置換"
+      },
+      "modeDesc": {
+        "add": "既存の割り当てを削除せずに、選択したクラスの学生を追加します。",
+        "remove": "選択したクラスの学生をこのメンターから削除します。",
+        "replace": "現在の学生の割り当てをすべて、選択したクラスの学生に置き換えます。"
+      }
+    }
+  }
+}

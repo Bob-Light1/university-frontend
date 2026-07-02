@@ -1,0 +1,66 @@
+{
+  "title": "Documentos",
+  "upload": "Carregar documento",
+  "download": "Descarregar",
+  "view": "Ver documento",
+  "delete": "Eliminar documento",
+  "type": {
+    "title": "Tipo de documento",
+    "transcript": "Histórico académico",
+    "certificate": "Certificado",
+    "report": "Relatório",
+    "contract": "Contrato",
+    "id": "Documento de identificação",
+    "diploma": "Diploma",
+    "other": "Outro"
+  },
+  "status": {
+    "draft": "Rascunho",
+    "published": "Publicado",
+    "archived": "Arquivado",
+    "locked": "Bloqueado"
+  },
+  "version": {
+    "title": "Versão",
+    "history": "Histórico de versões",
+    "current": "Versão atual"
+  },
+  "qr": {
+    "generate": "Gerar código QR",
+    "verify": "Verificar autenticidade",
+    "verified": "Documento verificado"
+  },
+  "share": {
+    "link": "Partilhar ligação",
+    "expires": "Expira em"
+  },
+  "retention": {
+    "policy": "Política de retenção",
+    "expiresOn": "Expira a"
+  },
+  "noDocuments": "Nenhum documento encontrado.",
+  "searchPlaceholder": "Pesquisar título ou descrição…",
+  "category": {
+    "ADMINISTRATIVE": "Administrativo",
+    "ACADEMIC": "Académico",
+    "FINANCIAL": "Financeiro",
+    "LEGAL": "Jurídico",
+    "GENERAL": "Geral",
+    "allCategories": "Todas as categorias"
+  },
+  "staffType": {
+    "NOTICE": "Aviso",
+    "REPORT": "Relatório",
+    "FORM": "Formulário",
+    "CERTIFICATE": "Certificado",
+    "CIRCULAR": "Circular",
+    "allTypes": "Todos os tipos"
+  },
+  "col": {
+    "title": "Título",
+    "type": "Tipo",
+    "category": "Categoria",
+    "tags": "Etiquetas",
+    "date": "Data"
+  }
+}

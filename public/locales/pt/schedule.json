@@ -1,0 +1,63 @@
+{
+  "title": "Horário",
+  "timetable": "Horário",
+  "slot": {
+    "create": "Adicionar bloco",
+    "edit": "Editar bloco",
+    "delete": "Eliminar bloco",
+    "day": "Dia",
+    "startTime": "Hora de início",
+    "endTime": "Hora de fim",
+    "subject": "Disciplina",
+    "teacher": "Professor",
+    "room": "Sala",
+    "class": "Turma"
+  },
+  "day": {
+    "monday": "Segunda-feira",
+    "tuesday": "Terça-feira",
+    "wednesday": "Quarta-feira",
+    "thursday": "Quinta-feira",
+    "friday": "Sexta-feira",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
+  "view": {
+    "week": "Vista semanal",
+    "day": "Vista diária",
+    "list": "Vista em lista"
+  },
+  "conflict": {
+    "detected": "Conflito detetado",
+    "teacher": "Conflito de professor",
+    "room": "Conflito de sala",
+    "resolve": "Resolver conflito"
+  },
+  "postpone": {
+    "title": "Adiar sessão",
+    "reason": "Motivo",
+    "newDate": "Nova data"
+  },
+  "cancel": {
+    "title": "Cancelar sessão",
+    "reason": "Motivo do cancelamento"
+  },
+  "gaet": {
+    "generate": "Gerar horário GAET",
+    "period": "Período"
+  },
+  "noSessions": "Nenhuma sessão encontrada.",
+  "col": {
+    "session": "Sessão",
+    "subject": "Disciplina",
+    "classes": "Turma(s)",
+    "start": "Início",
+    "end": "Fim",
+    "status": "Estado"
+  },
+  "filter": {
+    "from": "De",
+    "to": "Até",
+    "status": "Estado"
+  }
+}

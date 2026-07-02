@@ -1,0 +1,63 @@
+{
+  "title": "時間割",
+  "timetable": "時間割",
+  "slot": {
+    "create": "コマを追加",
+    "edit": "コマを編集",
+    "delete": "コマを削除",
+    "day": "曜日",
+    "startTime": "開始時刻",
+    "endTime": "終了時刻",
+    "subject": "科目",
+    "teacher": "教員",
+    "room": "教室",
+    "class": "クラス"
+  },
+  "day": {
+    "monday": "月曜日",
+    "tuesday": "火曜日",
+    "wednesday": "水曜日",
+    "thursday": "木曜日",
+    "friday": "金曜日",
+    "saturday": "土曜日",
+    "sunday": "日曜日"
+  },
+  "view": {
+    "week": "週表示",
+    "day": "日表示",
+    "list": "リスト表示"
+  },
+  "conflict": {
+    "detected": "競合を検出しました",
+    "teacher": "教員の競合",
+    "room": "教室の競合",
+    "resolve": "競合を解消"
+  },
+  "postpone": {
+    "title": "授業を延期",
+    "reason": "理由",
+    "newDate": "新しい日付"
+  },
+  "cancel": {
+    "title": "授業を中止",
+    "reason": "中止の理由"
+  },
+  "gaet": {
+    "generate": "GAET時間割を生成",
+    "period": "期間"
+  },
+  "noSessions": "授業が見つかりません。",
+  "col": {
+    "session": "授業",
+    "subject": "科目",
+    "classes": "クラス",
+    "start": "開始",
+    "end": "終了",
+    "status": "状態"
+  },
+  "filter": {
+    "from": "開始",
+    "to": "終了",
+    "status": "状態"
+  }
+}

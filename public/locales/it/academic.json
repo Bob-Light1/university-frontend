@@ -1,0 +1,107 @@
+{
+  "student": {
+    "title": "Studenti",
+    "create": "Crea studente",
+    "edit": "Modifica studente",
+    "detail": "Dettaglio studente",
+    "list": "Elenco studenti",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "matricule": "Matricola",
+    "class": "Classe",
+    "level": "Livello",
+    "department": "Dipartimento",
+    "campus": "Campus",
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "archived": "Archiviato"
+    },
+    "gender": {
+      "male": "Maschio",
+      "female": "Femmina"
+    },
+    "import": "Importa studenti",
+    "export": "Esporta studenti"
+  },
+  "teacher": {
+    "title": "Docenti",
+    "create": "Crea docente",
+    "edit": "Modifica docente",
+    "list": "Elenco docenti",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "speciality": "Specializzazione",
+    "department": "Dipartimento",
+    "subjects": "Materie",
+    "import": "Importa docenti"
+  },
+  "class": {
+    "title": "Classi",
+    "create": "Crea classe",
+    "edit": "Modifica classe",
+    "list": "Elenco classi",
+    "name": "Nome della classe",
+    "level": "Livello",
+    "capacity": "Capienza",
+    "mainTeacher": "Docente principale"
+  },
+  "subject": {
+    "title": "Materie",
+    "create": "Crea materia",
+    "edit": "Modifica materia",
+    "name": "Nome della materia",
+    "coefficient": "Coefficiente",
+    "type": "Tipo",
+    "types": {
+      "CM": "Lezione frontale (CM)",
+      "TD": "Esercitazione (TD)",
+      "TP": "Laboratorio (TP)"
+    },
+    "status": {
+      "draft": "Bozza",
+      "pending": "In attesa di approvazione",
+      "approved": "Approvato",
+      "archived": "Archiviato"
+    }
+  },
+  "level": {
+    "title": "Livelli",
+    "create": "Crea livello",
+    "name": "Nome del livello"
+  },
+  "department": {
+    "title": "Dipartimenti",
+    "create": "Crea dipartimento",
+    "name": "Nome del dipartimento"
+  },
+  "campus": {
+    "name": "Nome del campus",
+    "manager": "Responsabile",
+    "city": "Città",
+    "country": "Paese"
+  },
+  "mentor": {
+    "title": "Tutor",
+    "create": "Aggiungi tutor",
+    "edit": "Modifica tutor",
+    "list": "Elenco tutor",
+    "assignStudents": {
+      "title": "Assegna studenti",
+      "manage": "Gestisci",
+      "modeLabel": "Modalità di assegnazione",
+      "selectClasses": "Seleziona classi",
+      "noClasses": "Nessuna classe attiva trovata per questo campus.",
+      "mode": {
+        "add": "Aggiungi",
+        "remove": "Rimuovi",
+        "replace": "Sostituisci tutto"
+      },
+      "modeDesc": {
+        "add": "Aggiungi gli studenti delle classi selezionate senza rimuovere le assegnazioni esistenti.",
+        "remove": "Rimuovi da questo tutor gli studenti delle classi selezionate.",
+        "replace": "Sostituisci tutte le assegnazioni attuali degli studenti con quelle delle classi selezionate."
+      }
+    }
+  }
+}

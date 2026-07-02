@@ -1,0 +1,49 @@
+{
+  "title": "Impressão e PDF",
+  "preview": "Pré-visualizar",
+  "print": "Imprimir",
+  "download": "Descarregar PDF",
+  "batch": "Impressão em lote",
+  "bulletin": {
+    "title": "Boletim",
+    "byClass": "Imprimir por turma",
+    "individual": "Boletim individual",
+    "semester": "Semestre"
+  },
+  "transcript": {
+    "title": "Histórico académico",
+    "official": "Histórico oficial",
+    "student": "Aluno"
+  },
+  "attendance": {
+    "sheet": "Folha de presenças",
+    "monthly": "Relatório mensal"
+  },
+  "certificate": {
+    "enrollment": "Certificado de matrícula",
+    "completion": "Certificado de conclusão"
+  },
+  "header": {
+    "institution": "Instituição",
+    "academicYear": "Ano letivo",
+    "generatedOn": "Gerado a",
+    "page": "Página {current} de {total}"
+  },
+  "footer": {
+    "confidential": "Documento confidencial",
+    "verified": "Verificado com código QR"
+  },
+  "center": {
+    "title": "Centro de impressão",
+    "subtitle": "Navegue até um módulo e utilize a função de impressão do navegador (Ctrl+P / Cmd+P).",
+    "info": "Para imprimir um relatório, abra o módulo correspondente, aplique os filtros e prima Ctrl+P (ou Cmd+P no Mac). Todas as tabelas estão otimizadas para impressão.",
+    "available": "Módulos disponíveis"
+  },
+  "module": {
+    "results": "Imprimir os resultados académicos publicados dos alunos do seu campus.",
+    "students": "Imprimir a lista de alunos do campus com o número de aluno e a turma.",
+    "attendance": "Imprimir registos de assiduidade filtrados por intervalo de datas ou turma.",
+    "examinations": "Imprimir horários e listas das épocas de exames.",
+    "documents": "Imprimir documentos institucionais publicados no seu campus."
+  }
+}

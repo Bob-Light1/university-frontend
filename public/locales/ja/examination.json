@@ -1,0 +1,52 @@
+{
+  "title": "試験",
+  "session": {
+    "title": "試験セッション",
+    "create": "セッションを作成",
+    "edit": "セッションを編集",
+    "list": "セッション",
+    "name": "セッション名",
+    "startDate": "開始日",
+    "endDate": "終了日",
+    "type": "種類"
+  },
+  "questionBank": {
+    "title": "問題バンク",
+    "add": "問題を追加",
+    "question": "問題",
+    "answer": "解答",
+    "points": "配点"
+  },
+  "enrollment": {
+    "title": "登録",
+    "enroll": "学生を登録",
+    "unenroll": "登録を解除"
+  },
+  "delivery": {
+    "online": "オンライン試験",
+    "proctoring": "不正防止監視",
+    "start": "試験を開始",
+    "submit": "試験を提出"
+  },
+  "result": {
+    "correction": "採点",
+    "publish": "結果を公開",
+    "appeal": "異議申し立て"
+  },
+  "certificate": {
+    "generate": "証明書を生成",
+    "qr": "QRコードによる検証"
+  },
+  "noSessions": "試験セッションが見つかりません。",
+  "allYears": "すべての年度",
+  "academicYear": "学年度",
+  "semester": "学期",
+  "col": {
+    "session": "セッション",
+    "academicYear": "学年度",
+    "semester": "学期",
+    "start": "開始",
+    "end": "終了",
+    "status": "状態"
+  }
+}

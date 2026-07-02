@@ -1,0 +1,70 @@
+{
+  "title": "設定",
+  "language": {
+    "title": "言語と地域",
+    "select": "言語を選択",
+    "preview": "プレビューが即座に適用されます",
+    "saved": "言語設定を保存しました",
+    "rtlBadge": "RTL"
+  },
+  "timezone": {
+    "title": "タイムゾーン",
+    "select": "タイムゾーンを選択",
+    "current": "現在のタイムゾーン",
+    "help": "アプリ全体で表示されるすべての日付と時刻に適用されます。",
+    "utc": "UTC",
+    "africa": "アフリカ",
+    "america": "南北アメリカ",
+    "asia": "アジア",
+    "atlantic": "大西洋",
+    "europe": "ヨーロッパ",
+    "indian": "インド洋",
+    "pacific": "太平洋"
+  },
+  "grade": {
+    "title": "成績の形式",
+    "format": "表示形式",
+    "FRACTION": "分数 (15/20)",
+    "PERCENT": "パーセント (75%)",
+    "LETTER": "文字評価 (A+)",
+    "GPA": "GPA (3.75/4.0)"
+  },
+  "date": {
+    "title": "日付の形式",
+    "format": "日付の形式",
+    "DMY": "DD/MM/YYYY",
+    "MDY": "MM/DD/YYYY",
+    "YMD": "YYYY-MM-DD"
+  },
+  "theme": {
+    "title": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システムのデフォルト"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "photo": "プロフィール写真",
+    "update": "プロフィールを更新"
+  },
+  "notifications": {
+    "title": "通知",
+    "email": "メール通知",
+    "sms": "SMS通知",
+    "push": "プッシュ通知"
+  },
+  "campus": {
+    "title": "キャンパスの既定値",
+    "subtitle": "このキャンパスで、まだ独自の設定を行っていない新規ユーザーに適用されます。",
+    "defaultLanguage": "新規ユーザーの既定言語",
+    "defaultTimezone": "既定のタイムゾーン",
+    "defaultGradeFormat": "既定の成績形式",
+    "save": "キャンパスの既定値を保存",
+    "saveSuccess": "キャンパスの既定値を保存しました。",
+    "saveError": "キャンパスの既定値の保存に失敗しました。",
+    "loadError": "キャンパス設定の読み込みに失敗しました。"
+  },
+  "save": "保存",
+  "saved": "設定を正常に保存しました",
+  "regionSaved": "地域設定を保存しました"
+}

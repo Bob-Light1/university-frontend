@@ -1,0 +1,52 @@
+{
+  "title": "Esami",
+  "session": {
+    "title": "Sessione d'esame",
+    "create": "Crea sessione",
+    "edit": "Modifica sessione",
+    "list": "Sessioni",
+    "name": "Nome della sessione",
+    "startDate": "Data di inizio",
+    "endDate": "Data di fine",
+    "type": "Tipo"
+  },
+  "questionBank": {
+    "title": "Banca dati domande",
+    "add": "Aggiungi domanda",
+    "question": "Domanda",
+    "answer": "Risposta",
+    "points": "Punti"
+  },
+  "enrollment": {
+    "title": "Iscrizioni",
+    "enroll": "Iscrivi studente",
+    "unenroll": "Annulla iscrizione"
+  },
+  "delivery": {
+    "online": "Esame online",
+    "proctoring": "Monitoraggio antifrode",
+    "start": "Inizia esame",
+    "submit": "Invia esame"
+  },
+  "result": {
+    "correction": "Correzione",
+    "publish": "Pubblica risultati",
+    "appeal": "Ricorso"
+  },
+  "certificate": {
+    "generate": "Genera certificato",
+    "qr": "Verifica tramite codice QR"
+  },
+  "noSessions": "Nessuna sessione d'esame trovata.",
+  "allYears": "Tutti gli anni",
+  "academicYear": "Anno accademico",
+  "semester": "Semestre",
+  "col": {
+    "session": "Sessione",
+    "academicYear": "Anno accademico",
+    "semester": "Semestre",
+    "start": "Inizio",
+    "end": "Fine",
+    "status": "Stato"
+  }
+}

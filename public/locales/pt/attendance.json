@@ -1,0 +1,47 @@
+{
+  "title": "Assiduidade",
+  "rollCall": {
+    "title": "Chamada",
+    "take": "Fazer a chamada",
+    "session": "Sessão"
+  },
+  "status": {
+    "present": "Presente",
+    "absent": "Ausente",
+    "late": "Atrasado",
+    "excused": "Justificado"
+  },
+  "student": {
+    "attendance": "Assiduidade do aluno",
+    "history": "Histórico de assiduidade",
+    "rate": "Taxa de assiduidade"
+  },
+  "teacher": {
+    "attendance": "Assiduidade do professor",
+    "hoursDelivered": "Horas lecionadas",
+    "hoursContractual": "Horas contratuais",
+    "absence": "Falta"
+  },
+  "sheet": {
+    "sign": "Assinar folha",
+    "export": "Exportar folha de presenças",
+    "pdf": "Descarregar PDF"
+  },
+  "alert": {
+    "absentee": "Absentismo elevado",
+    "threshold": "Limite de faltas excedido"
+  },
+  "campus": "Registos de assiduidade de todo o campus",
+  "noRecords": "Nenhum registo de assiduidade encontrado.",
+  "col": {
+    "student": "Aluno",
+    "class": "Turma",
+    "date": "Data",
+    "session": "Sessão"
+  },
+  "filter": {
+    "status": "Estado",
+    "from": "De",
+    "to": "Até"
+  }
+}

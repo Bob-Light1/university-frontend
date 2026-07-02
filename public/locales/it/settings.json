@@ -1,0 +1,70 @@
+{
+  "title": "Impostazioni",
+  "language": {
+    "title": "Lingua e Regione",
+    "select": "Seleziona lingua",
+    "preview": "Anteprima applicata istantaneamente",
+    "saved": "Preferenza lingua salvata",
+    "rtlBadge": "RTL"
+  },
+  "timezone": {
+    "title": "Fuso orario",
+    "select": "Seleziona fuso orario",
+    "current": "Fuso orario attuale",
+    "help": "Si applica a tutte le date e gli orari mostrati nell'app.",
+    "utc": "UTC",
+    "africa": "Africa",
+    "america": "Americhe",
+    "asia": "Asia",
+    "atlantic": "Atlantico",
+    "europe": "Europa",
+    "indian": "Oceano Indiano",
+    "pacific": "Pacifico"
+  },
+  "grade": {
+    "title": "Formato voto",
+    "format": "Formato di visualizzazione",
+    "FRACTION": "Frazione (15/20)",
+    "PERCENT": "Percentuale (75%)",
+    "LETTER": "Voto in lettere (A+)",
+    "GPA": "GPA (3,75/4,0)"
+  },
+  "date": {
+    "title": "Formato data",
+    "format": "Formato data",
+    "DMY": "GG/MM/AAAA",
+    "MDY": "MM/GG/AAAA",
+    "YMD": "AAAA-MM-GG"
+  },
+  "theme": {
+    "title": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Predefinito di sistema"
+  },
+  "profile": {
+    "title": "Profilo",
+    "photo": "Foto profilo",
+    "update": "Aggiorna profilo"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "email": "Notifiche via e-mail",
+    "sms": "Notifiche via SMS",
+    "push": "Notifiche push"
+  },
+  "campus": {
+    "title": "Impostazioni predefinite del campus",
+    "subtitle": "Applicate ai nuovi utenti di questo campus che non hanno ancora impostato le proprie preferenze.",
+    "defaultLanguage": "Lingua predefinita per i nuovi utenti",
+    "defaultTimezone": "Fuso orario predefinito",
+    "defaultGradeFormat": "Formato voto predefinito",
+    "save": "Salva impostazioni del campus",
+    "saveSuccess": "Impostazioni del campus salvate.",
+    "saveError": "Impossibile salvare le impostazioni del campus.",
+    "loadError": "Impossibile caricare le impostazioni del campus."
+  },
+  "save": "Salva",
+  "saved": "Impostazioni salvate con successo",
+  "regionSaved": "Preferenze regionali salvate"
+}

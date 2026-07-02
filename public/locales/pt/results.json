@@ -1,0 +1,65 @@
+{
+  "title": "Resultados",
+  "grade": {
+    "title": "Notas",
+    "enter": "Introduzir notas",
+    "edit": "Editar nota",
+    "subject": "Disciplina",
+    "score": "Pontuação",
+    "outOf": "em",
+    "average": "Média",
+    "rank": "Classificação",
+    "coefficient": "Coeficiente",
+    "weighted": "Média ponderada",
+    "format": {
+      "FRACTION": "Fração (ex.: 15/20)",
+      "PERCENT": "Percentagem (ex.: 75%)",
+      "LETTER": "Nota por letra (ex.: A+)",
+      "GPA": "GPA (ex.: 3,75/4,0)"
+    }
+  },
+  "status": {
+    "draft": "Rascunho",
+    "submitted": "Submetido",
+    "published": "Publicado"
+  },
+  "transcript": {
+    "title": "Histórico académico",
+    "official": "Histórico oficial",
+    "semester": "Semestre",
+    "academicYear": "Ano letivo",
+    "generate": "Gerar histórico",
+    "download": "Descarregar histórico",
+    "signature": "Assinatura do encarregado de educação"
+  },
+  "bulletin": {
+    "title": "Boletim",
+    "generate": "Gerar boletim",
+    "batch": "Impressão em lote",
+    "class": "Boletins da turma"
+  },
+  "workflow": {
+    "submit": "Submeter para revisão",
+    "publish": "Publicar resultados",
+    "unpublish": "Retirar publicação"
+  },
+  "noResults": "Nenhum resultado encontrado.",
+  "filterStudent": "Filtrar por aluno ou disciplina…",
+  "evaluationType": {
+    "CC": "CC",
+    "EXAM": "Exame",
+    "RETAKE": "Recurso",
+    "PROJECT": "Projeto",
+    "PRACTICAL": "Prática",
+    "allTypes": "Todos os tipos"
+  },
+  "allYears": "Todos os anos",
+  "col": {
+    "student": "Aluno",
+    "subject": "Disciplina",
+    "evaluation": "Avaliação",
+    "semester": "Semestre",
+    "score": "Pontuação",
+    "outOf20": "/ 20"
+  }
+}

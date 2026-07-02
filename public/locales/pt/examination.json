@@ -1,0 +1,52 @@
+{
+  "title": "Exames",
+  "session": {
+    "title": "Época de exames",
+    "create": "Criar época",
+    "edit": "Editar época",
+    "list": "Épocas",
+    "name": "Nome da época",
+    "startDate": "Data de início",
+    "endDate": "Data de fim",
+    "type": "Tipo"
+  },
+  "questionBank": {
+    "title": "Banco de perguntas",
+    "add": "Adicionar pergunta",
+    "question": "Pergunta",
+    "answer": "Resposta",
+    "points": "Pontos"
+  },
+  "enrollment": {
+    "title": "Inscrições",
+    "enroll": "Inscrever aluno",
+    "unenroll": "Anular inscrição"
+  },
+  "delivery": {
+    "online": "Exame online",
+    "proctoring": "Monitorização antifraude",
+    "start": "Iniciar exame",
+    "submit": "Submeter exame"
+  },
+  "result": {
+    "correction": "Correção",
+    "publish": "Publicar resultados",
+    "appeal": "Recurso"
+  },
+  "certificate": {
+    "generate": "Gerar certificado",
+    "qr": "Verificação por código QR"
+  },
+  "noSessions": "Nenhuma época de exames encontrada.",
+  "allYears": "Todos os anos",
+  "academicYear": "Ano letivo",
+  "semester": "Semestre",
+  "col": {
+    "session": "Época",
+    "academicYear": "Ano letivo",
+    "semester": "Semestre",
+    "start": "Início",
+    "end": "Fim",
+    "status": "Estado"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "title": "Orario",
+  "timetable": "Orario",
+  "slot": {
+    "create": "Aggiungi fascia oraria",
+    "edit": "Modifica fascia oraria",
+    "delete": "Elimina fascia oraria",
+    "day": "Giorno",
+    "startTime": "Ora di inizio",
+    "endTime": "Ora di fine",
+    "subject": "Materia",
+    "teacher": "Docente",
+    "room": "Aula",
+    "class": "Classe"
+  },
+  "day": {
+    "monday": "Lunedì",
+    "tuesday": "Martedì",
+    "wednesday": "Mercoledì",
+    "thursday": "Giovedì",
+    "friday": "Venerdì",
+    "saturday": "Sabato",
+    "sunday": "Domenica"
+  },
+  "view": {
+    "week": "Vista settimanale",
+    "day": "Vista giornaliera",
+    "list": "Vista elenco"
+  },
+  "conflict": {
+    "detected": "Conflitto rilevato",
+    "teacher": "Conflitto docente",
+    "room": "Conflitto aula",
+    "resolve": "Risolvi conflitto"
+  },
+  "postpone": {
+    "title": "Rinvia sessione",
+    "reason": "Motivo",
+    "newDate": "Nuova data"
+  },
+  "cancel": {
+    "title": "Annulla sessione",
+    "reason": "Motivo dell'annullamento"
+  },
+  "gaet": {
+    "generate": "Genera orario GAET",
+    "period": "Periodo"
+  },
+  "noSessions": "Nessuna sessione trovata.",
+  "col": {
+    "session": "Sessione",
+    "subject": "Materia",
+    "classes": "Classe/i",
+    "start": "Inizio",
+    "end": "Fine",
+    "status": "Stato"
+  },
+  "filter": {
+    "from": "Da",
+    "to": "A",
+    "status": "Stato"
+  }
+}

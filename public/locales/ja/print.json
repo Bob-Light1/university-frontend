@@ -1,0 +1,49 @@
+{
+  "title": "印刷とPDF",
+  "preview": "プレビュー",
+  "print": "印刷",
+  "download": "PDFをダウンロード",
+  "batch": "一括印刷",
+  "bulletin": {
+    "title": "通知表",
+    "byClass": "クラス別に印刷",
+    "individual": "個別通知表",
+    "semester": "学期"
+  },
+  "transcript": {
+    "title": "成績証明書",
+    "official": "公式成績証明書",
+    "student": "学生"
+  },
+  "attendance": {
+    "sheet": "出席簿",
+    "monthly": "月次レポート"
+  },
+  "certificate": {
+    "enrollment": "在学証明書",
+    "completion": "修了証明書"
+  },
+  "header": {
+    "institution": "教育機関",
+    "academicYear": "学年度",
+    "generatedOn": "生成日",
+    "page": "{total} ページ中 {current} ページ"
+  },
+  "footer": {
+    "confidential": "機密書類",
+    "verified": "QRコードで検証済み"
+  },
+  "center": {
+    "title": "印刷センター",
+    "subtitle": "モジュールに移動し、ブラウザの印刷機能（Ctrl+P / Cmd+P）を使用してください。",
+    "info": "レポートを印刷するには、該当するモジュールを開いてフィルターを適用し、Ctrl+P（Macの場合はCmd+P）を押します。すべての表は印刷用に最適化されています。",
+    "available": "利用可能なモジュール"
+  },
+  "module": {
+    "results": "所属キャンパスの学生の公開済み学業成績を印刷します。",
+    "students": "学籍番号とクラス情報を含むキャンパスの学生名簿を印刷します。",
+    "attendance": "日付範囲またはクラスで絞り込んだ出欠記録を印刷します。",
+    "examinations": "試験セッションの時間割と名簿を印刷します。",
+    "documents": "所属キャンパスで公開された機関の書類を印刷します。"
+  }
+}

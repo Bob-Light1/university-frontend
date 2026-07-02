@@ -1,0 +1,47 @@
+{
+  "title": "出欠",
+  "rollCall": {
+    "title": "点呼",
+    "take": "出欠をとる",
+    "session": "授業"
+  },
+  "status": {
+    "present": "出席",
+    "absent": "欠席",
+    "late": "遅刻",
+    "excused": "公欠"
+  },
+  "student": {
+    "attendance": "学生の出欠",
+    "history": "出欠履歴",
+    "rate": "出席率"
+  },
+  "teacher": {
+    "attendance": "教員の出欠",
+    "hoursDelivered": "実施時間数",
+    "hoursContractual": "契約時間数",
+    "absence": "欠勤"
+  },
+  "sheet": {
+    "sign": "出席簿に署名",
+    "export": "出席簿をエクスポート",
+    "pdf": "PDFをダウンロード"
+  },
+  "alert": {
+    "absentee": "欠席率が高い",
+    "threshold": "欠席のしきい値を超過"
+  },
+  "campus": "キャンパス全体の出欠記録",
+  "noRecords": "出欠記録が見つかりません。",
+  "col": {
+    "student": "学生",
+    "class": "クラス",
+    "date": "日付",
+    "session": "授業"
+  },
+  "filter": {
+    "status": "状態",
+    "from": "開始",
+    "to": "終了"
+  }
+}

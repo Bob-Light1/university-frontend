@@ -1,0 +1,30 @@
+{
+  "validation": {
+    "required": "この項目は必須です",
+    "email": "有効なメールアドレスを入力してください",
+    "minLength": "最低 {min} 文字必要です",
+    "maxLength": "最大 {max} 文字まで入力できます",
+    "numberMin": "値は {min} 以上である必要があります",
+    "numberMax": "値は {max} 以下である必要があります",
+    "positiveNumber": "値は正の数である必要があります",
+    "invalidDate": "無効な日付です",
+    "passwordMatch": "パスワードが一致しません",
+    "invalidPhone": "電話番号の形式が無効です"
+  },
+  "api": {
+    "unauthorized": "アクセスが拒否されました。サインインしてください。",
+    "forbidden": "この操作を実行する権限がありません。",
+    "notFound": "要求されたリソースが見つかりませんでした。",
+    "serverError": "サーバーエラーが発生しました。しばらくしてから再度お試しください。",
+    "networkError": "ネットワークエラーです。接続を確認してください。",
+    "timeout": "リクエストがタイムアウトしました。再度お試しください。",
+    "conflict": "このレコードはすでに存在します。",
+    "badRequest": "無効なリクエストデータです。"
+  },
+  "form": {
+    "submitFailed": "フォームの送信に失敗しました。各項目を確認してください。",
+    "uploadFailed": "ファイルのアップロードに失敗しました。",
+    "fileTooLarge": "ファイルサイズが許容上限を超えています。",
+    "invalidFormat": "無効なファイル形式です。"
+  }
+}

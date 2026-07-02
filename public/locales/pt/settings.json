@@ -1,0 +1,70 @@
+{
+  "title": "Definições",
+  "language": {
+    "title": "Idioma e Região",
+    "select": "Selecionar idioma",
+    "preview": "Pré-visualização aplicada instantaneamente",
+    "saved": "Preferência de idioma guardada",
+    "rtlBadge": "RTL"
+  },
+  "timezone": {
+    "title": "Fuso horário",
+    "select": "Selecionar fuso horário",
+    "current": "Fuso horário atual",
+    "help": "Aplica-se a todas as datas e horas apresentadas na aplicação.",
+    "utc": "UTC",
+    "africa": "África",
+    "america": "Américas",
+    "asia": "Ásia",
+    "atlantic": "Atlântico",
+    "europe": "Europa",
+    "indian": "Oceano Índico",
+    "pacific": "Pacífico"
+  },
+  "grade": {
+    "title": "Formato de nota",
+    "format": "Formato de exibição",
+    "FRACTION": "Fração (15/20)",
+    "PERCENT": "Percentagem (75%)",
+    "LETTER": "Nota por letra (A+)",
+    "GPA": "GPA (3,75/4,0)"
+  },
+  "date": {
+    "title": "Formato de data",
+    "format": "Formato de data",
+    "DMY": "DD/MM/AAAA",
+    "MDY": "MM/DD/AAAA",
+    "YMD": "AAAA-MM-DD"
+  },
+  "theme": {
+    "title": "Tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Predefinição do sistema"
+  },
+  "profile": {
+    "title": "Perfil",
+    "photo": "Foto de perfil",
+    "update": "Atualizar perfil"
+  },
+  "notifications": {
+    "title": "Notificações",
+    "email": "Notificações por e-mail",
+    "sms": "Notificações por SMS",
+    "push": "Notificações push"
+  },
+  "campus": {
+    "title": "Predefinições do campus",
+    "subtitle": "Aplicadas aos novos utilizadores deste campus que ainda não definiram as suas próprias preferências.",
+    "defaultLanguage": "Idioma predefinido para novos utilizadores",
+    "defaultTimezone": "Fuso horário predefinido",
+    "defaultGradeFormat": "Formato de nota predefinido",
+    "save": "Guardar predefinições do campus",
+    "saveSuccess": "Predefinições do campus guardadas.",
+    "saveError": "Falha ao guardar as predefinições do campus.",
+    "loadError": "Falha ao carregar as definições do campus."
+  },
+  "save": "Guardar",
+  "saved": "Definições guardadas com sucesso",
+  "regionSaved": "Preferências regionais guardadas"
+}

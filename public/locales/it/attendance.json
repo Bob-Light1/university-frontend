@@ -1,0 +1,47 @@
+{
+  "title": "Presenze",
+  "rollCall": {
+    "title": "Appello",
+    "take": "Registra presenze",
+    "session": "Sessione"
+  },
+  "status": {
+    "present": "Presente",
+    "absent": "Assente",
+    "late": "In ritardo",
+    "excused": "Giustificato"
+  },
+  "student": {
+    "attendance": "Presenze dello studente",
+    "history": "Storico presenze",
+    "rate": "Tasso di presenza"
+  },
+  "teacher": {
+    "attendance": "Presenze del docente",
+    "hoursDelivered": "Ore erogate",
+    "hoursContractual": "Ore contrattuali",
+    "absence": "Assenza"
+  },
+  "sheet": {
+    "sign": "Firma il registro",
+    "export": "Esporta registro presenze",
+    "pdf": "Scarica PDF"
+  },
+  "alert": {
+    "absentee": "Assenteismo elevato",
+    "threshold": "Soglia di assenze superata"
+  },
+  "campus": "Registri delle presenze di tutto il campus",
+  "noRecords": "Nessun registro di presenza trovato.",
+  "col": {
+    "student": "Studente",
+    "class": "Classe",
+    "date": "Data",
+    "session": "Sessione"
+  },
+  "filter": {
+    "status": "Stato",
+    "from": "Da",
+    "to": "A"
+  }
+}

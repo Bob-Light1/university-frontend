@@ -1,0 +1,66 @@
+{
+  "title": "書類",
+  "upload": "書類をアップロード",
+  "download": "ダウンロード",
+  "view": "書類を表示",
+  "delete": "書類を削除",
+  "type": {
+    "title": "書類の種類",
+    "transcript": "成績証明書",
+    "certificate": "証明書",
+    "report": "レポート",
+    "contract": "契約書",
+    "id": "身分証明書",
+    "diploma": "学位記",
+    "other": "その他"
+  },
+  "status": {
+    "draft": "下書き",
+    "published": "公開済み",
+    "archived": "アーカイブ済み",
+    "locked": "ロック済み"
+  },
+  "version": {
+    "title": "バージョン",
+    "history": "バージョン履歴",
+    "current": "現在のバージョン"
+  },
+  "qr": {
+    "generate": "QRコードを生成",
+    "verify": "真正性を検証",
+    "verified": "書類を検証しました"
+  },
+  "share": {
+    "link": "リンクを共有",
+    "expires": "有効期限"
+  },
+  "retention": {
+    "policy": "保存ポリシー",
+    "expiresOn": "有効期限日"
+  },
+  "noDocuments": "書類が見つかりません。",
+  "searchPlaceholder": "タイトルまたは説明を検索…",
+  "category": {
+    "ADMINISTRATIVE": "管理",
+    "ACADEMIC": "学務",
+    "FINANCIAL": "財務",
+    "LEGAL": "法務",
+    "GENERAL": "一般",
+    "allCategories": "すべてのカテゴリ"
+  },
+  "staffType": {
+    "NOTICE": "通知",
+    "REPORT": "レポート",
+    "FORM": "書式",
+    "CERTIFICATE": "証明書",
+    "CIRCULAR": "回覧",
+    "allTypes": "すべての種類"
+  },
+  "col": {
+    "title": "タイトル",
+    "type": "種類",
+    "category": "カテゴリ",
+    "tags": "タグ",
+    "date": "日付"
+  }
+}

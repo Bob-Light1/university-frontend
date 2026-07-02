@@ -1,0 +1,107 @@
+{
+  "student": {
+    "title": "Alunos",
+    "create": "Criar aluno",
+    "edit": "Editar aluno",
+    "detail": "Detalhe do aluno",
+    "list": "Lista de alunos",
+    "firstName": "Nome",
+    "lastName": "Apelido",
+    "matricule": "Nº de aluno",
+    "class": "Turma",
+    "level": "Nível",
+    "department": "Departamento",
+    "campus": "Campus",
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "archived": "Arquivado"
+    },
+    "gender": {
+      "male": "Masculino",
+      "female": "Feminino"
+    },
+    "import": "Importar alunos",
+    "export": "Exportar alunos"
+  },
+  "teacher": {
+    "title": "Professores",
+    "create": "Criar professor",
+    "edit": "Editar professor",
+    "list": "Lista de professores",
+    "firstName": "Nome",
+    "lastName": "Apelido",
+    "speciality": "Especialidade",
+    "department": "Departamento",
+    "subjects": "Disciplinas",
+    "import": "Importar professores"
+  },
+  "class": {
+    "title": "Turmas",
+    "create": "Criar turma",
+    "edit": "Editar turma",
+    "list": "Lista de turmas",
+    "name": "Nome da turma",
+    "level": "Nível",
+    "capacity": "Capacidade",
+    "mainTeacher": "Professor responsável"
+  },
+  "subject": {
+    "title": "Disciplinas",
+    "create": "Criar disciplina",
+    "edit": "Editar disciplina",
+    "name": "Nome da disciplina",
+    "coefficient": "Coeficiente",
+    "type": "Tipo",
+    "types": {
+      "CM": "Aula teórica (CM)",
+      "TD": "Aula prática (TD)",
+      "TP": "Trabalho prático (TP)"
+    },
+    "status": {
+      "draft": "Rascunho",
+      "pending": "Aprovação pendente",
+      "approved": "Aprovado",
+      "archived": "Arquivado"
+    }
+  },
+  "level": {
+    "title": "Níveis",
+    "create": "Criar nível",
+    "name": "Nome do nível"
+  },
+  "department": {
+    "title": "Departamentos",
+    "create": "Criar departamento",
+    "name": "Nome do departamento"
+  },
+  "campus": {
+    "name": "Nome do campus",
+    "manager": "Responsável",
+    "city": "Cidade",
+    "country": "País"
+  },
+  "mentor": {
+    "title": "Mentores",
+    "create": "Adicionar mentor",
+    "edit": "Editar mentor",
+    "list": "Lista de mentores",
+    "assignStudents": {
+      "title": "Atribuir alunos",
+      "manage": "Gerir",
+      "modeLabel": "Modo de atribuição",
+      "selectClasses": "Selecionar turmas",
+      "noClasses": "Nenhuma turma ativa encontrada para este campus.",
+      "mode": {
+        "add": "Adicionar",
+        "remove": "Remover",
+        "replace": "Substituir tudo"
+      },
+      "modeDesc": {
+        "add": "Adicionar alunos das turmas selecionadas sem remover as atribuições existentes.",
+        "remove": "Remover deste mentor os alunos das turmas selecionadas.",
+        "replace": "Substituir todas as atribuições atuais de alunos pelas das turmas selecionadas."
+      }
+    }
+  }
+}

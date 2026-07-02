@@ -1,0 +1,65 @@
+{
+  "title": "成績",
+  "grade": {
+    "title": "評点",
+    "enter": "評点を入力",
+    "edit": "評点を編集",
+    "subject": "科目",
+    "score": "得点",
+    "outOf": "／",
+    "average": "平均",
+    "rank": "順位",
+    "coefficient": "係数",
+    "weighted": "加重平均",
+    "format": {
+      "FRACTION": "分数（例：15/20）",
+      "PERCENT": "パーセント（例：75%）",
+      "LETTER": "文字評価（例：A+）",
+      "GPA": "GPA（例：3.75/4.0）"
+    }
+  },
+  "status": {
+    "draft": "下書き",
+    "submitted": "提出済み",
+    "published": "公開済み"
+  },
+  "transcript": {
+    "title": "成績証明書",
+    "official": "公式成績証明書",
+    "semester": "学期",
+    "academicYear": "学年度",
+    "generate": "成績証明書を生成",
+    "download": "成績証明書をダウンロード",
+    "signature": "保護者の署名"
+  },
+  "bulletin": {
+    "title": "通知表",
+    "generate": "通知表を生成",
+    "batch": "一括印刷",
+    "class": "クラスの通知表"
+  },
+  "workflow": {
+    "submit": "審査に提出",
+    "publish": "結果を公開",
+    "unpublish": "公開を取り消す"
+  },
+  "noResults": "結果が見つかりません。",
+  "filterStudent": "学生または科目で絞り込み…",
+  "evaluationType": {
+    "CC": "平常点",
+    "EXAM": "試験",
+    "RETAKE": "再試験",
+    "PROJECT": "課題",
+    "PRACTICAL": "実技",
+    "allTypes": "すべての種類"
+  },
+  "allYears": "すべての年度",
+  "col": {
+    "student": "学生",
+    "subject": "科目",
+    "evaluation": "評価",
+    "semester": "学期",
+    "score": "得点",
+    "outOf20": "／ 20"
+  }
+}

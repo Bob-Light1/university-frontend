@@ -1,0 +1,30 @@
+{
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "email": "Inserisci un indirizzo e-mail valido",
+    "minLength": "Sono richiesti almeno {min} caratteri",
+    "maxLength": "Sono consentiti al massimo {max} caratteri",
+    "numberMin": "Il valore deve essere almeno {min}",
+    "numberMax": "Il valore deve essere al massimo {max}",
+    "positiveNumber": "Il valore deve essere un numero positivo",
+    "invalidDate": "Data non valida",
+    "passwordMatch": "Le password non corrispondono",
+    "invalidPhone": "Formato del numero di telefono non valido"
+  },
+  "api": {
+    "unauthorized": "Accesso negato. Effettua l'accesso.",
+    "forbidden": "Non disponi dell'autorizzazione per eseguire questa azione.",
+    "notFound": "La risorsa richiesta non è stata trovata.",
+    "serverError": "Si è verificato un errore del server. Riprova più tardi.",
+    "networkError": "Errore di rete. Controlla la connessione.",
+    "timeout": "Richiesta scaduta. Riprova.",
+    "conflict": "Questo record esiste già.",
+    "badRequest": "Dati della richiesta non validi."
+  },
+  "form": {
+    "submitFailed": "Invio del modulo non riuscito. Controlla i campi.",
+    "uploadFailed": "Caricamento del file non riuscito.",
+    "fileTooLarge": "La dimensione del file supera il limite consentito.",
+    "invalidFormat": "Formato del file non valido."
+  }
+}
