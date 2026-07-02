@@ -24,6 +24,7 @@ const LANG_TO_LOCALE = {
 // ── Module-level state (updated by configureLocale) ───────────────────────────
 let _locale   = 'en-GB';
 let _timezone = undefined; // undefined → browser local time
+let _dateFmt  = null;      // user numeric-date override; null → locale default
 let _cache    = {};        // keyed by format shape string
 
 // ── Internal helpers ─────────────────────────────────────────────────────────
@@ -58,6 +59,17 @@ export function configureLocale(langCode, timezone, preferredLocale) {
   _cache    = {}; // invalidate all cached formatters
 }
 
+/**
+ * Override the numeric (all-digits) short-date order. When set, `fDateShort`
+ * honors the user's explicit preference instead of the locale default; when
+ * null/unset it falls back to locale-driven ordering.
+ *
+ * @param {('DD/MM/YYYY'|'MM/DD/YYYY'|'YYYY-MM-DD'|null)} [pattern]
+ */
+export function configureDateFormat(pattern) {
+  _dateFmt = pattern || null;
+}
+
 // ── Date / time formatters ────────────────────────────────────────────────────
 
 /** Standard date — "15 Jan 2025" / "15 janv. 2025" / … */
@@ -72,10 +84,24 @@ export const fDateLong = (value) => {
   return d ? _fmt('dateLong', { day: 'numeric', month: 'long', year: 'numeric' }).format(d) : '—';
 };
 
-/** Short numeric date — "15/01/2025" or locale-appropriate numeric format */
+/** Short numeric date — honors the user's dateFormat override, else locale default */
 export const fDateShort = (value) => {
   const d = _parse(value);
-  return d ? _fmt('dateShort', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(d) : '—';
+  if (!d) return '—';
+  // formatToParts respects the configured timezone (carried by _fmt's options).
+  const fmt = _fmt('dateShort', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  if (!_dateFmt) return fmt.format(d);
+  const parts = fmt.formatToParts(d);
+  const part = (type) => parts.find((p) => p.type === type)?.value ?? '';
+  const dd = part('day');
+  const mm = part('month');
+  const yyyy = part('year');
+  switch (_dateFmt) {
+    case 'MM/DD/YYYY': return `${mm}/${dd}/${yyyy}`;
+    case 'YYYY-MM-DD': return `${yyyy}-${mm}-${dd}`;
+    case 'DD/MM/YYYY':
+    default:           return `${dd}/${mm}/${yyyy}`;
+  }
 };
 
 /** Time only — "14:30" (24h) */

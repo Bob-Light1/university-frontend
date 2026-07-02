@@ -1,1 +1,14 @@
-{ "title": "Einstellungen", "language": { "title": "Sprache & Region", "select": "Sprache auswählen", "preview": "Vorschau sofort angezeigt", "saved": "Spracheinstellung gespeichert", "rtlBadge": "RTL" }, "timezone": { "title": "Zeitzone", "select": "Zeitzone auswählen", "current": "Aktuelle Zeitzone", "africa": "Afrika", "europe": "Europa", "asia": "Asien", "america": "Amerika", "pacific": "Pazifik" }, "grade": { "title": "Notenformat", "format": "Anzeigeformat", "FRACTION": "Bruch (15/20)", "PERCENT": "Prozent (75%)", "LETTER": "Buchstabe (A+)", "GPA": "GPA (3,75/4,0)" }, "date": { "title": "Datumsformat", "format": "Format", "DMY": "TT.MM.JJJJ", "MDY": "MM/TT/JJJJ", "YMD": "JJJJ-MM-TT" }, "theme": { "title": "Design", "light": "Hell", "dark": "Dunkel", "system": "Systemstandard" }, "profile": { "title": "Profil", "photo": "Profilbild", "update": "Profil aktualisieren" }, "notifications": { "title": "Benachrichtigungen", "email": "E-Mail-Benachrichtigungen", "sms": "SMS-Benachrichtigungen", "push": "Push-Benachrichtigungen" }, "campus": { "title": "Campus-Einstellungen", "defaultLanguage": "Standardsprache", "defaultTimezone": "Standardzeitzone", "defaultGradeFormat": "Standard-Notenformat" }, "save": "Speichern", "saved": "Einstellungen gespeichert" }
+{
+  "title": "Einstellungen",
+  "language": { "title": "Sprache & Region", "select": "Sprache auswählen", "preview": "Vorschau sofort angezeigt", "saved": "Spracheinstellung gespeichert", "rtlBadge": "RTL" },
+  "timezone": { "title": "Zeitzone", "select": "Zeitzone auswählen", "current": "Aktuelle Zeitzone", "help": "Gilt für alle in der App angezeigten Datums- und Zeitangaben.", "utc": "UTC", "africa": "Afrika", "america": "Amerika", "asia": "Asien", "atlantic": "Atlantik", "europe": "Europa", "indian": "Indischer Ozean", "pacific": "Pazifik" },
+  "grade": { "title": "Notenformat", "format": "Anzeigeformat", "FRACTION": "Bruch (15/20)", "PERCENT": "Prozent (75%)", "LETTER": "Buchstabe (A+)", "GPA": "GPA (3,75/4,0)" },
+  "date": { "title": "Datumsformat", "format": "Datumsformat", "DMY": "TT.MM.JJJJ", "MDY": "MM/TT/JJJJ", "YMD": "JJJJ-MM-TT" },
+  "theme": { "title": "Design", "light": "Hell", "dark": "Dunkel", "system": "Systemstandard" },
+  "profile": { "title": "Profil", "photo": "Profilbild", "update": "Profil aktualisieren" },
+  "notifications": { "title": "Benachrichtigungen", "email": "E-Mail-Benachrichtigungen", "sms": "SMS-Benachrichtigungen", "push": "Push-Benachrichtigungen" },
+  "campus": { "title": "Campus-Einstellungen", "subtitle": "Gilt für neue Benutzer dieses Campus, die noch keine eigenen Einstellungen festgelegt haben.", "defaultLanguage": "Standardsprache", "defaultTimezone": "Standardzeitzone", "defaultGradeFormat": "Standard-Notenformat", "save": "Campus-Standardwerte speichern", "saveSuccess": "Campus-Standardwerte gespeichert.", "saveError": "Speichern der Campus-Standardwerte fehlgeschlagen.", "loadError": "Laden der Campus-Einstellungen fehlgeschlagen." },
+  "save": "Speichern",
+  "saved": "Einstellungen gespeichert",
+  "regionSaved": "Regionale Einstellungen gespeichert"
+}

@@ -1,1 +1,14 @@
-{ "title": "设置", "language": { "title": "语言与地区", "select": "选择语言", "preview": "即时预览", "saved": "语言偏好已保存", "rtlBadge": "RTL" }, "timezone": { "title": "时区", "select": "选择时区", "current": "当前时区", "africa": "非洲", "europe": "欧洲", "asia": "亚洲", "america": "美洲", "pacific": "太平洋" }, "grade": { "title": "成绩格式", "format": "显示格式", "FRACTION": "分数 (15/20)", "PERCENT": "百分比 (75%)", "LETTER": "字母 (A+)", "GPA": "绩点 (3.75/4.0)" }, "date": { "title": "日期格式", "format": "格式", "DMY": "DD/MM/YYYY", "MDY": "MM/DD/YYYY", "YMD": "YYYY-MM-DD" }, "theme": { "title": "主题", "light": "浅色", "dark": "深色", "system": "跟随系统" }, "profile": { "title": "个人资料", "photo": "头像", "update": "更新资料" }, "notifications": { "title": "通知", "email": "邮件通知", "sms": "短信通知", "push": "推送通知" }, "campus": { "title": "校区设置", "defaultLanguage": "默认语言", "defaultTimezone": "默认时区", "defaultGradeFormat": "默认成绩格式" }, "save": "保存", "saved": "设置已保存" }
+{
+  "title": "设置",
+  "language": { "title": "语言与地区", "select": "选择语言", "preview": "即时预览", "saved": "语言偏好已保存", "rtlBadge": "RTL" },
+  "timezone": { "title": "时区", "select": "选择时区", "current": "当前时区", "help": "适用于应用中向您显示的所有日期和时间。", "utc": "协调世界时", "africa": "非洲", "america": "美洲", "asia": "亚洲", "atlantic": "大西洋", "europe": "欧洲", "indian": "印度洋", "pacific": "太平洋" },
+  "grade": { "title": "成绩格式", "format": "显示格式", "FRACTION": "分数 (15/20)", "PERCENT": "百分比 (75%)", "LETTER": "字母 (A+)", "GPA": "绩点 (3.75/4.0)" },
+  "date": { "title": "日期格式", "format": "日期格式", "DMY": "DD/MM/YYYY", "MDY": "MM/DD/YYYY", "YMD": "YYYY-MM-DD" },
+  "theme": { "title": "主题", "light": "浅色", "dark": "深色", "system": "跟随系统" },
+  "profile": { "title": "个人资料", "photo": "头像", "update": "更新资料" },
+  "notifications": { "title": "通知", "email": "邮件通知", "sms": "短信通知", "push": "推送通知" },
+  "campus": { "title": "校区设置", "subtitle": "适用于本校区尚未设置自己偏好的新用户。", "defaultLanguage": "默认语言", "defaultTimezone": "默认时区", "defaultGradeFormat": "默认成绩格式", "save": "保存校区默认值", "saveSuccess": "校区默认值已保存。", "saveError": "保存校区默认值失败。", "loadError": "加载校区设置失败。" },
+  "save": "保存",
+  "saved": "设置已保存",
+  "regionSaved": "区域偏好已保存"
+}

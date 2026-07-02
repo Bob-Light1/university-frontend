@@ -11,10 +11,14 @@
     "title": "Timezone",
     "select": "Select timezone",
     "current": "Current timezone",
+    "help": "Applies to all dates and times shown to you across the app.",
+    "utc": "UTC",
     "africa": "Africa",
-    "europe": "Europe",
-    "asia": "Asia",
     "america": "Americas",
+    "asia": "Asia",
+    "atlantic": "Atlantic",
+    "europe": "Europe",
+    "indian": "Indian Ocean",
     "pacific": "Pacific"
   },
   "grade": {
@@ -51,10 +55,16 @@
   },
   "campus": {
     "title": "Campus defaults",
+    "subtitle": "Applied to new users on this campus who haven't set their own preferences yet.",
     "defaultLanguage": "Default language for new users",
     "defaultTimezone": "Default timezone",
-    "defaultGradeFormat": "Default grade format"
+    "defaultGradeFormat": "Default grade format",
+    "save": "Save campus defaults",
+    "saveSuccess": "Campus defaults saved.",
+    "saveError": "Failed to save campus defaults.",
+    "loadError": "Failed to load campus settings."
   },
-  "save": "Save settings",
-  "saved": "Settings saved successfully"
+  "save": "Save",
+  "saved": "Settings saved successfully",
+  "regionSaved": "Regional preferences saved"
 }

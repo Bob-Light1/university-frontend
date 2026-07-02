@@ -1,6 +1,7 @@
 import { Paper, Stack, Typography, Divider } from '@mui/material';
 import { Language } from '@mui/icons-material';
 import { LanguageSelector } from './LanguageSelector';
+import RegionalPreferences from './RegionalPreferences';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 /**
@@ -21,6 +22,10 @@ export default function LanguagePreferencesSection({ onSaved }) {
       <Divider sx={{ mb: 2.5 }} />
 
       <LanguageSelector onSaved={onSaved} />
+
+      <Divider sx={{ my: 3 }} />
+
+      <RegionalPreferences />
     </Paper>
   );
 }

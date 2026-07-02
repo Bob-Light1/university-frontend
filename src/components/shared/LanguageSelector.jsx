@@ -80,10 +80,6 @@ export function LanguageSelector({ onSaved }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
-      <Typography variant="subtitle1" fontWeight={600}>
-        {t('language.title')}
-      </Typography>
-
       <FormControl fullWidth size="small">
         <InputLabel id="language-select-label">{t('language.select')}</InputLabel>
         <Select

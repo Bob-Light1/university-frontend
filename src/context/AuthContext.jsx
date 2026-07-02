@@ -1,12 +1,12 @@
 import { createContext, useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config/env';
 import i18n, { RTL_LANGUAGES } from '../i18n/i18n.js';
-import { configureLocale } from '../utils/dateFormat.js';
+import { configureLocale, configureDateFormat } from '../utils/dateFormat.js';
 
 const SECURE = location.protocol === 'https:' ? ';Secure' : '';
 
 // Apply language + locale settings BEFORE React tree renders — prevents flash
-function applyLanguage(lang, timezone, preferredLocale) {
+function applyLanguage(lang, timezone, preferredLocale, dateFormat) {
   if (!lang) return;
   i18n.changeLanguage(lang);
   document.documentElement.lang = lang;
@@ -14,6 +14,7 @@ function applyLanguage(lang, timezone, preferredLocale) {
   document.cookie = `erp_lang=${lang};path=/;SameSite=Lax;max-age=31536000${SECURE}`;
   localStorage.setItem('erp_language', lang);
   configureLocale(lang, timezone, preferredLocale);
+  configureDateFormat(dateFormat);
 }
 
 export const AuthContext = createContext(undefined);
@@ -80,6 +81,7 @@ export function AuthProvider({ children }) {
           enrichedUserData.preferredLanguage,
           enrichedUserData.timezone,
           enrichedUserData.preferredLocale,
+          enrichedUserData.dateFormat,
         );
       }
 
@@ -165,6 +167,7 @@ export function AuthProvider({ children }) {
                 parsedUser.preferredLanguage,
                 parsedUser.timezone,
                 parsedUser.preferredLocale,
+                parsedUser.dateFormat,
               );
             }
             setUser(parsedUser);
@@ -176,15 +179,16 @@ export function AuthProvider({ children }) {
               .then((r) => r.json())
               .then(({ data }) => {
                 if (!data) return;
-                const { preferredLanguage, timezone, preferredLocale } = data;
+                const { preferredLanguage, timezone, preferredLocale, dateFormat } = data;
                 const changed =
                   preferredLanguage !== parsedUser.preferredLanguage ||
                   timezone          !== parsedUser.timezone          ||
-                  preferredLocale   !== parsedUser.preferredLocale;
+                  preferredLocale   !== parsedUser.preferredLocale   ||
+                  dateFormat        !== parsedUser.dateFormat;
                 if (changed) {
-                  if (preferredLanguage) applyLanguage(preferredLanguage, timezone, preferredLocale);
+                  if (preferredLanguage) applyLanguage(preferredLanguage, timezone, preferredLocale, dateFormat);
                   setUser((prev) => {
-                    const updated = { ...prev, preferredLanguage, timezone, preferredLocale };
+                    const updated = { ...prev, preferredLanguage, timezone, preferredLocale, dateFormat };
                     localStorage.setItem('user', JSON.stringify(updated));
                     return updated;
                   });

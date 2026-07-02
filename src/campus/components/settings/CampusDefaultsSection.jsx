@@ -9,103 +9,56 @@ import {
 import { Public, Schedule, Grade } from '@mui/icons-material';
 import api from '../../../api/axiosInstance';
 import { LANGUAGE_META, SUPPORTED_LANGUAGES } from '../../../i18n/i18n';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
+import { groupTimezones, prettyTimezone } from '../../../utils/timezones';
 
-// ── Timezone options grouped by region ───────────────────────────────────────
-
-const TIMEZONE_GROUPS = [
-  {
-    label: 'UTC',
-    zones: ['UTC'],
-  },
-  {
-    label: 'Africa',
-    zones: [
-      'Africa/Abidjan','Africa/Accra','Africa/Addis_Ababa','Africa/Algiers',
-      'Africa/Bamako','Africa/Bangui','Africa/Brazzaville','Africa/Cairo',
-      'Africa/Casablanca','Africa/Dakar','Africa/Dar_es_Salaam','Africa/Douala',
-      'Africa/Freetown','Africa/Harare','Africa/Johannesburg','Africa/Kampala',
-      'Africa/Khartoum','Africa/Kigali','Africa/Kinshasa','Africa/Lagos',
-      'Africa/Libreville','Africa/Lome','Africa/Luanda','Africa/Malabo',
-      'Africa/Nairobi','Africa/Ndjamena','Africa/Niamey','Africa/Nouakchott',
-      'Africa/Ouagadougou','Africa/Tripoli','Africa/Tunis','Africa/Windhoek',
-    ],
-  },
-  {
-    label: 'Europe',
-    zones: [
-      'Europe/Amsterdam','Europe/Athens','Europe/Berlin','Europe/Brussels',
-      'Europe/Budapest','Europe/Copenhagen','Europe/Dublin','Europe/Helsinki',
-      'Europe/Istanbul','Europe/Lisbon','Europe/London','Europe/Luxembourg',
-      'Europe/Madrid','Europe/Moscow','Europe/Oslo','Europe/Paris',
-      'Europe/Prague','Europe/Rome','Europe/Stockholm','Europe/Vienna',
-      'Europe/Warsaw','Europe/Zurich',
-    ],
-  },
-  {
-    label: 'Asia',
-    zones: [
-      'Asia/Baghdad','Asia/Bangkok','Asia/Beirut','Asia/Dubai',
-      'Asia/Hong_Kong','Asia/Jakarta','Asia/Jerusalem','Asia/Karachi',
-      'Asia/Kolkata','Asia/Kuala_Lumpur','Asia/Muscat','Asia/Qatar',
-      'Asia/Riyadh','Asia/Seoul','Asia/Shanghai','Asia/Singapore',
-      'Asia/Taipei','Asia/Tehran','Asia/Tokyo',
-    ],
-  },
-  {
-    label: 'America',
-    zones: [
-      'America/Bogota','America/Buenos_Aires','America/Caracas','America/Chicago',
-      'America/Denver','America/Lima','America/Los_Angeles','America/Mexico_City',
-      'America/New_York','America/Panama','America/Sao_Paulo','America/Toronto',
-      'America/Vancouver',
-    ],
-  },
-  {
-    label: 'Pacific / Atlantic',
-    zones: [
-      'Pacific/Auckland','Pacific/Fiji','Pacific/Honolulu',
-      'Atlantic/Azores','Atlantic/Cape_Verde','Indian/Mauritius','Indian/Reunion',
-    ],
-  },
-];
-
-const GRADE_OPTIONS = [
-  { value: 'FRACTION', label: '12/20 — Fraction' },
-  { value: 'PERCENT',  label: '60% — Percent'    },
-  { value: 'LETTER',   label: 'B+ — Letter grade' },
-  { value: 'GPA',      label: '3.5 — GPA'         },
-];
+const GRADE_VALUES = ['FRACTION', 'PERCENT', 'LETTER', 'GPA'];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function CampusDefaultsSection() {
   const { campusId } = useParams();
+  const { t } = useAppTranslation('settings');
 
-  const [defaults, setDefaults]   = useState(null);   // fetched campus defaults
   const [form, setForm]           = useState(null);   // controlled form state
+  const [timezones, setTimezones] = useState(['UTC']); // authoritative list from backend
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
   const [snackbar, setSnackbar]   = useState({ open: false, message: '', severity: 'success' });
 
   const savedRef = useRef(null); // track last-saved values for hasChanged
 
-  // ── Fetch current campus defaults ─────────────────────────────────────────
+  // ── Fetch current campus defaults + the authoritative options whitelist ─────
   useEffect(() => {
     if (!campusId) return;
     setLoading(true);
-    api.get(`/campus/${campusId}`)
-      .then(({ data }) => {
-        const { defaultLanguage = 'en', defaultTimezone = 'UTC', defaultGradeFormat = 'FRACTION' } = data.data ?? {};
+    Promise.all([
+      api.get(`/campus/${campusId}`),
+      api.get('/settings/options').catch(() => null), // non-fatal: page still works
+    ])
+      .then(([campusRes, optionsRes]) => {
+        const { defaultLanguage = 'en', defaultTimezone = 'UTC', defaultGradeFormat = 'FRACTION' } =
+          campusRes.data.data ?? {};
         const initial = { defaultLanguage, defaultTimezone, defaultGradeFormat };
-        setDefaults(initial);
         setForm(initial);
         savedRef.current = initial;
+
+        // Build the timezone option list from the backend whitelist, always
+        // including the campus's current value so the Select never shows blank.
+        const serverZones = optionsRes?.data?.data?.timezones ?? [];
+        const merged = serverZones.includes(defaultTimezone)
+          ? serverZones
+          : [...serverZones, defaultTimezone];
+        setTimezones(merged.length ? merged : [defaultTimezone]);
       })
       .catch(() => {
-        setSnackbar({ open: true, message: 'Failed to load campus settings.', severity: 'error' });
+        setSnackbar({ open: true, message: t('campus.loadError'), severity: 'error' });
       })
       .finally(() => setLoading(false));
-  }, [campusId]);
+  }, [campusId]); // eslint-disable-line react-hooks/exhaustive-deps -- refetch only on campus change
+
+  const timezoneGroups = groupTimezones(timezones);
+  const regionLabel = (label) => t(`timezone.${label.toLowerCase()}`, { defaultValue: label });
 
   const hasChanged = form && savedRef.current && (
     form.defaultLanguage   !== savedRef.current.defaultLanguage   ||
@@ -121,9 +74,9 @@ export default function CampusDefaultsSection() {
     try {
       await api.patch(`/campus/${campusId}/defaults`, form);
       savedRef.current = { ...form };
-      setSnackbar({ open: true, message: 'Campus defaults saved.', severity: 'success' });
+      setSnackbar({ open: true, message: t('campus.saveSuccess'), severity: 'success' });
     } catch {
-      setSnackbar({ open: true, message: 'Failed to save campus defaults.', severity: 'error' });
+      setSnackbar({ open: true, message: t('campus.saveError'), severity: 'error' });
     } finally {
       setSaving(false);
     }
@@ -135,9 +88,9 @@ export default function CampusDefaultsSection() {
       <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
         <Public color="action" />
         <Box>
-          <Typography variant="subtitle1" fontWeight={700}>Campus Defaults</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('campus.title')}</Typography>
           <Typography variant="caption" color="text.secondary">
-            Applied to new users on this campus who haven't set their own preferences yet.
+            {t('campus.subtitle')}
           </Typography>
         </Box>
       </Stack>
@@ -154,11 +107,11 @@ export default function CampusDefaultsSection() {
 
           {/* Default Language */}
           <FormControl fullWidth size="small">
-            <InputLabel id="def-lang-label">Default Language</InputLabel>
+            <InputLabel id="def-lang-label">{t('campus.defaultLanguage')}</InputLabel>
             <Select
               labelId="def-lang-label"
               value={form.defaultLanguage}
-              label="Default Language"
+              label={t('campus.defaultLanguage')}
               onChange={handleChange('defaultLanguage')}
             >
               {SUPPORTED_LANGUAGES.map((code) => {
@@ -168,7 +121,9 @@ export default function CampusDefaultsSection() {
                     <Stack direction="row" spacing={1} alignItems="center">
                       <Typography variant="body2">{meta?.nativeName ?? code}</Typography>
                       {meta?.rtl && (
-                        <Typography variant="caption" color="info.main">(RTL)</Typography>
+                        <Typography variant="caption" color="info.main">
+                          {t('language.rtlBadge')}
+                        </Typography>
                       )}
                     </Stack>
                   </MenuItem>
@@ -182,23 +137,23 @@ export default function CampusDefaultsSection() {
             <InputLabel id="def-tz-label">
               <Stack direction="row" spacing={0.5} alignItems="center">
                 <Schedule sx={{ fontSize: 16 }} />
-                <span>Default Timezone</span>
+                <span>{t('campus.defaultTimezone')}</span>
               </Stack>
             </InputLabel>
             <Select
               labelId="def-tz-label"
               value={form.defaultTimezone}
-              label="Default Timezone"
+              label={t('campus.defaultTimezone')}
               onChange={handleChange('defaultTimezone')}
               MenuProps={{ PaperProps: { sx: { maxHeight: 320 } } }}
             >
-              {TIMEZONE_GROUPS.flatMap(({ label, zones }) => [
+              {timezoneGroups.flatMap(({ label, zones }) => [
                 <ListSubheader key={`hdr-${label}`} sx={{ fontWeight: 700, lineHeight: '32px' }}>
-                  {label}
+                  {regionLabel(label)}
                 </ListSubheader>,
                 ...zones.map((tz) => (
                   <MenuItem key={tz} value={tz} sx={{ pl: 3 }}>
-                    <Typography variant="body2">{tz.replace(/_/g, ' ')}</Typography>
+                    <Typography variant="body2">{prettyTimezone(tz)}</Typography>
                   </MenuItem>
                 )),
               ])}
@@ -210,18 +165,18 @@ export default function CampusDefaultsSection() {
             <InputLabel id="def-grade-label">
               <Stack direction="row" spacing={0.5} alignItems="center">
                 <Grade sx={{ fontSize: 16 }} />
-                <span>Default Grade Format</span>
+                <span>{t('campus.defaultGradeFormat')}</span>
               </Stack>
             </InputLabel>
             <Select
               labelId="def-grade-label"
               value={form.defaultGradeFormat}
-              label="Default Grade Format"
+              label={t('campus.defaultGradeFormat')}
               onChange={handleChange('defaultGradeFormat')}
             >
-              {GRADE_OPTIONS.map(({ value, label }) => (
+              {GRADE_VALUES.map((value) => (
                 <MenuItem key={value} value={value}>
-                  <Typography variant="body2">{label}</Typography>
+                  <Typography variant="body2">{t(`grade.${value}`)}</Typography>
                 </MenuItem>
               ))}
             </Select>
@@ -237,7 +192,7 @@ export default function CampusDefaultsSection() {
             sx={{ alignSelf: 'flex-start' }}
             startIcon={saving ? <CircularProgress size={14} color="inherit" /> : null}
           >
-            Save Campus Defaults
+            {t('campus.save')}
           </Button>
         </Stack>
       )}
