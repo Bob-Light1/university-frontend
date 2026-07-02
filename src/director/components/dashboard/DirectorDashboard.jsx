@@ -22,7 +22,7 @@ import {
 import { getAllCampuses, getAdminMe } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
 import {
-  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, CAMPUS_STATUS_COLOR,
+  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, CAMPUS_STATUS_COLOR, directorPrimary,
 } from '../../../theme/directorTokens';
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
@@ -131,13 +131,13 @@ export default function DirectorDashboard() {
       <Paper variant="outlined" sx={{ borderRadius: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2, pb: 1.5 }}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Schedule sx={{ color: DIRECTOR_PRIMARY, fontSize: 20 }} />
+            <Schedule sx={{ color: directorPrimary(theme.palette.mode), fontSize: 20 }} />
             <Typography variant="subtitle1" fontWeight={700}>Recent Campuses</Typography>
           </Stack>
           <Button
             size="small"
             onClick={() => navigate('/director/campuses')}
-            sx={{ textTransform: 'none', color: DIRECTOR_PRIMARY }}
+            sx={{ textTransform: 'none', color: directorPrimary(theme.palette.mode) }}
           >
             View all
           </Button>

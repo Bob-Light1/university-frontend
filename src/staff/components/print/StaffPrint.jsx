@@ -11,7 +11,7 @@ import { useStaffPermission } from '../../hooks/useStaffPermission';
 import PermissionGate         from '../shared/PermissionGate';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY = '#00695C';
+import { STAFF_PRIMARY, staffPrimary } from '../../../theme/staffTokens';
 
 const PrintCard = ({ icon, title, description, to, disabled, t }) => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const PrintCard = ({ icon, title, description, to, disabled, t }) => {
     >
       <Stack spacing={1.5}>
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box sx={{ color: STAFF_PRIMARY }}>{icon}</Box>
+          <Box sx={(t) => ({ color: staffPrimary(t.palette.mode) })}>{icon}</Box>
           <Typography variant="subtitle1" fontWeight={700}>{title}</Typography>
           {!disabled && <OpenInNew sx={{ fontSize: 14, color: 'text.secondary', ml: 'auto' }} />}
         </Stack>
@@ -99,7 +99,7 @@ function PrintHub() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 960, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
-        <Print sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <Print sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box>
           <Typography variant="h5" fontWeight={800}>{t('print:center.title')}</Typography>
           <Typography variant="body2" color="text.secondary">{t('print:center.subtitle')}</Typography>

@@ -129,6 +129,7 @@ const ResultDetailDrawer = ({
             score={result.normalizedScore}
             rawScore={result.score}
             maxScore={result.maxScore}
+            gradeBand={result.gradeBand}
             size="lg"
           />
           {result.coefficient !== 1 && (

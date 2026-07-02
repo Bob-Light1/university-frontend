@@ -24,6 +24,7 @@
   "grade": {
     "title": "Grade format",
     "format": "Display format",
+    "help": "Controls how result scores are displayed to you across the app.",
     "FRACTION": "Fraction (15/20)",
     "PERCENT": "Percentage (75%)",
     "LETTER": "Letter grade (A+)",

@@ -5,23 +5,26 @@
  * (and the campus Settings → Language & Region tab) exposes it for free.
  *
  * Only genuinely-wired preferences are surfaced here:
- *  - timezone   → drives all date/time rendering via configureLocale()
- *  - dateFormat → drives numeric short dates via configureDateFormat()
- * theme & gradeFormat are intentionally omitted (no consuming infrastructure yet),
- * to avoid shipping controls that silently do nothing.
+ *  - timezone    → drives all date/time rendering via configureLocale()
+ *  - dateFormat  → drives numeric short dates via configureDateFormat()
+ *  - gradeFormat → drives result-score rendering via configureGradeFormat()
+ *  - theme       → drives the app-wide colour mode via setThemeMode()
+ *                  (RtlProvider re-creates the MUI theme; 'system' follows the OS)
  */
 import { useState, useEffect, useRef, useContext } from 'react';
 import {
   Box, FormControl, InputLabel, Select, MenuItem, ListSubheader,
   Typography, Button, CircularProgress, Snackbar, Alert, Skeleton, Stack,
 } from '@mui/material';
-import { Schedule, CalendarMonth } from '@mui/icons-material';
+import { Schedule, CalendarMonth, Grade, DarkMode } from '@mui/icons-material';
 import api from '../../api/axiosInstance';
 import { AuthContext } from '../../context/AuthContext';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
 import useFormSnackbar from '../../hooks/useFormSnackBar';
 import { configureLocale, configureDateFormat } from '../../utils/dateFormat';
+import { configureGradeFormat, GRADE_FORMATS } from '../../utils/gradeFormat';
+import { setThemeMode, THEME_MODES } from '../../theme/themeMode';
 import { groupTimezones, prettyTimezone } from '../../utils/timezones';
 
 const DATE_FORMATS = [
@@ -36,7 +39,7 @@ export default function RegionalPreferences() {
   const { user, updateUser } = useContext(AuthContext);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
-  const [form, setForm]           = useState(null);     // { timezone, dateFormat }
+  const [form, setForm]           = useState(null);     // { timezone, dateFormat, gradeFormat, theme }
   const [timezones, setTimezones] = useState(['UTC']);
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
@@ -53,9 +56,11 @@ export default function RegionalPreferences() {
       .then(([prefsRes, optionsRes]) => {
         if (!active) return;
         const prefs = prefsRes.data?.data ?? {};
-        const timezone   = prefs.timezone   || 'UTC';
-        const dateFormat = prefs.dateFormat || 'DD/MM/YYYY';
-        const initial = { timezone, dateFormat };
+        const timezone    = prefs.timezone    || 'UTC';
+        const dateFormat  = prefs.dateFormat  || 'DD/MM/YYYY';
+        const gradeFormat = prefs.gradeFormat || 'FRACTION';
+        const theme       = THEME_MODES.includes(prefs.theme) ? prefs.theme : 'light';
+        const initial = { timezone, dateFormat, gradeFormat, theme };
         setForm(initial);
         savedRef.current = initial;
 
@@ -74,8 +79,10 @@ export default function RegionalPreferences() {
   const regionLabel = (label) => t(`timezone.${label.toLowerCase()}`, { defaultValue: label });
 
   const hasChanged = form && savedRef.current && (
-    form.timezone   !== savedRef.current.timezone ||
-    form.dateFormat !== savedRef.current.dateFormat
+    form.timezone    !== savedRef.current.timezone   ||
+    form.dateFormat  !== savedRef.current.dateFormat ||
+    form.gradeFormat !== savedRef.current.gradeFormat ||
+    form.theme       !== savedRef.current.theme
   );
 
   const handleChange = (field) => (e) =>
@@ -86,10 +93,17 @@ export default function RegionalPreferences() {
     const previous = savedRef.current;
     try {
       await api.patch('/settings', form);
-      // Apply immediately, app-wide, so every date/time reflects the new prefs.
+      // Apply immediately, app-wide, so every date/time/grade reflects the new prefs.
       configureLocale(language, form.timezone, user?.preferredLocale);
       configureDateFormat(form.dateFormat);
-      updateUser?.({ timezone: form.timezone, dateFormat: form.dateFormat });
+      configureGradeFormat(form.gradeFormat);
+      setThemeMode(form.theme);
+      updateUser?.({
+        timezone: form.timezone,
+        dateFormat: form.dateFormat,
+        gradeFormat: form.gradeFormat,
+        theme: form.theme,
+      });
       savedRef.current = { ...form };
       showSnackbar(t('regionSaved'), 'success');
     } catch {
@@ -161,6 +175,53 @@ export default function RegionalPreferences() {
           {DATE_FORMATS.map(({ value, key }) => (
             <MenuItem key={value} value={value}>
               <Typography variant="body2">{t(`date.${key}`)}</Typography>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/* Grade format */}
+      <FormControl fullWidth size="small">
+        <InputLabel id="grade-fmt-label">
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <Grade sx={{ fontSize: 16 }} />
+            <span>{t('grade.format')}</span>
+          </Stack>
+        </InputLabel>
+        <Select
+          labelId="grade-fmt-label"
+          value={form.gradeFormat}
+          label={t('grade.format')}
+          onChange={handleChange('gradeFormat')}
+        >
+          {GRADE_FORMATS.map((value) => (
+            <MenuItem key={value} value={value}>
+              <Typography variant="body2">{t(`grade.${value}`)}</Typography>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Typography variant="caption" color="text.secondary" sx={{ mt: -1 }}>
+        {t('grade.help')}
+      </Typography>
+
+      {/* Theme (colour mode) */}
+      <FormControl fullWidth size="small">
+        <InputLabel id="theme-select-label">
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <DarkMode sx={{ fontSize: 16 }} />
+            <span>{t('theme.title')}</span>
+          </Stack>
+        </InputLabel>
+        <Select
+          labelId="theme-select-label"
+          value={form.theme}
+          label={t('theme.title')}
+          onChange={handleChange('theme')}
+        >
+          {THEME_MODES.map((value) => (
+            <MenuItem key={value} value={value}>
+              <Typography variant="body2">{t(`theme.${value}`)}</Typography>
             </MenuItem>
           ))}
         </Select>

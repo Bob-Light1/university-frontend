@@ -23,7 +23,7 @@ import {
 import { getAllCampuses, getAdminMe } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
 import {
-  ADMIN_PRIMARY, ADMIN_GRADIENT, CAMPUS_STATUS_COLOR,
+  ADMIN_PRIMARY, ADMIN_GRADIENT, CAMPUS_STATUS_COLOR, adminPrimary,
 } from '../../../theme/adminTokens';
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
@@ -166,13 +166,13 @@ export default function AdminDashboard() {
       <Paper variant="outlined" sx={{ borderRadius: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2, pb: 1.5 }}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Schedule sx={{ color: ADMIN_PRIMARY, fontSize: 20 }} />
+            <Schedule sx={{ color: adminPrimary(theme.palette.mode), fontSize: 20 }} />
             <Typography variant="subtitle1" fontWeight={700}>Recent Campuses</Typography>
           </Stack>
           <Button
             size="small"
             onClick={() => navigate('/admin/campuses')}
-            sx={{ textTransform: 'none', color: ADMIN_PRIMARY }}
+            sx={{ textTransform: 'none', color: adminPrimary(theme.palette.mode) }}
           >
             View all
           </Button>

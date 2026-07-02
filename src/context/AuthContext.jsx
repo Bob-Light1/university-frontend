@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config/env';
 import i18n, { RTL_LANGUAGES } from '../i18n/i18n.js';
 import { configureLocale, configureDateFormat } from '../utils/dateFormat.js';
+import { configureGradeFormat } from '../utils/gradeFormat.js';
+import { setThemeMode } from '../theme/themeMode.js';
 
 const SECURE = location.protocol === 'https:' ? ';Secure' : '';
 
@@ -84,6 +86,8 @@ export function AuthProvider({ children }) {
           enrichedUserData.dateFormat,
         );
       }
+      configureGradeFormat(enrichedUserData.gradeFormat);
+      setThemeMode(enrichedUserData.theme);
 
       // Save to localStorage
       localStorage.setItem('token', token);
@@ -170,6 +174,8 @@ export function AuthProvider({ children }) {
                 parsedUser.dateFormat,
               );
             }
+            configureGradeFormat(parsedUser.gradeFormat);
+            setThemeMode(parsedUser.theme);
             setUser(parsedUser);
 
             // Background resync from server — reconciles multi-device preference changes
@@ -179,16 +185,20 @@ export function AuthProvider({ children }) {
               .then((r) => r.json())
               .then(({ data }) => {
                 if (!data) return;
-                const { preferredLanguage, timezone, preferredLocale, dateFormat } = data;
+                const { preferredLanguage, timezone, preferredLocale, dateFormat, gradeFormat, theme } = data;
                 const changed =
                   preferredLanguage !== parsedUser.preferredLanguage ||
                   timezone          !== parsedUser.timezone          ||
                   preferredLocale   !== parsedUser.preferredLocale   ||
-                  dateFormat        !== parsedUser.dateFormat;
+                  dateFormat        !== parsedUser.dateFormat        ||
+                  gradeFormat       !== parsedUser.gradeFormat       ||
+                  theme             !== parsedUser.theme;
                 if (changed) {
                   if (preferredLanguage) applyLanguage(preferredLanguage, timezone, preferredLocale, dateFormat);
+                  configureGradeFormat(gradeFormat);
+                  setThemeMode(theme);
                   setUser((prev) => {
-                    const updated = { ...prev, preferredLanguage, timezone, preferredLocale, dateFormat };
+                    const updated = { ...prev, preferredLanguage, timezone, preferredLocale, dateFormat, gradeFormat, theme };
                     localStorage.setItem('user', JSON.stringify(updated));
                     return updated;
                   });

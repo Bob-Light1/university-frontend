@@ -13,7 +13,7 @@ import PermissionGate            from '../shared/PermissionGate';
 import usePaginatedList          from '../../../hooks/usePaginatedList';
 import { useAppTranslation }     from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY = '#00695C';
+import { staffPrimary } from '../../../theme/staffTokens';
 
 const STATUS_BG = {
   SCHEDULED: { bg: '#e3f2fd', color: '#1565c0' },
@@ -68,7 +68,7 @@ function ExamsList() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <LibraryBooks sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <LibraryBooks sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box flex={1}>
           <Typography variant="h5" fontWeight={800}>{t('common:nav.examinations')}</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -116,7 +116,7 @@ function ExamsList() {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableRow sx={{ bgcolor: 'action.hover' }}>
                 <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.session')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.academicYear')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('examination:col.semester')}</TableCell>

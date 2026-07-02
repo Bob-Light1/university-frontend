@@ -15,8 +15,7 @@ import { Search, Group } from '@mui/icons-material';
 
 import { getMyStudents } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
-
-const MENTOR_PRIMARY = '#003285';
+import { mentorPrimary } from '../../../theme/mentorTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -66,7 +65,7 @@ export default function MentorStudents() {
 
       {/* Header */}
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <Group sx={{ color: MENTOR_PRIMARY, fontSize: 28 }} />
+        <Group sx={(t) => ({ color: mentorPrimary(t.palette.mode), fontSize: 28 })} />
         <Box>
           <Typography variant="h5" fontWeight={800}>My Students</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -109,7 +108,7 @@ export default function MentorStudents() {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableRow sx={{ bgcolor: 'action.hover' }}>
                 <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Matricule</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>

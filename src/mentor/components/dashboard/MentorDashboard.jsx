@@ -16,7 +16,7 @@ import {
   Alert, Divider, LinearProgress,
   List, ListItem, ListItemAvatar, ListItemText,
   Card, CardActionArea,
-  Skeleton,
+  Skeleton, useTheme,
 } from '@mui/material';
 import {
   Group, Assessment, ChecklistRtl, MenuBook,
@@ -25,11 +25,11 @@ import {
 
 import { getMentorDashboard, getMyProfile } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import { mentorPrimary } from '../../../theme/mentorTokens';
 
 // ─── Theme tokens ─────────────────────────────────────────────────────────────
 
 const MENTOR_GRADIENT = 'linear-gradient(135deg, #003285 0%, #4989c8 100%)';
-const MENTOR_PRIMARY  = '#003285';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -83,6 +83,8 @@ const QuickCard = ({ label, icon, path, color, navigate }) => (
 
 export default function MentorDashboard() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const mentorAccent = mentorPrimary(theme.palette.mode);
   const [profile,   setProfile]   = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [loading,   setLoading]   = useState(true);
@@ -163,7 +165,7 @@ export default function MentorDashboard() {
       {/* ── KPI strip ── */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {[
-          { label: 'Total Students',  value: stats.totalStudents,  icon: <Group />,      color: MENTOR_PRIMARY },
+          { label: 'Total Students',  value: stats.totalStudents,  icon: <Group />,      color: mentorAccent },
           { label: 'Active Students', value: stats.activeStudents, icon: <Person />,     color: '#2e7d32' },
           { label: 'Attendance Rate', value: fmtPct(stats.attendanceRate), icon: <ChecklistRtl />, color: '#ed6c02' },
           { label: 'Classes',         value: stats.totalClasses,   icon: <School />,     color: '#7b1fa2' },
@@ -177,7 +179,7 @@ export default function MentorDashboard() {
       {/* ── Recent results ── */}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-          <Assessment sx={{ color: MENTOR_PRIMARY }} />
+          <Assessment sx={{ color: mentorAccent }} />
           <Typography variant="subtitle1" fontWeight={700}>Recent Results</Typography>
         </Stack>
         <Divider sx={{ mb: 2 }} />
@@ -225,7 +227,7 @@ export default function MentorDashboard() {
       <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>Quick Access</Typography>
       <Grid container spacing={2}>
         {[
-          { label: 'My Students', icon: <Group />,        path: '/mentor/students',   color: MENTOR_PRIMARY },
+          { label: 'My Students', icon: <Group />,        path: '/mentor/students',   color: mentorAccent },
           { label: 'Results',     icon: <Assessment />,   path: '/mentor/results',    color: '#2e7d32' },
           { label: 'Attendance',  icon: <ChecklistRtl />, path: '/mentor/attendance', color: '#ed6c02' },
           { label: 'Courses',     icon: <MenuBook />,     path: '/mentor/courses',    color: '#7b1fa2' },

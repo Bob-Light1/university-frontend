@@ -399,7 +399,7 @@ const ResultTeacher = () => {
                       <Typography variant="caption">{r.semester} {r.academicYear}</Typography>
                     </TableCell>
                     <TableCell>
-                      <ScoreDisplay score={r.normalizedScore} rawScore={r.score} maxScore={r.maxScore} />
+                      <ScoreDisplay score={r.normalizedScore} rawScore={r.score} maxScore={r.maxScore} gradeBand={r.gradeBand} />
                     </TableCell>
                     <TableCell>
                       <ResultStatusChip status={r.status} />
@@ -556,7 +556,7 @@ const ResultTeacher = () => {
                       )}
                       <TableCell>{fs.subject?.subject_name ?? '—'}</TableCell>
                       <TableCell>
-                        <ScoreDisplay score={fs.normalizedScore} rawScore={fs.score} maxScore={fs.maxScore} />
+                        <ScoreDisplay score={fs.normalizedScore} rawScore={fs.score} maxScore={fs.maxScore} gradeBand={fs.gradeBand} />
                       </TableCell>
                       <TableCell>
                         <Chip label="Retake Eligible" color="warning" size="small" />

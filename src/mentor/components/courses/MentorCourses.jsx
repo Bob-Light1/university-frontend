@@ -12,8 +12,8 @@ import {
 import { Search, MenuBook, Person } from '@mui/icons-material';
 
 import { getMyCourses } from '../../../services/mentorService';
+import { mentorPrimary } from '../../../theme/mentorTokens';
 
-const MENTOR_PRIMARY  = '#003285';
 const MENTOR_GRADIENT = 'linear-gradient(135deg, #003285 0%, #4989c8 100%)';
 
 export default function MentorCourses() {
@@ -48,7 +48,7 @@ export default function MentorCourses() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
 
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <MenuBook sx={{ color: MENTOR_PRIMARY, fontSize: 28 }} />
+        <MenuBook sx={(t) => ({ color: mentorPrimary(t.palette.mode), fontSize: 28 })} />
         <Box>
           <Typography variant="h5" fontWeight={800}>Courses</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -105,7 +105,7 @@ export default function MentorCourses() {
                       <Chip
                         label={c.courseCode}
                         size="small"
-                        sx={{ fontFamily: 'monospace', fontWeight: 700, bgcolor: '#f0f4ff', color: MENTOR_PRIMARY }}
+                        sx={{ fontFamily: 'monospace', fontWeight: 700, bgcolor: 'action.hover', color: 'text.primary' }}
                       />
                     )}
                   </Stack>

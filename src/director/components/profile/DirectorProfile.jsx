@@ -16,7 +16,7 @@ import {
   ListItemText, Skeleton, Snackbar,
 } from '@mui/material';
 import {
-  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, DIRECTOR_SHADOW,
+  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, DIRECTOR_SHADOW, directorPrimary,
 } from '../../../theme/directorTokens';
 import {
   Person, Email, Shield, Lock, Visibility, VisibilityOff,
@@ -195,7 +195,7 @@ export default function DirectorProfile() {
         {/* ── Change password ───────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <Lock sx={{ color: DIRECTOR_PRIMARY }} />
+            <Lock sx={(t) => ({ color: directorPrimary(t.palette.mode) })} />
             <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />

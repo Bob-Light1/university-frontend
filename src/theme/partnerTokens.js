@@ -16,6 +16,27 @@ export const WHATSAPP_BORDER      = '#bbf7d0';
 export const SMS_BG     = '#eff6ff';
 export const SMS_BORDER = '#bfdbfe';
 
+// ─── Dark-mode variants ────────────────────────────────────────────────────────
+// The orange brand colour stays legible on dark surfaces, but the pale tinted
+// backgrounds (WhatsApp/SMS) turn white-on-light in dark mode. Accessors return
+// the surface-appropriate value for the current resolved palette mode.
+
+export const BRAND_GRADIENT_DARK = 'linear-gradient(135deg, #a63e05 0%, #d4530a 100%)';
+
+const WHATSAPP_BG_DARK     = 'rgba(37, 211, 102, 0.14)';
+const WHATSAPP_BORDER_DARK = 'rgba(37, 211, 102, 0.35)';
+const SMS_BG_DARK          = 'rgba(59, 130, 246, 0.14)';
+const SMS_BORDER_DARK      = 'rgba(59, 130, 246, 0.35)';
+
+/** Brand banner gradient, deepened for dark surfaces. */
+export const brandGradient   = (mode) => (mode === 'dark' ? BRAND_GRADIENT_DARK : BRAND_GRADIENT);
+/** WhatsApp tinted background/border for the current surface. */
+export const whatsappBg      = (mode) => (mode === 'dark' ? WHATSAPP_BG_DARK : WHATSAPP_BG);
+export const whatsappBorder  = (mode) => (mode === 'dark' ? WHATSAPP_BORDER_DARK : WHATSAPP_BORDER);
+/** SMS tinted background/border for the current surface. */
+export const smsBg           = (mode) => (mode === 'dark' ? SMS_BG_DARK : SMS_BG);
+export const smsBorder       = (mode) => (mode === 'dark' ? SMS_BORDER_DARK : SMS_BORDER);
+
 // ─── Tier ─────────────────────────────────────────────────────────────────────
 
 export const TIER_COLOR = {

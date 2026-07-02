@@ -10,7 +10,8 @@ import { getStaffCourses }     from '../../../services/staffService';
 import PermissionGate          from '../shared/PermissionGate';
 import { useAppTranslation }   from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY  = '#00695C';
+import { staffPrimary } from '../../../theme/staffTokens';
+
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
 
 function CoursesList() {
@@ -46,7 +47,7 @@ function CoursesList() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <MenuBook sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <MenuBook sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box>
           <Typography variant="h5" fontWeight={800}>{t('common:nav.courses')}</Typography>
           <Typography variant="body2" color="text.secondary">{t('staff:courses.subtitle')}</Typography>
@@ -94,7 +95,7 @@ function CoursesList() {
                       <Chip
                         label={c.courseCode}
                         size="small"
-                        sx={{ fontFamily: 'monospace', fontWeight: 700, bgcolor: '#e8f5e9', color: STAFF_PRIMARY }}
+                        sx={{ fontFamily: 'monospace', fontWeight: 700, bgcolor: 'action.hover', color: 'text.primary' }}
                       />
                     )}
                   </Stack>

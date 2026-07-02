@@ -2,7 +2,7 @@
   "title": "Configuración",
   "language": { "title": "Idioma y región", "select": "Seleccionar idioma", "preview": "Vista previa instantánea", "saved": "Preferencia de idioma guardada", "rtlBadge": "RTL" },
   "timezone": { "title": "Zona horaria", "select": "Seleccionar zona horaria", "current": "Zona horaria actual", "help": "Se aplica a todas las fechas y horas que se le muestran en la aplicación.", "utc": "UTC", "africa": "África", "america": "Américas", "asia": "Asia", "atlantic": "Atlántico", "europe": "Europa", "indian": "Océano Índico", "pacific": "Pacífico" },
-  "grade": { "title": "Formato de calificaciones", "format": "Formato", "FRACTION": "Fracción (15/20)", "PERCENT": "Porcentaje (75%)", "LETTER": "Letra (A+)", "GPA": "GPA (3,75/4,0)" },
+  "grade": { "title": "Formato de calificaciones", "format": "Formato", "help": "Define cómo se muestran las calificaciones en toda la aplicación.", "FRACTION": "Fracción (15/20)", "PERCENT": "Porcentaje (75%)", "LETTER": "Letra (A+)", "GPA": "GPA (3,75/4,0)" },
   "date": { "title": "Formato de fecha", "format": "Formato de fecha", "DMY": "DD/MM/AAAA", "MDY": "MM/DD/AAAA", "YMD": "AAAA-MM-DD" },
   "theme": { "title": "Tema", "light": "Claro", "dark": "Oscuro", "system": "Predeterminado del sistema" },
   "profile": { "title": "Perfil", "photo": "Foto de perfil", "update": "Actualizar perfil" },

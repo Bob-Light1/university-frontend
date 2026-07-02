@@ -14,7 +14,7 @@ import PermissionGate         from '../shared/PermissionGate';
 import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY = '#00695C';
+import { staffPrimary } from '../../../theme/staffTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -74,7 +74,7 @@ function AttendanceList() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
       {/* ── Header ── */}
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <ChecklistRtl sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <ChecklistRtl sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box flex={1}>
           <Typography variant="h5" fontWeight={800}>{t('attendance:title')}</Typography>
           <Typography variant="body2" color="text.secondary">{t('attendance:campus')}</Typography>
@@ -119,7 +119,7 @@ function AttendanceList() {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableRow sx={{ bgcolor: 'action.hover' }}>
                 <TableCell sx={{ fontWeight: 700 }}>{t('attendance:col.student')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('attendance:col.class')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('attendance:col.date')}</TableCell>

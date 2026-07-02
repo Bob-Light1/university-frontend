@@ -13,7 +13,7 @@ import PermissionGate         from '../shared/PermissionGate';
 import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY = '#00695C';
+import { STAFF_PRIMARY, staffPrimary } from '../../../theme/staffTokens';
 
 const STATUS_BG = {
   PUBLISHED: { bg: '#e8f5e9', color: '#2e7d32' },
@@ -155,7 +155,7 @@ function ScheduleList() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
       {/* ── Header ── */}
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <CalendarMonth sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <CalendarMonth sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box flex={1}>
           <Typography variant="h5" fontWeight={800}>{t('common:nav.schedule')}</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -216,11 +216,11 @@ function ScheduleList() {
           : days.map((day) => (
               <Box key={day} sx={{ mb: 3 }}>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-                  <CalendarMonth sx={{ fontSize: 16, color: STAFF_PRIMARY }} />
-                  <Typography variant="subtitle2" fontWeight={700} color={STAFF_PRIMARY} sx={{ textTransform: 'capitalize' }}>
+                  <CalendarMonth sx={(t) => ({ fontSize: 16, color: staffPrimary(t.palette.mode) })} />
+                  <Typography variant="subtitle2" fontWeight={700} sx={(t) => ({ color: staffPrimary(t.palette.mode), textTransform: 'capitalize' })}>
                     {fmtDayHeader(day)}
                   </Typography>
-                  <Chip label={grouped[day].length} size="small" sx={{ height: 18, fontSize: 10, bgcolor: '#e8f5e9', color: STAFF_PRIMARY }} />
+                  <Chip label={grouped[day].length} size="small" sx={{ height: 18, fontSize: 10, bgcolor: 'action.hover', color: 'text.primary' }} />
                 </Stack>
                 <Grid container spacing={2}>
                   {grouped[day].map((s) => (

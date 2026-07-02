@@ -24,6 +24,7 @@
   "grade": {
     "title": "Formato de nota",
     "format": "Formato de exibição",
+    "help": "Define como as notas são exibidas em todo o aplicativo.",
     "FRACTION": "Fração (15/20)",
     "PERCENT": "Percentagem (75%)",
     "LETTER": "Nota por letra (A+)",

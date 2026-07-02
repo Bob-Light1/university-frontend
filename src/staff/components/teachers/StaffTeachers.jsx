@@ -14,7 +14,7 @@ import PermissionGate        from '../shared/PermissionGate';
 import usePaginatedList      from '../../../hooks/usePaginatedList';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY = '#00695C';
+import { staffPrimary } from '../../../theme/staffTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -63,7 +63,7 @@ function TeachersList() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <School sx={{ color: STAFF_PRIMARY, fontSize: 28 }} />
+        <School sx={(t) => ({ color: staffPrimary(t.palette.mode), fontSize: 28 })} />
         <Box flex={1}>
           <Typography variant="h5" fontWeight={800}>{t('common:nav.teachers')}</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -105,7 +105,7 @@ function TeachersList() {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableRow sx={{ bgcolor: 'action.hover' }}>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:nav.teachers')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('common:field.email')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{t('staff:col.employment')}</TableCell>

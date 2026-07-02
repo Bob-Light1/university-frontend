@@ -2,7 +2,7 @@
   "title": "Einstellungen",
   "language": { "title": "Sprache & Region", "select": "Sprache auswählen", "preview": "Vorschau sofort angezeigt", "saved": "Spracheinstellung gespeichert", "rtlBadge": "RTL" },
   "timezone": { "title": "Zeitzone", "select": "Zeitzone auswählen", "current": "Aktuelle Zeitzone", "help": "Gilt für alle in der App angezeigten Datums- und Zeitangaben.", "utc": "UTC", "africa": "Afrika", "america": "Amerika", "asia": "Asien", "atlantic": "Atlantik", "europe": "Europa", "indian": "Indischer Ozean", "pacific": "Pazifik" },
-  "grade": { "title": "Notenformat", "format": "Anzeigeformat", "FRACTION": "Bruch (15/20)", "PERCENT": "Prozent (75%)", "LETTER": "Buchstabe (A+)", "GPA": "GPA (3,75/4,0)" },
+  "grade": { "title": "Notenformat", "format": "Anzeigeformat", "help": "Legt fest, wie Noten in der gesamten App angezeigt werden.", "FRACTION": "Bruch (15/20)", "PERCENT": "Prozent (75%)", "LETTER": "Buchstabe (A+)", "GPA": "GPA (3,75/4,0)" },
   "date": { "title": "Datumsformat", "format": "Datumsformat", "DMY": "TT.MM.JJJJ", "MDY": "MM/TT/JJJJ", "YMD": "JJJJ-MM-TT" },
   "theme": { "title": "Design", "light": "Hell", "dark": "Dunkel", "system": "Systemstandard" },
   "profile": { "title": "Profil", "photo": "Profilbild", "update": "Profil aktualisieren" },

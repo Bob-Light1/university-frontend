@@ -10,12 +10,13 @@
  *  - ResultEmptyState       — empty state illustration
  *  - RESULT_STATUS_META     — label + colour per status
  *  - SCORE_COLOR            — score → MUI colour helper
- *  - formatScore            — "14.50 / 20" formatter
+ *  - formatScore            — grade formatter honouring the user's gradeFormat preference
  */
 
 import {
   Chip, Box, Typography, Stack, Avatar, alpha, useTheme,
 } from '@mui/material';
+import { formatGrade } from '../../utils/gradeFormat';
 import {
   Edit as DraftIcon,
   HourglassTop as SubmittedIcon,
@@ -60,13 +61,11 @@ export const SCORE_BG_COLOR = (score) => {
 };
 
 // ─── Format score string ───────────────────────────────────────────────────────
+// Delegates to the preference-aware formatter. LETTER/GPA use the persisted
+// gradeBand snapshot when available, else fall back to a "14.50 / 20" fraction.
 
-export const formatScore = (normalizedScore, rawScore, maxScore) => {
-  if (normalizedScore != null) return `${normalizedScore.toFixed(2)} / 20`;
-  if (rawScore != null && maxScore != null)
-    return `${rawScore} / ${maxScore}`;
-  return '—';
-};
+export const formatScore = (normalizedScore, rawScore, maxScore, gradeBand) =>
+  formatGrade({ normalizedScore, score: rawScore, maxScore, gradeBand });
 
 // ─── ResultStatusChip ──────────────────────────────────────────────────────────
 
@@ -105,16 +104,18 @@ export const EvalTypeChip = ({ type, size = 'small' }) => {
 // ─── ScoreDisplay ─────────────────────────────────────────────────────────────
 
 /**
- * Displays normalised score with colour-coded background.
- * @param {{ score: number|null, rawScore?: number, maxScore?: number, size?: 'sm'|'md'|'lg' }}
+ * Displays a score, formatted per the user's gradeFormat preference, with a
+ * colour-coded background. Colour coding always tracks the normalised /20 score,
+ * independent of the chosen display format.
+ * @param {{ score: number|null, rawScore?: number, maxScore?: number, gradeBand?: object, size?: 'sm'|'md'|'lg' }}
  */
-export const ScoreDisplay = ({ score, rawScore, maxScore, size = 'md' }) => {
+export const ScoreDisplay = ({ score, rawScore, maxScore, gradeBand, size = 'md' }) => {
   const sizes = { sm: { px: 1, py: 0.25, fontSize: '0.75rem' },
                   md: { px: 1.5, py: 0.5, fontSize: '0.875rem' },
                   lg: { px: 2,   py: 1,   fontSize: '1.125rem' } };
 
   const s = sizes[size] ?? sizes.md;
-  const display = formatScore(score, rawScore, maxScore);
+  const display = formatScore(score, rawScore, maxScore, gradeBand);
 
   return (
     <Box

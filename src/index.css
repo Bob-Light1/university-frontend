@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Base dark-mode surface — paints the page behind screens that don't set their
+   own background, so no white gaps show through in dark mode. Kept minimal;
+   per-screen colours are handled by MUI semantic tokens in components. */
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: #0f1720;
+  color-scheme: dark;
+}

@@ -38,7 +38,7 @@ export default function CampusSettings() {
             borderBottom: '1px solid',
             borderColor: 'divider',
             px: 2,
-            bgcolor: '#f8f9fa',
+            bgcolor: 'background.default',
           }}
         >
           <Tab

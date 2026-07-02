@@ -22,7 +22,7 @@ import {
   ManageAccounts, CheckCircle, Block, PauseCircle,
   Refresh, VerifiedUser, History,
 } from '@mui/icons-material';
-import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
+import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, adminPrimary } from '../../../theme/adminTokens';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { yupEmail, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
@@ -195,7 +195,7 @@ export default function AdminAccounts() {
         {/* ── Create form ──────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <PersonAdd sx={{ color: ADMIN_PRIMARY }} />
+            <PersonAdd sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
             <Typography variant="subtitle1" fontWeight={700}>Create New Account</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
@@ -282,7 +282,7 @@ export default function AdminAccounts() {
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between"
             sx={{ p: 3, pb: 2 }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <ManageAccounts sx={{ color: ADMIN_PRIMARY }} />
+              <ManageAccounts sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
               <Typography variant="subtitle1" fontWeight={700}>Existing Accounts</Typography>
             </Stack>
             <Tooltip title="Refresh">

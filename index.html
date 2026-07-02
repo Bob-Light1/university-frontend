@@ -5,6 +5,26 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
+    <!-- Anti-flash: resolve the colour mode before first paint so dark users
+         never see a white flash. Mirrors src/theme/themeMode.js (key 'erp_theme',
+         default 'light'). Kept inline and dependency-free to run synchronously. -->
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('erp_theme') || 'light';
+          var dark =
+            m === 'dark' ||
+            (m === 'system' &&
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var mode = dark ? 'dark' : 'light';
+          document.documentElement.dataset.theme = mode;
+          document.documentElement.style.colorScheme = mode;
+        } catch (e) {
+          /* storage unavailable — default light applies */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

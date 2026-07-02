@@ -419,7 +419,7 @@ const ResultManager = () => {
                     <Typography variant="caption">{r.semester} {r.academicYear}</Typography>
                   </TableCell>
                   <TableCell>
-                    <ScoreDisplay score={r.normalizedScore} rawScore={r.score} maxScore={r.maxScore} />
+                    <ScoreDisplay score={r.normalizedScore} rawScore={r.score} maxScore={r.maxScore} gradeBand={r.gradeBand} />
                   </TableCell>
                   <TableCell>
                     <ResultStatusChip status={r.status} />

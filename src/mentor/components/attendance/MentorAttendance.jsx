@@ -15,8 +15,7 @@ import { ChecklistRtl } from '@mui/icons-material';
 
 import { getMyAttendance } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
-
-const MENTOR_PRIMARY = '#003285';
+import { mentorPrimary } from '../../../theme/mentorTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -74,7 +73,7 @@ export default function MentorAttendance() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
 
       <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-        <ChecklistRtl sx={{ color: MENTOR_PRIMARY, fontSize: 28 }} />
+        <ChecklistRtl sx={(t) => ({ color: mentorPrimary(t.palette.mode), fontSize: 28 })} />
         <Box>
           <Typography variant="h5" fontWeight={800}>Attendance</Typography>
           <Typography variant="body2" color="text.secondary">
@@ -126,7 +125,7 @@ export default function MentorAttendance() {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableRow sx={{ bgcolor: 'action.hover' }}>
                 <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>

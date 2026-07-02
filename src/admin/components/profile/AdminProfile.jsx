@@ -15,7 +15,7 @@ import {
   CircularProgress, Alert, Snackbar,
   List, ListItem, ListItemIcon, ListItemText, Skeleton,
 } from '@mui/material';
-import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
+import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, adminPrimary } from '../../../theme/adminTokens';
 import {
   Person, Email, Shield, Lock, Visibility, VisibilityOff,
   CheckCircle, Schedule, Save,
@@ -245,7 +245,7 @@ export default function AdminProfile() {
       {/* ── Section 2: Password ──────────────────────────────────────────────── */}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-          <Lock sx={{ color: ADMIN_PRIMARY }} />
+          <Lock sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
           <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
         </Stack>
         <Divider sx={{ mb: 2.5 }} />

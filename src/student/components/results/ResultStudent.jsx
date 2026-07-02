@@ -34,7 +34,7 @@ import { getResultById, getTranscript } from '../../../services/resultService';
 import ResultDetailDrawer from '../../../components/results/ResultDetailDrawer';
 import {
   ResultStatusChip, EvalTypeChip, ScoreDisplay, ResultEmptyState,
-  SCORE_COLOR, RESULT_STATUS_META,
+  SCORE_COLOR, RESULT_STATUS_META, formatScore,
 } from '../../../components/results/ResultShared';
 
 // ─── Progress bar with colour ─────────────────────────────────────────────────
@@ -117,7 +117,7 @@ const SemesterBlock = ({ semData }) => (
                       <Typography variant="caption" color="text.secondary">{ev.evaluationTitle}:</Typography>
                       <Typography variant="caption" fontWeight={700}
                         color={SCORE_COLOR(ev.normalizedScore)}>
-                        {ev.normalizedScore?.toFixed(2) ?? `${ev.score}/${ev.maxScore}`}
+                        {formatScore(ev.normalizedScore, ev.score, ev.maxScore, ev.gradeBand)}
                       </Typography>
                     </Stack>
                   ))}
@@ -262,6 +262,7 @@ const ResultStudent = () => {
                         score={r.normalizedScore}
                         rawScore={r.score}
                         maxScore={r.maxScore}
+                        gradeBand={r.gradeBand}
                       />
                     </TableCell>
                     <TableCell>
