@@ -123,7 +123,7 @@ export default function AdminDashboard() {
 
       {/* ── KPI cards ─────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 3 }}>
-        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={ADMIN_PRIMARY}                    loading={loading} />
+        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={adminPrimary(theme.palette.mode)} loading={loading} />
         <KpiCard label="Active"          value={active}           icon={<CheckCircle />} color={theme.palette.success.dark}       loading={loading} />
         <KpiCard label="Inactive"        value={inactive}         icon={<Block />}       color={theme.palette.warning.main}       loading={loading} />
         <KpiCard label="Platform Growth" value={`${total} sites`} icon={<TrendingUp />}  color={theme.palette.secondary.dark}     loading={loading} />

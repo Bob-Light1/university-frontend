@@ -121,7 +121,7 @@ export default function DirectorDashboard() {
 
       {/* ── KPI cards ─────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 3 }}>
-        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={DIRECTOR_PRIMARY}              loading={loading} />
+        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={directorPrimary(theme.palette.mode)} loading={loading} />
         <KpiCard label="Active"          value={active}           icon={<CheckCircle />} color={theme.palette.success.dark}    loading={loading} />
         <KpiCard label="Inactive"        value={inactive}         icon={<Block />}       color={theme.palette.warning.main}    loading={loading} />
         <KpiCard label="Platform Reach"  value={`${total} sites`} icon={<TrendingUp />}  color={theme.palette.secondary.dark}  loading={loading} />

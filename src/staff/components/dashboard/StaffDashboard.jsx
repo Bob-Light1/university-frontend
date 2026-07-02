@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box, Typography, Paper, Stack, Chip, Grid,
-  CircularProgress, Alert, Divider,
+  CircularProgress, Alert, Divider, useTheme,
 } from '@mui/material';
 import {
   DashboardCustomize, Group, ChecklistRtl,
@@ -12,7 +12,8 @@ import { useAuth }             from '../../../hooks/useAuth';
 import { getStaffDashboard }   from '../../../services/staffService';
 import { useAppTranslation }   from '../../../hooks/useAppTranslation';
 
-const STAFF_PRIMARY  = '#00695C';
+import { staffPrimary } from '../../../theme/staffTokens';
+
 const STAFF_GRADIENT = 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)';
 
 // Map permission key → staff:perm translation key
@@ -66,6 +67,7 @@ function KpiCard({ label, value, icon, color, suffix }) {
 export default function StaffDashboard() {
   const { user }                  = useAuth();
   const { t }                     = useAppTranslation(['staff', 'common']);
+  const theme                     = useTheme();
   const [data,    setData]        = useState(null);
   const [loading, setLoading]     = useState(true);
   const [error,   setError]       = useState(null);
@@ -127,7 +129,7 @@ export default function StaffDashboard() {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {stats.totalStudents !== undefined && (
           <Grid item xs={12} sm={6} md={3}>
-            <KpiCard label={t('staff:kpi.totalStudents')} value={stats.totalStudents} icon={<Group sx={{ fontSize: 32 }} />} color={STAFF_PRIMARY} />
+            <KpiCard label={t('staff:kpi.totalStudents')} value={stats.totalStudents} icon={<Group sx={{ fontSize: 32 }} />} color={staffPrimary(theme.palette.mode)} />
           </Grid>
         )}
         {stats.activeStudents !== undefined && (

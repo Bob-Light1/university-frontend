@@ -210,7 +210,7 @@ export default function CampusDashboard() {
           <Typography
             variant="h4"
             fontWeight={700}
-            color="#2c3e50"
+            color="text.primary"
             sx={{ fontSize: { xs: '1.4rem', sm: '2rem', md: '2.125rem' } }}
           >
             {campus.campus_name}
