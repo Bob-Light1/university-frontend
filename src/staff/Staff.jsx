@@ -18,8 +18,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import PrintIcon       from '@mui/icons-material/Print';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import CampaignIcon    from '@mui/icons-material/Campaign';
-import MessageIcon     from '@mui/icons-material/Message';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import AppShell  from '../components/AppShell';
 import { useAuth } from '../hooks/useAuth';
@@ -34,11 +32,11 @@ const PERMISSION_NAV_CONFIG = [
   { keys: ['courses.read',      'courses.manage'],      link: '/staff/courses',       tKey: 'common:nav.courses',      icon: MenuBookIcon       },
   { keys: ['schedule.read',     'schedule.manage'],     link: '/staff/schedule',      tKey: 'common:nav.schedule',     icon: EventNoteIcon      },
   { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',     tKey: 'common:nav.documents',    icon: DescriptionIcon    },
-  { keys: ['finance.read',      'finance.manage'],      link: '/staff/finance',       tKey: 'common:nav.finance',      icon: AccountBalanceIcon },
   { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',         tKey: 'common:nav.examinations', icon: QuizIcon           },
   { keys: ['print'],                                    link: '/staff/print',         tKey: 'common:nav.print',        icon: PrintIcon          },
   { keys: ['announcements'],                            link: '/staff/announcements', tKey: 'common:nav.announcements',icon: CampaignIcon       },
-  { keys: ['messages'],                                 link: '/staff/messages',      tKey: 'common:nav.messages',     icon: MessageIcon        },
+  // NOTE: 'finance' and 'messages' permissions exist but have no staff portal
+  // page/route yet — omitted from nav to avoid routing to a blank screen.
 ];
 
 export default function Staff() {

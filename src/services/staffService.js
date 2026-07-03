@@ -20,7 +20,9 @@ export const restoreStaff             = (id)          => api.patch(`/staff/${id}
 export const deleteStaffPermanently   = (id)          => api.delete(`/staff/${id}/permanent`);
 export const assignStaffRole          = (id, subRoleId) => api.patch(`/staff/${id}/assign-role`, { subRoleId });
 export const updateStaffStatus        = (id, status)  => api.patch(`/staff/${id}/status`, { status });
-export const resetStaffPassword       = (id, newPassword) => api.patch(`/staff/${id}/reset-password`, { newPassword });
+// Secure reset: the backend re-issues an activation link/code (returned in the
+// response) so the staff member sets their own password — no plaintext is sent.
+export const resetStaffPassword       = (id)          => api.patch(`/staff/${id}/reset-password`);
 
 export const getCMUploadSignature    = ()           => api.get('/staff/upload-signature');
 

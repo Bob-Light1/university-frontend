@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Button, CircularProgress, Alert,
@@ -36,6 +37,7 @@ const SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 export default function StaffRoleForm({ open, onClose, onSaved, role }) {
   const { t }    = useAppTranslation('staff');
+  const { campusId } = useParams();
   const isEdit   = Boolean(role?._id);
   const [apiError, setApiError] = useState('');
 
@@ -53,7 +55,9 @@ export default function StaffRoleForm({ open, onClose, onSaved, role }) {
       try {
         const res = isEdit
           ? await updateStaffRole(role._id, values)
-          : await createStaffRole(values);
+          // campus is required by the backend for global roles (ADMIN/DIRECTOR);
+          // a CAMPUS_MANAGER's own campus is derived from the token server-side.
+          : await createStaffRole(campusId ? { ...values, campus: campusId } : values);
         onSaved(res.data?.data ?? res.data);
         onClose();
       } catch (err) {

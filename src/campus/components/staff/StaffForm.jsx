@@ -12,7 +12,7 @@ import * as Yup from 'yup';
 import { useParams } from 'react-router-dom';
 
 import api                  from '../../../api/axiosInstance';
-import { createStaff, updateStaff } from '../../../services/staffService';
+import { createStaff, updateStaff, assignStaffRole } from '../../../services/staffService';
 import PhoneInput           from '../../../components/shared/PhoneInput';
 import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
 import { yupPhone } from '../../../utils/validationRules';
@@ -101,7 +101,15 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
         if (profileImage)     payload.profileImage = profileImage;
 
         if (isEdit) {
-          await updateStaff(staff._id, payload);
+          // PUT /staff/:id ignores subRole by design — role changes go through the
+          // dedicated assign-role endpoint (which validates campus ownership).
+          const { subRole: _subRole, ...updatePayload } = payload;
+          await updateStaff(staff._id, updatePayload);
+
+          const initialSubRole = staff?.subRole?._id ?? staff?.subRole ?? '';
+          if ((values.subRole || '') !== (initialSubRole || '')) {
+            await assignStaffRole(staff._id, values.subRole || null);
+          }
           onSuccess(t('staff:form.updatedSuccess'));
         } else {
           const res = await createStaff(payload);

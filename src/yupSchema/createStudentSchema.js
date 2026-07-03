@@ -6,8 +6,12 @@ import {
 /**
  * Student create/edit validation. Password is never set here (account
  * activation lets the user choose their own).
+ * @param {boolean} isEdit - Whether we are editing an existing student.
+ *   Validation is identical for create and edit (all business fields stay
+ *   required), so the flag is accepted for call-site symmetry with the other
+ *   entity schemas rather than branching behaviour.
  */
-export const createStudentSchema = () =>
+export const createStudentSchema = (isEdit = false) => // eslint-disable-line no-unused-vars
   Yup.object().shape({
     // ── Affectation académique ────────────────────────────────────────────────
 

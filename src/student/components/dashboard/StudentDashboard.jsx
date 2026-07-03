@@ -117,7 +117,7 @@ const SessionRow = ({ session, showDate = false }) => {
           {session.teacher
             ? `${session.teacher.firstName} ${session.teacher.lastName}`
             : '—'}
-          {session.room?.roomCode ? ` · Room ${session.room.roomCode}` : ''}
+          {session.room?.code ? ` · Room ${session.room.code}` : ''}
           {session.isVirtual ? ' · Virtual' : ''}
         </Typography>
       </Box>
@@ -527,7 +527,7 @@ export default function StudentDashboard() {
                             </Typography>
                             <Typography variant="caption" color="text.secondary" display="block">
                               {fmtTime(exam.startTime)} – {fmtTime(exam.endTime)}
-                              {exam.room?.roomCode ? ` · Room ${exam.room.roomCode}` : ''}
+                              {exam.room?.code ? ` · Room ${exam.room.code}` : ''}
                             </Typography>
                           </Box>
                           <Chip

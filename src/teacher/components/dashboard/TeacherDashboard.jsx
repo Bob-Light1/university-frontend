@@ -119,7 +119,7 @@ const SessionRow = ({ session, showDate = false }) => {
         </Typography>
         <Typography variant="caption" color="text.secondary" noWrap>
           {session.classes?.map((c) => c.className).join(', ') || '—'}
-          {session.room?.roomCode ? ` · Room ${session.room.roomCode}` : ''}
+          {session.room?.code ? ` · Room ${session.room.code}` : ''}
           {session.isVirtual ? ' · Virtual' : ''}
         </Typography>
       </Box>

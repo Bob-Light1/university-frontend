@@ -119,7 +119,7 @@ function PrintHub() {
 
       <Grid container spacing={2}>
         {modules.map((m) => (
-          <Grid item xs={12} sm={6} key={m.title}>
+          <Grid size={{ xs: 12, sm: 6 }} key={m.title}>
             <PrintCard {...m} disabled={!has(m.perm)} t={t} />
           </Grid>
         ))}

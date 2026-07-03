@@ -165,10 +165,10 @@ export default function TeacherProfile() {
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.85 }}>{profile?.email}</Typography>
             <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 0.5 }}>
-              {profile?.department?.department_name && (
+              {profile?.department?.name && (
                 <Chip
                   icon={<School sx={{ fontSize: 12, color: 'white !important' }} />}
-                  label={profile.department.department_name}
+                  label={profile.department.name}
                   size="small"
                   sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)' }}
                 />

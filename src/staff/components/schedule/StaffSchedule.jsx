@@ -201,7 +201,7 @@ function ScheduleList() {
         ? (
           <Grid container spacing={2}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <Grid item xs={12} sm={6} md={4} key={i}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
                 <Skeleton variant="rounded" height={130} sx={{ borderRadius: 2 }} />
               </Grid>
             ))}
@@ -224,7 +224,7 @@ function ScheduleList() {
                 </Stack>
                 <Grid container spacing={2}>
                   {grouped[day].map((s) => (
-                    <Grid item xs={12} sm={6} md={4} key={s._id}>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={s._id}>
                       <SessionCard s={s} t={t} i18n={i18n} />
                     </Grid>
                   ))}

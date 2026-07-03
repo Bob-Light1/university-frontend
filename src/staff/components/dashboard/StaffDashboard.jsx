@@ -128,27 +128,27 @@ export default function StaffDashboard() {
       {/* KPI cards (only show if permission unlocked data) */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {stats.totalStudents !== undefined && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <KpiCard label={t('staff:kpi.totalStudents')} value={stats.totalStudents} icon={<Group sx={{ fontSize: 32 }} />} color={staffPrimary(theme.palette.mode)} />
           </Grid>
         )}
         {stats.activeStudents !== undefined && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <KpiCard label={t('staff:kpi.activeStudents')} value={stats.activeStudents} icon={<Group sx={{ fontSize: 32 }} />} color="#1565C0" />
           </Grid>
         )}
         {stats.attendanceRate !== undefined && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <KpiCard label={t('staff:kpi.attendanceRate')} value={stats.attendanceRate} suffix="%" icon={<ChecklistRtl sx={{ fontSize: 32 }} />} color="#6A1B9A" />
           </Grid>
         )}
         {stats.publishedResults !== undefined && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <KpiCard label={t('staff:kpi.publishedResults')} value={stats.publishedResults} icon={<Assessment sx={{ fontSize: 32 }} />} color="#E65100" />
           </Grid>
         )}
         {stats.totalTeachers !== undefined && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <KpiCard label={t('staff:kpi.teachers')} value={stats.totalTeachers} icon={<School sx={{ fontSize: 32 }} />} color="#00838F" />
           </Grid>
         )}
