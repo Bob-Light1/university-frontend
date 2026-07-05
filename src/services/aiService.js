@@ -44,6 +44,32 @@ export const getAiConversation = (id) =>
 export const getAiUsage = (params = {}) =>
   api.get('/ai/usage', { params });
 
+/**
+ * AI-assisted descriptive summary over ERP aggregates (Feature 2, M5).
+ * data = { figures, narrative, snapshotId, generatedAt } — figures are ERP
+ * numbers, the narrative is in the user's preferred language.
+ * @param {string} report - 'class-performance' | 'attendance-summary' | 'dropout-risk'
+ *   (backend AI_ANALYTICS_REPORTS is the source of truth).
+ * @param {Object} params - Report filters, validated per report server-side
+ *   (e.g. { academicYear: '2025-2026', semester: 'S1' }).
+ */
+export const runAiAnalytics = (report, params = {}) =>
+  api.post(`/ai/analytics/${report}`, { params });
+
+/**
+ * Business advisor proposals (M5b — ADMIN/DIRECTOR/CAMPUS_MANAGER, campus
+ * feature 'advisors'). data = { proposals, engine } where each proposal is
+ * { title, rationale, evidence, suggestedAction } — suggestedAction is a
+ * PROPOSAL to render as a normal permission-gated ERP button: the AI never
+ * executes it (human-in-the-loop).
+ * @param {string} advisor - 'finance' | 'academic' | 'marketing'
+ *   (backend AI_ADVISORS is the source of truth).
+ * @param {Object} params - Advisor filters, whitelisted server-side
+ *   (finance: { months? }, academic: { academicYear?, semester? }).
+ */
+export const runAiAdvisor = (advisor, params = {}) =>
+  api.post(`/ai/advisors/${advisor}`, { params });
+
 // ─── Chat (SSE) ───────────────────────────────────────────────────────────────
 
 /** Parses one raw SSE block into { event, data } (null for keep-alives). */

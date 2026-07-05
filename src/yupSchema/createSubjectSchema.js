@@ -6,6 +6,14 @@ export const createSubjectSchema = Yup.object().shape({
     .required('Campus is required')
     .matches(/^[0-9a-fA-F]{24}$/, 'Invalid campus ID'),
 
+  // department: Optional department the subject belongs to (must be in the campus)
+  department: Yup.string()
+    .matches(/^[0-9a-fA-F]{24}$/, {
+      message: 'Invalid department ID',
+      excludeEmptyString: true,
+    })
+    .nullable(),
+
   // subject_name: Subject name
   subject_name: Yup.string()
     .trim()

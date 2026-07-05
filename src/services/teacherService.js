@@ -56,9 +56,10 @@ export const getTeacherFormData = (campusId, signal) =>
       signal,
     }),
 
-    // Subjects scoped to this campus
+    // Subjects scoped to this campus — limit=200 so the subject picker is not
+    // silently capped at the default page size (mirrors the class fetch below).
     api.get('/subject', {
-      params: { campusId },
+      params: { campusId, limit: 200 },
       signal,
     }),
 

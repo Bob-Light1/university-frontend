@@ -5,7 +5,7 @@ import {
   TableRow, IconButton, Dialog, DialogContent, TextField,
   Stack, Tooltip, InputAdornment, Skeleton, Chip, MenuItem,
   Snackbar, Alert, useTheme, useMediaQuery, Card, CardContent,
-  FormControlLabel, Switch,
+  FormControlLabel, Switch, TablePagination,
 } from '@mui/material';
 
 import {
@@ -31,6 +31,18 @@ import MobileSubjectCard from './MobileSubjectCard';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
 import { useParams } from 'react-router-dom';
 
+// Subject categories — mirrors the backend Subject model enum (source of truth).
+const SUBJECT_CATEGORIES = [
+  'Science',
+  'Mathematics',
+  'Languages',
+  'Social Studies',
+  'Arts',
+  'Physical Education',
+  'Technology',
+  'Other',
+];
+
 const Subject = () => {
   const theme = useTheme();
   const { campusId } = useParams();
@@ -39,12 +51,18 @@ const Subject = () => {
 
   const [subjects, setSubjects] = useState([]);
   const [campus, setCampus] = useState(null);
+  const [departments, setDepartments] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Server-side pagination state (page is 0-based for MUI TablePagination).
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [total, setTotal] = useState(0);
 
   const [notification, setNotification] = useState({
     open: false,
@@ -87,7 +105,14 @@ const Subject = () => {
 
     setLoading(true);
     try {
-      const params = new URLSearchParams({ campusId, includeArchived });
+      // True server-side pagination — page/limit are sent to the backend, which
+      // caps limit at 100. Total count comes back in the `pagination` envelope.
+      const params = new URLSearchParams({
+        campusId,
+        includeArchived,
+        page: page + 1,
+        limit: rowsPerPage,
+      });
       if (debouncedSearch.trim()) params.append('search', debouncedSearch.trim());
 
       const [subjectRes, campusRes] = await Promise.all([
@@ -96,6 +121,7 @@ const Subject = () => {
       ]);
 
       setSubjects(subjectRes.data?.data || []);
+      setTotal(subjectRes.data?.pagination?.total ?? 0);
       setCampus(campusRes.data?.data || null);
 
     } catch (e) {
@@ -103,7 +129,27 @@ const Subject = () => {
     } finally {
       setLoading(false);
     }
-  }, [campusId, includeArchived, debouncedSearch]);
+  }, [campusId, includeArchived, debouncedSearch, page, rowsPerPage]);
+
+  // Load the campus departments once (used by the create/edit form select).
+  // limit=200 so the picker is not silently capped at the default page size.
+  useEffect(() => {
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(campusId);
+    if (!campusId || !isMongoId) return;
+
+    let active = true;
+    api
+      .get('/department', { params: { campusId, limit: 200 } })
+      .then((res) => { if (active) setDepartments(res.data?.data || []); })
+      .catch(() => { if (active) setDepartments([]); });
+
+    return () => { active = false; };
+  }, [campusId]);
+
+  // Reset to the first page whenever the result set changes (search / archive toggle).
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, includeArchived]);
 
   useEffect(() => {
     fetchData();
@@ -322,6 +368,7 @@ const Subject = () => {
               <TableRow>
                 <TableCell>Subject</TableCell>
                 <TableCell>Code</TableCell>
+                <TableCell>Department</TableCell>
                 <TableCell>Coefficient</TableCell>
                 <TableCell>Color</TableCell>
                 <TableCell>Status</TableCell>
@@ -333,7 +380,7 @@ const Subject = () => {
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={7}>
                       <Skeleton height={48} animation="wave" />
                     </TableCell>
                   </TableRow>
@@ -363,7 +410,13 @@ const Subject = () => {
                       <Chip label={subj.subject_code || '—'} size="small" />
                     </TableCell>
 
-                    <TableCell>{subj.coefficient || '—'}</TableCell>
+                    <TableCell>
+                      <Typography variant="body2" color="text.secondary">
+                        {subj.department?.name || '—'}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>{subj.coefficient ?? '—'}</TableCell>
 
                     <TableCell>
                       {subj.color ? (
@@ -430,6 +483,23 @@ const Subject = () => {
         </TableContainer>
       )}
 
+      {/* PAGINATION — server-side, shared by mobile & desktop views */}
+      {!loading && total > 0 && (
+        <TablePagination
+          component="div"
+          count={total}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          sx={{ mt: 1 }}
+        />
+      )}
+
       {/* CREATE / EDIT MODAL - Responsive */}
       <Dialog
         open={open}
@@ -480,8 +550,10 @@ const Subject = () => {
               schoolCampus: selectedSubject?.schoolCampus?._id || campusId || '',
               subject_name: selectedSubject?.subject_name || '',
               subject_code: selectedSubject?.subject_code || '',
+              department: selectedSubject?.department?._id || selectedSubject?.department || '',
+              category: selectedSubject?.category || 'Other',
               description: selectedSubject?.description || '',
-              coefficient: selectedSubject?.coefficient || 1,
+              coefficient: selectedSubject?.coefficient ?? 1,
               color: selectedSubject?.color || '#1976d2',
             }}
             validationSchema={createSubjectSchema}
@@ -552,6 +624,56 @@ const Subject = () => {
                       inputLabel: { htmlFor: 'subject_code' },
                     }}
                   />
+
+                  <TextField
+                    select
+                    label="Department"
+                    name="department"
+                    value={values.department}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.department && Boolean(errors.department)}
+                    helperText={
+                      (touched.department && errors.department) ||
+                      'Optional — department this subject belongs to'
+                    }
+                    fullWidth
+                    slotProps={{
+                      input: { id: 'department' },
+                      inputLabel: { htmlFor: 'department' },
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {departments.map((dept) => (
+                      <MenuItem key={dept._id} value={dept._id}>
+                        {dept.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    select
+                    label="Category"
+                    name="category"
+                    value={values.category}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.category && Boolean(errors.category)}
+                    helperText={touched.category && errors.category}
+                    fullWidth
+                    slotProps={{
+                      input: { id: 'category' },
+                      inputLabel: { htmlFor: 'category' },
+                    }}
+                  >
+                    {SUBJECT_CATEGORIES.map((cat) => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </TextField>
 
                   <TextField
                     type="number"

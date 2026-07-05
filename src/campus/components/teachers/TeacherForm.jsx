@@ -58,7 +58,8 @@ const SELECT_SX = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 const ENDPOINTS = {
   campus:      (id) => `/campus/${id}`,
   departments: (id) => `/campus/${id}/departments`,
-  subjects:    (id) => `/subject?campusId=${id}`,
+  // limit=200 so the subject picker is not silently capped at the default page size.
+  subjects:    (id) => `/subject?campusId=${id}&limit=200`,
   // Classes scoped to this campus — needed for assignment and classManager election
   classes:     (id) => `/campus/${id}/classes`,
 };

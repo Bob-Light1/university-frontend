@@ -775,7 +775,8 @@ const ExaminationManager = () => {
     try {
       const params = campusId ? { campusId } : {};
       const [subRes, teachRes, classRes] = await Promise.all([
-        api.get('/subject',  { params }).catch(() => ({ data: {} })),
+        // limit=200 so the subject picker is not silently capped at the default page size.
+        api.get('/subject',  { params: { ...params, limit: 200 } }).catch(() => ({ data: {} })),
         api.get('/teachers', { params }).catch(() => ({ data: {} })),
         // limit=200 so the class picker is not silently capped at the default page size.
         api.get('/class',    { params: { ...params, limit: 200 } }).catch(() => ({ data: {} })),

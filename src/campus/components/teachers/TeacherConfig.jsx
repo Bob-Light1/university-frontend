@@ -344,7 +344,8 @@ export const teacherConfig = {
     departments: (campusId) => `/campus/${campusId}/departments`,
     classes:     (campusId) => `/campus/${campusId}/classes`,
     // Generic route with campusId query param (format A)
-    subjects:    (campusId) => `/subject?campusId=${campusId}`,
+    // limit=200 so the subject picker is not silently capped at the default page size.
+    subjects:    (campusId) => `/subject?campusId=${campusId}&limit=200`,
   },
 };
 
