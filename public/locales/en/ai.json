@@ -1,0 +1,126 @@
+{
+  "title": "AI Assistant",
+  "subtitle": "Chat, search, analytics and advisors — grounded in your campus data",
+  "tabs": {
+    "chat": "Assistant",
+    "search": "Search",
+    "analytics": "Analytics",
+    "advisors": "Advisors"
+  },
+  "plans": {
+    "free": "Free",
+    "standard": "Standard",
+    "premium": "Premium"
+  },
+  "actions": {
+    "retry": "Retry"
+  },
+  "usage": {
+    "title": "Monthly usage",
+    "unavailable": "Usage counters are temporarily unavailable.",
+    "unlimited": "{used} tokens used · unlimited plan",
+    "breakdown": "In: {in} · Out: {out}",
+    "used": "{used} / {budget} tokens",
+    "remaining": "{remaining} left"
+  },
+  "citations": {
+    "title": "{count, plural, one {# verified source} other {# verified sources}}",
+    "untitled": "Untitled source",
+    "relevance": "Relevance score"
+  },
+  "chat": {
+    "history": "History",
+    "new": "New chat",
+    "noHistory": "No conversations yet.",
+    "untitled": "Untitled conversation",
+    "messageCount": "{count, plural, one {# message} other {# messages}}",
+    "toggleHistory": "Toggle history",
+    "groundedNote": "Answers cite authorized documents only",
+    "emptyTitle": "Ask about your campus",
+    "emptyHint": "Ask a question about your documents, students, schedules or procedures. The assistant answers in your language and cites its sources.",
+    "placeholder": "Type your message…",
+    "send": "Send",
+    "stop": "Stop"
+  },
+  "search": {
+    "title": "Semantic search",
+    "subtitle": "Search the campus document library by meaning, not just keywords.",
+    "placeholder": "Search documents…",
+    "resultCount": "{count, plural, one {# result} other {# results}}",
+    "for": "for “{query}”",
+    "empty": "No matching documents found.",
+    "hint": "Enter a query to search your authorized documents by meaning."
+  },
+  "params": {
+    "academicYear": "Academic year",
+    "semester": "Semester",
+    "months": "Months",
+    "any": "Any",
+    "semesterOptions": {
+      "S1": "Semester 1",
+      "S2": "Semester 2",
+      "Annual": "Annual"
+    }
+  },
+  "analytics": {
+    "title": "AI-assisted analytics",
+    "subtitle": "The AI narrates verified ERP figures — it never computes or invents them.",
+    "reports": {
+      "class-performance": "Class performance",
+      "attendance-summary": "Attendance summary",
+      "dropout-risk": "Dropout risk"
+    },
+    "run": "Run report",
+    "refresh": "Refresh",
+    "narrative": "AI summary",
+    "noNarrative": "No summary was generated.",
+    "figures": "Figures",
+    "generatedAt": "Generated at {date}"
+  },
+  "advisors": {
+    "title": "Business advisors",
+    "subtitle": "Deterministic proposals over your ERP data — you decide and act.",
+    "names": {
+      "finance": "Finance",
+      "academic": "Academic",
+      "marketing": "Marketing"
+    },
+    "run": "Get proposals",
+    "openScreen": "Open screen",
+    "proposalOnly": "Proposal — nothing is executed automatically",
+    "proposalCount": "{count, plural, one {# proposal} other {# proposals}}",
+    "engine": "Engine {version}",
+    "noProposalsTitle": "Nothing to flag",
+    "noProposalsHint": "The advisor found no actionable signal in the current data.",
+    "disclaimer": "Advisors propose; they never modify ERP data. Every action opens a permission-gated screen where your own access applies.",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "Open overdue fees",
+      "OPEN_FINANCIAL_SUMMARY": "Open financial summary",
+      "OPEN_DROPOUT_RISK_LIST": "Open at-risk list",
+      "OPEN_ATTENDANCE_DASHBOARD": "Open attendance",
+      "OPEN_LEAD_PIPELINE": "Open lead pipeline",
+      "OPEN_LEAD_FRAUD_REVIEW": "Open fraud review",
+      "OPEN_LEAD_ANALYTICS": "Open lead analytics"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "AI is not available",
+      "description": "The AI service is not configured on this platform. Contact your administrator to enable it."
+    },
+    "AI_NOT_ENABLED": {
+      "title": "AI is not enabled for this campus",
+      "description": "This campus has no active AI subscription. Ask your administrator to enable an AI plan."
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "Not included in your plan",
+      "description": "This capability requires a higher AI plan. Ask your administrator to upgrade the campus plan."
+    },
+    "AI_BUDGET_EXCEEDED": "The monthly AI token budget for this campus is exhausted.",
+    "UPSTREAM_TIMEOUT": "The AI service timed out. Please try again.",
+    "NETWORK": "Network error — could not reach the AI service.",
+    "STREAM": "The response stream was interrupted. Please try again.",
+    "HTTP_ERROR": "The AI service returned an error. Please try again.",
+    "INTERNAL": "Something went wrong. Please try again."
+  }
+}

@@ -12,7 +12,7 @@ export const DEFAULT_LANG         = 'en';
 export const NAMESPACES = [
   'common', 'auth', 'academic', 'schedule', 'results', 'attendance',
   'examination', 'documents', 'finance', 'settings', 'notifications',
-  'errors', 'print', 'gaet', 'staff',
+  'errors', 'print', 'gaet', 'staff', 'ai',
 ];
 
 // Language metadata (native name + flag country code for country-flag-icons)

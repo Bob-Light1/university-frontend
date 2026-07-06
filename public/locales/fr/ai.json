@@ -1,0 +1,126 @@
+{
+  "title": "Assistant IA",
+  "subtitle": "Chat, recherche, analyses et conseils — fondés sur les données de votre campus",
+  "tabs": {
+    "chat": "Assistant",
+    "search": "Recherche",
+    "analytics": "Analyses",
+    "advisors": "Conseils"
+  },
+  "plans": {
+    "free": "Gratuit",
+    "standard": "Standard",
+    "premium": "Premium"
+  },
+  "actions": {
+    "retry": "Réessayer"
+  },
+  "usage": {
+    "title": "Consommation mensuelle",
+    "unavailable": "Les compteurs de consommation sont temporairement indisponibles.",
+    "unlimited": "{used} jetons utilisés · forfait illimité",
+    "breakdown": "Entrée : {in} · Sortie : {out}",
+    "used": "{used} / {budget} jetons",
+    "remaining": "{remaining} restants"
+  },
+  "citations": {
+    "title": "{count, plural, one {# source vérifiée} other {# sources vérifiées}}",
+    "untitled": "Source sans titre",
+    "relevance": "Score de pertinence"
+  },
+  "chat": {
+    "history": "Historique",
+    "new": "Nouveau chat",
+    "noHistory": "Aucune conversation pour l’instant.",
+    "untitled": "Conversation sans titre",
+    "messageCount": "{count, plural, one {# message} other {# messages}}",
+    "toggleHistory": "Afficher l’historique",
+    "groundedNote": "Les réponses citent uniquement les documents autorisés",
+    "emptyTitle": "Interrogez votre campus",
+    "emptyHint": "Posez une question sur vos documents, étudiants, emplois du temps ou procédures. L’assistant répond dans votre langue et cite ses sources.",
+    "placeholder": "Saisissez votre message…",
+    "send": "Envoyer",
+    "stop": "Arrêter"
+  },
+  "search": {
+    "title": "Recherche sémantique",
+    "subtitle": "Recherchez dans la bibliothèque documentaire par le sens, pas seulement par mots-clés.",
+    "placeholder": "Rechercher des documents…",
+    "resultCount": "{count, plural, one {# résultat} other {# résultats}}",
+    "for": "pour « {query} »",
+    "empty": "Aucun document correspondant trouvé.",
+    "hint": "Saisissez une requête pour rechercher vos documents autorisés par le sens."
+  },
+  "params": {
+    "academicYear": "Année scolaire",
+    "semester": "Semestre",
+    "months": "Mois",
+    "any": "Indifférent",
+    "semesterOptions": {
+      "S1": "Semestre 1",
+      "S2": "Semestre 2",
+      "Annual": "Annuel"
+    }
+  },
+  "analytics": {
+    "title": "Analyses assistées par l’IA",
+    "subtitle": "L’IA commente des chiffres ERP vérifiés — elle ne les calcule ni ne les invente jamais.",
+    "reports": {
+      "class-performance": "Performance des classes",
+      "attendance-summary": "Synthèse d’assiduité",
+      "dropout-risk": "Risque de décrochage"
+    },
+    "run": "Lancer le rapport",
+    "refresh": "Actualiser",
+    "narrative": "Synthèse IA",
+    "noNarrative": "Aucune synthèse n’a été générée.",
+    "figures": "Chiffres",
+    "generatedAt": "Généré le {date}"
+  },
+  "advisors": {
+    "title": "Conseillers métier",
+    "subtitle": "Des propositions déterministes sur vos données ERP — vous décidez et agissez.",
+    "names": {
+      "finance": "Finance",
+      "academic": "Pédagogie",
+      "marketing": "Marketing"
+    },
+    "run": "Obtenir des propositions",
+    "openScreen": "Ouvrir l’écran",
+    "proposalOnly": "Proposition — rien n’est exécuté automatiquement",
+    "proposalCount": "{count, plural, one {# proposition} other {# propositions}}",
+    "engine": "Moteur {version}",
+    "noProposalsTitle": "Rien à signaler",
+    "noProposalsHint": "Le conseiller n’a détecté aucun signal exploitable dans les données actuelles.",
+    "disclaimer": "Les conseillers proposent ; ils ne modifient jamais les données ERP. Chaque action ouvre un écran soumis à vos propres permissions.",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "Voir les impayés",
+      "OPEN_FINANCIAL_SUMMARY": "Voir la synthèse financière",
+      "OPEN_DROPOUT_RISK_LIST": "Voir la liste à risque",
+      "OPEN_ATTENDANCE_DASHBOARD": "Voir l’assiduité",
+      "OPEN_LEAD_PIPELINE": "Voir le pipeline de prospects",
+      "OPEN_LEAD_FRAUD_REVIEW": "Voir la revue anti-fraude",
+      "OPEN_LEAD_ANALYTICS": "Voir les analyses de prospects"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "L’IA n’est pas disponible",
+      "description": "Le service d’IA n’est pas configuré sur cette plateforme. Contactez votre administrateur pour l’activer."
+    },
+    "AI_NOT_ENABLED": {
+      "title": "L’IA n’est pas activée pour ce campus",
+      "description": "Ce campus n’a pas d’abonnement IA actif. Demandez à votre administrateur d’activer un forfait IA."
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "Non inclus dans votre forfait",
+      "description": "Cette capacité nécessite un forfait IA supérieur. Demandez à votre administrateur de faire évoluer le forfait du campus."
+    },
+    "AI_BUDGET_EXCEEDED": "Le budget mensuel de jetons IA de ce campus est épuisé.",
+    "UPSTREAM_TIMEOUT": "Le service d’IA n’a pas répondu à temps. Veuillez réessayer.",
+    "NETWORK": "Erreur réseau — impossible de joindre le service d’IA.",
+    "STREAM": "Le flux de réponse a été interrompu. Veuillez réessayer.",
+    "HTTP_ERROR": "Le service d’IA a renvoyé une erreur. Veuillez réessayer.",
+    "INTERNAL": "Une erreur est survenue. Veuillez réessayer."
+  }
+}

@@ -65,6 +65,9 @@ const CampusSettings = lazy(() =>
 const ScheduleGaet = lazy(() =>
   import('../campus/components/schedule/ScheduleGaet')
 );
+const AiAssistant = lazy(() =>
+  import('../campus/components/ai/AiAssistant')
+);
 
 export const campusRoutes = (
   <>
@@ -90,5 +93,6 @@ export const campusRoutes = (
     <Route path="staff"         element={<CampusStaff />} />
     <Route path="mentors"       element={<CampusMentors />} />
     <Route path="settings"      element={<CampusSettings />} />
+    <Route path="ai"            element={<AiAssistant />} />
   </>
 );

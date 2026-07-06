@@ -37,6 +37,18 @@ export const AI_PLAN_FEATURES = Object.freeze({
   [AI_PLANS.PREMIUM]: Object.freeze({ chat: true, search: true, analytics: true, advisors: true }),
 });
 
+/**
+ * Default monthly token budget per plan (mirror of AI_PLAN_PRESETS
+ * .monthlyTokenBudget, decision D10). Used by the admin entitlement panel to
+ * preview the backend preset when the plan changes; the admin may override it.
+ * 0 means unlimited (ADMIN only).
+ */
+export const AI_PLAN_BUDGETS = Object.freeze({
+  [AI_PLANS.FREE]: 200000,
+  [AI_PLANS.STANDARD]: 1000000,
+  [AI_PLANS.PREMIUM]: 5000000,
+});
+
 /** Descriptive analytics reports (Feature 2). */
 export const AI_ANALYTICS_REPORTS = Object.freeze({
   CLASS_PERFORMANCE: 'class-performance',

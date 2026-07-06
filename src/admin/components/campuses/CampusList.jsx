@@ -14,17 +14,18 @@ import {
   TableContainer, TablePagination, TextField, FormControl,
   InputLabel, Select, MenuItem, Button, IconButton,
   InputAdornment, Avatar, Alert, Skeleton, Tooltip,
-  Snackbar, useTheme, useMediaQuery,
+  Snackbar,
 } from '@mui/material';
 import {
   Search, FilterListOff, AddBusiness,
   Visibility, Business, Inventory2, Unarchive,
-  LocationOn, Person, CalendarToday,
+  LocationOn, Person, CalendarToday, AutoAwesome,
 } from '@mui/icons-material';
 
 import { getAllCampuses, archiveCampus, restoreCampus } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
+import AiEntitlementDialog from './AiEntitlementDialog';
 import {
   ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, CAMPUS_STATUS_COLOR,
 } from '../../../theme/adminTokens';
@@ -36,7 +37,7 @@ const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 
 
 // ─── Mobile campus card ───────────────────────────────────────────────────────
 
-const CampusCard = ({ campus: c, onView, onArchive, onRestore }) => (
+const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement }) => (
   <Paper
     variant="outlined"
     sx={{ p: 2, borderRadius: 2, '&:hover': { boxShadow: 2 } }}
@@ -99,6 +100,11 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore }) => (
           <Visibility fontSize="small" />
         </IconButton>
       </Tooltip>
+      <Tooltip title="AI entitlement">
+        <IconButton size="medium" color="primary" onClick={() => onAiEntitlement(c)}>
+          <AutoAwesome fontSize="small" />
+        </IconButton>
+      </Tooltip>
       {c.status === 'archived' ? (
         <Tooltip title="Restore campus">
           <IconButton size="medium" color="success" onClick={() => onRestore(c)}>
@@ -120,8 +126,6 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore }) => (
 
 export default function CampusList() {
   const navigate  = useNavigate();
-  const theme     = useTheme();
-  const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [campuses,      setCampuses]      = useState([]);
@@ -130,6 +134,7 @@ export default function CampusList() {
   const [loading,       setLoading]       = useState(true);
   const [error,         setError]         = useState('');
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: 'archive', campus: null, busy: false });
+  const [aiDialog,      setAiDialog]      = useState({ open: false, campus: null });
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -160,6 +165,9 @@ export default function CampusList() {
 
   const handleAskRestore = (campus) =>
     setConfirmDialog({ open: true, action: 'restore', campus, busy: false });
+
+  const handleOpenAiEntitlement = (campus) =>
+    setAiDialog({ open: true, campus });
 
   const handleConfirmAction = async () => {
     const { action, campus } = confirmDialog;
@@ -345,6 +353,11 @@ export default function CampusList() {
                             <Visibility fontSize="small" />
                           </IconButton>
                         </Tooltip>
+                        <Tooltip title="AI entitlement">
+                          <IconButton size="small" color="primary" onClick={() => handleOpenAiEntitlement(c)}>
+                            <AutoAwesome fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                         {c.status === 'archived' ? (
                           <Tooltip title="Restore campus">
                             <IconButton size="small" color="success" onClick={() => handleAskRestore(c)}>
@@ -389,6 +402,7 @@ export default function CampusList() {
                 onView={(id) => navigate(`/campus/${id}`)}
                 onArchive={handleAskArchive}
                 onRestore={handleAskRestore}
+                onAiEntitlement={handleOpenAiEntitlement}
               />
             ))}
           </Stack>
@@ -405,6 +419,14 @@ export default function CampusList() {
         busy={confirmDialog.busy}
         onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
         onConfirm={handleConfirmAction}
+      />
+
+      {/* ── AI entitlement dialog ───────────────────────────────────────────────── */}
+      <AiEntitlementDialog
+        open={aiDialog.open}
+        campus={aiDialog.campus}
+        onClose={() => setAiDialog({ open: false, campus: null })}
+        onSaved={(name) => showSnackbar(`AI entitlement updated for ${name}.`, 'success')}
       />
 
       {/* ── Snackbar ────────────────────────────────────────────────────────────── */}

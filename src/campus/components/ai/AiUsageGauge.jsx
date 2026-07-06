@@ -12,7 +12,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Paper, Stack, Box, Typography, LinearProgress, Chip, Skeleton, Tooltip,
+  Paper, Stack, Typography, LinearProgress, Chip, Skeleton, Tooltip,
 } from '@mui/material';
 import { Bolt, WorkspacePremium } from '@mui/icons-material';
 
@@ -27,7 +27,6 @@ export default function AiUsageGauge({ campusId, onLoaded, compact = false }) {
 
   const load = useCallback(() => {
     let cancelled = false;
-    setState((s) => ({ ...s, loading: true }));
     getAiUsage({ campusId })
       .then((res) => {
         if (cancelled) return;

@@ -115,6 +115,11 @@ export default function Campus() {
     },
 
     // ── Announcements & notification delivery log ───────────────────────────
+    // ── AI Assistant (Phase 3 — chat · search · analytics · advisors) ───────
+    { type: 'divider', label: 'divider-ai' },
+    { link: `/campus/${campusId}/ai`, label: 'AI Assistant', icon: AutoAwesomeIcon, accent: '#7b2ff7' },
+
+    // ── Announcements & notification delivery log ───────────────────────────
     { type: 'divider', label: 'divider-announcements' },
     { link: `/campus/${campusId}/notification`,     label: 'Announcements', icon: CampaignIcon },
     { link: `/campus/${campusId}/notification-log`, label: 'Delivery Log',  icon: MarkEmailReadIcon },

@@ -109,3 +109,26 @@ export const listAdminAccounts = (params = {}) =>
  */
 export const updateAdminStatus = (id, status) =>
   api.patch(`/admin/${id}/status`, { status });
+
+// ─── AI ENTITLEMENT (Phase 3 — §11.3) ─────────────────────────────────────────
+
+/**
+ * GET /admin/campuses/:id/ai-entitlement
+ * Current per-campus AI entitlement + last audit entries (ADMIN | DIRECTOR).
+ * data = { campusId, campusName, aiEntitlement, audit[] }.
+ * @param {string} id - Campus ObjectId.
+ */
+export const getCampusAiEntitlement = (id) =>
+  api.get(`/admin/campuses/${id}/ai-entitlement`);
+
+/**
+ * PUT /admin/campuses/:id/ai-entitlement
+ * Activate / update the AI entitlement of a campus. Only the explicitly
+ * provided fields are sent; a plan change without explicit budget/features
+ * applies the backend D10 preset. data = { campusId, campusName, aiEntitlement }.
+ * @param {string} id - Campus ObjectId.
+ * @param {{ enabled?: boolean, plan?: string, llmProfile?: string,
+ *   monthlyTokenBudget?: number, features?: Object }} data
+ */
+export const updateCampusAiEntitlement = (id, data) =>
+  api.put(`/admin/campuses/${id}/ai-entitlement`, data);
