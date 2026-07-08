@@ -87,7 +87,7 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
                 width: 40,
                 height: 20,
                 bgcolor: subject.color,
-                border: '1px solid #ddd',
+                border: '1px solid', borderColor: 'divider',
                 borderRadius: 1,
                 mt: 0.5,
               }}

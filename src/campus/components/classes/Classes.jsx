@@ -330,10 +330,10 @@ const Classes = () => {
                 p: 6, 
                 textAlign: 'center', 
                 borderRadius: 3,
-                bgcolor: 'grey.50'
+                bgcolor: 'background.neutral'
               }}
             >
-              <SchoolIcon sx={{ fontSize: 64, color: 'grey.300', mb: 2 }} />
+              <SchoolIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No classes yet
               </Typography>
@@ -367,7 +367,7 @@ const Classes = () => {
           }}
         >
           <Table>
-            <TableHead sx={{ bgcolor: 'grey.100' }}>
+            <TableHead>
               <TableRow>
                 <TableCell>Class</TableCell>
                 <TableCell>Level</TableCell>
@@ -389,7 +389,7 @@ const Classes = () => {
               ) : isEmpty ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
-                    <SchoolIcon sx={{ fontSize: 64, color: 'grey.300', mb: 2 }} />
+                    <SchoolIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                     <Typography variant="subtitle1" color="text.secondary">
                       No classes registered at the moment
                     </Typography>

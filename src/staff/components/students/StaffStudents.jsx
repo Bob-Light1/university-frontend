@@ -6,6 +6,7 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, Group, Refresh } from '@mui/icons-material';
 
 import { getStaffStudents }   from '../../../services/staffService';
@@ -15,6 +16,7 @@ import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -23,17 +25,19 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const STATUS_BG = {
-  active:    { bg: '#e8f5e9', color: '#2e7d32' },
-  inactive:  { bg: '#fff3e0', color: '#e65100' },
-  suspended: { bg: '#fdecea', color: '#c62828' },
-  archived:  { bg: '#f5f5f5', color: '#616161' },
+/** Student status → semantic hue. */
+const STATUS_HUE = {
+  active:    'success',
+  inactive:  'warning',
+  suspended: 'error',
+  archived:  'neutral',
 };
 
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function StudentsList() {
   const { t } = useAppTranslation(['common', 'staff']);
+  const { palette: { mode } } = useTheme();
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -120,7 +124,7 @@ function StudentsList() {
                     </TableRow>
                   )
                   : students.map((s) => {
-                      const sc = STATUS_BG[s.status] ?? STATUS_BG.inactive;
+                      const sc = statusTint(mode, STATUS_HUE[s.status] ?? STATUS_HUE.inactive);
                       return (
                         <TableRow key={s._id} hover>
                           <TableCell>

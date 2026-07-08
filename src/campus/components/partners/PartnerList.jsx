@@ -93,7 +93,7 @@ const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRes
             sx={{
               fontFamily: 'monospace', fontWeight: 700,
               px: 1, py: 0.3, borderRadius: 1,
-              bgcolor: 'grey.100', letterSpacing: 0.5,
+              bgcolor: 'background.neutral', letterSpacing: 0.5,
             }}
           >
             {partner.partnerCode}
@@ -269,7 +269,7 @@ const PartnerList = ({
                           sx={{
                             fontFamily: 'monospace', fontWeight: 700,
                             px: 1, py: 0.3, borderRadius: 1,
-                            bgcolor: 'grey.100', letterSpacing: 0.5,
+                            bgcolor: 'background.neutral', letterSpacing: 0.5,
                           }}
                         >
                           {partner.partnerCode || '—'}

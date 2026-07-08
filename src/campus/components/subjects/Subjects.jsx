@@ -327,10 +327,10 @@ const Subject = () => {
                 p: 6,
                 textAlign: 'center',
                 borderRadius: 3,
-                bgcolor: 'grey.50',
+                bgcolor: 'background.neutral',
               }}
             >
-              <BookIcon sx={{ fontSize: 64, color: 'grey.300', mb: 2 }} />
+              <BookIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No subjects yet
               </Typography>
@@ -364,7 +364,7 @@ const Subject = () => {
           }}
         >
           <Table>
-            <TableHead sx={{ bgcolor: 'grey.100' }}>
+            <TableHead>
               <TableRow>
                 <TableCell>Subject</TableCell>
                 <TableCell>Code</TableCell>
@@ -388,7 +388,7 @@ const Subject = () => {
               ) : isEmpty ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
-                    <BookIcon sx={{ fontSize: 64, color: 'grey.300', mb: 2 }} />
+                    <BookIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                     <Typography variant="subtitle1" color="text.secondary">
                       No subjects registered at the moment
                     </Typography>
@@ -425,7 +425,7 @@ const Subject = () => {
                             width: 40,
                             height: 20,
                             bgcolor: subj.color,
-                            border: '1px solid #ddd',
+                            border: '1px solid', borderColor: 'divider',
                             borderRadius: 1,
                           }}
                         />

@@ -6,6 +6,7 @@ import {
   TableContainer, TableHead, TableRow, Skeleton,
   IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { LibraryBooks, Refresh } from '@mui/icons-material';
 
 import { getStaffExaminations } from '../../../services/staffService';
@@ -14,14 +15,16 @@ import usePaginatedList          from '../../../hooks/usePaginatedList';
 import { useAppTranslation }     from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
-const STATUS_BG = {
-  SCHEDULED: { bg: '#e3f2fd', color: '#1565c0' },
-  ONGOING:   { bg: '#e8f5e9', color: '#2e7d32' },
-  COMPLETED: { bg: '#f5f5f5', color: '#616161' },
-  DRAFT:     { bg: '#fff8e1', color: '#f57f17' },
-  POSTPONED: { bg: '#fff3e0', color: '#e65100' },
-  CANCELLED: { bg: '#fdecea', color: '#c62828' },
+/** Exam session status → semantic hue. */
+const STATUS_HUE = {
+  SCHEDULED: 'info',
+  ONGOING:   'success',
+  COMPLETED: 'neutral',
+  DRAFT:     'amber',
+  POSTPONED: 'warning',
+  CANCELLED: 'error',
 };
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -34,6 +37,7 @@ const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function ExamsList() {
   const { t, i18n } = useAppTranslation(['examination', 'common']);
+  const { palette: { mode } } = useTheme();
 
   const [year,     setYear]     = useState('');
   const [semester, setSemester] = useState('');
@@ -139,7 +143,7 @@ function ExamsList() {
                     </TableRow>
                   )
                   : exams.map((e) => {
-                      const sc = STATUS_BG[e.status] ?? { bg: '#f5f5f5', color: '#616161' };
+                      const sc = statusTint(mode, STATUS_HUE[e.status]);
                       return (
                         <TableRow key={e._id} hover>
                           <TableCell>

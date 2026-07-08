@@ -437,7 +437,9 @@ export default function NewCampus() {
             elevation={24}
             sx={{
               borderRadius: 4,
-              background: 'rgba(255,255,255,0.97)',
+              // Follows the palette: the card body hosts theme-driven form
+              // fields, so a hardcoded white surface hides them in dark mode.
+              background: (t) => alpha(t.palette.background.paper, 0.97),
               backdropFilter: 'blur(20px)',
               boxShadow: '0 25px 60px rgba(0,0,0,0.4)',
               overflow: 'hidden',

@@ -20,12 +20,17 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { PersonOutline, MailOutline, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useFormik } from 'formik';
 
 import api from '../../../api/axiosInstance';
 import { createAdminSchema } from '../../../yupSchema/createAdminSchema';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+
+// Brand cyan for the card heading. #0077be is fine on white (4.79:1) but only
+// reaches 3.46:1 on the dark `paper` surface, so it is resolved per mode.
+const BRAND_HEADING = (t) => (t.palette.mode === 'dark' ? '#4fc3f7' : '#0077be');
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
@@ -93,7 +98,9 @@ export default function CreateAdmin() {
           elevation={0}
           sx={{
             borderRadius: 6,
-            background: 'rgba(255, 255, 255, 0.85)',
+            // Follows the palette: the card body hosts theme-driven form fields,
+            // so a hardcoded white surface hides them in dark mode.
+            background: (t) => alpha(t.palette.background.paper, 0.88),
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
             px: { xs: 2, sm: 3 },
@@ -104,7 +111,7 @@ export default function CreateAdmin() {
           <CardContent>
             {/* Header */}
             <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography variant="h5" fontWeight="900" sx={{ color: '#0077be' }}>
+              <Typography variant="h5" fontWeight="900" sx={{ color: BRAND_HEADING }}>
                 Create Account
               </Typography>
               <Typography variant="body2" color="text.secondary">

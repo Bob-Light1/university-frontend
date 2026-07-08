@@ -4,6 +4,7 @@ import {
   TextField, MenuItem, Select, FormControl, InputLabel,
   Alert, Pagination, Skeleton, IconButton, Tooltip, Divider,
 } from '@mui/material';
+import { alpha, useTheme } from '@mui/material/styles';
 import {
   CalendarMonth, AccessTime, Person, Class, Refresh,
 } from '@mui/icons-material';
@@ -13,29 +14,34 @@ import PermissionGate         from '../shared/PermissionGate';
 import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
-import { STAFF_PRIMARY, staffPrimary } from '../../../theme/staffTokens';
+import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint, statusColor } from '../../../theme/statusTokens';
 
-const STATUS_BG = {
-  PUBLISHED: { bg: '#e8f5e9', color: '#2e7d32' },
-  DRAFT:     { bg: '#f5f5f5', color: '#616161' },
-  CANCELLED: { bg: '#fdecea', color: '#c62828' },
-  POSTPONED: { bg: '#fff3e0', color: '#e65100' },
-  COMPLETED: { bg: '#e3f2fd', color: '#1565c0' },
+/** Schedule session status → semantic hue. */
+const STATUS_HUE = {
+  PUBLISHED: 'success',
+  DRAFT:     'neutral',
+  CANCELLED: 'error',
+  POSTPONED: 'warning',
+  COMPLETED: 'info',
 };
 
-const SESSION_TYPE_COLOR = {
-  LECTURE:  '#1565c0',
-  LAB:      '#2e7d32',
-  TUTORIAL: '#e65100',
-  SEMINAR:  '#6a1b9a',
-  WORKSHOP: '#00695C',
+/** Session type → semantic hue. WORKSHOP keeps the staff brand teal. */
+const SESSION_TYPE_HUE = {
+  LECTURE:  'info',
+  LAB:      'success',
+  TUTORIAL: 'warning',
+  SEMINAR:  'purple',
 };
 
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function SessionCard({ s, t, i18n }) {
-  const sc    = STATUS_BG[s.status] ?? { bg: '#f5f5f5', color: '#616161' };
-  const color = SESSION_TYPE_COLOR[s.sessionType] ?? STAFF_PRIMARY;
+  const { palette: { mode } } = useTheme();
+  const sc    = statusTint(mode, STATUS_HUE[s.status]);
+  const color = SESSION_TYPE_HUE[s.sessionType]
+    ? statusColor(mode, SESSION_TYPE_HUE[s.sessionType])
+    : staffPrimary(mode);
 
   const classes = (s.classes ?? []).map((c) => c?.className ?? c).filter(Boolean);
   const teacher = s.teacher
@@ -76,7 +82,7 @@ function SessionCard({ s, t, i18n }) {
               <Chip
                 label={t(`common:sessionType.${s.sessionType}`, { defaultValue: s.sessionType })}
                 size="small"
-                sx={{ bgcolor: color + '18', color, fontWeight: 600, fontSize: 10 }}
+                sx={{ bgcolor: alpha(color, 0.16), color, fontWeight: 600, fontSize: 10 }}
               />
             )}
           </Stack>

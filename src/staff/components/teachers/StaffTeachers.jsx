@@ -6,6 +6,7 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, School, Refresh } from '@mui/icons-material';
 
 import { getStaffTeachers }  from '../../../services/staffService';
@@ -15,6 +16,7 @@ import usePaginatedList      from '../../../hooks/usePaginatedList';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -23,24 +25,27 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const STATUS_BG = {
-  active:    { bg: '#e8f5e9', color: '#2e7d32' },
-  inactive:  { bg: '#fff3e0', color: '#e65100' },
-  suspended: { bg: '#fdecea', color: '#c62828' },
-  archived:  { bg: '#f5f5f5', color: '#616161' },
+/** Teacher status → semantic hue. */
+const STATUS_HUE = {
+  active:    'success',
+  inactive:  'warning',
+  suspended: 'error',
+  archived:  'neutral',
 };
 
-const EMP_BG = {
-  'full-time': { bg: '#e3f2fd', color: '#1565c0' },
-  'part-time': { bg: '#f3e5f5', color: '#6a1b9a' },
-  'contract':  { bg: '#fff8e1', color: '#f57f17' },
-  'temporary': { bg: '#fce4ec', color: '#c62828' },
+/** Employment type → semantic hue. */
+const EMP_HUE = {
+  'full-time': 'info',
+  'part-time': 'purple',
+  'contract':  'amber',
+  'temporary': 'pink',
 };
 
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function TeachersList() {
   const { t } = useAppTranslation(['common', 'staff']);
+  const { palette: { mode } } = useTheme();
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
@@ -127,8 +132,8 @@ function TeachersList() {
                     </TableRow>
                   )
                   : teachers.map((teacher) => {
-                      const sc = STATUS_BG[teacher.status] ?? STATUS_BG.inactive;
-                      const ec = EMP_BG[teacher.employmentType] ?? EMP_BG['full-time'];
+                      const sc = statusTint(mode, STATUS_HUE[teacher.status] ?? STATUS_HUE.inactive);
+                      const ec = statusTint(mode, EMP_HUE[teacher.employmentType] ?? EMP_HUE['full-time']);
                       return (
                         <TableRow key={teacher._id} hover>
                           <TableCell>

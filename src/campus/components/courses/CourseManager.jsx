@@ -80,14 +80,26 @@ import {
   CourseEmptyState,
 } from '../../../components/courses/CourseShared';
 import { fDate } from '../../../utils/dateFormat';
+import { statusTint } from '../../../theme/statusTokens';
 
 // ─── KPI config ───────────────────────────────────────────────────────────────
 
+/**
+ * Approval status → icon + semantic hue. The hue is resolved to a surface tint
+ * by `statusTint(mode, hue)`: the card background used to be a hardcoded pale
+ * hex, which stayed light in dark mode and hid the (white) card text.
+ */
 const STATUS_META = {
-  DRAFT:          { color: '#94a3b8', bg: '#f8fafc', icon: <Edit sx={{ fontSize: 18 }} /> },
-  PENDING_REVIEW: { color: '#f97316', bg: '#fff7ed', icon: <HourglassTop sx={{ fontSize: 18 }} /> },
-  APPROVED:       { color: '#22c55e', bg: '#f0fdf4', icon: <CheckCircle sx={{ fontSize: 18 }} /> },
-  REJECTED:       { color: '#ef4444', bg: '#fef2f2', icon: <Cancel sx={{ fontSize: 18 }} /> },
+  DRAFT:          { hue: 'neutral', icon: <Edit sx={{ fontSize: 18 }} /> },
+  PENDING_REVIEW: { hue: 'warning', icon: <HourglassTop sx={{ fontSize: 18 }} /> },
+  APPROVED:       { hue: 'success', icon: <CheckCircle sx={{ fontSize: 18 }} /> },
+  REJECTED:       { hue: 'error',   icon: <Cancel sx={{ fontSize: 18 }} /> },
+};
+
+/** Resolve a course approval status to its icon and surface-legible colours. */
+const statusMeta = (mode, status) => {
+  const meta = STATUS_META[status] ?? STATUS_META.DRAFT;
+  return { icon: meta.icon, ...statusTint(mode, meta.hue) };
 };
 
 /** True when a course document is archived (soft-deleted) on the backend. */
@@ -181,7 +193,8 @@ const VersionHistoryDialog = ({ open, onClose, courseId, courseCode }) => {
 // ─── Mobile course card ───────────────────────────────────────────────────────
 
 const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, isAdmin }) => {
-  const sm = STATUS_META[c.approvalStatus] ?? STATUS_META.DRAFT;
+  const { palette: { mode } } = useTheme();
+  const sm = statusMeta(mode, c.approvalStatus);
   const archived = isArchived(c);
 
   return (
@@ -191,7 +204,7 @@ const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, 
         borderRadius: 2,
         borderLeftWidth: 4,
         borderLeftColor: sm.color,
-        bgcolor: archived ? 'action.hover' : sm.bg,
+        bgcolor: archived ? 'action.hover' : sm.softBg,
         opacity: archived ? 0.6 : 1,
         transition: 'box-shadow 0.2s',
         '&:hover': { boxShadow: 3 },
@@ -259,6 +272,7 @@ const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, 
 
 const CourseManager = () => {
   const theme    = useTheme();
+  const mode     = theme.palette.mode;
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { getUserRole } = useContext(AuthContext);
@@ -563,7 +577,7 @@ const CourseManager = () => {
           <Box sx={{ overflowX: 'auto' }}>
             <Table size="small" sx={{ minWidth: 800 }}>
               <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableRow>
                   {['Code', 'Title', 'Category', 'Level', 'Difficulty', 'Status', 'Version', ''].map((h) => (
                     <TableCell
                       key={h}
@@ -596,7 +610,7 @@ const CourseManager = () => {
                   </TableRow>
                 ) : (
                   course.courses.map((c) => {
-                    const sm = STATUS_META[c.approvalStatus] ?? STATUS_META.DRAFT;
+                    const sm = statusMeta(mode, c.approvalStatus);
                     const archived = isArchived(c);
                     return (
                       <TableRow

@@ -554,8 +554,8 @@ const GenericEntityPage = ({
               <TableContainer sx={{
                 overflowX: 'auto',
                 '&::-webkit-scrollbar': { height: 8 },
-                '&::-webkit-scrollbar-track': { bgcolor: 'grey.100' },
-                '&::-webkit-scrollbar-thumb': { bgcolor: 'grey.400', borderRadius: 4, '&:hover': { bgcolor: 'grey.600' } },
+                '&::-webkit-scrollbar-track': { bgcolor: 'background.neutral' },
+                '&::-webkit-scrollbar-thumb': { bgcolor: 'action.disabled', borderRadius: 4, '&:hover': { bgcolor: 'action.active' } },
               }}>
                 <Table sx={{ minWidth: 650 }}>
                   <TableHead sx={{ bgcolor: 'background.neutral' }}>

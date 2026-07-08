@@ -6,6 +6,7 @@ import {
   TableContainer, TableHead, TableRow, Skeleton,
   IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { ChecklistRtl, Refresh } from '@mui/icons-material';
 
 import { getStaffAttendance } from '../../../services/staffService';
@@ -15,6 +16,7 @@ import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -30,17 +32,19 @@ const deriveStatus = (r) => {
   return 'absent';
 };
 
-const STATUS_BG = {
-  present: { bg: '#e8f5e9', color: '#2e7d32' },
-  late:    { bg: '#fff3e0', color: '#e65100' },
-  excused: { bg: '#e3f2fd', color: '#1565c0' },
-  absent:  { bg: '#fdecea', color: '#c62828' },
+/** Attendance status → semantic hue. */
+const STATUS_HUE = {
+  present: 'success',
+  late:    'warning',
+  excused: 'info',
+  absent:  'error',
 };
 
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function AttendanceList() {
   const { t, i18n } = useAppTranslation(['attendance', 'common']);
+  const { palette: { mode } } = useTheme();
 
   const [status,   setStatus]   = useState('');
   const [fromDate, setFromDate] = useState('');
@@ -142,9 +146,9 @@ function AttendanceList() {
                   )
                   : records.map((r) => {
                       const derived = deriveStatus(r);
-                      const sc      = STATUS_BG[derived];
+                      const sc      = statusTint(mode, STATUS_HUE[derived]);
                       return (
-                        <TableRow key={r._id} hover sx={{ bgcolor: sc.bg + '22' }}>
+                        <TableRow key={r._id} hover sx={{ bgcolor: sc.softBg }}>
                           <TableCell>
                             <Stack direction="row" spacing={1.5} alignItems="center">
                               <Avatar src={imgUrl(r.student?.profileImage)} sx={{ width: 30, height: 30, fontSize: 12 }}>

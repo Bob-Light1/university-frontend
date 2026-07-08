@@ -23,6 +23,7 @@ import {
   Tabs, Tab, Fade, Zoom, alpha,
   Dialog, DialogTitle, DialogContent, DialogActions,
 } from '@mui/material';
+import { lighten, useTheme } from '@mui/material/styles';
 import {
   MailOutline, LockOutlined, Visibility, VisibilityOff,
   Login as LoginIcon, ArrowBack, Shield,
@@ -70,7 +71,9 @@ const USER_TYPES = [
   },
   {
     value: 'partner', label: 'Partner', icon: Handshake,
-    gradient: 'linear-gradient(135deg, #1a1a2e 0%, #bf360c 100%)', color: '#e65100',
+    // #e65100 only reached 3.79:1 on white — too low for the small bold tab
+    // labels that use it. #c2410c keeps the gradient's orange family at 5.18:1.
+    gradient: 'linear-gradient(135deg, #1a1a2e 0%, #bf360c 100%)', color: '#c2410c',
     description: 'Leads, commissions & affiliate kit',
     supportsUsername: false,
   },
@@ -111,6 +114,16 @@ const REDIRECT_MAP = {
 const ADMIN_GRADIENT = 'linear-gradient(135deg, #003285 0%, #2a629a 100%)';
 const ADMIN_COLOR    = '#003285';
 
+/**
+ * Role/brand accent tuned to the current surface. The brand hexes above are deep
+ * enough for white-on-brand gradients but illegible as a foreground on the dark
+ * `paper` surface — lighten them when the palette flips.
+ * @param {('light'|'dark')} mode
+ * @param {string} color
+ * @returns {string}
+ */
+const roleAccent = (mode, color) => (mode === 'dark' ? lighten(color, 0.45) : color);
+
 // Fixed neutral gradient for Step 1 — independent of any role selection.
 // This ensures the "back" button always restores the same visual state.
 const STEP1_GRADIENT = 'linear-gradient(135deg, #0d1b3e 0%, #1c3a6e 100%)';
@@ -138,6 +151,7 @@ export default function LoginPage({ variant = 'public' }) {
   const navigate  = useNavigate();
   const { state } = useLocation();
   const { login } = useAuth();
+  const { palette: { mode } } = useTheme();
 
   const [step,           setStep]           = useState(1); // 1 = role picker, 2 = form
   const [showPassword,   setShowPassword]   = useState(false);
@@ -151,6 +165,9 @@ export default function LoginPage({ variant = 'public' }) {
   const roleCopy    = ROLE_COPY[userType] ?? ROLE_COPY.manager;
   const activeGrad  = isAdmin ? ADMIN_GRADIENT : currentType.gradient;
   const activeColor = isAdmin ? ADMIN_COLOR    : currentType.color;
+  // Same hue, but legible when it lands on the `paper` surface (form panel,
+  // dialog) instead of on the brand gradient.
+  const activeAccent = roleAccent(mode, activeColor);
 
   // ── Formik ────────────────────────────────────────────────────────────────
 
@@ -283,6 +300,7 @@ export default function LoginPage({ variant = 'public' }) {
             }}>
               {USER_TYPES.map(({ value, label, icon: Icon, color, description }) => {
                 const sel = userType === value;
+                const cardAccent = roleAccent(mode, color);
                 return (
                   <Box
                     key={value}
@@ -290,29 +308,34 @@ export default function LoginPage({ variant = 'public' }) {
                     onClick={() => selectRole(value)}
                     onKeyDown={(e) => e.key === 'Enter' && selectRole(value)}
                     sx={{
+                      // The card sits on the brand gradient but is a real surface:
+                      // it must follow the palette, otherwise `text.primary`
+                      // (white in dark mode) lands on a hardcoded white card.
                       cursor: 'pointer', outline: 'none',
-                      bgcolor: 'white', borderRadius: 3,
+                      bgcolor: 'background.paper', borderRadius: 3,
                       p: { xs: 2, sm: 3 },
                       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5,
-                      border: `2px solid ${sel ? color : 'transparent'}`,
+                      border: `2px solid ${sel ? cardAccent : 'transparent'}`,
                       boxShadow: sel
-                        ? `0 8px 32px ${alpha(color, 0.35)}`
+                        ? `0 8px 32px ${alpha(cardAccent, 0.35)}`
                         : '0 2px 12px rgba(0,0,0,0.1)',
                       transition: 'all 0.22s ease',
                       '&:hover': {
                         transform: 'translateY(-5px)',
-                        borderColor: color,
-                        boxShadow: `0 14px 40px ${alpha(color, 0.3)}`,
+                        borderColor: cardAccent,
+                        boxShadow: `0 14px 40px ${alpha(cardAccent, 0.3)}`,
                       },
-                      '&:focus-visible': { boxShadow: `0 0 0 3px white, 0 0 0 5px ${color}` },
+                      '&:focus-visible': {
+                        boxShadow: (t) => `0 0 0 3px ${t.palette.background.paper}, 0 0 0 5px ${cardAccent}`,
+                      },
                     }}
                   >
                     <Box sx={{
                       width: 60, height: 60, borderRadius: '50%',
-                      bgcolor: alpha(color, 0.1),
+                      bgcolor: alpha(cardAccent, 0.1),
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Icon sx={{ fontSize: 30, color }} />
+                      <Icon sx={{ fontSize: 30, color: cardAccent }} />
                     </Box>
                     <Typography variant="subtitle1" fontWeight={700} color="text.primary">
                       {label}
@@ -401,7 +424,7 @@ export default function LoginPage({ variant = 'public' }) {
           borderRadius: 4, overflow: 'hidden',
           minHeight: isAdmin ? 560 : 580,
           zIndex: 2, position: 'relative',
-          backgroundColor: 'rgba(255,255,255,0.98)',
+          backgroundColor: (t) => alpha(t.palette.background.paper, 0.98),
           boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
         }}>
 
@@ -472,7 +495,7 @@ export default function LoginPage({ variant = 'public' }) {
 
           {/* ── Right form panel ─────────────────────────────────────── */}
           <Box sx={{
-            flex: 1, p: { xs: 3, sm: 5 }, bgcolor: 'white',
+            flex: 1, p: { xs: 3, sm: 5 }, bgcolor: 'background.paper',
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
             overflowY: 'auto',
           }}>
@@ -488,7 +511,7 @@ export default function LoginPage({ variant = 'public' }) {
                     sx={{
                       mb: 2.5, textTransform: 'none', fontSize: '0.8rem',
                       color: 'text.secondary', pl: 0,
-                      '&:hover': { color: activeColor, bgcolor: 'transparent' },
+                      '&:hover': { color: activeAccent, bgcolor: 'transparent' },
                     }}
                   >
                     Change role
@@ -501,17 +524,27 @@ export default function LoginPage({ variant = 'public' }) {
                     {!isAdmin && (
                       <Box sx={{
                         width: 36, height: 36, borderRadius: '50%',
-                        bgcolor: alpha(activeColor, 0.1),
+                        bgcolor: alpha(activeAccent, 0.1),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         flexShrink: 0,
                         transition: 'background-color 0.4s ease',
                       }}>
-                        <RoleIcon sx={{ fontSize: 18, color: activeColor }} />
+                        <RoleIcon sx={{ fontSize: 18, color: activeAccent }} />
                       </Box>
                     )}
+                    {/* Gradient-clipped text is unreadable on a dark surface
+                        (the brand stops are near-black there) — fall back to the
+                        surface-legible accent. */}
                     <Typography variant="h4" fontWeight={900} sx={{
-                      background: activeGrad, transition: 'all 0.5s ease',
-                      backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                      transition: 'all 0.5s ease',
+                      ...(mode === 'dark'
+                        ? { color: activeAccent }
+                        : {
+                            background: activeGrad,
+                            backgroundClip: 'text',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                          }),
                     }}>
                       {isAdmin ? 'Administration' : `Sign in as ${currentType.label}`}
                     </Typography>
@@ -525,11 +558,11 @@ export default function LoginPage({ variant = 'public' }) {
                     <Box sx={{
                       display: 'inline-flex', alignItems: 'center', gap: 0.75, mt: 1,
                       px: 1.5, py: 0.5, borderRadius: 1, width: 'fit-content',
-                      bgcolor: alpha(ADMIN_COLOR, 0.07),
-                      border: `1px solid ${alpha(ADMIN_COLOR, 0.18)}`,
+                      bgcolor: alpha(activeAccent, 0.07),
+                      border: `1px solid ${alpha(activeAccent, 0.18)}`,
                     }}>
-                      <Shield sx={{ fontSize: 13, color: ADMIN_COLOR }} />
-                      <Typography variant="caption" sx={{ color: ADMIN_COLOR, fontWeight: 600, fontSize: '0.7rem' }}>
+                      <Shield sx={{ fontSize: 13, color: activeAccent }} />
+                      <Typography variant="caption" sx={{ color: activeAccent, fontWeight: 600, fontSize: '0.7rem' }}>
                         Restricted access — authorised personnel only
                       </Typography>
                     </Box>
@@ -549,8 +582,8 @@ export default function LoginPage({ variant = 'public' }) {
                           sx={{
                             mb: 1.5, minHeight: 36, borderBottom: 1, borderColor: 'divider',
                             '& .MuiTab-root': { minHeight: 36, textTransform: 'none', fontSize: '0.82rem', py: 0.5, px: 1.5 },
-                            '& .Mui-selected':      { color: `${activeColor} !important`, fontWeight: 700 },
-                            '& .MuiTabs-indicator': { backgroundColor: activeColor, transition: 'background-color 0.5s ease' },
+                            '& .Mui-selected':      { color: `${activeAccent} !important`, fontWeight: 700 },
+                            '& .MuiTabs-indicator': { backgroundColor: activeAccent, transition: 'background-color 0.5s ease' },
                           }}
                         >
                           <Tab value="email"    label="Email"    icon={<MailOutline sx={{ fontSize: 15 }} />} iconPosition="start" />
@@ -572,15 +605,15 @@ export default function LoginPage({ variant = 'public' }) {
                           startAdornment={
                             <InputAdornment position="start">
                               {identifierMode === 'username' && !isAdmin
-                                ? <Badge      sx={{ color: activeColor }} />
-                                : <MailOutline sx={{ color: activeColor }} />}
+                                ? <Badge      sx={{ color: activeAccent }} />
+                                : <MailOutline sx={{ color: activeAccent }} />}
                             </InputAdornment>
                           }
                           sx={{
                             borderRadius: 2,
                             '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
-                            '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeColor },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeColor },
+                            '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeAccent },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
                           }}
                         />
                         {formik.touched.identifier && formik.errors.identifier && (
@@ -601,7 +634,7 @@ export default function LoginPage({ variant = 'public' }) {
                         disabled={isLoading} autoComplete="current-password"
                         startAdornment={
                           <InputAdornment position="start">
-                            <LockOutlined sx={{ color: activeColor }} />
+                            <LockOutlined sx={{ color: activeAccent }} />
                           </InputAdornment>
                         }
                         endAdornment={
@@ -616,8 +649,8 @@ export default function LoginPage({ variant = 'public' }) {
                         sx={{
                           borderRadius: 2,
                           '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
-                          '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeColor },
-                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeColor },
+                          '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeAccent },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
                         }}
                       />
                       {formik.touched.password && formik.errors.password && (
@@ -672,10 +705,10 @@ export default function LoginPage({ variant = 'public' }) {
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
           <Box sx={{
             width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-            bgcolor: alpha(activeColor, 0.1),
+            bgcolor: alpha(activeAccent, 0.1),
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <LockReset sx={{ fontSize: 22, color: activeColor }} />
+            <LockReset sx={{ fontSize: 22, color: activeAccent }} />
           </Box>
           Forgot your password?
         </DialogTitle>

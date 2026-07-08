@@ -350,7 +350,7 @@ const ResultTeacher = () => {
           <Box sx={{ overflowX: 'auto' }}>
             <Table size="small">
               <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Evaluation</TableCell>
@@ -533,7 +533,7 @@ const ResultTeacher = () => {
             <Box sx={{ overflowX: 'auto' }}>
             <Table size="small">
               <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Score /20</TableCell>

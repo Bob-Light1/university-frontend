@@ -11,11 +11,13 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, Group } from '@mui/icons-material';
 
 import { getMyStudents } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { mentorPrimary } from '../../../theme/mentorTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -24,14 +26,16 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const STATUS_COLORS = {
-  active:   { bg: '#e8f5e9', color: '#2e7d32' },
-  inactive: { bg: '#fff3e0', color: '#e65100' },
-  suspended:{ bg: '#fdecea', color: '#c62828' },
-  archived: { bg: '#f5f5f5', color: '#616161' },
+/** Student status → semantic hue. */
+const STATUS_HUE = {
+  active:    'success',
+  inactive:  'warning',
+  suspended: 'error',
+  archived:  'neutral',
 };
 
 export default function MentorStudents() {
+  const { palette: { mode } } = useTheme();
   const [students, setStudents] = useState([]);
   const [total,    setTotal]    = useState(0);
   const [page,     setPage]     = useState(1);
@@ -134,7 +138,7 @@ export default function MentorStudents() {
                     </TableRow>
                   )
                   : students.map((s) => {
-                    const sc = STATUS_COLORS[s.status] ?? STATUS_COLORS.inactive;
+                    const sc = statusTint(mode, STATUS_HUE[s.status] ?? STATUS_HUE.inactive);
                     return (
                       <TableRow key={s._id} hover>
                         <TableCell>

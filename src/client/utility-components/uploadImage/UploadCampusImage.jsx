@@ -164,7 +164,7 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
               ? 'primary.main'
               : imageUrl
               ? 'success.main'
-              : 'grey.300',
+              : 'divider',
             borderRadius: 2,
             p: 3,
             textAlign: 'center',
@@ -172,13 +172,13 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
               ? 'primary.50'
               : imageUrl
               ? 'success.50'
-              : 'grey.50',
+              : 'background.neutral',
             transition: 'all 0.3s ease',
             opacity: isDisabled ? 0.6 : 1,
             cursor: isDisabled ? 'not-allowed' : 'pointer',
             '&:hover': !isDisabled && {
               borderColor: error ? 'error.dark' : 'primary.main',
-              bgcolor: isDragging ? 'primary.100' : 'grey.100',
+              bgcolor: isDragging ? 'primary.100' : 'action.hover',
               transform: 'translateY(-2px)',
               boxShadow: 2,
             },
@@ -209,7 +209,7 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
                 <ImageIcon
                   sx={{
                     fontSize: 48,
-                    color: isDragging ? 'primary.main' : 'grey.400',
+                    color: isDragging ? 'primary.main' : 'text.disabled',
                     transition: 'color 0.3s',
                   }}
                 />

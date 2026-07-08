@@ -10,11 +10,13 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, Assessment } from '@mui/icons-material';
 
 import { getMyResults } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { mentorPrimary } from '../../../theme/mentorTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -23,15 +25,17 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const gradeColor = (score, max) => {
-  if (!max) return {};
+/** Grade band → semantic hue (resolved to a surface tint by statusTint). */
+const gradeHue = (score, max) => {
+  if (!max) return null;
   const pct = score / max;
-  if (pct >= 0.75) return { bg: '#e8f5e9', color: '#2e7d32' };
-  if (pct >= 0.50) return { bg: '#fff3e0', color: '#e65100' };
-  return { bg: '#fdecea', color: '#c62828' };
+  if (pct >= 0.75) return 'success';
+  if (pct >= 0.50) return 'warning';
+  return 'error';
 };
 
 export default function MentorResults() {
+  const { palette: { mode } } = useTheme();
   const [results, setResults] = useState([]);
   const [total,   setTotal]   = useState(0);
   const [page,    setPage]    = useState(1);
@@ -125,7 +129,7 @@ export default function MentorResults() {
                     </TableRow>
                   )
                   : displayed.map((r) => {
-                    const gc = gradeColor(r.score, r.maxScore);
+                    const gc = statusTint(mode, gradeHue(r.score, r.maxScore));
                     return (
                       <TableRow key={r._id} hover>
                         <TableCell>

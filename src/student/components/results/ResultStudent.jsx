@@ -86,7 +86,7 @@ const SemesterBlock = ({ semData }) => (
       <Box sx={{ overflowX: 'auto' }}>
       <Table size="small">
         <TableHead>
-          <TableRow sx={{ bgcolor: 'grey.50' }}>
+          <TableRow>
             <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>Avg / 20</TableCell>
             <TableCell sx={{ fontWeight: 700 }}>Progress</TableCell>
@@ -216,7 +216,7 @@ const ResultStudent = () => {
           <Box sx={{ overflowX: 'auto' }}>
             <Table size="small">
               <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Evaluation</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Period</TableCell>

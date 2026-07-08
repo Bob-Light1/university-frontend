@@ -6,6 +6,7 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, Assessment, Refresh } from '@mui/icons-material';
 
 import { getStaffResults }   from '../../../services/staffService';
@@ -15,6 +16,7 @@ import usePaginatedList      from '../../../hooks/usePaginatedList';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -23,12 +25,13 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const gradeColor = (score, max) => {
-  if (!max) return {};
+/** Grade band → semantic hue (resolved to a surface tint by statusTint). */
+const gradeHue = (score, max) => {
+  if (!max) return null;
   const pct = score / max;
-  if (pct >= 0.75) return { bg: '#e8f5e9', color: '#2e7d32' };
-  if (pct >= 0.50) return { bg: '#fff3e0', color: '#e65100' };
-  return { bg: '#fdecea', color: '#c62828' };
+  if (pct >= 0.75) return 'success';
+  if (pct >= 0.50) return 'warning';
+  return 'error';
 };
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -41,6 +44,7 @@ const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function ResultsList() {
   const { t } = useAppTranslation(['results', 'common']);
+  const { palette: { mode } } = useTheme();
 
   const [search,   setSearch]   = useState('');
   const [semester, setSemester] = useState('');
@@ -161,7 +165,7 @@ function ResultsList() {
                     </TableRow>
                   )
                   : displayed.map((r) => {
-                      const gc   = gradeColor(r.score, r.maxScore);
+                      const gc   = statusTint(mode, gradeHue(r.score, r.maxScore));
                       const norm = r.normalizedScore ?? (r.maxScore ? +((r.score / r.maxScore) * 20).toFixed(2) : null);
                       return (
                         <TableRow key={r._id} hover>

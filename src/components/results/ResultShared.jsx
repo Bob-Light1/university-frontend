@@ -53,7 +53,7 @@ export const SCORE_COLOR = (score) => {
 };
 
 export const SCORE_BG_COLOR = (score) => {
-  if (score == null) return 'grey.100';
+  if (score == null) return 'background.neutral';
   if (score < 7)  return 'error.50';
   if (score < 10) return 'warning.50';
   if (score < 14) return 'info.50';
@@ -125,7 +125,7 @@ export const ScoreDisplay = ({ score, rawScore, maxScore, gradeBand, size = 'md'
         px: s.px,
         py: s.py,
         borderRadius: 1.5,
-        bgcolor: score != null ? SCORE_BG_COLOR(score) : 'grey.100',
+        bgcolor: score != null ? SCORE_BG_COLOR(score) : 'background.neutral',
       }}
     >
       <Typography

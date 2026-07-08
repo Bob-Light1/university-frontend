@@ -11,11 +11,13 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { ChecklistRtl } from '@mui/icons-material';
 
 import { getMyAttendance } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import { mentorPrimary } from '../../../theme/mentorTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
 const imgUrl = (img) => {
   if (!img) return null;
@@ -24,14 +26,16 @@ const imgUrl = (img) => {
     : `${IMAGE_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`;
 };
 
-const STATUS_STYLE = {
-  present:  { bg: '#e8f5e9', color: '#2e7d32' },
-  absent:   { bg: '#fdecea', color: '#c62828' },
-  late:     { bg: '#fff3e0', color: '#e65100' },
-  excused:  { bg: '#e3f2fd', color: '#1565c0' },
+/** Attendance status → semantic hue. */
+const STATUS_HUE = {
+  present: 'success',
+  absent:  'error',
+  late:    'warning',
+  excused: 'info',
 };
 
 export default function MentorAttendance() {
+  const { palette: { mode } } = useTheme();
   const [records, setRecords] = useState([]);
   const [total,   setTotal]   = useState(0);
   const [page,    setPage]    = useState(1);
@@ -150,7 +154,7 @@ export default function MentorAttendance() {
                     </TableRow>
                   )
                   : records.map((r) => {
-                    const sc = STATUS_STYLE[r.status] ?? STATUS_STYLE.absent;
+                    const sc = statusTint(mode, STATUS_HUE[r.status] ?? STATUS_HUE.absent);
                     return (
                       <TableRow key={r._id} hover>
                         <TableCell>

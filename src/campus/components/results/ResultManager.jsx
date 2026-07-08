@@ -356,7 +356,7 @@ const ResultManager = () => {
         <Box sx={{ overflowX: 'auto' }}>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 700 }}>Student</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Class</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>

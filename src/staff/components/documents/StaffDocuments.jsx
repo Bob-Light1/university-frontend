@@ -6,6 +6,7 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Skeleton, IconButton, Tooltip,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Search, FolderOpen, Refresh } from '@mui/icons-material';
 
 import { getStaffDocuments }  from '../../../services/staffService';
@@ -14,19 +15,22 @@ import usePaginatedList       from '../../../hooks/usePaginatedList';
 import { useAppTranslation }  from '../../../hooks/useAppTranslation';
 
 import { staffPrimary } from '../../../theme/staffTokens';
+import { statusTint } from '../../../theme/statusTokens';
 
-const CATEGORY_BG = {
-  ADMINISTRATIVE: { bg: '#e3f2fd', color: '#1565c0' },
-  ACADEMIC:       { bg: '#e8f5e9', color: '#2e7d32' },
-  FINANCIAL:      { bg: '#fff8e1', color: '#f57f17' },
-  LEGAL:          { bg: '#fce4ec', color: '#c62828' },
-  GENERAL:        { bg: '#f5f5f5', color: '#616161' },
+/** Document category → semantic hue. */
+const CATEGORY_HUE = {
+  ADMINISTRATIVE: 'info',
+  ACADEMIC:       'success',
+  FINANCIAL:      'amber',
+  LEGAL:          'pink',
+  GENERAL:        'neutral',
 };
 
 const ROWS_OPTIONS = [10, 20, 50, 100];
 
 function DocumentsList() {
   const { t, i18n } = useAppTranslation(['documents', 'common']);
+  const { palette: { mode } } = useTheme();
 
   const [search,   setSearch]   = useState('');
   const [category, setCategory] = useState('');
@@ -131,7 +135,7 @@ function DocumentsList() {
                     </TableRow>
                   )
                   : docs.map((d) => {
-                      const cc = CATEGORY_BG[d.category] ?? CATEGORY_BG.GENERAL;
+                      const cc = statusTint(mode, CATEGORY_HUE[d.category] ?? CATEGORY_HUE.GENERAL);
                       return (
                         <TableRow key={d._id} hover>
                           <TableCell>

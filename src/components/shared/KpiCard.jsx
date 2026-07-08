@@ -97,7 +97,7 @@ const KPICards = ({ metrics = [], loading = false }) => {
                       ) : metric.trend < 0 ? (
                         <TrendingDown sx={{ fontSize: 16, color: 'error.main' }} />
                       ) : (
-                        <RemoveIcon sx={{ fontSize: 16, color: 'grey.500' }} />
+                        <RemoveIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
                       )}
                       <Typography
                         variant="caption"
@@ -108,7 +108,7 @@ const KPICards = ({ metrics = [], loading = false }) => {
                               ? 'success.main'
                               : metric.trend < 0
                               ? 'error.main'
-                              : 'grey.500',
+                              : 'text.disabled',
                         }}
                       >
                         {Math.abs(metric.trend)}%
