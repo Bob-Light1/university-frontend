@@ -21,6 +21,7 @@ import {
 
 import { getAllCampuses, getAdminMe } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, CAMPUS_STATUS_COLOR, directorPrimary,
 } from '../../../theme/directorTokens';
@@ -54,6 +55,7 @@ const KpiCard = ({ label, value, icon, color, loading }) => (
 export default function DirectorDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t }    = useAppTranslation(['admin', 'common']);
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -73,12 +75,13 @@ export default function DirectorDashboard() {
         setCampuses(Array.isArray(campusRes.data?.data) ? campusRes.data.data : []);
         setProfile(meRes.data?.data ?? meRes.data);
       } catch {
-        setError('Failed to load dashboard data.');
+        setError(t('dashboard.loadError'));
       } finally {
         setLoading(false);
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const total    = campuses.length;
@@ -86,7 +89,7 @@ export default function DirectorDashboard() {
   const inactive = campuses.filter((c) => c.status === 'inactive').length;
   const recent   = [...campuses].slice(0, 5);
 
-  const directorName = profile?.admin_name ?? user?.admin_name ?? 'Director';
+  const directorName = profile?.admin_name ?? user?.admin_name ?? t('dashboard.fallbackDirector');
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
@@ -109,10 +112,10 @@ export default function DirectorDashboard() {
         </Avatar>
         <Box>
           <Typography variant="h5" fontWeight={700}>
-            Welcome back, {directorName}
+            {t('dashboard.welcome', { name: directorName })}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Director — wewigo ERP
+            {t('dashboard.subtitleDirector')}
           </Typography>
         </Box>
       </Stack>
@@ -121,10 +124,10 @@ export default function DirectorDashboard() {
 
       {/* ── KPI cards ─────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 3 }}>
-        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={directorPrimary(theme.palette.mode)} loading={loading} />
-        <KpiCard label="Active"          value={active}           icon={<CheckCircle />} color={theme.palette.success.dark}    loading={loading} />
-        <KpiCard label="Inactive"        value={inactive}         icon={<Block />}       color={theme.palette.warning.main}    loading={loading} />
-        <KpiCard label="Platform Reach"  value={`${total} sites`} icon={<TrendingUp />}  color={theme.palette.secondary.dark}  loading={loading} />
+        <KpiCard label={t('dashboard.kpi.totalCampuses')} value={total}                          icon={<Business />}    color={directorPrimary(theme.palette.mode)} loading={loading} />
+        <KpiCard label={t('dashboard.kpi.active')}        value={active}                         icon={<CheckCircle />} color={theme.palette.success.dark}    loading={loading} />
+        <KpiCard label={t('dashboard.kpi.inactive')}      value={inactive}                       icon={<Block />}       color={theme.palette.warning.main}    loading={loading} />
+        <KpiCard label={t('dashboard.kpi.platformReach')} value={t('dashboard.kpi.sites', { count: total })} icon={<TrendingUp />} color={theme.palette.secondary.dark} loading={loading} />
       </Stack>
 
       {/* ── Recent campuses ───────────────────────────────────────────────────── */}
@@ -132,14 +135,14 @@ export default function DirectorDashboard() {
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2, pb: 1.5 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Schedule sx={{ color: directorPrimary(theme.palette.mode), fontSize: 20 }} />
-            <Typography variant="subtitle1" fontWeight={700}>Recent Campuses</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>{t('dashboard.recent.title')}</Typography>
           </Stack>
           <Button
             size="small"
             onClick={() => navigate('/director/campuses')}
             sx={{ textTransform: 'none', color: directorPrimary(theme.palette.mode) }}
           >
-            View all
+            {t('dashboard.recent.viewAll')}
           </Button>
         </Stack>
         <Divider />
@@ -149,11 +152,11 @@ export default function DirectorDashboard() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700 }}>Campus</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Manager</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Created</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.campus')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.manager')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.location')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.created')}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }} />
               </TableRow>
             </TableHead>
@@ -169,7 +172,7 @@ export default function DirectorDashboard() {
               ) : recent.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                    No campuses on the platform yet.
+                    {t('dashboard.recent.emptyDirector')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -194,10 +197,10 @@ export default function DirectorDashboard() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize' }}
+                        sx={{ fontWeight: 600 }}
                       />
                     </TableCell>
                     <TableCell>
@@ -212,7 +215,7 @@ export default function DirectorDashboard() {
                         onClick={() => navigate(`/campus/${c._id}`)}
                         sx={{ textTransform: 'none', fontSize: '0.75rem' }}
                       >
-                        View
+                        {t('common:action.view')}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -230,7 +233,7 @@ export default function DirectorDashboard() {
             </Stack>
           ) : recent.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
-              No campuses yet.
+              {t('dashboard.recent.emptyShort')}
             </Typography>
           ) : (
             <Stack spacing={1}>
@@ -257,10 +260,10 @@ export default function DirectorDashboard() {
                         {c.campus_name}
                       </Typography>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+                        sx={{ fontWeight: 600, flexShrink: 0 }}
                       />
                     </Stack>
                     <Typography variant="caption" color="text.secondary" noWrap>

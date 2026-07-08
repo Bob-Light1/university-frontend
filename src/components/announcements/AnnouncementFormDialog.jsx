@@ -16,6 +16,7 @@ import { Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { announcementSchema } from '../../yupSchema/announcementSchema';
 import { TYPE_OPTIONS, ROLE_OPTIONS } from './announcementConstants';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 const defaultValues = {
   title:       '',
@@ -44,6 +45,7 @@ export default function AnnouncementFormDialog({
 }) {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['announcements', 'common']);
 
   const formik = useFormik({
     initialValues: initialValues
@@ -73,7 +75,7 @@ export default function AnnouncementFormDialog({
         });
         onClose();
       } catch (err) {
-        setStatus({ error: err.response?.data?.message || 'Failed to save.' });
+        setStatus({ error: err.response?.data?.message || t('form.saveFailed') });
       } finally {
         setSubmitting(false);
       }
@@ -110,7 +112,7 @@ export default function AnnouncementFormDialog({
       slotProps={{ paper: { sx: { borderRadius: isMobile ? 0 : 3 } } }}
     >
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        {mode === 'create' ? 'New Announcement' : 'Edit Announcement'}
+        {mode === 'create' ? t('form.newTitle') : t('form.editTitle')}
         {isMobile && (
           <IconButton onClick={onClose} disabled={formik.isSubmitting} size="small" edge="end">
             <Close />
@@ -131,7 +133,7 @@ export default function AnnouncementFormDialog({
 
             {/* Title */}
             <TextField
-              label="Title"
+              label={t('form.title')}
               name="title"
               value={formik.values.title}
               onChange={formik.handleChange}
@@ -139,7 +141,7 @@ export default function AnnouncementFormDialog({
               error={formik.touched.title && Boolean(formik.errors.title)}
               helperText={
                 (formik.touched.title && formik.errors.title) ||
-                `${formik.values.title.length}/150`
+                t('form.counter', { current: String(formik.values.title.length), max: '150' })
               }
               fullWidth
               required
@@ -148,7 +150,7 @@ export default function AnnouncementFormDialog({
 
             {/* Content */}
             <TextField
-              label="Content"
+              label={t('form.content')}
               name="content"
               value={formik.values.content}
               onChange={formik.handleChange}
@@ -156,7 +158,7 @@ export default function AnnouncementFormDialog({
               error={formik.touched.content && Boolean(formik.errors.content)}
               helperText={
                 (formik.touched.content && formik.errors.content) ||
-                `${formik.values.content.length}/3000`
+                t('form.counter', { current: String(formik.values.content.length), max: '3000' })
               }
               multiline
               rows={5}
@@ -168,7 +170,7 @@ export default function AnnouncementFormDialog({
             {/* Type */}
             <Box>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block', fontWeight: 600 }}>
-                Type
+                {t('form.type')}
               </Typography>
               <ToggleButtonGroup
                 value={formik.values.type}
@@ -177,7 +179,7 @@ export default function AnnouncementFormDialog({
                 size="small"
                 sx={{ flexWrap: 'wrap', gap: 0.5 }}
               >
-                {TYPE_OPTIONS.map(({ value, label, color, Icon }) => (
+                {TYPE_OPTIONS.map(({ value, labelKey, color, Icon }) => (
                   <ToggleButton
                     key={value}
                     value={value}
@@ -191,7 +193,7 @@ export default function AnnouncementFormDialog({
                     }}
                   >
                     <Icon sx={{ fontSize: 16, mr: 0.5 }} />
-                    {label}
+                    {t(labelKey)}
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
@@ -200,13 +202,13 @@ export default function AnnouncementFormDialog({
             {/* Target Audience */}
             <Box>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block', fontWeight: 600 }}>
-                Target Audience
+                {t('form.targetAudience')}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {ROLE_OPTIONS.map(({ value, label }) => (
+                {ROLE_OPTIONS.map(({ value, labelKey }) => (
                   <Chip
                     key={value}
-                    label={label}
+                    label={t(labelKey)}
                     onClick={() => toggleRole(value)}
                     color={isSelected(value) ? 'primary' : 'default'}
                     variant={isSelected(value) ? 'filled' : 'outlined'}
@@ -225,7 +227,7 @@ export default function AnnouncementFormDialog({
 
             {/* Expiry date */}
             <TextField
-              label="Expires at (optional)"
+              label={t('form.expiresAt')}
               name="expiresAt"
               type="date"
               value={formik.values.expiresAt}
@@ -248,12 +250,12 @@ export default function AnnouncementFormDialog({
                   color="primary"
                 />
               }
-              label="Pin this announcement"
+              label={t('form.pin')}
             />
 
             {formik.values.pinned && (
               <TextField
-                label="Auto-unpin date (optional)"
+                label={t('form.autoUnpin')}
                 name="pinnedUntil"
                 type="date"
                 value={formik.values.pinnedUntil}
@@ -276,7 +278,7 @@ export default function AnnouncementFormDialog({
             disabled={formik.isSubmitting}
             sx={{ textTransform: 'none' }}
           >
-            Cancel
+            {t('common:action.cancel')}
           </Button>
           <Button
             type="submit"
@@ -285,7 +287,7 @@ export default function AnnouncementFormDialog({
             startIcon={formik.isSubmitting ? <CircularProgress size={16} /> : null}
             sx={{ textTransform: 'none', borderRadius: 2 }}
           >
-            {mode === 'create' ? 'Create Draft' : 'Save Changes'}
+            {mode === 'create' ? t('form.createDraft') : t('form.saveChanges')}
           </Button>
         </DialogActions>
       </form>

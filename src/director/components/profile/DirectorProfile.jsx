@@ -1,39 +1,62 @@
 /**
  * @file DirectorProfile.jsx
- * @description Director portal — own profile view and password change.
- * Reuses the same /admin/me endpoint as the Admin portal.
+ * @description Director portal — own profile management. Feature parity with
+ * AdminProfile: the /admin/me/* endpoints all authorize DIRECTOR, so the
+ * director gets the same self-service surface, in the director palette.
  *
- * Data: GET /admin/me
- * Action: PATCH /admin/me/password — { currentPassword, newPassword }
+ * Section 1 : Identity header (photo upload, name, email, role chip)
+ * Section 2 : Personal information + editable display name
+ * Section 3 : Change password
+ * Section 4 : Notification preferences
+ * Section 5 : Language & region (language, timezone, date/grade format, theme)
+ *
+ * Data:    GET   /admin/me
+ * Actions: PATCH /admin/me/profile · /admin/me/profile-image
+ *          PATCH /admin/me/password · /admin/me/notifications
  */
 
 import { useState, useEffect } from 'react';
 import {
-  Box, Typography, Paper, Stack, Divider, Avatar,
-  Chip, FormControl, InputLabel, OutlinedInput,
-  Button, IconButton, InputAdornment, FormHelperText,
-  CircularProgress, Alert, List, ListItem, ListItemIcon,
-  ListItemText, Skeleton, Snackbar,
+  Box, Typography, Paper, Stack, Divider,
+  Chip, TextField, Button, IconButton, InputAdornment,
+  CircularProgress, Alert, Snackbar,
+  List, ListItem, ListItemIcon, ListItemText, Skeleton,
 } from '@mui/material';
 import {
-  DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, DIRECTOR_SHADOW, directorPrimary,
-} from '../../../theme/directorTokens';
-import {
   Person, Email, Shield, Lock, Visibility, VisibilityOff,
-  CheckCircle, Schedule,
+  CheckCircle, Schedule, Save,
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
+import i18n from '../../../i18n/i18n';
 
-import { getAdminMe, updateAdminPassword } from '../../../services/admin_service';
+import {
+  DIRECTOR_GRADIENT, DIRECTOR_SHADOW, directorPrimary,
+} from '../../../theme/directorTokens';
+import { yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
+import {
+  getAdminMe, updateAdminPassword,
+  updateAdminProfile, uploadAdminProfileImage, updateAdminNotifications,
+} from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import ProfileImageUploader from '../../../components/shared/ProfileImageUploader';
+import NotificationPreferences from '../../../components/shared/NotificationPreferences';
 import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// ─── Schemas ──────────────────────────────────────────────────────────────────
+// The director document is an Admin document with role DIRECTOR — same field.
+// Lazy thunks so a language switch is reflected on the next validation pass.
+
+const nameSchema = Yup.object({
+  admin_name: Yup.string()
+    .min(2, () => i18n.t('admin:profile.validation.nameMin'))
+    .max(100)
+    .required(() => i18n.t('admin:profile.validation.nameRequired')),
+});
 
 const passwordSchema = Yup.object({
-  currentPassword: Yup.string().required('Current password is required'),
+  currentPassword: Yup.string().required(() => i18n.t('errors:validation.currentPasswordRequired')),
   newPassword:     yupPassword(),
   confirmPassword: yupConfirmPassword('newPassword'),
 });
@@ -57,179 +80,263 @@ const DetailItem = ({ icon, primary, secondary }) => (
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DirectorProfile() {
+  const { t } = useAppTranslation(['admin', 'common']);
   const [profile,     setProfile]     = useState(null);
   const [profileLoad, setProfileLoad] = useState(true);
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew,     setShowNew]     = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [notifPrefs,  setNotifPrefs]  = useState({ inapp: true, email: true, whatsapp: false });
+  const [showPwd,     setShowPwd]     = useState({ current: false, newPwd: false, confirm: false });
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   useEffect(() => {
     getAdminMe()
-      .then((r) => setProfile(r.data?.data ?? r.data))
-      .catch(() => showSnackbar('Failed to load profile.', 'error'))
+      .then((r) => {
+        const data = r.data?.data ?? r.data;
+        setProfile(data);
+        if (data?.notificationPrefs) setNotifPrefs(data.notificationPrefs);
+      })
+      .catch(() => showSnackbar(t('profile.toast.loadFailed'), 'error'))
       .finally(() => setProfileLoad(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const formik = useFormik({
-    initialValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
-    validationSchema: passwordSchema,
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
+  // ─── Name form ────────────────────────────────────────────────────────────
+
+  const nameFormik = useFormik({
+    initialValues: { admin_name: profile?.admin_name ?? '' },
+    validationSchema: nameSchema,
+    validateOnBlur: true,
+    enableReinitialize: true,
+    onSubmit: async (values, { setSubmitting }) => {
       try {
-        await updateAdminPassword({
-          currentPassword: values.currentPassword,
-          newPassword:     values.newPassword,
-        });
-        showSnackbar('Password updated successfully.', 'success');
-        resetForm();
+        const res = await updateAdminProfile({ admin_name: values.admin_name });
+        const doc = res.data?.data ?? res.data;
+        setProfile((prev) => ({ ...prev, admin_name: doc.admin_name ?? prev.admin_name }));
+        showSnackbar(t('profile.toast.updated'), 'success');
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to update password.', 'error');
+        showSnackbar(err.response?.data?.message || t('profile.toast.updateFailed'), 'error');
       } finally {
         setSubmitting(false);
       }
     },
   });
 
-  const busy = formik.isSubmitting;
+  // ─── Password form ────────────────────────────────────────────────────────
 
-  const pwField = (name, label, show, onToggle) => (
-    <FormControl size="small" fullWidth error={formik.touched[name] && Boolean(formik.errors[name])}>
-      <InputLabel htmlFor={name}>{label}</InputLabel>
-      <OutlinedInput
-        id={name}
-        name={name}
-        type={show ? 'text' : 'password'}
-        label={label}
-        value={formik.values[name]}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        disabled={busy}
-        sx={{ borderRadius: 2 }}
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton onClick={onToggle} edge="end" disabled={busy} size="small">
-              {show ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-      {formik.touched[name] && formik.errors[name] && (
-        <FormHelperText>{formik.errors[name]}</FormHelperText>
-      )}
-    </FormControl>
-  );
+  const passwordFormik = useFormik({
+    initialValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
+    validationSchema: passwordSchema,
+    validateOnBlur: true,
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        await updateAdminPassword({
+          currentPassword: values.currentPassword,
+          newPassword:     values.newPassword,
+        });
+        showSnackbar(t('profile.toast.passwordUpdated'), 'success');
+        resetForm();
+      } catch (err) {
+        showSnackbar(err.response?.data?.message || t('profile.toast.passwordFailed'), 'error');
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  // ─── Photo upload ─────────────────────────────────────────────────────────
+
+  const handlePhotoUploaded = async (url) => {
+    try {
+      await uploadAdminProfileImage(url);
+      setProfile((prev) => ({ ...prev, profileImage: url }));
+      showSnackbar(t('profile.toast.photoUpdated'), 'success');
+    } catch {
+      showSnackbar(t('profile.toast.photoFailed'), 'error');
+    }
+  };
+
+  // ─── Notification preferences ─────────────────────────────────────────────
+
+  const handleSaveNotifs = async () => {
+    try {
+      await updateAdminNotifications(notifPrefs);
+      showSnackbar(t('profile.toast.prefsSaved'), 'success');
+    } catch {
+      showSnackbar(t('profile.toast.prefsFailed'), 'error');
+    }
+  };
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 760, mx: 'auto' }}>
 
-      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>My Profile</Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>{t('profile.title')}</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Your director account details and security settings.
+        {t('profile.subtitleDirector')}
       </Typography>
 
-      <Stack spacing={3}>
-
-        {/* ── Profile card ──────────────────────────────────────────────────────── */}
-        <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
-          <Box sx={{ p: 3, background: DIRECTOR_GRADIENT, color: 'white' }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar
-                sx={{
-                  width: 64, height: 64,
-                  bgcolor: 'rgba(255,255,255,0.2)',
-                  border: '2px solid rgba(255,255,255,0.4)',
-                  fontSize: '1.6rem', fontWeight: 700,
-                }}
-              >
-                {profileLoad ? <Person /> : (profile?.admin_name?.[0]?.toUpperCase() ?? 'D')}
-              </Avatar>
-              <Box>
-                {profileLoad ? (
-                  <>
-                    <Skeleton width={160} height={28} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
-                    <Skeleton width={120} height={20} sx={{ bgcolor: 'rgba(255,255,255,0.15)', mt: 0.5 }} />
-                  </>
-                ) : (
-                  <>
-                    <Typography variant="h6" fontWeight={700}>{profile?.admin_name}</Typography>
-                    <Chip
-                      label="Director"
-                      size="small"
-                      icon={<Shield sx={{ fontSize: '0.75rem !important', color: 'white !important' }} />}
-                      sx={{
-                        bgcolor: 'rgba(255,255,255,0.2)',
-                        color: 'white',
-                        fontWeight: 600,
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        mt: 0.5,
-                      }}
-                    />
-                  </>
-                )}
-              </Box>
-            </Stack>
-          </Box>
-
-          <Box sx={{ p: 2.5 }}>
+      {/* ── Identity header ──────────────────────────────────────────────────── */}
+      <Paper sx={{ p: 3, mb: 3, borderRadius: 3, background: DIRECTOR_GRADIENT, color: 'white' }}>
+        <Stack direction="row" spacing={2.5} alignItems="center">
+          <ProfileImageUploader
+            currentImage={profile?.profileImage}
+            signatureEndpoint="/admin/me/upload-signature"
+            onUploaded={handlePhotoUploaded}
+            size={72}
+          />
+          <Box>
             {profileLoad ? (
-              <Stack spacing={1}>
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} variant="text" height={40} />
-                ))}
-              </Stack>
+              <>
+                <Skeleton width={160} height={28} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                <Skeleton width={120} height={20} sx={{ bgcolor: 'rgba(255,255,255,0.15)', mt: 0.5 }} />
+              </>
             ) : (
-              <List disablePadding>
-                <DetailItem icon={<Email color="action" fontSize="small" />}    primary="Email"      secondary={profile?.email}  />
-                <DetailItem icon={<Shield color="action" fontSize="small" />}   primary="Role"       secondary={profile?.role}   />
-                <DetailItem icon={<CheckCircle color="action" fontSize="small" />} primary="Status"  secondary={profile?.status} />
-                <DetailItem
-                  icon={<Schedule color="action" fontSize="small" />}
-                  primary="Last Login"
-                  secondary={profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : 'Not recorded'}
-                />
-              </List>
+              <>
+                <Typography variant="h6" fontWeight={700}>{profile?.admin_name}</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>{profile?.email}</Typography>
+                <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 0.5 }}>
+                  <Chip
+                    icon={<Shield sx={{ fontSize: 12, color: 'white !important' }} />}
+                    label={t('profile.roleDirector')}
+                    size="small"
+                    sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)', fontWeight: 600 }}
+                  />
+                  {profile?.status && (
+                    <Chip
+                      label={t(`common:status.${profile.status}`)}
+                      size="small"
+                      sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
+                    />
+                  )}
+                </Stack>
+              </>
             )}
           </Box>
-        </Paper>
+        </Stack>
+      </Paper>
 
-        {/* ── Change password ───────────────────────────────────────────────────── */}
-        <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <Lock sx={(t) => ({ color: directorPrimary(t.palette.mode) })} />
-            <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
+      {/* ── Section 1: Personal information ──────────────────────────────────── */}
+      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+          <Person color="action" />
+          <Typography variant="subtitle1" fontWeight={700}>{t('profile.personalInfo')}</Typography>
+        </Stack>
+        <Divider sx={{ mb: 2.5 }} />
+
+        {profileLoad ? (
+          <Stack spacing={1}>
+            {[90, 70].map((w, i) => <Skeleton key={i} variant="text" width={`${w}%`} height={40} />)}
           </Stack>
-          <Divider sx={{ mb: 2.5 }} />
+        ) : (
+          <>
+            <List disablePadding sx={{ mb: 2.5 }}>
+              <DetailItem icon={<Email color="action" fontSize="small" />}       primary={t('profile.email')}     secondary={profile?.email} />
+              <DetailItem icon={<Shield color="action" fontSize="small" />}      primary={t('profile.role')}      secondary={profile?.role} />
+              <DetailItem icon={<CheckCircle color="action" fontSize="small" />} primary={t('profile.status')}    secondary={profile?.status ? t(`common:status.${profile.status}`) : '—'} />
+              <DetailItem
+                icon={<Schedule color="action" fontSize="small" />}
+                primary={t('profile.lastLogin')}
+                secondary={profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : t('profile.notRecorded')}
+              />
+            </List>
+            <Divider sx={{ mb: 2.5 }} />
 
-          <Box component="form" onSubmit={formik.handleSubmit} noValidate>
-            <Stack spacing={2}>
-              {pwField('currentPassword', 'Current Password',     showCurrent, () => setShowCurrent((p) => !p))}
-              {pwField('newPassword',     'New Password',         showNew,     () => setShowNew((p) => !p))}
-              {pwField('confirmPassword', 'Confirm New Password', showConfirm, () => setShowConfirm((p) => !p))}
+            <form onSubmit={nameFormik.handleSubmit} noValidate>
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label={t('profile.displayName')}
+                  name="admin_name"
+                  value={nameFormik.values.admin_name}
+                  onChange={nameFormik.handleChange}
+                  onBlur={nameFormik.handleBlur}
+                  error={nameFormik.touched.admin_name && Boolean(nameFormik.errors.admin_name)}
+                  helperText={nameFormik.touched.admin_name && nameFormik.errors.admin_name}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={nameFormik.isSubmitting}
+                    startIcon={nameFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Save />}
+                    sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: DIRECTOR_GRADIENT, boxShadow: DIRECTOR_SHADOW }}
+                  >
+                    {nameFormik.isSubmitting ? t('profile.saving') : t('profile.saveProfile')}
+                  </Button>
+                </Box>
+              </Stack>
+            </form>
+          </>
+        )}
+      </Paper>
 
-              <Alert severity="info" sx={{ borderRadius: 2, py: 0.5 }}>
-                Password must be at least 8 characters with one uppercase, one lowercase, and one number.
-              </Alert>
+      {/* ── Section 2: Password ──────────────────────────────────────────────── */}
+      <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+          <Lock sx={(th) => ({ color: directorPrimary(th.palette.mode) })} />
+          <Typography variant="subtitle1" fontWeight={700}>{t('profile.changePassword')}</Typography>
+        </Stack>
+        <Divider sx={{ mb: 2.5 }} />
 
+        <form onSubmit={passwordFormik.handleSubmit} noValidate>
+          <Stack spacing={2.5}>
+            {[
+              { name: 'currentPassword', label: t('profile.currentPassword'), key: 'current' },
+              { name: 'newPassword',     label: t('profile.newPassword'),     key: 'newPwd'  },
+              { name: 'confirmPassword', label: t('profile.confirmPassword'), key: 'confirm' },
+            ].map(({ name, label, key }) => (
+              <TextField
+                key={name}
+                fullWidth
+                type={showPwd[key] ? 'text' : 'password'}
+                name={name}
+                label={label}
+                value={passwordFormik.values[name]}
+                onChange={passwordFormik.handleChange}
+                onBlur={passwordFormik.handleBlur}
+                error={passwordFormik.touched[name] && Boolean(passwordFormik.errors[name])}
+                helperText={passwordFormik.touched[name] && passwordFormik.errors[name]}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton size="small" onClick={() => setShowPwd((p) => ({ ...p, [key]: !p[key] }))} edge="end">
+                          {showPwd[key] ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            ))}
+
+            <Alert severity="info" sx={{ borderRadius: 2, py: 0.5 }}>
+              {t('profile.passwordHint')}
+            </Alert>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 type="submit"
                 variant="contained"
-                disabled={busy}
-                startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <Lock />}
-                sx={{
-                  textTransform: 'none', fontWeight: 700, borderRadius: 2, py: 1.2,
-                  background: DIRECTOR_GRADIENT, boxShadow: DIRECTOR_SHADOW,
-                  alignSelf: 'flex-start',
-                }}
+                disabled={passwordFormik.isSubmitting}
+                startIcon={passwordFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Lock />}
+                sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: DIRECTOR_GRADIENT, boxShadow: DIRECTOR_SHADOW }}
               >
-                {busy ? 'Updating…' : 'Update Password'}
+                {passwordFormik.isSubmitting ? t('profile.updating') : t('profile.updatePassword')}
               </Button>
-            </Stack>
-          </Box>
-        </Paper>
+            </Box>
+          </Stack>
+        </form>
+      </Paper>
 
-      </Stack>
+      {/* ── Section 3: Notifications ─────────────────────────────────────────── */}
+      <NotificationPreferences
+        value={notifPrefs}
+        onChange={setNotifPrefs}
+        onSave={handleSaveNotifs}
+        onError={() => showSnackbar(t('profile.toast.prefsFailed'), 'error')}
+      />
 
-      {/* ── Language & Region ── */}
+      {/* ── Section 4: Language & Region ─────────────────────────────────────── */}
       <Box sx={{ mt: 3 }}>
         <LanguagePreferencesSection />
       </Box>
@@ -244,7 +351,6 @@ export default function DirectorProfile() {
           {snackbar.message}
         </Alert>
       </Snackbar>
-
     </Box>
   );
 }

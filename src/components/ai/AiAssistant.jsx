@@ -1,15 +1,22 @@
 /**
  * @file AiAssistant.jsx
  * @description Campus AI hub — the single surface that consumes the Phase 3 AI
- * gateway (aiService.js). Five capabilities behind tabs:
+ * gateway (aiService.js). Four capabilities behind tabs:
  *   - Chat:      RAG assistant over authorized documents (SSE)
  *   - Search:    hybrid semantic search of the document library
  *   - Analytics: AI-narrated descriptive reports over ERP aggregates
  *   - Advisors:  deterministic business proposals (human-in-the-loop)
  * plus a monthly consumption gauge in the header.
  *
- * Route:  /campus/:campusId/ai
- * Access: ADMIN / DIRECTOR / CAMPUS_MANAGER (campus-scoped, JWT-derived).
+ * Mounted by two shells:
+ *   - /campus/:campusId/ai      → campus portal (campusId from the route)
+ *   - /admin/ai · /director/ai  → AiWorkspace passes the selected campusId
+ * Access: ADMIN / DIRECTOR / CAMPUS_MANAGER.
+ *
+ * `campusId` is forwarded to every panel and travels to the gateway as a query
+ * parameter. It only ever *narrows* a global role (ADMIN/DIRECTOR) to one
+ * tenant: for scoped roles the gateway derives the campus from the JWT and
+ * ignores the parameter, so it can never widen anyone's scope (§4.1).
  *
  * Gating is layered: the usage gauge resolves the plan and, when the whole
  * campus subscription is off (AI_DISABLED / AI_NOT_ENABLED), the hub shows a
@@ -38,9 +45,10 @@ import {
   AI_FEATURES, AI_PLAN_FEATURES, AI_ERROR_CODES,
 } from './aiConstants';
 
-export default function AiAssistant() {
+export default function AiAssistant({ campusId: campusIdProp }) {
   const theme = useTheme();
-  const { campusId } = useParams();
+  const { campusId: routeCampusId } = useParams();
+  const campusId = campusIdProp ?? routeCampusId;
   const { t } = useTranslation('ai');
 
   const [tab, setTab] = useState(0);
@@ -65,11 +73,14 @@ export default function AiAssistant() {
   const effectiveFeatures = features ?? (plan ? AI_PLAN_FEATURES[plan] : null);
   const has = (f) => !effectiveFeatures || effectiveFeatures[f];
 
+  // Every panel is keyed on campusId: switching tenant remounts it, so a chat
+  // thread, a result list or a report never survives into another campus's
+  // context (the chat also aborts its in-flight stream on unmount).
   const TABS = [
-    { key: AI_FEATURES.CHAT, label: t('tabs.chat'), icon: <Forum sx={{ fontSize: 18 }} />, color: theme.palette.primary.main, node: <AiChat /> },
-    { key: AI_FEATURES.SEARCH, label: t('tabs.search'), icon: <TravelExplore sx={{ fontSize: 18 }} />, color: theme.palette.info.main, node: <AiSearch /> },
-    { key: AI_FEATURES.ANALYTICS, label: t('tabs.analytics'), icon: <Insights sx={{ fontSize: 18 }} />, color: theme.palette.success.main, node: <AiAnalytics /> },
-    { key: AI_FEATURES.ADVISORS, label: t('tabs.advisors'), icon: <Lightbulb sx={{ fontSize: 18 }} />, color: theme.palette.warning.main, node: <AiAdvisors /> },
+    { key: AI_FEATURES.CHAT, label: t('tabs.chat'), icon: <Forum sx={{ fontSize: 18 }} />, color: theme.palette.primary.main, node: <AiChat key={campusId} campusId={campusId} /> },
+    { key: AI_FEATURES.SEARCH, label: t('tabs.search'), icon: <TravelExplore sx={{ fontSize: 18 }} />, color: theme.palette.info.main, node: <AiSearch key={campusId} campusId={campusId} /> },
+    { key: AI_FEATURES.ANALYTICS, label: t('tabs.analytics'), icon: <Insights sx={{ fontSize: 18 }} />, color: theme.palette.success.main, node: <AiAnalytics key={campusId} campusId={campusId} /> },
+    { key: AI_FEATURES.ADVISORS, label: t('tabs.advisors'), icon: <Lightbulb sx={{ fontSize: 18 }} />, color: theme.palette.warning.main, node: <AiAdvisors key={campusId} campusId={campusId} /> },
   ].filter((x) => has(x.key));
 
   const safeTab = Math.min(tab, Math.max(TABS.length - 1, 0));

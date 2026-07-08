@@ -22,7 +22,9 @@ import {
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import i18n from '../../../i18n/i18n';
 import { yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 import {
   getAdminMe, updateAdminPassword,
@@ -34,13 +36,18 @@ import NotificationPreferences from '../../../components/shared/NotificationPref
 import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
+// Messages are lazy thunks so a language switch is reflected on the next
+// validation pass (module-scope schemas would otherwise freeze their language).
 
 const nameSchema = Yup.object({
-  admin_name: Yup.string().min(2, 'Min 2 chars').max(100).required('Name is required'),
+  admin_name: Yup.string()
+    .min(2, () => i18n.t('admin:profile.validation.nameMin'))
+    .max(100)
+    .required(() => i18n.t('admin:profile.validation.nameRequired')),
 });
 
 const passwordSchema = Yup.object({
-  currentPassword: Yup.string().required('Current password is required'),
+  currentPassword: Yup.string().required(() => i18n.t('errors:validation.currentPasswordRequired')),
   newPassword:     yupPassword(),
   confirmPassword: yupConfirmPassword('newPassword'),
 });
@@ -64,11 +71,14 @@ const DetailItem = ({ icon, primary, secondary }) => (
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminProfile() {
+  const { t } = useAppTranslation(['admin', 'common']);
   const [profile,     setProfile]     = useState(null);
   const [profileLoad, setProfileLoad] = useState(true);
   const [notifPrefs,  setNotifPrefs]  = useState({ inapp: true, email: true, whatsapp: false });
   const [showPwd, setShowPwd] = useState({ current: false, newPwd: false, confirm: false });
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
+
+  const isDirector = profile?.role === 'DIRECTOR';
 
   useEffect(() => {
     getAdminMe()
@@ -77,7 +87,7 @@ export default function AdminProfile() {
         setProfile(data);
         if (data?.notificationPrefs) setNotifPrefs(data.notificationPrefs);
       })
-      .catch(() => showSnackbar('Failed to load profile.', 'error'))
+      .catch(() => showSnackbar(t('profile.toast.loadFailed'), 'error'))
       .finally(() => setProfileLoad(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -93,9 +103,9 @@ export default function AdminProfile() {
         const res = await updateAdminProfile({ admin_name: values.admin_name });
         const doc = res.data?.data ?? res.data;
         setProfile((prev) => ({ ...prev, admin_name: doc.admin_name ?? prev.admin_name }));
-        showSnackbar('Profile updated.', 'success');
+        showSnackbar(t('profile.toast.updated'), 'success');
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to update profile.', 'error');
+        showSnackbar(err.response?.data?.message || t('profile.toast.updateFailed'), 'error');
       } finally {
         setSubmitting(false);
       }
@@ -114,10 +124,10 @@ export default function AdminProfile() {
           currentPassword: values.currentPassword,
           newPassword:     values.newPassword,
         });
-        showSnackbar('Password updated successfully.', 'success');
+        showSnackbar(t('profile.toast.passwordUpdated'), 'success');
         resetForm();
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to update password.', 'error');
+        showSnackbar(err.response?.data?.message || t('profile.toast.passwordFailed'), 'error');
       } finally {
         setSubmitting(false);
       }
@@ -130,9 +140,9 @@ export default function AdminProfile() {
     try {
       await uploadAdminProfileImage(url);
       setProfile((prev) => ({ ...prev, profileImage: url }));
-      showSnackbar('Photo updated.', 'success');
+      showSnackbar(t('profile.toast.photoUpdated'), 'success');
     } catch {
-      showSnackbar('Failed to save photo.', 'error');
+      showSnackbar(t('profile.toast.photoFailed'), 'error');
     }
   };
 
@@ -141,9 +151,9 @@ export default function AdminProfile() {
   const handleSaveNotifs = async () => {
     try {
       await updateAdminNotifications(notifPrefs);
-      showSnackbar('Preferences saved.', 'success');
+      showSnackbar(t('profile.toast.prefsSaved'), 'success');
     } catch {
-      showSnackbar('Failed to save preferences.', 'error');
+      showSnackbar(t('profile.toast.prefsFailed'), 'error');
     }
   };
 
@@ -172,15 +182,15 @@ export default function AdminProfile() {
                 <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 0.5 }}>
                   <Chip
                     icon={<Shield sx={{ fontSize: 12, color: 'white !important' }} />}
-                    label={profile?.role === 'DIRECTOR' ? 'Director' : 'Platform Admin'}
+                    label={isDirector ? t('profile.roleDirector') : t('profile.roleAdmin')}
                     size="small"
                     sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)', fontWeight: 600 }}
                   />
                   {profile?.status && (
                     <Chip
-                      label={profile.status}
+                      label={t(`common:status.${profile.status}`)}
                       size="small"
-                      sx={{ textTransform: 'capitalize', bgcolor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
+                      sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
                     />
                   )}
                 </Stack>
@@ -194,7 +204,7 @@ export default function AdminProfile() {
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
           <Person color="action" />
-          <Typography variant="subtitle1" fontWeight={700}>Personal Information</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('profile.personalInfo')}</Typography>
         </Stack>
         <Divider sx={{ mb: 2.5 }} />
 
@@ -205,10 +215,10 @@ export default function AdminProfile() {
         ) : (
           <>
             <List disablePadding sx={{ mb: 2.5 }}>
-              <DetailItem icon={<Email color="action" fontSize="small" />}    primary="Email"      secondary={profile?.email} />
-              <DetailItem icon={<Shield color="action" fontSize="small" />}   primary="Role"       secondary={profile?.role} />
-              <DetailItem icon={<CheckCircle color="action" fontSize="small" />} primary="Status"  secondary={profile?.status} />
-              <DetailItem icon={<Schedule color="action" fontSize="small" />} primary="Last Login" secondary={profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : 'Not recorded'} />
+              <DetailItem icon={<Email color="action" fontSize="small" />}    primary={t('profile.email')}     secondary={profile?.email} />
+              <DetailItem icon={<Shield color="action" fontSize="small" />}   primary={t('profile.role')}      secondary={profile?.role} />
+              <DetailItem icon={<CheckCircle color="action" fontSize="small" />} primary={t('profile.status')}  secondary={profile?.status ? t(`common:status.${profile.status}`) : '—'} />
+              <DetailItem icon={<Schedule color="action" fontSize="small" />} primary={t('profile.lastLogin')} secondary={profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : t('profile.notRecorded')} />
             </List>
             <Divider sx={{ mb: 2.5 }} />
 
@@ -216,7 +226,7 @@ export default function AdminProfile() {
               <Stack spacing={2}>
                 <TextField
                   fullWidth
-                  label="Display Name"
+                  label={t('profile.displayName')}
                   name="admin_name"
                   value={nameFormik.values.admin_name}
                   onChange={nameFormik.handleChange}
@@ -233,7 +243,7 @@ export default function AdminProfile() {
                     startIcon={nameFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Save />}
                     sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW }}
                   >
-                    {nameFormik.isSubmitting ? 'Saving…' : 'Save Profile'}
+                    {nameFormik.isSubmitting ? t('profile.saving') : t('profile.saveProfile')}
                   </Button>
                 </Box>
               </Stack>
@@ -245,17 +255,17 @@ export default function AdminProfile() {
       {/* ── Section 2: Password ──────────────────────────────────────────────── */}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 3, mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-          <Lock sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
-          <Typography variant="subtitle1" fontWeight={700}>Change Password</Typography>
+          <Lock sx={(th) => ({ color: adminPrimary(th.palette.mode) })} />
+          <Typography variant="subtitle1" fontWeight={700}>{t('profile.changePassword')}</Typography>
         </Stack>
         <Divider sx={{ mb: 2.5 }} />
 
         <form onSubmit={passwordFormik.handleSubmit} noValidate>
           <Stack spacing={2.5}>
             {[
-              { name: 'currentPassword', label: 'Current Password', key: 'current' },
-              { name: 'newPassword',     label: 'New Password',     key: 'newPwd'  },
-              { name: 'confirmPassword', label: 'Confirm Password', key: 'confirm' },
+              { name: 'currentPassword', label: t('profile.currentPassword'), key: 'current' },
+              { name: 'newPassword',     label: t('profile.newPassword'),     key: 'newPwd'  },
+              { name: 'confirmPassword', label: t('profile.confirmPassword'), key: 'confirm' },
             ].map(({ name, label, key }) => (
               <TextField
                 key={name}
@@ -284,7 +294,7 @@ export default function AdminProfile() {
             ))}
 
             <Alert severity="info" sx={{ borderRadius: 2, py: 0.5 }}>
-              Password must be at least 8 characters with one uppercase, one lowercase, and one number.
+              {t('profile.passwordHint')}
             </Alert>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -295,7 +305,7 @@ export default function AdminProfile() {
                 startIcon={passwordFormik.isSubmitting ? <CircularProgress size={16} color="inherit" /> : <Lock />}
                 sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW }}
               >
-                {passwordFormik.isSubmitting ? 'Updating…' : 'Update Password'}
+                {passwordFormik.isSubmitting ? t('profile.updating') : t('profile.updatePassword')}
               </Button>
             </Box>
           </Stack>
@@ -307,7 +317,7 @@ export default function AdminProfile() {
         value={notifPrefs}
         onChange={setNotifPrefs}
         onSave={handleSaveNotifs}
-        onError={() => showSnackbar('Failed to save preferences.', 'error')}
+        onError={() => showSnackbar(t('profile.toast.prefsFailed'), 'error')}
       />
 
       {/* ── Section 4: Language & Region ─────────────────────────────────────── */}

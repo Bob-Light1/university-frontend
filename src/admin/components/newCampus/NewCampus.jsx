@@ -36,10 +36,11 @@ import UploadCampusImage         from '../../../client/utility-components/upload
 import { API_BASE_URL }          from '../../../config/env';
 import { ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
 import PhoneInput from '../../../components/shared/PhoneInput';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
-// ─── Step labels ──────────────────────────────────────────────────────────────
+// ─── Step keys (labels resolved at render via the `admin` namespace) ───────────
 
-const STEPS = ['Campus Information', 'Manager Details', 'Location & Image'];
+const STEP_KEYS = ['step.campusInfo', 'step.managerDetails', 'step.locationImage'];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -47,6 +48,7 @@ export default function NewCampus() {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const { t }    = useAppTranslation(['admin', 'common']);
 
   const [showPassword, setShowPassword] = useState(false);
   const [imageResetKey, setImageResetKey] = useState(0);
@@ -101,7 +103,7 @@ export default function NewCampus() {
     validateOnBlur:   true,
     onSubmit: async (values) => {
       if (!values.campus_image) {
-        setSnackbar({ open: true, message: 'Please upload a campus image first.', severity: 'warning' });
+        setSnackbar({ open: true, message: t('newCampus.toast.imageRequired'), severity: 'warning' });
         return;
       }
       setIsLoading(true);
@@ -129,7 +131,7 @@ export default function NewCampus() {
           timeout: 60000, // Render free tier cold start can take up to 60 s
         });
 
-        setSnackbar({ open: true, message: '✨ Campus created successfully!', severity: 'success' });
+        setSnackbar({ open: true, message: t('newCampus.toast.created'), severity: 'success' });
         formik.resetForm();
         setImageResetKey((p) => p + 1);
         setActiveStep(0);
@@ -139,8 +141,8 @@ export default function NewCampus() {
         setSnackbar({
           open:     true,
           message:  isTimeout
-            ? 'Request timed out. Please check your connection and try again.'
-            : error.response?.data?.message || 'An error occurred while creating the campus.',
+            ? t('newCampus.toast.timeout')
+            : error.response?.data?.message || t('newCampus.toast.failed'),
           severity: 'error',
         });
       } finally {
@@ -182,14 +184,14 @@ export default function NewCampus() {
           <Fade in timeout={500}>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
-                <SectionTitle>Campus Information</SectionTitle>
+                <SectionTitle>{t('newCampus.section.campusInfo')}</SectionTitle>
               </Grid>
 
               <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth error={formik.touched.campus_name && Boolean(formik.errors.campus_name)}>
-                  <InputLabel htmlFor="campus_name">Campus Name *</InputLabel>
+                  <InputLabel htmlFor="campus_name">{t('newCampus.field.campusName')}</InputLabel>
                   <OutlinedInput
-                    id="campus_name" name="campus_name" label="Campus Name *"
+                    id="campus_name" name="campus_name" label={t('newCampus.field.campusName')}
                     value={formik.values.campus_name}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -204,9 +206,9 @@ export default function NewCampus() {
 
               <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth error={formik.touched.campus_number && Boolean(formik.errors.campus_number)}>
-                  <InputLabel htmlFor="campus_number">Campus Number (Optional)</InputLabel>
+                  <InputLabel htmlFor="campus_number">{t('newCampus.field.campusNumber')}</InputLabel>
                   <OutlinedInput
-                    id="campus_number" name="campus_number" label="Campus Number (Optional)"
+                    id="campus_number" name="campus_number" label={t('newCampus.field.campusNumber')}
                     value={formik.values.campus_number}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -228,14 +230,14 @@ export default function NewCampus() {
           <Fade in timeout={500}>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
-                <SectionTitle>Manager Details</SectionTitle>
+                <SectionTitle>{t('newCampus.section.managerDetails')}</SectionTitle>
               </Grid>
 
               <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth error={formik.touched.manager_name && Boolean(formik.errors.manager_name)}>
-                  <InputLabel htmlFor="manager_name">Manager Full Name *</InputLabel>
+                  <InputLabel htmlFor="manager_name">{t('newCampus.field.managerName')}</InputLabel>
                   <OutlinedInput
-                    id="manager_name" name="manager_name" label="Manager Full Name *"
+                    id="manager_name" name="manager_name" label={t('newCampus.field.managerName')}
                     value={formik.values.manager_name}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -250,9 +252,9 @@ export default function NewCampus() {
 
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth error={formik.touched.email && Boolean(formik.errors.email)}>
-                  <InputLabel htmlFor="nc-email">Email Address *</InputLabel>
+                  <InputLabel htmlFor="nc-email">{t('newCampus.field.email')}</InputLabel>
                   <OutlinedInput
-                    id="nc-email" name="email" type="email" label="Email Address *"
+                    id="nc-email" name="email" type="email" label={t('newCampus.field.email')}
                     value={formik.values.email}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -268,7 +270,7 @@ export default function NewCampus() {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <PhoneInput
                   name="manager_phone"
-                  label="Phone Number"
+                  label={t('newCampus.field.phone')}
                   value={formik.values.manager_phone}
                   onChange={(v) => formik.setFieldValue('manager_phone', v)}
                   onBlur={formik.handleBlur}
@@ -280,8 +282,8 @@ export default function NewCampus() {
               </Grid>
 
               {[
-                { id: 'nc-password',  name: 'password',         label: 'Password *',         autoComplete: 'new-password' },
-                { id: 'nc-confirm',   name: 'confirm_password', label: 'Confirm Password *',  autoComplete: 'new-password' },
+                { id: 'nc-password',  name: 'password',         label: t('newCampus.field.password'),        autoComplete: 'new-password' },
+                { id: 'nc-confirm',   name: 'confirm_password', label: t('newCampus.field.confirmPassword'), autoComplete: 'new-password' },
               ].map(({ id, name, label, autoComplete }) => (
                 <Grid key={id} size={{ xs: 12 }}>
                   <FormControl fullWidth error={formik.touched[name] && Boolean(formik.errors[name])}>
@@ -299,7 +301,7 @@ export default function NewCampus() {
                           <IconButton
                             onClick={() => setShowPassword((p) => !p)}
                             edge="end" disabled={isLoading}
-                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            aria-label={showPassword ? t('common:a11y.hidePassword') : t('common:a11y.showPassword')}
                           >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -323,14 +325,14 @@ export default function NewCampus() {
           <Fade in timeout={500}>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12 }}>
-                <SectionTitle>Location &amp; Campus Image</SectionTitle>
+                <SectionTitle>{t('newCampus.section.locationImage')}</SectionTitle>
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="location-city">City (Optional)</InputLabel>
+                  <InputLabel htmlFor="location-city">{t('newCampus.field.city')}</InputLabel>
                   <OutlinedInput
-                    id="location-city" name="location.city" label="City (Optional)"
+                    id="location-city" name="location.city" label={t('newCampus.field.city')}
                     value={formik.values.location.city}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -342,9 +344,9 @@ export default function NewCampus() {
 
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="location-country">Country</InputLabel>
+                  <InputLabel htmlFor="location-country">{t('newCampus.field.country')}</InputLabel>
                   <OutlinedInput
-                    id="location-country" name="location.country" label="Country"
+                    id="location-country" name="location.country" label={t('newCampus.field.country')}
                     value={formik.values.location.country}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading}
@@ -356,9 +358,9 @@ export default function NewCampus() {
 
               <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="location-address">Address (Optional)</InputLabel>
+                  <InputLabel htmlFor="location-address">{t('newCampus.field.address')}</InputLabel>
                   <OutlinedInput
-                    id="location-address" name="location.address" label="Address (Optional)"
+                    id="location-address" name="location.address" label={t('newCampus.field.address')}
                     value={formik.values.location.address}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     disabled={isLoading} multiline rows={2}
@@ -379,7 +381,7 @@ export default function NewCampus() {
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                     <PhotoCamera sx={{ mr: 1, color: 'primary.main' }} />
-                    <Typography variant="subtitle1" fontWeight="bold">Campus Image *</Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">{t('newCampus.field.campusImage')}</Typography>
                   </Box>
                   <UploadCampusImage
                     key={imageResetKey}
@@ -420,7 +422,7 @@ export default function NewCampus() {
       <Button
         startIcon={<ArrowBack />}
         onClick={() => navigate('/')}
-        aria-label="Return to admin dashboard"
+        aria-label={t('newCampus.backToDashboardAria')}
         sx={{
           position: 'fixed', top: 20, left: 20,
           color: 'rgba(255,255,255,0.55)',
@@ -428,7 +430,7 @@ export default function NewCampus() {
           '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.08)' },
         }}
       >
-        Admin Dashboard
+        {t('newCampus.backToDashboard')}
       </Button>
 
       <Container maxWidth="md">
@@ -460,10 +462,10 @@ export default function NewCampus() {
                 </Box>
               </Box>
               <Typography variant="h4" fontWeight={700} sx={{ mb: 0.5 }}>
-                Create New Campus
+                {t('newCampus.title')}
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.85 }}>
-                Establish a new campus of distinction
+                {t('newCampus.subtitle')}
               </Typography>
             </Box>
 
@@ -477,8 +479,8 @@ export default function NewCampus() {
                   '& .MuiStepLabel-root .Mui-active':    { color: 'primary.main' },
                 }}
               >
-                {STEPS.map((label, index) => (
-                  <Step key={label}>
+                {STEP_KEYS.map((stepKey, index) => (
+                  <Step key={stepKey}>
                     <StepLabel
                       slots={{
                         stepIcon: activeStep > index
@@ -486,7 +488,7 @@ export default function NewCampus() {
                           : undefined,
                       }}
                     >
-                      {!isMobile && label}
+                      {!isMobile && t(`newCampus.${stepKey}`)}
                     </StepLabel>
                   </Step>
                 ))}
@@ -507,12 +509,12 @@ export default function NewCampus() {
                     variant="outlined"
                     sx={{ borderRadius: 2, px: 3, py: 1.5, fontWeight: 'bold', textTransform: 'none' }}
                   >
-                    Back
+                    {t('common:action.back')}
                   </Button>
 
                   <Box sx={{ flex: 1 }} />
 
-                  {activeStep === STEPS.length - 1 ? (
+                  {activeStep === STEP_KEYS.length - 1 ? (
                     <Button
                       type="submit" variant="contained" disabled={isLoading || !serverReady}
                       endIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : !serverReady ? <CircularProgress size={20} color="inherit" /> : <CheckCircle />}
@@ -524,7 +526,7 @@ export default function NewCampus() {
                         '&:hover': { boxShadow: '0 8px 28px rgba(0,50,133,0.45)' },
                       }}
                     >
-                      {isLoading ? 'Creating…' : !serverReady ? 'Connecting…' : 'Create Campus'}
+                      {isLoading ? t('newCampus.button.creating') : !serverReady ? t('newCampus.button.connecting') : t('newCampus.button.create')}
                     </Button>
                   ) : (
                     <Button
@@ -536,7 +538,7 @@ export default function NewCampus() {
                         background: ADMIN_GRADIENT,
                       }}
                     >
-                      Next
+                      {t('common:action.next')}
                     </Button>
                   )}
                 </Box>

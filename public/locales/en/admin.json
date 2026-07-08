@@ -1,0 +1,409 @@
+{
+  "portal": {
+    "label": "Admin Portal",
+    "pageTitle": "Admin Portal"
+  },
+  "director": {
+    "label": "Director Portal",
+    "pageTitle": "Director Portal"
+  },
+  "nav": {
+    "campuses": "Campuses",
+    "newCampus": "New Campus",
+    "adminAccounts": "Admin Accounts",
+    "aiWorkspace": "AI Workspace",
+    "testimonials": "Testimonials",
+    "faq": "FAQ",
+    "coursePreviews": "Course Previews",
+    "competition": "Competition",
+    "applications": "Applications"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {name}",
+    "subtitleAdmin": "Platform Administrator — wewigo ERP",
+    "subtitleDirector": "Director — wewigo ERP",
+    "loadError": "Failed to load dashboard data.",
+    "fallbackAdmin": "Admin",
+    "fallbackDirector": "Director",
+    "kpi": {
+      "totalCampuses": "Total Campuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "platformGrowth": "Platform Growth",
+      "platformReach": "Platform Reach",
+      "sites": "{count, plural, one {# site} other {# sites}}"
+    },
+    "quickAction": {
+      "newCampus": "New Campus",
+      "manageCampuses": "Manage Campuses",
+      "adminAccounts": "Admin Accounts"
+    },
+    "recent": {
+      "title": "Recent Campuses",
+      "viewAll": "View all",
+      "empty": "No campuses yet. Create the first one.",
+      "emptyShort": "No campuses yet.",
+      "emptyDirector": "No campuses on the platform yet."
+    }
+  },
+  "campusTable": {
+    "campus": "Campus",
+    "manager": "Manager",
+    "location": "Location",
+    "created": "Created"
+  },
+  "campuses": {
+    "title": "Campuses",
+    "subtitleAdmin": "All campuses registered on the platform.",
+    "subtitleDirector": "Overview of all campuses registered on the platform.",
+    "newCampus": "New Campus",
+    "searchPlaceholder": "Search name, manager, email…",
+    "loadError": "Failed to load campuses.",
+    "empty": "No campuses found.",
+    "entityType": "campus",
+    "action": {
+      "viewPortal": "View campus portal",
+      "aiEntitlement": "AI entitlement",
+      "restore": "Restore campus",
+      "archive": "Archive campus"
+    },
+    "toast": {
+      "archived": "{name} archived.",
+      "restored": "{name} restored.",
+      "archiveFailed": "Failed to archive campus.",
+      "restoreFailed": "Failed to restore campus.",
+      "aiEntitlementUpdated": "AI entitlement updated for {name}."
+    }
+  },
+  "newCampus": {
+    "backToDashboard": "Admin Dashboard",
+    "backToDashboardAria": "Return to admin dashboard",
+    "title": "Create New Campus",
+    "subtitle": "Establish a new campus of distinction",
+    "step": {
+      "campusInfo": "Campus Information",
+      "managerDetails": "Manager Details",
+      "locationImage": "Location & Image"
+    },
+    "section": {
+      "campusInfo": "Campus Information",
+      "managerDetails": "Manager Details",
+      "locationImage": "Location & Campus Image"
+    },
+    "field": {
+      "campusName": "Campus Name *",
+      "campusNumber": "Campus Number (Optional)",
+      "managerName": "Manager Full Name *",
+      "email": "Email Address *",
+      "phone": "Phone Number",
+      "password": "Password *",
+      "confirmPassword": "Confirm Password *",
+      "city": "City (Optional)",
+      "country": "Country",
+      "address": "Address (Optional)",
+      "campusImage": "Campus Image *"
+    },
+    "button": {
+      "creating": "Creating…",
+      "connecting": "Connecting…",
+      "create": "Create Campus"
+    },
+    "toast": {
+      "imageRequired": "Please upload a campus image first.",
+      "created": "✨ Campus created successfully!",
+      "timeout": "Request timed out. Please check your connection and try again.",
+      "failed": "An error occurred while creating the campus."
+    }
+  },
+  "accounts": {
+    "title": "Admin Accounts",
+    "subtitle": "Create and manage platform-level Admin and Director accounts.",
+    "roleInfo": {
+      "title": "Role differences",
+      "admin": "Full platform access — can create campuses and other admin accounts.",
+      "director": "Campus oversight and reporting — no account creation rights."
+    },
+    "create": {
+      "title": "Create New Account",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleDirector": "Director",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordHint": "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number and a special character.",
+      "submitting": "Creating…",
+      "submit": "Create Account"
+    },
+    "existing": {
+      "title": "Existing Accounts",
+      "empty": "No accounts found.",
+      "account": "Account",
+      "role": "Role",
+      "createdBy": "Created by",
+      "lastLogin": "Last Login",
+      "selfBootstrap": "Self (bootstrap)",
+      "bootstrapChip": "Bootstrap",
+      "bootstrapTooltip": "Bootstrap account — status is permanently protected",
+      "youChip": "You",
+      "noHistory": "No history"
+    },
+    "action": {
+      "activate": "Activate",
+      "suspend": "Suspend",
+      "deactivate": "Deactivate"
+    },
+    "toast": {
+      "loadFailed": "Failed to load accounts.",
+      "activated": "Account activated.",
+      "suspended": "Account suspended.",
+      "deactivated": "Account deactivated.",
+      "statusFailed": "Failed to update status.",
+      "createdAdmin": "Admin account created successfully.",
+      "createdDirector": "Director account created successfully.",
+      "createFailed": "Failed to create account."
+    },
+    "validation": {
+      "nameMin": "Minimum 3 characters",
+      "nameRequired": "Name is required",
+      "roleRequired": "Role is required"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitleDirector": "Your director account details, security and personal preferences.",
+    "personalInfo": "Personal Information",
+    "roleAdmin": "Platform Admin",
+    "roleDirector": "Director",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "lastLogin": "Last Login",
+    "notRecorded": "Not recorded",
+    "displayName": "Display Name",
+    "saving": "Saving…",
+    "saveProfile": "Save Profile",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordHint": "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number and a special character.",
+    "updating": "Updating…",
+    "updatePassword": "Update Password",
+    "validation": {
+      "nameMin": "Min 2 chars",
+      "nameRequired": "Name is required"
+    },
+    "toast": {
+      "loadFailed": "Failed to load profile.",
+      "updated": "Profile updated.",
+      "updateFailed": "Failed to update profile.",
+      "passwordUpdated": "Password updated successfully.",
+      "passwordFailed": "Failed to update password.",
+      "photoUpdated": "Photo updated.",
+      "photoFailed": "Failed to save photo.",
+      "prefsSaved": "Preferences saved.",
+      "prefsFailed": "Failed to save preferences."
+    }
+  },
+  "aiEntitlement": {
+    "title": "AI Entitlement",
+    "neverProvisioned": "This campus has never been provisioned. Saving will create its AI entitlement with the values below.",
+    "enabledLabel": "AI enabled for this campus",
+    "enabledDesc": "Master switch. Disabling it also opts the campus out of retention (D7).",
+    "plan": "Plan",
+    "planOption": "{plan} — {tokens} tokens/mo",
+    "presetTooltip": "Re-apply this plan's default budget and features (D10 preset)",
+    "preset": "Preset",
+    "llmProfile": "LLM profile",
+    "llmProfileHelper": "Named provider profile (e.g. free, groq-llama, anthropic-prod). Config-driven — no code change to switch.",
+    "budget": "Monthly token budget",
+    "budgetError": "Must be an integer ≥ 0.",
+    "budgetHelper": "0 = unlimited. Currently {tokens} tokens/month.",
+    "features": "Features",
+    "featuresHelper": "Overrides the plan preset. Each panel still degrades on AI_FEATURE_NOT_IN_PLAN at runtime.",
+    "feature": {
+      "chat": "Chat (RAG assistant)",
+      "search": "Semantic search",
+      "analytics": "AI analytics",
+      "advisors": "Business advisors"
+    },
+    "changeHistory": "Change history",
+    "noChanges": "No changes recorded yet.",
+    "unknownActor": "unknown",
+    "saving": "Saving…",
+    "save": "Save entitlement",
+    "loadError": "Failed to load AI entitlement.",
+    "saveError": "Failed to update AI entitlement.",
+    "fallbackCampus": "Campus"
+  },
+  "competition": {
+    "title": "Competitions",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "new": "New competition",
+    "campus": "Campus",
+    "allCampuses": "All campuses",
+    "statusActive": "Active",
+    "statusClosed": "Closed",
+    "empty": "No competitions",
+    "emptyHint": "Create one with the button above.",
+    "loadError": "Failed to load competitions.",
+    "prizeCount": "{count, plural, one {# prize} other {# prizes}}",
+    "closesOn": "Closes {date}",
+    "winnerCount": "{count, plural, one {# winner} other {# winners}}",
+    "action": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "closeNow": "Close now (freeze winners)",
+      "alreadyClosed": "Already closed"
+    },
+    "form": {
+      "editTitle": "Edit competition",
+      "newTitle": "New competition",
+      "period": "Period (YYYY-MM) *",
+      "periodPlaceholder": "2026-07",
+      "closingDate": "Closing date *",
+      "activeLabel": "Active (visible on the portal)",
+      "prizes": "PRIZES",
+      "winners": "WINNERS",
+      "rank": "Rank",
+      "value": "Value",
+      "valuePlaceholder": "-20% + certificate",
+      "remove": "Remove",
+      "descriptionFr": "Description (FR) *",
+      "descriptionEn": "Description (EN)",
+      "addPrize": "Add prize",
+      "periodError": "Period must be YYYY-MM.",
+      "closingRequired": "Closing date is required.",
+      "saveFailed": "Failed to save."
+    },
+    "confirm": {
+      "closeTitle": "Close competition",
+      "closeMessage": "Freeze winners for {period} from the period's quiz scores and deactivate it? This cannot be undone.",
+      "deleteTitle": "Delete competition",
+      "deleteMessage": "Competition {period} will be permanently removed. This cannot be undone."
+    },
+    "toast": {
+      "created": "Competition created.",
+      "updated": "Competition updated.",
+      "closed": "Competition closed.",
+      "deleted": "Competition deleted.",
+      "activated": "Activated.",
+      "deactivated": "Deactivated.",
+      "failed": "Failed.",
+      "actionFailed": "Action failed.",
+      "selectCampus": "Select a campus before creating."
+    }
+  },
+  "applications": {
+    "title": "Partner Applications",
+    "totalChip": "{count} total",
+    "empty": "No applications found.",
+    "loadError": "Failed to load applications.",
+    "reviewFailed": "Review failed.",
+    "note": "Note: {note}",
+    "approve": "Approve",
+    "reject": "Reject",
+    "type": {
+      "influencer": "Influencer",
+      "church_leader": "Church leader",
+      "student_leader": "Student leader",
+      "teacher": "Teacher",
+      "parent": "Parent",
+      "other": "Other"
+    },
+    "channel": {
+      "online": "Online",
+      "offline": "Offline",
+      "hybrid": "Hybrid"
+    },
+    "dialog": {
+      "approveTitle": "Approve application",
+      "rejectTitle": "Reject application",
+      "internalNote": "Internal note (optional)",
+      "notePlaceholder": "Reason for approval / rejection…",
+      "confirmApprove": "Confirm approval",
+      "confirmReject": "Confirm rejection"
+    }
+  },
+  "content": {
+    "campus": "Campus",
+    "allCampuses": "All campuses",
+    "statusPublished": "Published",
+    "statusDraft": "Draft",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "selectCampusFirst": "Select a campus before creating.",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "published": "Published.",
+    "unpublished": "Unpublished.",
+    "statusFailed": "Failed to update status.",
+    "actionFailed": "Action failed.",
+    "saveFailed": "Failed to save.",
+    "deleteMessage": "This item will be permanently removed. This cannot be undone.",
+    "emptyHint": "Create your first item with the button above.",
+    "required": "Required",
+    "french": "Français",
+    "english": "English",
+    "testimonial": {
+      "plural": "Testimonials",
+      "new": "New testimonial",
+      "edit": "Edit testimonial",
+      "deleteTitle": "Delete testimonial",
+      "search": "Search testimonials…",
+      "empty": "No testimonials",
+      "loadError": "Failed to load testimonials.",
+      "created": "Testimonial created.",
+      "updated": "Testimonial updated.",
+      "deleted": "Testimonial deleted."
+    },
+    "faq": {
+      "plural": "FAQ",
+      "new": "New FAQ entry",
+      "edit": "Edit FAQ entry",
+      "deleteTitle": "Delete FAQ entry",
+      "search": "Search FAQ…",
+      "empty": "No FAQ entries",
+      "loadError": "Failed to load FAQ entries.",
+      "created": "FAQ entry created.",
+      "updated": "FAQ entry updated.",
+      "deleted": "FAQ entry deleted."
+    },
+    "course": {
+      "plural": "Course previews",
+      "new": "New course preview",
+      "edit": "Edit course preview",
+      "deleteTitle": "Delete course preview",
+      "search": "Search course previews…",
+      "empty": "No course previews",
+      "loadError": "Failed to load course previews.",
+      "created": "Course preview created.",
+      "updated": "Course preview updated.",
+      "deleted": "Course preview deleted."
+    },
+    "field": {
+      "firstName": "First name",
+      "city": "City",
+      "graduationYear": "Graduation year",
+      "program": "Program",
+      "quote": "Quote",
+      "photoUrl": "Photo URL",
+      "employer": "Employer",
+      "order": "Display order",
+      "isPublished": "Published",
+      "question": "Question",
+      "answer": "Answer",
+      "category": "Category",
+      "title": "Title",
+      "content": "Content (excerpt)",
+      "videoUrl": "Video URL"
+    },
+    "faqCategory": {
+      "general": "General",
+      "inscription": "Registration",
+      "tarifs": "Pricing",
+      "formations": "Programs"
+    }
+  }
+}

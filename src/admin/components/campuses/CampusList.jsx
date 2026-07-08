@@ -24,6 +24,7 @@ import {
 
 import { getAllCampuses, archiveCampus, restoreCampus } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
 import AiEntitlementDialog from './AiEntitlementDialog';
 import {
@@ -37,7 +38,7 @@ const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 
 
 // ─── Mobile campus card ───────────────────────────────────────────────────────
 
-const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement }) => (
+const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement, t }) => (
   <Paper
     variant="outlined"
     sx={{ p: 2, borderRadius: 2, '&:hover': { boxShadow: 2 } }}
@@ -55,10 +56,10 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement }
             {c.campus_name}
           </Typography>
           <Chip
-            label={c.status}
+            label={t(`common:status.${c.status}`)}
             color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
             size="small"
-            sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+            sx={{ fontWeight: 600, flexShrink: 0 }}
           />
         </Stack>
         {c.campus_number && (
@@ -95,24 +96,24 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement }
     </Stack>
 
     <Stack direction="row" spacing={1} justifyContent="flex-end">
-      <Tooltip title="View campus portal">
+      <Tooltip title={t('campuses.action.viewPortal')}>
         <IconButton size="medium" onClick={() => onView(c._id)}>
           <Visibility fontSize="small" />
         </IconButton>
       </Tooltip>
-      <Tooltip title="AI entitlement">
+      <Tooltip title={t('campuses.action.aiEntitlement')}>
         <IconButton size="medium" color="primary" onClick={() => onAiEntitlement(c)}>
           <AutoAwesome fontSize="small" />
         </IconButton>
       </Tooltip>
       {c.status === 'archived' ? (
-        <Tooltip title="Restore campus">
+        <Tooltip title={t('campuses.action.restore')}>
           <IconButton size="medium" color="success" onClick={() => onRestore(c)}>
             <Unarchive fontSize="small" />
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Archive campus">
+        <Tooltip title={t('campuses.action.archive')}>
           <IconButton size="medium" color="error" onClick={() => onArchive(c)}>
             <Inventory2 fontSize="small" />
           </IconButton>
@@ -126,6 +127,7 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement }
 
 export default function CampusList() {
   const navigate  = useNavigate();
+  const { t }     = useAppTranslation(['admin', 'common']);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
   const [campuses,      setCampuses]      = useState([]);
@@ -146,11 +148,12 @@ export default function CampusList() {
       setCampuses(Array.isArray(res.data?.data) ? res.data.data : []);
       if (res.data?.pagination) setPagination((p) => ({ ...p, ...res.data.pagination }));
     } catch {
-      setError('Failed to load campuses.');
+      setError(t('campuses.loadError'));
       setCampuses([]);
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   useEffect(() => { fetch(); }, [fetch]);
@@ -175,14 +178,17 @@ export default function CampusList() {
     try {
       if (action === 'archive') {
         await archiveCampus(campus._id);
-        showSnackbar(`${campus.campus_name} archived.`, 'success');
+        showSnackbar(t('campuses.toast.archived', { name: campus.campus_name }), 'success');
       } else {
         await restoreCampus(campus._id);
-        showSnackbar(`${campus.campus_name} restored.`, 'success');
+        showSnackbar(t('campuses.toast.restored', { name: campus.campus_name }), 'success');
       }
       fetch();
     } catch (err) {
-      showSnackbar(err.response?.data?.message || `Failed to ${action} campus.`, 'error');
+      const fallback = action === 'archive'
+        ? t('campuses.toast.archiveFailed')
+        : t('campuses.toast.restoreFailed');
+      showSnackbar(err.response?.data?.message || fallback, 'error');
     } finally {
       setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
@@ -212,9 +218,9 @@ export default function CampusList() {
         sx={{ mb: 2.5 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={700}>Campuses</Typography>
+          <Typography variant="h5" fontWeight={700}>{t('campuses.title')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            All campuses registered on the platform.
+            {t('campuses.subtitleAdmin')}
           </Typography>
         </Box>
         <Button
@@ -227,7 +233,7 @@ export default function CampusList() {
             alignSelf: { xs: 'flex-end', sm: 'auto' },
           }}
         >
-          New Campus
+          {t('campuses.newCampus')}
         </Button>
       </Stack>
 
@@ -235,7 +241,7 @@ export default function CampusList() {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" sx={{ mb: 2 }}>
         <TextField
           size="small"
-          placeholder="Search name, manager, email…"
+          placeholder={t('campuses.searchPlaceholder')}
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
           sx={{ flex: 1, minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -250,12 +256,12 @@ export default function CampusList() {
           }}
         />
         <FormControl size="small" sx={SX_INPUT}>
-          <InputLabel>Status</InputLabel>
-          <Select label="Status" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
-            <MenuItem value="archived">Archived</MenuItem>
+          <InputLabel>{t('common:field.status')}</InputLabel>
+          <Select label={t('common:field.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
+            <MenuItem value="active">{t('common:status.active')}</MenuItem>
+            <MenuItem value="inactive">{t('common:status.inactive')}</MenuItem>
+            <MenuItem value="archived">{t('common:status.archived')}</MenuItem>
           </Select>
         </FormControl>
         <Button
@@ -263,7 +269,7 @@ export default function CampusList() {
           onClick={handleReset}
           sx={{ borderRadius: 2, textTransform: 'none', alignSelf: { xs: 'flex-start', sm: 'center' } }}
         >
-          Reset
+          {t('common:action.reset')}
         </Button>
       </Stack>
 
@@ -275,12 +281,12 @@ export default function CampusList() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700 }}>Campus</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Manager</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Created</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.campus')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.manager')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.location')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.created')}</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 700 }}>{t('common:table.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -295,7 +301,7 @@ export default function CampusList() {
               ) : campuses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 6, color: 'text.secondary' }}>
-                    No campuses found.
+                    {t('campuses.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -335,10 +341,10 @@ export default function CampusList() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize' }}
+                        sx={{ fontWeight: 600 }}
                       />
                     </TableCell>
                     <TableCell>
@@ -348,24 +354,24 @@ export default function CampusList() {
                     </TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                        <Tooltip title="View campus portal">
+                        <Tooltip title={t('campuses.action.viewPortal')}>
                           <IconButton size="small" onClick={() => navigate(`/campus/${c._id}`)}>
                             <Visibility fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="AI entitlement">
+                        <Tooltip title={t('campuses.action.aiEntitlement')}>
                           <IconButton size="small" color="primary" onClick={() => handleOpenAiEntitlement(c)}>
                             <AutoAwesome fontSize="small" />
                           </IconButton>
                         </Tooltip>
                         {c.status === 'archived' ? (
-                          <Tooltip title="Restore campus">
+                          <Tooltip title={t('campuses.action.restore')}>
                             <IconButton size="small" color="success" onClick={() => handleAskRestore(c)}>
                               <Unarchive fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         ) : (
-                          <Tooltip title="Archive campus">
+                          <Tooltip title={t('campuses.action.archive')}>
                             <IconButton size="small" color="error" onClick={() => handleAskArchive(c)}>
                               <Inventory2 fontSize="small" />
                             </IconButton>
@@ -391,7 +397,7 @@ export default function CampusList() {
           </Stack>
         ) : campuses.length === 0 ? (
           <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
-            <Typography color="text.secondary">No campuses found.</Typography>
+            <Typography color="text.secondary">{t('campuses.empty')}</Typography>
           </Paper>
         ) : (
           <Stack spacing={1.5}>
@@ -403,6 +409,7 @@ export default function CampusList() {
                 onArchive={handleAskArchive}
                 onRestore={handleAskRestore}
                 onAiEntitlement={handleOpenAiEntitlement}
+                t={t}
               />
             ))}
           </Stack>
@@ -415,7 +422,7 @@ export default function CampusList() {
         open={confirmDialog.open}
         action={confirmDialog.action}
         entityLabel={confirmDialog.campus?.campus_name ?? ''}
-        entityType="campus"
+        entityType={t('campuses.entityType')}
         busy={confirmDialog.busy}
         onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
         onConfirm={handleConfirmAction}
@@ -426,7 +433,7 @@ export default function CampusList() {
         open={aiDialog.open}
         campus={aiDialog.campus}
         onClose={() => setAiDialog({ open: false, campus: null })}
-        onSaved={(name) => showSnackbar(`AI entitlement updated for ${name}.`, 'success')}
+        onSaved={(name) => showSnackbar(t('campuses.toast.aiEntitlementUpdated', { name }), 'success')}
       />
 
       {/* ── Snackbar ────────────────────────────────────────────────────────────── */}

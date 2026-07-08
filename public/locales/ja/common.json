@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "マイプロフィール",
     "signOut": "サインアウト",
-    "settings": "設定"
+    "settings": "設定",
+    "aiAssistant": "AI アシスタント"
   },
   "notifPref": {
     "title": "通知設定",
@@ -164,5 +165,19 @@
     "whatsappDesc": "WhatsApp（モバイル）でメッセージを受け取る",
     "save": "設定を保存",
     "saving": "保存中…"
+  },
+  "a11y": {
+    "showPassword": "パスワードを表示",
+    "hidePassword": "パスワードを非表示"
+  },
+  "confirmDialog": {
+    "archiveTitle": "アーカイブ",
+    "restoreTitle": "復元",
+    "archiving": "アーカイブ中…",
+    "restoring": "復元中…",
+    "archiveBody": "<b>{label}</b>{suffix} を本当にアーカイブしますか？",
+    "restoreBody": "<b>{label}</b>{suffix} を本当に復元しますか？",
+    "archiveNote": "レコードは非表示になりますが、すべてのデータは保持されます。いつでも復元できます。",
+    "restoreNote": "レコードは再び有効になり、プラットフォーム全体で表示されます。"
   }
 }

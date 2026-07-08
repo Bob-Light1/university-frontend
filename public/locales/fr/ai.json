@@ -1,6 +1,16 @@
 {
   "title": "Assistant IA",
   "subtitle": "Chat, recherche, analyses et conseils — fondés sur les données de votre campus",
+  "workspace": {
+    "title": "Espace de travail IA",
+    "subtitle": "Sélectionnez un campus, puis discutez, cherchez, analysez et obtenez des propositions le concernant.",
+    "selectCampus": "Campus",
+    "noCampuses": "Aucun campus actif trouvé.",
+    "loadError": "Impossible de charger les campus.",
+    "emptyTitle": "Choisissez un campus pour commencer",
+    "emptyHint": "L'assistant travaille sur un seul campus à la fois : ses documents, ses chiffres, son forfait IA. Choisissez le campus sur lequel vous voulez travailler.",
+    "campusCount": "{count, plural, one {# campus actif} other {# campus actifs}}"
+  },
   "tabs": {
     "chat": "Assistant",
     "search": "Recherche",

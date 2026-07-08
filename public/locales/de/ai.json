@@ -1,6 +1,16 @@
 {
   "title": "KI-Assistent",
   "subtitle": "Chat, Suche, Analysen und Berater — basierend auf den Daten Ihres Campus",
+  "workspace": {
+    "title": "KI-Arbeitsbereich",
+    "subtitle": "Wählen Sie einen Campus und chatten, suchen, analysieren Sie dann und erhalten Sie Vorschläge dazu.",
+    "selectCampus": "Campus",
+    "noCampuses": "Kein aktiver Campus gefunden.",
+    "loadError": "Campus konnten nicht geladen werden.",
+    "emptyTitle": "Wählen Sie einen Campus, um zu beginnen",
+    "emptyHint": "Der Assistent arbeitet immer nur mit einem Campus: dessen Dokumenten, Kennzahlen und KI-Tarif. Wählen Sie den Campus, mit dem Sie arbeiten möchten.",
+    "campusCount": "{count, plural, one {# aktiver Campus} other {# aktive Campus}}"
+  },
   "tabs": {
     "chat": "Assistent",
     "search": "Suche",

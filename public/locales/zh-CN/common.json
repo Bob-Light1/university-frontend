@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "我的资料",
     "signOut": "退出登录",
-    "settings": "设置"
+    "settings": "设置",
+    "aiAssistant": "AI 助手"
   },
   "notifPref": {
     "title": "通知偏好设置",
@@ -164,5 +165,19 @@
     "whatsappDesc": "通过 WhatsApp 接收消息（手机）",
     "save": "保存偏好设置",
     "saving": "保存中…"
+  },
+  "a11y": {
+    "showPassword": "显示密码",
+    "hidePassword": "隐藏密码"
+  },
+  "confirmDialog": {
+    "archiveTitle": "归档",
+    "restoreTitle": "恢复",
+    "archiving": "正在归档…",
+    "restoring": "正在恢复…",
+    "archiveBody": "确定要归档 <b>{label}</b>{suffix} 吗？",
+    "restoreBody": "确定要恢复 <b>{label}</b>{suffix} 吗？",
+    "archiveNote": "该记录将被隐藏，但所有数据都会保留。您可以随时恢复它。",
+    "restoreNote": "该记录将重新激活并在整个平台上可见。"
   }
 }

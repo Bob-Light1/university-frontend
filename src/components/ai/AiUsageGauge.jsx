@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Bolt, WorkspacePremium } from '@mui/icons-material';
 
-import { getAiUsage } from '../../../services/aiService';
+import { getAiUsage } from '../../services/aiService';
 import { extractAiError, formatTokens, AI_ERROR_CODES } from './aiConstants';
 
 const PLAN_COLOR = { free: 'default', standard: 'info', premium: 'warning' };

@@ -1,0 +1,89 @@
+{
+  "title": "Ankündigungen",
+  "globalChip": "Global",
+  "count": "{count, plural, one {# Ankündigung} other {# Ankündigungen}}",
+  "new": "Neue Ankündigung",
+  "searchPlaceholder": "Ankündigungen suchen…",
+  "selectCampusFirst": "Wählen Sie einen Campus, bevor Sie eine Ankündigung erstellen.",
+  "allCampuses": "Alle Campus",
+  "campus": "Campus",
+  "loadError": "Ankündigungen konnten nicht geladen werden.",
+  "empty": {
+    "title": "Keine Ankündigungen",
+    "hint": "Erstellen Sie Ihre erste Ankündigung mit der Schaltfläche oben."
+  },
+  "filter": {
+    "allStatuses": "Alle Status",
+    "allTypes": "Alle Typen",
+    "pinnedOnly": "Nur angeheftete",
+    "showAll": "Alle anzeigen"
+  },
+  "type": {
+    "info": "Info",
+    "warning": "Warnung",
+    "urgent": "Dringend",
+    "event": "Ereignis"
+  },
+  "status": {
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "archived": "Archiviert"
+  },
+  "target": {
+    "ALL": "Alle",
+    "STUDENT": "Studierende",
+    "TEACHER": "Lehrkräfte",
+    "PARENT": "Eltern",
+    "PARTNER": "Partner",
+    "MENTOR": "Mentoren",
+    "STAFF": "Personal"
+  },
+  "action": {
+    "publish": "Veröffentlichen",
+    "archive": "Archivieren",
+    "pin": "Anheften",
+    "unpin": "Lösen",
+    "edit": "Bearbeiten",
+    "editDisabled": "Zum Bearbeiten zuerst archivieren",
+    "delete": "Löschen"
+  },
+  "row": {
+    "expires": "· Läuft ab am {date}",
+    "published": "· Veröffentlicht am {date}",
+    "archived": "· Archiviert am {date}"
+  },
+  "confirm": {
+    "publishTitle": "Ankündigung veröffentlichen",
+    "publishMessage": "„{title}“ wird für die Zielgruppe sichtbar.",
+    "archiveTitle": "Ankündigung archivieren",
+    "archiveMessage": "„{title}“ wird sofort für Nutzer ausgeblendet.",
+    "deleteTitle": "Ankündigung löschen",
+    "deleteMessage": "„{title}“ wird für alle Nutzer dauerhaft entfernt. Dies kann nicht rückgängig gemacht werden."
+  },
+  "toast": {
+    "created": "Ankündigung erstellt (Entwurf).",
+    "updated": "Ankündigung aktualisiert.",
+    "published": "Ankündigung veröffentlicht.",
+    "archived": "Ankündigung archiviert.",
+    "deleted": "Ankündigung gelöscht.",
+    "pinned": "Angeheftet.",
+    "unpinned": "Gelöst.",
+    "pinFailed": "Anheften konnte nicht umgeschaltet werden.",
+    "actionFailed": "Aktion fehlgeschlagen."
+  },
+  "form": {
+    "newTitle": "Neue Ankündigung",
+    "editTitle": "Ankündigung bearbeiten",
+    "title": "Titel",
+    "content": "Inhalt",
+    "type": "Typ",
+    "targetAudience": "Zielgruppe",
+    "expiresAt": "Läuft ab am (optional)",
+    "pin": "Diese Ankündigung anheften",
+    "autoUnpin": "Datum zum automatischen Lösen (optional)",
+    "createDraft": "Entwurf erstellen",
+    "saveChanges": "Änderungen speichern",
+    "saveFailed": "Speichern fehlgeschlagen.",
+    "counter": "{current}/{max}"
+  }
+}

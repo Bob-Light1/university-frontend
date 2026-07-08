@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "Mi perfil",
     "signOut": "Cerrar sesión",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "aiAssistant": "Asistente de IA"
   },
   "notifPref": {
     "title": "Preferencias de notificaciones",
@@ -164,5 +165,19 @@
     "whatsappDesc": "Recibir mensajes por WhatsApp (móvil)",
     "save": "Guardar preferencias",
     "saving": "Guardando…"
+  },
+  "a11y": {
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
+  },
+  "confirmDialog": {
+    "archiveTitle": "Archivar",
+    "restoreTitle": "Restaurar",
+    "archiving": "Archivando…",
+    "restoring": "Restaurando…",
+    "archiveBody": "¿Seguro que desea archivar <b>{label}</b>{suffix}?",
+    "restoreBody": "¿Seguro que desea restaurar <b>{label}</b>{suffix}?",
+    "archiveNote": "El registro se ocultará pero se conservarán todos los datos. Podrá restaurarlo en cualquier momento.",
+    "restoreNote": "El registro volverá a estar activo y visible en toda la plataforma."
   }
 }

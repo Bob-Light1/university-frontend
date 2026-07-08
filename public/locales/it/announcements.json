@@ -1,0 +1,89 @@
+{
+  "title": "Annunci",
+  "globalChip": "Globale",
+  "count": "{count, plural, one {# annuncio} other {# annunci}}",
+  "new": "Nuovo annuncio",
+  "searchPlaceholder": "Cerca annunci…",
+  "selectCampusFirst": "Seleziona un campus prima di creare un annuncio.",
+  "allCampuses": "Tutti i campus",
+  "campus": "Campus",
+  "loadError": "Impossibile caricare gli annunci.",
+  "empty": {
+    "title": "Nessun annuncio",
+    "hint": "Crea il tuo primo annuncio con il pulsante qui sopra."
+  },
+  "filter": {
+    "allStatuses": "Tutti gli stati",
+    "allTypes": "Tutti i tipi",
+    "pinnedOnly": "Solo fissati",
+    "showAll": "Mostra tutto"
+  },
+  "type": {
+    "info": "Info",
+    "warning": "Avviso",
+    "urgent": "Urgente",
+    "event": "Evento"
+  },
+  "status": {
+    "draft": "Bozza",
+    "published": "Pubblicato",
+    "archived": "Archiviato"
+  },
+  "target": {
+    "ALL": "Tutti",
+    "STUDENT": "Studenti",
+    "TEACHER": "Insegnanti",
+    "PARENT": "Genitori",
+    "PARTNER": "Partner",
+    "MENTOR": "Mentori",
+    "STAFF": "Personale"
+  },
+  "action": {
+    "publish": "Pubblica",
+    "archive": "Archivia",
+    "pin": "Fissa",
+    "unpin": "Rimuovi",
+    "edit": "Modifica",
+    "editDisabled": "Archivia prima per modificare",
+    "delete": "Elimina"
+  },
+  "row": {
+    "expires": "· Scade il {date}",
+    "published": "· Pubblicato il {date}",
+    "archived": "· Archiviato il {date}"
+  },
+  "confirm": {
+    "publishTitle": "Pubblica annuncio",
+    "publishMessage": "«{title}» diventerà visibile al pubblico di destinazione.",
+    "archiveTitle": "Archivia annuncio",
+    "archiveMessage": "«{title}» verrà nascosto immediatamente agli utenti.",
+    "deleteTitle": "Elimina annuncio",
+    "deleteMessage": "«{title}» verrà rimosso definitivamente per tutti gli utenti. Questa azione non può essere annullata."
+  },
+  "toast": {
+    "created": "Annuncio creato (bozza).",
+    "updated": "Annuncio aggiornato.",
+    "published": "Annuncio pubblicato.",
+    "archived": "Annuncio archiviato.",
+    "deleted": "Annuncio eliminato.",
+    "pinned": "Fissato.",
+    "unpinned": "Rimosso.",
+    "pinFailed": "Impossibile modificare il fissaggio.",
+    "actionFailed": "Azione non riuscita."
+  },
+  "form": {
+    "newTitle": "Nuovo annuncio",
+    "editTitle": "Modifica annuncio",
+    "title": "Titolo",
+    "content": "Contenuto",
+    "type": "Tipo",
+    "targetAudience": "Pubblico di destinazione",
+    "expiresAt": "Scade il (facoltativo)",
+    "pin": "Fissa questo annuncio",
+    "autoUnpin": "Data di rimozione automatica (facoltativo)",
+    "createDraft": "Crea bozza",
+    "saveChanges": "Salva modifiche",
+    "saveFailed": "Salvataggio non riuscito.",
+    "counter": "{current}/{max}"
+  }
+}

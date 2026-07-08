@@ -1,0 +1,89 @@
+{
+  "title": "お知らせ",
+  "globalChip": "グローバル",
+  "count": "{count, plural, other {# 件のお知らせ}}",
+  "new": "新規お知らせ",
+  "searchPlaceholder": "お知らせを検索…",
+  "selectCampusFirst": "お知らせを作成する前にキャンパスを選択してください。",
+  "allCampuses": "すべてのキャンパス",
+  "campus": "キャンパス",
+  "loadError": "お知らせの読み込みに失敗しました。",
+  "empty": {
+    "title": "お知らせはありません",
+    "hint": "上のボタンで最初のお知らせを作成してください。"
+  },
+  "filter": {
+    "allStatuses": "すべてのステータス",
+    "allTypes": "すべてのタイプ",
+    "pinnedOnly": "固定のみ",
+    "showAll": "すべて表示"
+  },
+  "type": {
+    "info": "情報",
+    "warning": "警告",
+    "urgent": "緊急",
+    "event": "イベント"
+  },
+  "status": {
+    "draft": "下書き",
+    "published": "公開済み",
+    "archived": "アーカイブ済み"
+  },
+  "target": {
+    "ALL": "全員",
+    "STUDENT": "学生",
+    "TEACHER": "教員",
+    "PARENT": "保護者",
+    "PARTNER": "パートナー",
+    "MENTOR": "メンター",
+    "STAFF": "スタッフ"
+  },
+  "action": {
+    "publish": "公開",
+    "archive": "アーカイブ",
+    "pin": "固定",
+    "unpin": "固定解除",
+    "edit": "編集",
+    "editDisabled": "編集するには先にアーカイブしてください",
+    "delete": "削除"
+  },
+  "row": {
+    "expires": "· 期限 {date}",
+    "published": "· 公開日 {date}",
+    "archived": "· アーカイブ日 {date}"
+  },
+  "confirm": {
+    "publishTitle": "お知らせを公開",
+    "publishMessage": "「{title}」が対象の閲覧者に表示されます。",
+    "archiveTitle": "お知らせをアーカイブ",
+    "archiveMessage": "「{title}」はすぐにユーザーから非表示になります。",
+    "deleteTitle": "お知らせを削除",
+    "deleteMessage": "「{title}」はすべてのユーザーに対して完全に削除されます。この操作は取り消せません。"
+  },
+  "toast": {
+    "created": "お知らせを作成しました（下書き）。",
+    "updated": "お知らせを更新しました。",
+    "published": "お知らせを公開しました。",
+    "archived": "お知らせをアーカイブしました。",
+    "deleted": "お知らせを削除しました。",
+    "pinned": "固定しました。",
+    "unpinned": "固定を解除しました。",
+    "pinFailed": "固定の切り替えに失敗しました。",
+    "actionFailed": "操作に失敗しました。"
+  },
+  "form": {
+    "newTitle": "新規お知らせ",
+    "editTitle": "お知らせを編集",
+    "title": "タイトル",
+    "content": "内容",
+    "type": "タイプ",
+    "targetAudience": "対象の閲覧者",
+    "expiresAt": "期限（任意）",
+    "pin": "このお知らせを固定",
+    "autoUnpin": "自動固定解除日（任意）",
+    "createDraft": "下書きを作成",
+    "saveChanges": "変更を保存",
+    "saveFailed": "保存に失敗しました。",
+    "counter": "{current}/{max}"
+  }
+}

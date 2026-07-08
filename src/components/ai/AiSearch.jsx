@@ -6,6 +6,10 @@
  * current user may open. Ranked by relevance; one result per source.
  *
  * Read-only, no ERP write. Feature/entitlement failures render a full notice.
+ *
+ * Props:
+ *  campusId  string|undefined — campus targeted by a GLOBAL role (ADMIN /
+ *    DIRECTOR). Scoped roles omit it (campus derived from the JWT).
  */
 
 import { useState } from 'react';
@@ -17,11 +21,11 @@ import {
 import { Search, TravelExplore } from '@mui/icons-material';
 
 import CitationList from './CitationList';
-import { searchAi } from '../../../services/aiService';
+import { searchAi } from '../../services/aiService';
 import { extractAiError, errorKey, isUnavailableError } from './aiConstants';
 import AiUnavailable from './AiUnavailable';
 
-export default function AiSearch() {
+export default function AiSearch({ campusId }) {
   const { t } = useTranslation('ai');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(null);   // null = never searched
@@ -36,7 +40,7 @@ export default function AiSearch() {
     setLoading(true);
     setError(null);
     setLastQuery(q);
-    searchAi({ query: q, types: ['document'], limit: 10 })
+    searchAi({ query: q, types: ['document'], limit: 10 }, campusId)
       .then((res) => setResults(res.data?.data?.results ?? []))
       .catch((err) => {
         const norm = extractAiError(err);

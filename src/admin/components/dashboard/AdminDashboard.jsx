@@ -22,6 +22,7 @@ import {
 
 import { getAllCampuses, getAdminMe } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   ADMIN_PRIMARY, ADMIN_GRADIENT, CAMPUS_STATUS_COLOR, adminPrimary,
 } from '../../../theme/adminTokens';
@@ -55,6 +56,7 @@ const KpiCard = ({ label, value, icon, color, loading }) => (
 export default function AdminDashboard() {
   const navigate  = useNavigate();
   const { user }  = useAuth();
+  const { t }     = useAppTranslation(['admin', 'common']);
   const theme     = useTheme();
   const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -74,12 +76,13 @@ export default function AdminDashboard() {
         setCampuses(Array.isArray(campusRes.data?.data) ? campusRes.data.data : []);
         setProfile(meRes.data?.data ?? meRes.data);
       } catch {
-        setError('Failed to load dashboard data.');
+        setError(t('dashboard.loadError'));
       } finally {
         setLoading(false);
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const total    = campuses.length;
@@ -87,8 +90,10 @@ export default function AdminDashboard() {
   const inactive = campuses.filter((c) => c.status === 'inactive').length;
   const recent   = [...campuses].slice(0, 5);
 
-  const adminName = profile?.admin_name ?? user?.admin_name ?? 'Admin';
   const role      = profile?.role ?? user?.role ?? 'ADMIN';
+  const isDirector = role === 'DIRECTOR';
+  const adminName = profile?.admin_name ?? user?.admin_name
+    ?? (isDirector ? t('dashboard.fallbackDirector') : t('dashboard.fallbackAdmin'));
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1100, mx: 'auto' }}>
@@ -111,10 +116,10 @@ export default function AdminDashboard() {
         </Avatar>
         <Box>
           <Typography variant="h5" fontWeight={700}>
-            Welcome back, {adminName}
+            {t('dashboard.welcome', { name: adminName })}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {role === 'DIRECTOR' ? 'Director' : 'Platform Administrator'} — wewigo ERP
+            {isDirector ? t('dashboard.subtitleDirector') : t('dashboard.subtitleAdmin')}
           </Typography>
         </Box>
       </Stack>
@@ -123,10 +128,10 @@ export default function AdminDashboard() {
 
       {/* ── KPI cards ─────────────────────────────────────────────────────────── */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 3 }}>
-        <KpiCard label="Total Campuses"  value={total}            icon={<Business />}    color={adminPrimary(theme.palette.mode)} loading={loading} />
-        <KpiCard label="Active"          value={active}           icon={<CheckCircle />} color={theme.palette.success.dark}       loading={loading} />
-        <KpiCard label="Inactive"        value={inactive}         icon={<Block />}       color={theme.palette.warning.main}       loading={loading} />
-        <KpiCard label="Platform Growth" value={`${total} sites`} icon={<TrendingUp />}  color={theme.palette.secondary.dark}     loading={loading} />
+        <KpiCard label={t('dashboard.kpi.totalCampuses')}  value={total}                          icon={<Business />}    color={adminPrimary(theme.palette.mode)} loading={loading} />
+        <KpiCard label={t('dashboard.kpi.active')}         value={active}                         icon={<CheckCircle />} color={theme.palette.success.dark}       loading={loading} />
+        <KpiCard label={t('dashboard.kpi.inactive')}       value={inactive}                       icon={<Block />}       color={theme.palette.warning.main}       loading={loading} />
+        <KpiCard label={t('dashboard.kpi.platformGrowth')} value={t('dashboard.kpi.sites', { count: total })} icon={<TrendingUp />} color={theme.palette.secondary.dark} loading={loading} />
       </Stack>
 
       {/* ── Quick actions ─────────────────────────────────────────────────────── */}
@@ -142,7 +147,7 @@ export default function AdminDashboard() {
           onClick={() => navigate('/admin/new-campus')}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2, background: ADMIN_GRADIENT }}
         >
-          New Campus
+          {t('dashboard.quickAction.newCampus')}
         </Button>
         <Button
           variant="outlined"
@@ -150,7 +155,7 @@ export default function AdminDashboard() {
           onClick={() => navigate('/admin/campuses')}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Manage Campuses
+          {t('dashboard.quickAction.manageCampuses')}
         </Button>
         <Button
           variant="outlined"
@@ -158,7 +163,7 @@ export default function AdminDashboard() {
           onClick={() => navigate('/admin/accounts')}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Admin Accounts
+          {t('dashboard.quickAction.adminAccounts')}
         </Button>
       </Stack>
 
@@ -167,14 +172,14 @@ export default function AdminDashboard() {
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2, pb: 1.5 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Schedule sx={{ color: adminPrimary(theme.palette.mode), fontSize: 20 }} />
-            <Typography variant="subtitle1" fontWeight={700}>Recent Campuses</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>{t('dashboard.recent.title')}</Typography>
           </Stack>
           <Button
             size="small"
             onClick={() => navigate('/admin/campuses')}
             sx={{ textTransform: 'none', color: adminPrimary(theme.palette.mode) }}
           >
-            View all
+            {t('dashboard.recent.viewAll')}
           </Button>
         </Stack>
         <Divider />
@@ -184,11 +189,11 @@ export default function AdminDashboard() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700 }}>Campus</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Manager</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Created</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.campus')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.manager')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.location')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.created')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -203,7 +208,7 @@ export default function AdminDashboard() {
               ) : recent.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                    No campuses yet. Create the first one.
+                    {t('dashboard.recent.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -228,10 +233,10 @@ export default function AdminDashboard() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize' }}
+                        sx={{ fontWeight: 600 }}
                       />
                     </TableCell>
                     <TableCell>
@@ -254,7 +259,7 @@ export default function AdminDashboard() {
             </Stack>
           ) : recent.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
-              No campuses yet.
+              {t('dashboard.recent.emptyShort')}
             </Typography>
           ) : (
             <Stack spacing={1}>
@@ -281,10 +286,10 @@ export default function AdminDashboard() {
                         {c.campus_name}
                       </Typography>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+                        sx={{ fontWeight: 600, flexShrink: 0 }}
                       />
                     </Stack>
                     <Typography variant="caption" color="text.secondary" noWrap>

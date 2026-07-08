@@ -1,9 +1,8 @@
 /**
  * @file validationRules.js
- * @description Source unique de vérité pour toutes les règles de validation utilisateur.
+ * @description Single source of truth for every user-facing validation rule.
  *
- * Exporte des Yup field builders réutilisables et des constantes REGEX.
- * Utilisation dans les schemas Yup:
+ * Exports reusable Yup field builders and REGEX constants. Usage in Yup schemas:
  *
  *   import { yupEmail, yupPassword, yupPhone, yupName } from '../utils/validationRules';
  *
@@ -14,21 +13,34 @@
  *     firstName: yupName({ label: 'First name' }),
  *   });
  *
- * Politique password uniforme (tous types d'utilisateurs) :
- *   ≥8 chars · ≥1 minuscule · ≥1 majuscule · ≥1 chiffre · ≥1 symbole · pas d'espace
+ * Uniform password policy (all user types):
+ *   >=8 chars, >=1 lowercase, >=1 uppercase, >=1 digit, >=1 symbol, no spaces
+ *
+ * i18n: every message is a lazy thunk resolved by Yup at validation time, not at
+ * module evaluation time. Schemas built at module scope (the common case) would
+ * otherwise freeze their messages to whatever language was active on first import
+ * and never follow a language switch. Keys live in the `errors` namespace, which
+ * i18n.js loads eagerly, so no namespace has to be awaited here.
  */
 
 import * as Yup from 'yup';
+import i18n from '../i18n/i18n';
+
+/**
+ * @param {string} key   Key under `errors:validation.`
+ * @param {Object} [vars] ICU interpolation values
+ */
+const tErr = (key, vars) => i18n.t(`errors:validation.${key}`, vars);
 
 // ── Regex constants ────────────────────────────────────────────────────────────
 
 export const REGEX = {
   EMAIL:     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
 
-  // E.164-like: + suivi de 7–19 chiffres (format produit par <PhoneInput />)
+  // E.164-like: "+" followed by 7–19 digits (the format <PhoneInput /> produces)
   PHONE:     /^\+[0-9]{7,19}$/,
 
-  // Noms (accents supportés, espaces, tirets, apostrophes)
+  // Names (accents, spaces, hyphens, apostrophes)
   NAME:      /^[a-zA-ZÀ-ÿ\s'-]+$/,
 
   // Usernames
@@ -52,57 +64,59 @@ export const yupEmail = (opts = {}) => {
   let s = Yup.string()
     .trim()
     .lowercase()
-    .max(maxLength, `Email must not exceed ${maxLength} characters`)
-    .matches(REGEX.EMAIL, 'Please enter a valid email address');
-  return required ? s.required('Email is required') : s.nullable().notRequired();
+    .max(maxLength, () => tErr('emailMax', { max: maxLength }))
+    .matches(REGEX.EMAIL, () => tErr('email'));
+  return required ? s.required(() => tErr('emailRequired')) : s.nullable().notRequired();
 };
 
 // ── Password ───────────────────────────────────────────────────────────────────
 
 /**
- * Champ password complet — formulaires de création et changement de password.
+ * Full password field — creation and change-password forms.
  * @param {{ required?: boolean, isEdit?: boolean }} opts
- *   isEdit: true → complètement optionnel (vide = ne pas changer)
+ *   isEdit: true → fully optional (empty = leave unchanged)
  */
 export const yupPassword = (opts = {}) => {
   const { required = true, isEdit = false } = opts;
   if (isEdit) return Yup.string().notRequired();
 
   let s = Yup.string()
-    .min(8,   'Password must be at least 8 characters')
-    .max(128, 'Password must not exceed 128 characters')
-    .matches(REGEX.PW_LOWER,  'Must contain at least one lowercase letter')
-    .matches(REGEX.PW_UPPER,  'Must contain at least one uppercase letter')
-    .matches(REGEX.PW_DIGIT,  'Must contain at least one number')
-    .matches(REGEX.PW_SYMBOL, 'Must contain at least one special character (e.g. !@#$%)')
-    .test('no-spaces', 'Password must not contain spaces', (v) => !v || !/\s/.test(v));
+    .min(8,   () => tErr('passwordMin', { min: 8 }))
+    .max(128, () => tErr('passwordMax', { max: 128 }))
+    .matches(REGEX.PW_LOWER,  () => tErr('passwordLower'))
+    .matches(REGEX.PW_UPPER,  () => tErr('passwordUpper'))
+    .matches(REGEX.PW_DIGIT,  () => tErr('passwordDigit'))
+    .matches(REGEX.PW_SYMBOL, () => tErr('passwordSymbol'))
+    .test('no-spaces', () => tErr('passwordNoSpaces'), (v) => !v || !/\s/.test(v));
 
-  return required ? s.required('Password is required') : s.notRequired();
+  return required ? s.required(() => tErr('passwordRequired')) : s.notRequired();
 };
 
 /**
- * Champ password pour la connexion — présence uniquement, pas de règles de format.
- * Appliquer des règles de format au login bloquerait les anciens comptes.
+ * Login password field — presence only, no format rules.
+ * Enforcing the current policy at login would lock out legacy accounts.
  */
 export const yupPasswordLogin = () =>
-  Yup.string().min(1, 'Password is required').required('Password is required');
+  Yup.string()
+    .min(1, () => tErr('passwordRequired'))
+    .required(() => tErr('passwordRequired'));
 
 /**
- * Confirmation de password.
- * @param {string} refField — nom du champ password à vérifier (défaut: 'password')
+ * Password confirmation.
+ * @param {string} refField — name of the password field to match (default: 'password')
  */
 export const yupConfirmPassword = (refField = 'password') =>
   Yup.string()
-    .oneOf([Yup.ref(refField)], 'Passwords do not match')
-    .required('Please confirm your password');
+    .oneOf([Yup.ref(refField)], () => tErr('passwordMatch'))
+    .required(() => tErr('passwordConfirmRequired'));
 
-// ── Téléphone ──────────────────────────────────────────────────────────────────
+// ── Phone ──────────────────────────────────────────────────────────────────────
 
 /**
- * Champ téléphone — valide le format E.164-like produit par <PhoneInput />.
- * Valeur stockée : "+237612345678" (pas d'espaces/parenthèses).
+ * Phone field — validates the E.164-like format produced by <PhoneInput />.
+ * Stored value: "+237612345678" (no spaces or parentheses).
  *
- * Dans les formulaires, utiliser le composant <PhoneInput /> avec :
+ * In forms, use the <PhoneInput /> component with:
  *   onChange={(v) => formik.setFieldValue('phone', v)}
  *
  * @param {boolean} required
@@ -110,26 +124,31 @@ export const yupConfirmPassword = (refField = 'password') =>
 export const yupPhone = (required = false) => {
   let s = Yup.string()
     .trim()
-    .matches(REGEX.PHONE, 'Please enter a valid phone number (e.g. +237 612 345 678)');
-  return required ? s.required('Phone number is required') : s.nullable().notRequired();
+    .matches(REGEX.PHONE, () => tErr('phoneFormat'));
+  return required ? s.required(() => tErr('phoneRequired')) : s.nullable().notRequired();
 };
 
-// ── Noms ───────────────────────────────────────────────────────────────────────
+// ── Names ──────────────────────────────────────────────────────────────────────
 
 /**
  * @param {{ min?: number, max?: number, label?: string, required?: boolean, validateChars?: boolean }} opts
- *   validateChars: false → n'applique pas le regex de caractères (pour des noms libres)
+ *   label: already-translated field name interpolated into the message.
+ *   validateChars: false → skip the character regex (for free-form names)
  */
 export const yupName = (opts = {}) => {
-  const { min = 2, max = 50, label = 'Name', required = true, validateChars = true } = opts;
+  const { min = 2, max = 50, label, required = true, validateChars = true } = opts;
+  const fieldLabel = () => label ?? i18n.t('common:field.name');
+
   let s = Yup.string()
     .trim()
-    .min(min, `${label} must be at least ${min} characters`)
-    .max(max, `${label} must not exceed ${max} characters`);
+    .min(min, () => tErr('nameMin', { label: fieldLabel(), min }))
+    .max(max, () => tErr('nameMax', { label: fieldLabel(), max }));
   if (validateChars) {
-    s = s.matches(REGEX.NAME, `${label} can only contain letters, spaces, hyphens and apostrophes`);
+    s = s.matches(REGEX.NAME, () => tErr('nameChars', { label: fieldLabel() }));
   }
-  return required ? s.required(`${label} is required`) : s.nullable().notRequired();
+  return required
+    ? s.required(() => tErr('nameRequired', { label: fieldLabel() }))
+    : s.nullable().notRequired();
 };
 
 // ── Username ───────────────────────────────────────────────────────────────────
@@ -141,13 +160,13 @@ export const yupUsername = (required = true) => {
   let s = Yup.string()
     .trim()
     .lowercase()
-    .min(3,  'Username must be at least 3 characters')
-    .max(30, 'Username must not exceed 30 characters')
-    .matches(REGEX.USERNAME, 'Only lowercase letters, numbers, dots, hyphens and underscores');
-  return required ? s.required('Username is required') : s.nullable().notRequired();
+    .min(3,  () => tErr('usernameMin', { min: 3 }))
+    .max(30, () => tErr('usernameMax', { max: 30 }))
+    .matches(REGEX.USERNAME, () => tErr('usernameFormat'));
+  return required ? s.required(() => tErr('usernameRequired')) : s.nullable().notRequired();
 };
 
-// ── Date de naissance ──────────────────────────────────────────────────────────
+// ── Date of birth ──────────────────────────────────────────────────────────────
 
 /**
  * @param {{ minAge?: number, maxAge?: number, required?: boolean }} opts
@@ -156,11 +175,11 @@ export const yupDateOfBirth = (opts = {}) => {
   const { minAge, maxAge, required = false } = opts;
 
   let s = Yup.date()
-    .typeError('Please enter a valid date')
-    .max(new Date(), 'Date of birth cannot be in the future');
+    .typeError(() => tErr('dobInvalid'))
+    .max(new Date(), () => tErr('dobFuture'));
 
   if (minAge != null) {
-    s = s.test('min-age', `Must be at least ${minAge} years old`, (value) => {
+    s = s.test('min-age', () => tErr('dobMinAge', { minAge }), (value) => {
       if (!value) return true;
       const cutoff = new Date();
       cutoff.setFullYear(cutoff.getFullYear() - minAge);
@@ -169,7 +188,7 @@ export const yupDateOfBirth = (opts = {}) => {
   }
 
   if (maxAge != null) {
-    s = s.test('max-age', `Age cannot exceed ${maxAge} years`, (value) => {
+    s = s.test('max-age', () => tErr('dobMaxAge', { maxAge }), (value) => {
       if (!value) return true;
       const cutoff = new Date();
       cutoff.setFullYear(cutoff.getFullYear() - maxAge);
@@ -177,5 +196,5 @@ export const yupDateOfBirth = (opts = {}) => {
     });
   }
 
-  return required ? s.required('Date of birth is required') : s.nullable().notRequired();
+  return required ? s.required(() => tErr('dobRequired')) : s.nullable().notRequired();
 };

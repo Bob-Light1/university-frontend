@@ -8,6 +8,11 @@
  *
  * Available to staffing roles; ANALYTICS feature gating is enforced server-side
  * (AI_FEATURE_NOT_IN_PLAN → full notice).
+ *
+ * Props:
+ *  campusId  string|undefined — campus targeted by a GLOBAL role (ADMIN /
+ *    DIRECTOR). Aggregates are campus-scoped by construction, so a global role
+ *    without a campus target gets a 400 from the internal aggregate API.
  */
 
 import { useState } from 'react';
@@ -23,7 +28,7 @@ import {
 import AiParamsBar from './AiParamsBar';
 import AiFigures from './AiFigures';
 import AiUnavailable from './AiUnavailable';
-import { runAiAnalytics } from '../../../services/aiService';
+import { runAiAnalytics } from '../../services/aiService';
 import {
   AI_ANALYTICS_REPORTS, ANALYTICS_REPORT_ORDER,
   extractAiError, errorKey, isUnavailableError,
@@ -36,7 +41,7 @@ const REPORTS = {
   [AI_ANALYTICS_REPORTS.DROPOUT_RISK]: { params: ['academicYear', 'semester'], icon: TrendingDown },
 };
 
-export default function AiAnalytics() {
+export default function AiAnalytics({ campusId }) {
   const { t } = useTranslation('ai');
   const [report, setReport] = useState(ANALYTICS_REPORT_ORDER[0]);
   const [params, setParams] = useState({});
@@ -62,7 +67,7 @@ export default function AiAnalytics() {
   const run = () => {
     setLoading(true);
     setError(null);
-    runAiAnalytics(report, params)
+    runAiAnalytics(report, params, campusId)
       .then((res) => setResult(res.data?.data ?? null))
       .catch((err) => {
         const norm = extractAiError(err);

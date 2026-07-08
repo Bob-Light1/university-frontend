@@ -66,7 +66,7 @@ const ScheduleGaet = lazy(() =>
   import('../campus/components/schedule/ScheduleGaet')
 );
 const AiAssistant = lazy(() =>
-  import('../campus/components/ai/AiAssistant')
+  import('../components/ai/AiAssistant')
 );
 
 export const campusRoutes = (

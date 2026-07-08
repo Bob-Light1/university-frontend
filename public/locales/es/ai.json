@@ -1,6 +1,16 @@
 {
   "title": "Asistente de IA",
   "subtitle": "Chat, búsqueda, analíticas y asesores — basados en los datos de tu campus",
+  "workspace": {
+    "title": "Espacio de trabajo IA",
+    "subtitle": "Seleccione un campus y luego converse, busque, analice y obtenga propuestas sobre él.",
+    "selectCampus": "Campus",
+    "noCampuses": "No se encontró ningún campus activo.",
+    "loadError": "No se pudieron cargar los campus.",
+    "emptyTitle": "Elija un campus para empezar",
+    "emptyHint": "El asistente trabaja sobre un solo campus a la vez: sus documentos, sus cifras, su plan de IA. Elija el campus sobre el que desea trabajar.",
+    "campusCount": "{count, plural, one {# campus activo} other {# campus activos}}"
+  },
   "tabs": {
     "chat": "Asistente",
     "search": "Búsqueda",

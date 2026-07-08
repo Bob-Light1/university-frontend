@@ -25,26 +25,30 @@ import {
 import { ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, adminPrimary } from '../../../theme/adminTokens';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import i18n from '../../../i18n/i18n';
 import { yupEmail, yupPassword, yupConfirmPassword } from '../../../utils/validationRules';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 import { createAdminAccount, listAdminAccounts, updateAdminStatus } from '../../../services/admin_service';
 import { useAuth } from '../../../hooks/useAuth';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+// `labelKey` points into `common:status.*`; the color/icon are visual metadata.
 
 const STATUS_CONFIG = {
-  active:    { label: 'Active',    color: 'success', icon: <CheckCircle fontSize="small" /> },
-  inactive:  { label: 'Inactive',  color: 'default', icon: <PauseCircle fontSize="small" /> },
-  suspended: { label: 'Suspended', color: 'error',   icon: <Block       fontSize="small" /> },
+  active:    { labelKey: 'common:status.active',    color: 'success', icon: <CheckCircle fontSize="small" /> },
+  inactive:  { labelKey: 'common:status.inactive',  color: 'default', icon: <PauseCircle fontSize="small" /> },
+  suspended: { labelKey: 'common:status.suspended', color: 'error',   icon: <Block       fontSize="small" /> },
 };
 
 // ─── Validation ───────────────────────────────────────────────────────────────
+// Lazy thunks so a language switch is reflected on the next validation pass.
 
 const schema = Yup.object({
-  admin_name:      Yup.string().trim().min(3, 'Minimum 3 characters').required('Name is required'),
+  admin_name:      Yup.string().trim().min(3, () => i18n.t('admin:accounts.validation.nameMin')).required(() => i18n.t('admin:accounts.validation.nameRequired')),
   email:           yupEmail(),
-  role:            Yup.string().oneOf(['ADMIN', 'DIRECTOR']).required('Role is required'),
+  role:            Yup.string().oneOf(['ADMIN', 'DIRECTOR']).required(() => i18n.t('admin:accounts.validation.roleRequired')),
   password:        yupPassword(),
   confirmPassword: yupConfirmPassword('password'),
 });
@@ -53,6 +57,7 @@ const schema = Yup.object({
 
 export default function AdminAccounts() {
   const { user }   = useAuth();
+  const { t }      = useAppTranslation(['admin', 'common']);
   const [showPassword, setShowPassword] = useState(false);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
@@ -68,11 +73,11 @@ export default function AdminAccounts() {
       const res = await listAdminAccounts({ limit: 100 });
       setAccounts(res.data?.data ?? []);
     } catch {
-      showSnackbar('Failed to load accounts.', 'error');
+      showSnackbar(t('accounts.toast.loadFailed'), 'error');
     } finally {
       setAccountsLoad(false);
     }
-  }, [showSnackbar]);
+  }, [showSnackbar, t]);
 
   useEffect(() => { fetchAccounts(); }, [fetchAccounts]);
 
@@ -85,9 +90,10 @@ export default function AdminAccounts() {
       setAccounts((prev) =>
         prev.map((a) => (a._id === id ? { ...a, status: newStatus } : a))
       );
-      showSnackbar(`Account ${newStatus === 'active' ? 'activated' : newStatus === 'suspended' ? 'suspended' : 'deactivated'}.`, 'success');
+      const toastKey = newStatus === 'active' ? 'activated' : newStatus === 'suspended' ? 'suspended' : 'deactivated';
+      showSnackbar(t(`accounts.toast.${toastKey}`), 'success');
     } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to update status.', 'error');
+      showSnackbar(err.response?.data?.message || t('accounts.toast.statusFailed'), 'error');
     } finally {
       setStatusLoading(null);
     }
@@ -113,13 +119,13 @@ export default function AdminAccounts() {
           password:   values.password,
         });
         showSnackbar(
-          `${values.role === 'DIRECTOR' ? 'Director' : 'Admin'} account created successfully.`,
+          values.role === 'DIRECTOR' ? t('accounts.toast.createdDirector') : t('accounts.toast.createdAdmin'),
           'success',
         );
         resetForm();
         fetchAccounts();
       } catch (err) {
-        showSnackbar(err.response?.data?.message || 'Failed to create account.', 'error');
+        showSnackbar(err.response?.data?.message || t('accounts.toast.createFailed'), 'error');
       } finally {
         setSubmitting(false);
       }
@@ -154,7 +160,7 @@ export default function AdminAccounts() {
       <IconButton
         onClick={() => setShowPassword((p) => !p)}
         edge="end" disabled={busy}
-        aria-label={showPassword ? 'Hide password' : 'Show password'}
+        aria-label={showPassword ? t('common:a11y.hidePassword') : t('common:a11y.showPassword')}
       >
         {showPassword ? <VisibilityOff /> : <Visibility />}
       </IconButton>
@@ -166,27 +172,27 @@ export default function AdminAccounts() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 900, mx: 'auto' }}>
 
-      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>Admin Accounts</Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 0.5 }}>{t('accounts.title')}</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Create and manage platform-level Admin and Director accounts.
+        {t('accounts.subtitle')}
       </Typography>
 
       <Stack spacing={3}>
 
         {/* ── Role info banner ─────────────────────────────────────────────── */}
         <Alert severity="info" sx={{ borderRadius: 2 }}>
-          <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Role differences</Typography>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>{t('accounts.roleInfo.title')}</Typography>
           <Stack spacing={1}>
             <Stack direction="row" spacing={1} alignItems="flex-start">
               <Chip label="ADMIN" size="small" color="primary" variant="outlined" sx={{ fontWeight: 700, flexShrink: 0 }} />
               <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                Full platform access — can create campuses and other admin accounts.
+                {t('accounts.roleInfo.admin')}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="flex-start">
               <Chip label="DIRECTOR" size="small" color="warning" variant="outlined" sx={{ fontWeight: 700, flexShrink: 0 }} />
               <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                Campus oversight and reporting — no account creation rights.
+                {t('accounts.roleInfo.director')}
               </Typography>
             </Stack>
           </Stack>
@@ -195,31 +201,31 @@ export default function AdminAccounts() {
         {/* ── Create form ──────────────────────────────────────────────────── */}
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-            <PersonAdd sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
-            <Typography variant="subtitle1" fontWeight={700}>Create New Account</Typography>
+            <PersonAdd sx={(th) => ({ color: adminPrimary(th.palette.mode) })} />
+            <Typography variant="subtitle1" fontWeight={700}>{t('accounts.create.title')}</Typography>
           </Stack>
           <Divider sx={{ mb: 2.5 }} />
 
           <Box component="form" onSubmit={formik.handleSubmit} noValidate>
             <Stack spacing={2}>
 
-              {field('admin_name', 'Full Name')}
-              {field('email', 'Email Address', 'email')}
+              {field('admin_name', t('accounts.create.fullName'))}
+              {field('email', t('accounts.create.email'), 'email')}
 
               <FormControl size="small" fullWidth error={formik.touched.role && Boolean(formik.errors.role)}>
-                <InputLabel id="role-label">Role</InputLabel>
+                <InputLabel id="role-label">{t('accounts.create.role')}</InputLabel>
                 <Select
                   labelId="role-label"
                   name="role"
-                  label="Role"
+                  label={t('accounts.create.role')}
                   value={formik.values.role}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   disabled={busy}
                   sx={{ borderRadius: 2 }}
                 >
-                  <MenuItem value="ADMIN">Admin</MenuItem>
-                  <MenuItem value="DIRECTOR">Director</MenuItem>
+                  <MenuItem value="ADMIN">{t('accounts.create.roleAdmin')}</MenuItem>
+                  <MenuItem value="DIRECTOR">{t('accounts.create.roleDirector')}</MenuItem>
                 </Select>
                 {formik.touched.role && formik.errors.role && (
                   <FormHelperText>{formik.errors.role}</FormHelperText>
@@ -227,11 +233,11 @@ export default function AdminAccounts() {
               </FormControl>
 
               <FormControl size="small" fullWidth error={formik.touched.password && Boolean(formik.errors.password)}>
-                <InputLabel htmlFor="password">Password</InputLabel>
+                <InputLabel htmlFor="password">{t('accounts.create.password')}</InputLabel>
                 <OutlinedInput
                   id="password" name="password"
                   type={showPassword ? 'text' : 'password'}
-                  label="Password"
+                  label={t('accounts.create.password')}
                   value={formik.values.password}
                   onChange={formik.handleChange} onBlur={formik.handleBlur}
                   disabled={busy} endAdornment={passwordAdornment}
@@ -243,11 +249,11 @@ export default function AdminAccounts() {
               </FormControl>
 
               <FormControl size="small" fullWidth error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}>
-                <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+                <InputLabel htmlFor="confirmPassword">{t('accounts.create.confirmPassword')}</InputLabel>
                 <OutlinedInput
                   id="confirmPassword" name="confirmPassword"
                   type={showPassword ? 'text' : 'password'}
-                  label="Confirm Password"
+                  label={t('accounts.create.confirmPassword')}
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange} onBlur={formik.handleBlur}
                   disabled={busy} endAdornment={passwordAdornment}
@@ -259,7 +265,7 @@ export default function AdminAccounts() {
               </FormControl>
 
               <Alert severity="info" sx={{ borderRadius: 2, py: 0.5 }}>
-                Password must be at least 8 characters with one uppercase, one lowercase, and one number.
+                {t('accounts.create.passwordHint')}
               </Alert>
 
               <Button
@@ -270,7 +276,7 @@ export default function AdminAccounts() {
                   background: ADMIN_GRADIENT, boxShadow: ADMIN_SHADOW,
                 }}
               >
-                {busy ? 'Creating…' : 'Create Account'}
+                {busy ? t('accounts.create.submitting') : t('accounts.create.submit')}
               </Button>
 
             </Stack>
@@ -282,10 +288,10 @@ export default function AdminAccounts() {
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between"
             sx={{ p: 3, pb: 2 }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <ManageAccounts sx={(t) => ({ color: adminPrimary(t.palette.mode) })} />
-              <Typography variant="subtitle1" fontWeight={700}>Existing Accounts</Typography>
+              <ManageAccounts sx={(th) => ({ color: adminPrimary(th.palette.mode) })} />
+              <Typography variant="subtitle1" fontWeight={700}>{t('accounts.existing.title')}</Typography>
             </Stack>
-            <Tooltip title="Refresh">
+            <Tooltip title={t('common:action.refresh')}>
               <IconButton size="small" onClick={fetchAccounts} disabled={accountsLoad}>
                 <Refresh fontSize="small" />
               </IconButton>
@@ -299,19 +305,19 @@ export default function AdminAccounts() {
             </Box>
           ) : accounts.length === 0 ? (
             <Box sx={{ p: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">No accounts found.</Typography>
+              <Typography variant="body2" color="text.secondary">{t('accounts.existing.empty')}</Typography>
             </Box>
           ) : (
             <TableContainer>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'action.hover' }}>
-                    <TableCell sx={{ fontWeight: 700 }}>Account</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Role</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Created by</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Last Login</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('accounts.existing.account')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('accounts.existing.role')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('accounts.existing.createdBy')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('accounts.existing.lastLogin')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t('common:table.actions')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -327,7 +333,7 @@ export default function AdminAccounts() {
                       ? history.map((h) =>
                           `${new Date(h.changedAt).toLocaleDateString()} — ${h.status}${h.note ? ` (${h.note})` : ''}`
                         ).join('\n')
-                      : 'No history';
+                      : t('accounts.existing.noHistory');
 
                     return (
                       <TableRow key={account._id} hover>
@@ -348,10 +354,10 @@ export default function AdminAccounts() {
                                   {account.admin_name}
                                 </Typography>
                                 {account.isBootstrap && (
-                                  <Tooltip title="Bootstrap account — status is permanently protected">
+                                  <Tooltip title={t('accounts.existing.bootstrapTooltip')}>
                                     <Chip
                                       icon={<VerifiedUser sx={{ fontSize: '0.7rem !important' }} />}
-                                      label="Bootstrap"
+                                      label={t('accounts.existing.bootstrapChip')}
                                       size="small"
                                       color="secondary"
                                       sx={{ height: 18, fontSize: '0.6rem', fontWeight: 700 }}
@@ -359,7 +365,7 @@ export default function AdminAccounts() {
                                   </Tooltip>
                                 )}
                                 {isSelf && (
-                                  <Chip label="You" size="small"
+                                  <Chip label={t('accounts.existing.youChip')} size="small"
                                     sx={{ height: 18, fontSize: '0.65rem' }} />
                                 )}
                               </Stack>
@@ -386,7 +392,7 @@ export default function AdminAccounts() {
                           <Tooltip title={<Box sx={{ whiteSpace: 'pre-line', fontSize: '0.7rem' }}>{historyTooltip}</Box>} arrow>
                             <Chip
                               icon={cfg.icon}
-                              label={cfg.label}
+                              label={t(cfg.labelKey)}
                               size="small"
                               color={cfg.color}
                               variant="outlined"
@@ -405,7 +411,7 @@ export default function AdminAccounts() {
                             </Typography>
                           ) : (
                             <Typography variant="caption" color="secondary.main" fontWeight={600}>
-                              Self (bootstrap)
+                              {t('accounts.existing.selfBootstrap')}
                             </Typography>
                           )}
                         </TableCell>
@@ -428,7 +434,7 @@ export default function AdminAccounts() {
                           ) : (
                             <Stack direction="row" spacing={0.5} justifyContent="flex-end">
                               {account.status !== 'active' && (
-                                <Tooltip title="Activate">
+                                <Tooltip title={t('accounts.action.activate')}>
                                   <IconButton size="small" color="success"
                                     onClick={() => handleStatusChange(account._id, 'active')}>
                                     <CheckCircle fontSize="small" />
@@ -436,7 +442,7 @@ export default function AdminAccounts() {
                                 </Tooltip>
                               )}
                               {account.status !== 'suspended' && (
-                                <Tooltip title="Suspend">
+                                <Tooltip title={t('accounts.action.suspend')}>
                                   <IconButton size="small" color="error"
                                     onClick={() => handleStatusChange(account._id, 'suspended')}>
                                     <Block fontSize="small" />
@@ -444,7 +450,7 @@ export default function AdminAccounts() {
                                 </Tooltip>
                               )}
                               {account.status !== 'inactive' && (
-                                <Tooltip title="Deactivate">
+                                <Tooltip title={t('accounts.action.deactivate')}>
                                   <IconButton size="small"
                                     onClick={() => handleStatusChange(account._id, 'inactive')}>
                                     <PauseCircle fontSize="small" />

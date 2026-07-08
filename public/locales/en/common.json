@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "My Profile",
     "signOut": "Sign out",
-    "settings": "Settings"
+    "settings": "Settings",
+    "aiAssistant": "AI Assistant"
   },
   "notifPref": {
     "title": "Notification Preferences",
@@ -164,5 +165,19 @@
     "whatsappDesc": "Receive messages on WhatsApp (mobile)",
     "save": "Save Preferences",
     "saving": "Saving…"
+  },
+  "a11y": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  },
+  "confirmDialog": {
+    "archiveTitle": "Archive",
+    "restoreTitle": "Restore",
+    "archiving": "Archiving…",
+    "restoring": "Restoring…",
+    "archiveBody": "Do you really want to archive <b>{label}</b>{suffix}?",
+    "restoreBody": "Do you really want to restore <b>{label}</b>{suffix}?",
+    "archiveNote": "The record will be hidden but all data will be retained. You can restore it at any time.",
+    "restoreNote": "The record will become active again and visible across the platform."
   }
 }

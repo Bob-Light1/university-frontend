@@ -21,21 +21,24 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getAllCampuses } from '../../services/admin_service';
 import ContentFormDialog from './ContentFormDialog';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 const LIMIT = 15;
 
 function ConfirmDialog({ open, title, message, onConfirm, onClose, loading }) {
+  const { t } = useAppTranslation('common');
+
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth
       slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ fontWeight: 700 }}>{title}</DialogTitle>
       <DialogContent><Typography variant="body2">{message}</Typography></DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={loading} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={onClose} disabled={loading} sx={{ textTransform: 'none' }}>{t('action.cancel')}</Button>
         <Button variant="contained" color="error" onClick={onConfirm} disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
           sx={{ textTransform: 'none', borderRadius: 2 }}>
-          Confirm
+          {t('action.confirm')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -43,9 +46,12 @@ function ConfirmDialog({ open, title, message, onConfirm, onClose, loading }) {
 }
 
 export default function ContentAdmin({ config }) {
-  const { title, pluralTitle, icon: Icon, service, fields, renderPrimary, renderSecondary } = config;
+  const { i18nKey, icon: Icon, service, fields, renderPrimary, renderSecondary } = config;
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['admin', 'common']);
+  // Resource-scoped translator: `tr('plural')` → `content.<i18nKey>.plural`.
+  const tr = useCallback((key, opts) => t(`content.${i18nKey}.${key}`, opts), [t, i18nKey]);
 
   const [items,   setItems]   = useState([]);
   const [total,   setTotal]   = useState(0);
@@ -85,11 +91,11 @@ export default function ContentAdmin({ config }) {
       setItems(data.data || []);
       setTotal(data.pagination?.total || 0);
     } catch {
-      setError(`Failed to load ${pluralTitle.toLowerCase()}.`);
+      setError(tr('loadError'));
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, published, selectedCampusId, service, pluralTitle]);
+  }, [page, debouncedSearch, published, selectedCampusId, service, tr]);
 
   useEffect(() => {
     const t = setTimeout(() => { setDebouncedSearch(search); setPage(1); }, 400);
@@ -105,32 +111,32 @@ export default function ContentAdmin({ config }) {
 
   const handleCreate = async (values) => {
     await service.create({ ...values, campusId: selectedCampusId });
-    showSnack(`${title} created.`);
+    showSnack(tr('created'));
     fetchItems();
   };
 
   const handleEdit = async (values) => {
     await service.update(editTarget._id, values);
-    showSnack(`${title} updated.`);
+    showSnack(tr('updated'));
     fetchItems();
   };
 
   const handleTogglePublish = async (item) => {
     try {
       await service.togglePublish(item._id, { isPublished: !item.isPublished });
-      showSnack(item.isPublished ? 'Unpublished.' : 'Published.');
+      showSnack(item.isPublished ? t('content.unpublished') : t('content.published'));
       fetchItems();
     } catch (e) {
-      showSnack(e.response?.data?.message || 'Failed to update status.', 'error');
+      showSnack(e.response?.data?.message || t('content.statusFailed'), 'error');
     }
   };
 
   const handleDelete = (item) => setConfirmData({
-    title: `Delete ${title}`,
-    message: 'This item will be permanently removed. This cannot be undone.',
+    title: tr('deleteTitle'),
+    message: t('content.deleteMessage'),
     action: async () => {
       await service.remove(item._id);
-      showSnack(`${title} deleted.`);
+      showSnack(tr('deleted'));
       fetchItems();
     },
   });
@@ -141,7 +147,7 @@ export default function ContentAdmin({ config }) {
     try {
       await confirmData.action();
     } catch (e) {
-      showSnack(e.response?.data?.message || 'Action failed.', 'error');
+      showSnack(e.response?.data?.message || t('content.actionFailed'), 'error');
     } finally {
       setActionLoading(false);
       setConfirmData(null);
@@ -150,7 +156,7 @@ export default function ContentAdmin({ config }) {
 
   const openCreate = () => {
     if (!selectedCampusId) {
-      showSnack('Select a campus before creating.', 'warning');
+      showSnack(t('content.selectCampusFirst'), 'warning');
       return;
     }
     setEditTarget(null);
@@ -168,25 +174,25 @@ export default function ContentAdmin({ config }) {
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Icon color="primary" sx={{ fontSize: 36 }} />
           <Box>
-            <Typography variant="h5" fontWeight={700}>{pluralTitle}</Typography>
+            <Typography variant="h5" fontWeight={700}>{tr('plural')}</Typography>
             <Typography variant="caption" color="text.secondary">
-              {total} item{total !== 1 ? 's' : ''}
+              {t('content.itemCount', { count: total })}
             </Typography>
           </Box>
         </Stack>
         <Button variant="contained" startIcon={<Add />} onClick={openCreate}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700, width: { xs: '100%', sm: 'auto' } }}>
-          New {title}
+          {tr('new')}
         </Button>
       </Stack>
 
       {/* Campus selector */}
       <Paper elevation={0} sx={{ p: 2, borderRadius: 2, mb: 2, bgcolor: 'action.hover' }}>
         <FormControl size="small" fullWidth>
-          <InputLabel>Campus</InputLabel>
-          <Select value={selectedCampusId} label="Campus"
+          <InputLabel>{t('content.campus')}</InputLabel>
+          <Select value={selectedCampusId} label={t('content.campus')}
             onChange={(e) => { setSelectedCampusId(e.target.value); setPage(1); }}>
-            <MenuItem value="">All campuses</MenuItem>
+            <MenuItem value="">{t('content.allCampuses')}</MenuItem>
             {campuses.map((c) => (
               <MenuItem key={c._id} value={c._id}>{c.campus_name || c._id}</MenuItem>
             ))}
@@ -197,16 +203,16 @@ export default function ContentAdmin({ config }) {
       {/* Filters */}
       <Paper elevation={0} sx={{ p: 2, borderRadius: 2, mb: 2, bgcolor: 'action.hover' }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-          <TextField size="small" placeholder={`Search ${pluralTitle.toLowerCase()}…`}
+          <TextField size="small" placeholder={tr('search')}
             value={search} onChange={(e) => setSearch(e.target.value)} fullWidth
             slotProps={{ input: { startAdornment: <InputAdornment position="start"><Search /></InputAdornment> } }} />
           <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Status</InputLabel>
-            <Select value={published} label="Status"
+            <InputLabel>{t('common:field.status')}</InputLabel>
+            <Select value={published} label={t('common:field.status')}
               onChange={(e) => { setPublished(e.target.value); setPage(1); }}>
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="true">Published</MenuItem>
-              <MenuItem value="false">Draft</MenuItem>
+              <MenuItem value="">{t('common:all')}</MenuItem>
+              <MenuItem value="true">{t('content.statusPublished')}</MenuItem>
+              <MenuItem value="false">{t('content.statusDraft')}</MenuItem>
             </Select>
           </FormControl>
         </Stack>
@@ -237,10 +243,10 @@ export default function ContentAdmin({ config }) {
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Icon sx={{ fontSize: 56, color: 'text.disabled', mb: 1.5 }} />
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            No {pluralTitle.toLowerCase()}
+            {tr('empty')}
           </Typography>
           <Typography variant="body2" color="text.disabled">
-            Create your first item with the button above.
+            {t('content.emptyHint')}
           </Typography>
         </Box>
       ) : (
@@ -250,7 +256,7 @@ export default function ContentAdmin({ config }) {
               sx={{ p: 2, borderRadius: 2, borderLeft: `4px solid ${item.isPublished ? theme.palette.success.main : theme.palette.grey[400]}` }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}
                 alignItems={{ xs: 'flex-start', sm: 'center' }}>
-                <Chip label={item.isPublished ? 'Published' : 'Draft'} size="small"
+                <Chip label={item.isPublished ? t('content.statusPublished') : t('content.statusDraft')} size="small"
                   color={item.isPublished ? 'success' : 'default'}
                   sx={{ fontWeight: 700, fontSize: 11 }} />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -264,18 +270,18 @@ export default function ContentAdmin({ config }) {
                 </Box>
                 {isMobile && <Divider sx={{ opacity: 0.4, width: '100%' }} />}
                 <Stack direction="row" spacing={0.5} sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}>
-                  <Tooltip title={item.isPublished ? 'Unpublish' : 'Publish'}>
+                  <Tooltip title={item.isPublished ? t('content.unpublish') : t('content.publish')}>
                     <IconButton size="small" color={item.isPublished ? 'warning' : 'success'}
                       onClick={() => handleTogglePublish(item)}>
                       {item.isPublished ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Edit">
+                  <Tooltip title={t('common:action.edit')}>
                     <IconButton size="small" onClick={() => { setEditTarget(item); setFormOpen(true); }}>
                       <Edit fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete">
+                  <Tooltip title={t('common:action.delete')}>
                     <IconButton size="small" color="error" onClick={() => handleDelete(item)}>
                       <Delete fontSize="small" />
                     </IconButton>
@@ -301,7 +307,7 @@ export default function ContentAdmin({ config }) {
         onSubmit={editTarget ? handleEdit : handleCreate}
         initialValues={editTarget}
         mode={editTarget ? 'edit' : 'create'}
-        title={title}
+        i18nKey={i18nKey}
         fields={fields}
       />
 

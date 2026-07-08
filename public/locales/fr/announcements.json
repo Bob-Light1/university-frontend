@@ -1,0 +1,89 @@
+{
+  "title": "Annonces",
+  "globalChip": "Global",
+  "count": "{count, plural, one {# annonce} other {# annonces}}",
+  "new": "Nouvelle annonce",
+  "searchPlaceholder": "Rechercher des annonces…",
+  "selectCampusFirst": "Sélectionnez un campus avant de créer une annonce.",
+  "allCampuses": "Tous les campus",
+  "campus": "Campus",
+  "loadError": "Échec du chargement des annonces.",
+  "empty": {
+    "title": "Aucune annonce",
+    "hint": "Créez votre première annonce avec le bouton ci-dessus."
+  },
+  "filter": {
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "pinnedOnly": "Épinglées seulement",
+    "showAll": "Tout afficher"
+  },
+  "type": {
+    "info": "Info",
+    "warning": "Avertissement",
+    "urgent": "Urgent",
+    "event": "Événement"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "published": "Publiée",
+    "archived": "Archivée"
+  },
+  "target": {
+    "ALL": "Tout le monde",
+    "STUDENT": "Étudiants",
+    "TEACHER": "Enseignants",
+    "PARENT": "Parents",
+    "PARTNER": "Partenaires",
+    "MENTOR": "Mentors",
+    "STAFF": "Personnel"
+  },
+  "action": {
+    "publish": "Publier",
+    "archive": "Archiver",
+    "pin": "Épingler",
+    "unpin": "Désépingler",
+    "edit": "Modifier",
+    "editDisabled": "Archiver d’abord pour modifier",
+    "delete": "Supprimer"
+  },
+  "row": {
+    "expires": "· Expire le {date}",
+    "published": "· Publiée le {date}",
+    "archived": "· Archivée le {date}"
+  },
+  "confirm": {
+    "publishTitle": "Publier l’annonce",
+    "publishMessage": "« {title} » deviendra visible pour le public ciblé.",
+    "archiveTitle": "Archiver l’annonce",
+    "archiveMessage": "« {title} » sera immédiatement masquée pour les utilisateurs.",
+    "deleteTitle": "Supprimer l’annonce",
+    "deleteMessage": "« {title} » sera définitivement supprimée pour tous les utilisateurs. Cette action est irréversible."
+  },
+  "toast": {
+    "created": "Annonce créée (brouillon).",
+    "updated": "Annonce mise à jour.",
+    "published": "Annonce publiée.",
+    "archived": "Annonce archivée.",
+    "deleted": "Annonce supprimée.",
+    "pinned": "Épinglée.",
+    "unpinned": "Désépinglée.",
+    "pinFailed": "Échec du basculement de l’épinglage.",
+    "actionFailed": "Échec de l’action."
+  },
+  "form": {
+    "newTitle": "Nouvelle annonce",
+    "editTitle": "Modifier l’annonce",
+    "title": "Titre",
+    "content": "Contenu",
+    "type": "Type",
+    "targetAudience": "Public cible",
+    "expiresAt": "Expire le (facultatif)",
+    "pin": "Épingler cette annonce",
+    "autoUnpin": "Date de désépinglage auto (facultatif)",
+    "createDraft": "Créer le brouillon",
+    "saveChanges": "Enregistrer",
+    "saveFailed": "Échec de l’enregistrement.",
+    "counter": "{current}/{max}"
+  }
+}

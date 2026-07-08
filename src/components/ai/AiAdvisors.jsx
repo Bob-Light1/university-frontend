@@ -8,10 +8,16 @@
  *
  * Direction roles only (ADMIN / DIRECTOR / CAMPUS_MANAGER); ADVISORS feature
  * gating is enforced server-side. Zero proposals is a legitimate, quiet state.
+ *
+ * Props:
+ *  campusId  string — campus the proposals are computed for. Also the base of
+ *    the `suggestedAction` deep-links (/campus/:campusId/…): ADMIN and DIRECTOR
+ *    reach any campus subtree through CampusGuard, so one route shape fits all
+ *    three direction roles.
  */
 
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Box, Stack, Paper, Typography, Button, ToggleButtonGroup, ToggleButton,
@@ -25,7 +31,7 @@ import {
 import AiParamsBar from './AiParamsBar';
 import CitationList from './CitationList';
 import AiUnavailable from './AiUnavailable';
-import { runAiAdvisor } from '../../../services/aiService';
+import { runAiAdvisor } from '../../services/aiService';
 import {
   AI_ADVISORS, ADVISOR_ORDER,
   extractAiError, errorKey, isUnavailableError,
@@ -100,10 +106,9 @@ function ProposalCard({ proposal, onAction }) {
   );
 }
 
-export default function AiAdvisors() {
+export default function AiAdvisors({ campusId }) {
   const { t } = useTranslation('ai');
   const navigate = useNavigate();
-  const { campusId } = useParams();
 
   const [advisor, setAdvisor] = useState(ADVISOR_ORDER[0]);
   const [params, setParams] = useState({});
@@ -129,7 +134,7 @@ export default function AiAdvisors() {
   const run = () => {
     setLoading(true);
     setError(null);
-    runAiAdvisor(advisor, params)
+    runAiAdvisor(advisor, params, campusId)
       .then((res) => setResult(res.data?.data ?? null))
       .catch((err) => {
         const norm = extractAiError(err);
@@ -142,7 +147,7 @@ export default function AiAdvisors() {
 
   const handleAction = (action) => {
     const screen = ACTION_ROUTE[action.type];
-    if (screen) navigate(`/campus/${campusId}/${screen}`);
+    if (screen && campusId) navigate(`/campus/${campusId}/${screen}`);
   };
 
   if (blocked) return <AiUnavailable code={blocked} onRetry={() => setBlocked(null)} />;

@@ -1,0 +1,89 @@
+{
+  "title": "Announcements",
+  "globalChip": "Global",
+  "count": "{count, plural, one {# announcement} other {# announcements}}",
+  "new": "New Announcement",
+  "searchPlaceholder": "Search announcements…",
+  "selectCampusFirst": "Select a campus before creating an announcement.",
+  "allCampuses": "All campuses",
+  "campus": "Campus",
+  "loadError": "Failed to load announcements.",
+  "empty": {
+    "title": "No announcements",
+    "hint": "Create your first announcement with the button above."
+  },
+  "filter": {
+    "allStatuses": "All statuses",
+    "allTypes": "All types",
+    "pinnedOnly": "Pinned only",
+    "showAll": "Show all"
+  },
+  "type": {
+    "info": "Info",
+    "warning": "Warning",
+    "urgent": "Urgent",
+    "event": "Event"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "target": {
+    "ALL": "Everyone",
+    "STUDENT": "Students",
+    "TEACHER": "Teachers",
+    "PARENT": "Parents",
+    "PARTNER": "Partners",
+    "MENTOR": "Mentors",
+    "STAFF": "Staff"
+  },
+  "action": {
+    "publish": "Publish",
+    "archive": "Archive",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "edit": "Edit",
+    "editDisabled": "Archive first to edit",
+    "delete": "Delete"
+  },
+  "row": {
+    "expires": "· Expires {date}",
+    "published": "· Published {date}",
+    "archived": "· Archived {date}"
+  },
+  "confirm": {
+    "publishTitle": "Publish Announcement",
+    "publishMessage": "\"{title}\" will become visible to the targeted audience.",
+    "archiveTitle": "Archive Announcement",
+    "archiveMessage": "\"{title}\" will be hidden from users immediately.",
+    "deleteTitle": "Delete Announcement",
+    "deleteMessage": "\"{title}\" will be permanently removed for all users. This cannot be undone."
+  },
+  "toast": {
+    "created": "Announcement created (draft).",
+    "updated": "Announcement updated.",
+    "published": "Announcement published.",
+    "archived": "Announcement archived.",
+    "deleted": "Announcement deleted.",
+    "pinned": "Pinned.",
+    "unpinned": "Unpinned.",
+    "pinFailed": "Failed to toggle pin.",
+    "actionFailed": "Action failed."
+  },
+  "form": {
+    "newTitle": "New Announcement",
+    "editTitle": "Edit Announcement",
+    "title": "Title",
+    "content": "Content",
+    "type": "Type",
+    "targetAudience": "Target Audience",
+    "expiresAt": "Expires at (optional)",
+    "pin": "Pin this announcement",
+    "autoUnpin": "Auto-unpin date (optional)",
+    "createDraft": "Create Draft",
+    "saveChanges": "Save Changes",
+    "saveFailed": "Failed to save.",
+    "counter": "{current}/{max}"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "title": "الإعلانات",
+  "globalChip": "عام",
+  "count": "{count, plural, zero {لا إعلانات} one {إعلان واحد} two {إعلانان} few {# إعلانات} many {# إعلانًا} other {# إعلان}}",
+  "new": "إعلان جديد",
+  "searchPlaceholder": "البحث في الإعلانات…",
+  "selectCampusFirst": "اختر حرمًا جامعيًا قبل إنشاء إعلان.",
+  "allCampuses": "جميع الأحرام",
+  "campus": "الحرم الجامعي",
+  "loadError": "فشل تحميل الإعلانات.",
+  "empty": {
+    "title": "لا توجد إعلانات",
+    "hint": "أنشئ أول إعلان لك بالزر أعلاه."
+  },
+  "filter": {
+    "allStatuses": "جميع الحالات",
+    "allTypes": "جميع الأنواع",
+    "pinnedOnly": "المثبتة فقط",
+    "showAll": "عرض الكل"
+  },
+  "type": {
+    "info": "معلومة",
+    "warning": "تحذير",
+    "urgent": "عاجل",
+    "event": "حدث"
+  },
+  "status": {
+    "draft": "مسودة",
+    "published": "منشور",
+    "archived": "مؤرشف"
+  },
+  "target": {
+    "ALL": "الجميع",
+    "STUDENT": "الطلاب",
+    "TEACHER": "المعلمون",
+    "PARENT": "أولياء الأمور",
+    "PARTNER": "الشركاء",
+    "MENTOR": "الموجهون",
+    "STAFF": "الموظفون"
+  },
+  "action": {
+    "publish": "نشر",
+    "archive": "أرشفة",
+    "pin": "تثبيت",
+    "unpin": "إلغاء التثبيت",
+    "edit": "تعديل",
+    "editDisabled": "قم بالأرشفة أولاً للتعديل",
+    "delete": "حذف"
+  },
+  "row": {
+    "expires": "· ينتهي في {date}",
+    "published": "· نُشر في {date}",
+    "archived": "· أُرشف في {date}"
+  },
+  "confirm": {
+    "publishTitle": "نشر الإعلان",
+    "publishMessage": "سيصبح «{title}» مرئيًا للجمهور المستهدف.",
+    "archiveTitle": "أرشفة الإعلان",
+    "archiveMessage": "سيُخفى «{title}» فورًا عن المستخدمين.",
+    "deleteTitle": "حذف الإعلان",
+    "deleteMessage": "سيُحذف «{title}» نهائيًا لجميع المستخدمين. لا يمكن التراجع عن هذا الإجراء."
+  },
+  "toast": {
+    "created": "تم إنشاء الإعلان (مسودة).",
+    "updated": "تم تحديث الإعلان.",
+    "published": "تم نشر الإعلان.",
+    "archived": "تمت أرشفة الإعلان.",
+    "deleted": "تم حذف الإعلان.",
+    "pinned": "تم التثبيت.",
+    "unpinned": "تم إلغاء التثبيت.",
+    "pinFailed": "فشل تبديل التثبيت.",
+    "actionFailed": "فشل الإجراء."
+  },
+  "form": {
+    "newTitle": "إعلان جديد",
+    "editTitle": "تعديل الإعلان",
+    "title": "العنوان",
+    "content": "المحتوى",
+    "type": "النوع",
+    "targetAudience": "الجمهور المستهدف",
+    "expiresAt": "ينتهي في (اختياري)",
+    "pin": "تثبيت هذا الإعلان",
+    "autoUnpin": "تاريخ إلغاء التثبيت التلقائي (اختياري)",
+    "createDraft": "إنشاء مسودة",
+    "saveChanges": "حفظ التغييرات",
+    "saveFailed": "فشل الحفظ.",
+    "counter": "{current}/{max}"
+  }
+}

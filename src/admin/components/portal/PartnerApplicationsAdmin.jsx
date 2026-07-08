@@ -16,6 +16,7 @@ import HandshakeIcon   from '@mui/icons-material/Handshake';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon      from '@mui/icons-material/Cancel';
 import api from '../../../api/axiosInstance';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 const LIMIT = 20;
 
@@ -25,22 +26,8 @@ const STATUS_COLORS = {
   rejected: 'error',
 };
 
-const TYPE_LABELS = {
-  influencer:     'Influencer',
-  church_leader:  'Church leader',
-  student_leader: 'Student leader',
-  teacher:        'Teacher',
-  parent:         'Parent',
-  other:          'Other',
-};
-
-const CHANNEL_LABELS = {
-  online:  'Online',
-  offline: 'Offline',
-  hybrid:  'Hybrid',
-};
-
 export default function PartnerApplicationsAdmin() {
+  const { t } = useAppTranslation(['admin', 'common']);
   const [items,    setItems]    = useState([]);
   const [total,    setTotal]    = useState(0);
   const [page,     setPage]     = useState(1);
@@ -65,10 +52,11 @@ export default function PartnerApplicationsAdmin() {
       setItems(res.data.data ?? []);
       setTotal(res.data.pagination?.total ?? 0);
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to load applications.');
+      setError(err?.response?.data?.message || t('applications.loadError'));
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, status]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
@@ -91,7 +79,7 @@ export default function PartnerApplicationsAdmin() {
       setReviewOpen(false);
       fetchItems();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Review failed.');
+      setError(err?.response?.data?.message || t('applications.reviewFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -103,20 +91,20 @@ export default function PartnerApplicationsAdmin() {
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 900, mx: 'auto' }}>
       <Stack direction="row" alignItems="center" gap={1.5} mb={3}>
         <HandshakeIcon color="primary" />
-        <Typography variant="h5" fontWeight={700}>Partner Applications</Typography>
-        <Chip label={`${total} total`} size="small" variant="outlined" />
+        <Typography variant="h5" fontWeight={700}>{t('applications.title')}</Typography>
+        <Chip label={t('applications.totalChip', { count: total })} size="small" variant="outlined" />
       </Stack>
 
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
 
       {/* Filter by status */}
       <FormControl size="small" sx={{ mb: 3, minWidth: 160 }}>
-        <InputLabel>Status</InputLabel>
-        <Select value={status} label="Status" onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
-          <MenuItem value="all">All</MenuItem>
-          <MenuItem value="pending">Pending</MenuItem>
-          <MenuItem value="approved">Approved</MenuItem>
-          <MenuItem value="rejected">Rejected</MenuItem>
+        <InputLabel>{t('common:field.status')}</InputLabel>
+        <Select value={status} label={t('common:field.status')} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
+          <MenuItem value="all">{t('common:all')}</MenuItem>
+          <MenuItem value="pending">{t('common:status.pending')}</MenuItem>
+          <MenuItem value="approved">{t('common:status.approved')}</MenuItem>
+          <MenuItem value="rejected">{t('common:status.rejected')}</MenuItem>
         </Select>
       </FormControl>
 
@@ -127,7 +115,7 @@ export default function PartnerApplicationsAdmin() {
         </Stack>
       ) : items.length === 0 ? (
         <Typography color="text.secondary" textAlign="center" py={6}>
-          No applications found.
+          {t('applications.empty')}
         </Typography>
       ) : (
         <Stack gap={1.5}>
@@ -140,7 +128,7 @@ export default function PartnerApplicationsAdmin() {
                       {app.firstName} {app.lastName}
                     </Typography>
                     <Chip
-                      label={app.status}
+                      label={t(`common:status.${app.status}`)}
                       color={STATUS_COLORS[app.status] || 'default'}
                       size="small"
                     />
@@ -150,8 +138,8 @@ export default function PartnerApplicationsAdmin() {
                     <Typography variant="body2" color="text.secondary">{app.phone}</Typography>
                   )}
                   <Stack direction="row" gap={1} mt={0.75} flexWrap="wrap">
-                    <Chip label={TYPE_LABELS[app.commercialType] || app.commercialType} size="small" variant="outlined" />
-                    <Chip label={CHANNEL_LABELS[app.channelType]  || app.channelType}   size="small" variant="outlined" />
+                    <Chip label={app.commercialType ? t(`applications.type.${app.commercialType}`) : app.commercialType} size="small" variant="outlined" />
+                    <Chip label={app.channelType ? t(`applications.channel.${app.channelType}`) : app.channelType}   size="small" variant="outlined" />
                   </Stack>
                   {app.message && (
                     <Typography variant="body2" mt={0.75} sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
@@ -160,7 +148,7 @@ export default function PartnerApplicationsAdmin() {
                   )}
                   {app.reviewNote && (
                     <Typography variant="caption" color="text.disabled" mt={0.5} display="block">
-                      Note: {app.reviewNote}
+                      {t('applications.note', { note: app.reviewNote })}
                     </Typography>
                   )}
                 </Box>
@@ -173,7 +161,7 @@ export default function PartnerApplicationsAdmin() {
                       onClick={() => openReview(app, 'approved')}
                       sx={{ textTransform: 'none', borderRadius: 2 }}
                     >
-                      Approve
+                      {t('applications.approve')}
                     </Button>
                     <Button
                       size="small" variant="outlined" color="error"
@@ -181,7 +169,7 @@ export default function PartnerApplicationsAdmin() {
                       onClick={() => openReview(app, 'rejected')}
                       sx={{ textTransform: 'none', borderRadius: 2 }}
                     >
-                      Reject
+                      {t('applications.reject')}
                     </Button>
                   </Stack>
                 )}
@@ -206,23 +194,23 @@ export default function PartnerApplicationsAdmin() {
         slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle fontWeight={700}>
-          {reviewAction === 'approved' ? 'Approve application' : 'Reject application'}
+          {reviewAction === 'approved' ? t('applications.dialog.approveTitle') : t('applications.dialog.rejectTitle')}
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" mb={2}>
             {reviewing && `${reviewing.firstName} ${reviewing.lastName} — ${reviewing.email}`}
           </Typography>
           <TextField
-            label="Internal note (optional)"
+            label={t('applications.dialog.internalNote')}
             multiline rows={3} fullWidth size="small"
             value={reviewNote}
             onChange={(e) => setReviewNote(e.target.value)}
-            placeholder="Reason for approval / rejection…"
+            placeholder={t('applications.dialog.notePlaceholder')}
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setReviewOpen(false)} disabled={submitting} sx={{ textTransform: 'none' }}>
-            Cancel
+            {t('common:action.cancel')}
           </Button>
           <Button
             variant="contained"
@@ -232,7 +220,7 @@ export default function PartnerApplicationsAdmin() {
             startIcon={submitting ? <CircularProgress size={16} /> : null}
             sx={{ textTransform: 'none', borderRadius: 2 }}
           >
-            Confirm {reviewAction}
+            {reviewAction === 'approved' ? t('applications.dialog.confirmApprove') : t('applications.dialog.confirmReject')}
           </Button>
         </DialogActions>
       </Dialog>

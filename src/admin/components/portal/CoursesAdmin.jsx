@@ -8,17 +8,16 @@ import ContentAdmin from '../../../components/portalAdmin/ContentAdmin';
 import { coursePreviewsApi } from '../../../services/portalContentService';
 
 const config = {
-  title: 'Course preview',
-  pluralTitle: 'Course previews',
+  i18nKey: 'course',
   icon: MenuBookIcon,
   service: coursePreviewsApi,
   fields: [
-    { name: 'program', label: 'Program', type: 'text', required: true },
-    { name: 'title', label: 'Title', type: 'bilingual', required: true },
-    { name: 'content', label: 'Content (excerpt)', type: 'bilingual', required: true, multiline: true },
-    { name: 'videoUrl', label: 'Video URL', type: 'text', placeholder: 'https://…' },
-    { name: 'order', label: 'Display order', type: 'number', default: 0 },
-    { name: 'isPublished', label: 'Published', type: 'switch', default: false },
+    { name: 'program', labelKey: 'field.program', type: 'text', required: true },
+    { name: 'title', labelKey: 'field.title', type: 'bilingual', required: true },
+    { name: 'content', labelKey: 'field.content', type: 'bilingual', required: true, multiline: true },
+    { name: 'videoUrl', labelKey: 'field.videoUrl', type: 'text', placeholder: 'https://…' },
+    { name: 'order', labelKey: 'field.order', type: 'number', default: 0 },
+    { name: 'isPublished', labelKey: 'field.isPublished', type: 'switch', default: false },
   ],
   renderPrimary: (c) => c.title?.fr,
   renderSecondary: (c) => c.program,

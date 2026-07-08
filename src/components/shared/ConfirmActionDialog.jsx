@@ -5,7 +5,7 @@
  * @param {boolean}  open
  * @param {'archive'|'restore'} action
  * @param {string}   entityLabel   - Human-readable entity name, e.g. "John Doe" or "Science Class"
- * @param {string}   entityType    - Entity kind, e.g. "partner", "campus", "teacher"
+ * @param {string}   entityType    - Already-translated entity kind, e.g. "partner", "campus", "teacher"
  * @param {boolean}  busy          - Shows spinner on confirm button while request is in flight
  * @param {Function} onClose
  * @param {Function} onConfirm
@@ -15,40 +15,26 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, Typography, Stack, CircularProgress, Box,
 } from '@mui/material';
-import { Inventory2, Unarchive, WarningAmber } from '@mui/icons-material';
+import { Inventory2, Unarchive } from '@mui/icons-material';
+import { Trans } from 'react-i18next';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 const CONFIG = {
   archive: {
-    title:       'Archive',
-    icon:        <Inventory2 sx={{ fontSize: 40, color: 'error.main' }} />,
-    color:       'error',
-    verb:        'archive',
-    description: (label, type) =>
-      <>
-        Do you really want to archive{' '}
-        <Box component="strong" sx={{ color: 'text.primary' }}>{label}</Box>
-        {type ? ` (${type})` : ''}?
-        <br />
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-          The record will be hidden but all data will be retained. You can restore it at any time.
-        </Typography>
-      </>,
+    titleKey: 'confirmDialog.archiveTitle',
+    busyKey:  'confirmDialog.archiving',
+    bodyKey:  'confirmDialog.archiveBody',
+    noteKey:  'confirmDialog.archiveNote',
+    icon:     <Inventory2 sx={{ fontSize: 40, color: 'error.main' }} />,
+    color:    'error',
   },
   restore: {
-    title:       'Restore',
-    icon:        <Unarchive sx={{ fontSize: 40, color: 'success.main' }} />,
-    color:       'success',
-    verb:        'restore',
-    description: (label, type) =>
-      <>
-        Do you really want to restore{' '}
-        <Box component="strong" sx={{ color: 'text.primary' }}>{label}</Box>
-        {type ? ` (${type})` : ''}?
-        <br />
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-          The record will become active again and visible across the platform.
-        </Typography>
-      </>,
+    titleKey: 'confirmDialog.restoreTitle',
+    busyKey:  'confirmDialog.restoring',
+    bodyKey:  'confirmDialog.restoreBody',
+    noteKey:  'confirmDialog.restoreNote',
+    icon:     <Unarchive sx={{ fontSize: 40, color: 'success.main' }} />,
+    color:    'success',
   },
 };
 
@@ -61,6 +47,7 @@ const ConfirmActionDialog = ({
   onClose,
   onConfirm,
 }) => {
+  const { t } = useAppTranslation('common');
   const cfg = CONFIG[action] ?? CONFIG.archive;
 
   const handleClose = () => {
@@ -83,14 +70,23 @@ const ConfirmActionDialog = ({
         <Stack direction="row" alignItems="center" spacing={1.5}>
           {cfg.icon}
           <Typography variant="h6" fontWeight={700}>
-            {cfg.title}
+            {t(cfg.titleKey)}
           </Typography>
         </Stack>
       </DialogTitle>
 
       <DialogContent sx={{ pt: 0 }}>
         <Typography variant="body2" color="text.secondary" lineHeight={1.7}>
-          {cfg.description(entityLabel, entityType)}
+          <Trans
+            i18nKey={cfg.bodyKey}
+            ns="common"
+            values={{ label: entityLabel, suffix: entityType ? ` (${entityType})` : '' }}
+            components={{ b: <Box component="strong" sx={{ color: 'text.primary' }} /> }}
+          />
+          <br />
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+            {t(cfg.noteKey)}
+          </Typography>
         </Typography>
       </DialogContent>
 
@@ -100,7 +96,7 @@ const ConfirmActionDialog = ({
           disabled={busy}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Cancel
+          {t('action.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -110,7 +106,7 @@ const ConfirmActionDialog = ({
           onClick={onConfirm}
           sx={{ textTransform: 'none', fontWeight: 700, borderRadius: 2 }}
         >
-          {busy ? `${cfg.title}ing…` : cfg.title}
+          {busy ? t(cfg.busyKey) : t(cfg.titleKey)}
         </Button>
       </DialogActions>
     </Dialog>

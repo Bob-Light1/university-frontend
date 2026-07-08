@@ -8,6 +8,9 @@ const DirectorDashboard = lazy(() => import('../director/components/dashboard/Di
 const DirectorCampuses  = lazy(() => import('../director/components/campuses/DirectorCampuses'));
 const DirectorProfile   = lazy(() => import('../director/components/profile/DirectorProfile'));
 
+// ─── Phase 3 — AI workspace (shared with the Admin portal) ────────────────────
+const AiWorkspace       = lazy(() => import('../components/ai/AiWorkspace'));
+
 export const directorRoutes = (
   <Route path="/director">
     <Route element={<ProtectedRoute allowedRoles={['DIRECTOR']} redirectTo="/admin" />}>
@@ -15,6 +18,7 @@ export const directorRoutes = (
         <Route index        element={<DirectorDashboard />} />
         <Route path="dashboard" element={<DirectorDashboard />} />
         <Route path="campuses"  element={<DirectorCampuses />}  />
+        <Route path="ai"        element={<AiWorkspace />}       />
         <Route path="profile"   element={<DirectorProfile />}   />
       </Route>
     </Route>

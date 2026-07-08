@@ -24,6 +24,9 @@ const CompetitionAdmin    = lazy(() => import('../admin/components/portal/Compet
 // ─── Phase 3 — Partner applications review ────────────────────────────────────
 const PartnerApplicationsAdmin = lazy(() => import('../admin/components/portal/PartnerApplicationsAdmin'));
 
+// ─── Phase 3 — AI workspace (shared with the Director portal) ─────────────────
+const AiWorkspace = lazy(() => import('../components/ai/AiWorkspace'));
+
 export const adminRoutes = (
   <Route path="/admin">
 
@@ -43,6 +46,9 @@ export const adminRoutes = (
         <Route path="accounts"       element={<AdminAccounts />}      />
         <Route path="profile"        element={<AdminProfile />}       />
         <Route path="announcements"  element={<AdminAnnouncements />} />
+
+        {/* Phase 3 — AI workspace (chat · search · analytics · advisors) */}
+        <Route path="ai"             element={<AiWorkspace />}        />
 
         {/* Phase 2 — Portal content */}
         <Route path="portal/testimonials" element={<TestimonialsAdmin />} />

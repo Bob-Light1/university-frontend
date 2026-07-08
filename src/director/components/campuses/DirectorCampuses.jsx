@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 
 import { getAllCampuses } from '../../../services/admin_service';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   DIRECTOR_PRIMARY, DIRECTOR_GRADIENT, DIRECTOR_SHADOW, CAMPUS_STATUS_COLOR,
 } from '../../../theme/directorTokens';
@@ -33,7 +34,7 @@ const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 
 
 // ─── Mobile campus card (read-only) ──────────────────────────────────────────
 
-const CampusCard = ({ campus: c, onView }) => (
+const CampusCard = ({ campus: c, onView, t }) => (
   <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, '&:hover': { boxShadow: 2 } }}>
     <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 1.5 }}>
       <Avatar
@@ -48,10 +49,10 @@ const CampusCard = ({ campus: c, onView }) => (
             {c.campus_name}
           </Typography>
           <Chip
-            label={c.status}
+            label={t(`common:status.${c.status}`)}
             color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
             size="small"
-            sx={{ fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}
+            sx={{ fontWeight: 600, flexShrink: 0 }}
           />
         </Stack>
         {c.campus_number && (
@@ -88,7 +89,7 @@ const CampusCard = ({ campus: c, onView }) => (
     </Stack>
 
     <Stack direction="row" spacing={1} justifyContent="flex-end">
-      <Tooltip title="View campus portal">
+      <Tooltip title={t('campuses.action.viewPortal')}>
         <IconButton size="medium" onClick={() => onView(c._id)}>
           <Visibility fontSize="small" />
         </IconButton>
@@ -101,6 +102,7 @@ const CampusCard = ({ campus: c, onView }) => (
 
 export default function DirectorCampuses() {
   const navigate = useNavigate();
+  const { t }    = useAppTranslation(['admin', 'common']);
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -120,11 +122,12 @@ export default function DirectorCampuses() {
       setCampuses(Array.isArray(res.data?.data) ? res.data.data : []);
       if (res.data?.pagination) setPagination((p) => ({ ...p, ...res.data.pagination }));
     } catch {
-      setError('Failed to load campuses.');
+      setError(t('campuses.loadError'));
       setCampuses([]);
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   useEffect(() => { fetchCampuses(); }, [fetchCampuses]);
@@ -151,9 +154,9 @@ export default function DirectorCampuses() {
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <Box sx={{ mb: 2.5 }}>
-        <Typography variant="h5" fontWeight={700}>Campuses</Typography>
+        <Typography variant="h5" fontWeight={700}>{t('campuses.title')}</Typography>
         <Typography variant="body2" color="text.secondary">
-          Overview of all campuses registered on the platform.
+          {t('campuses.subtitleDirector')}
         </Typography>
       </Box>
 
@@ -161,7 +164,7 @@ export default function DirectorCampuses() {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" sx={{ mb: 2 }}>
         <TextField
           size="small"
-          placeholder="Search name, manager, email…"
+          placeholder={t('campuses.searchPlaceholder')}
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
           sx={{ flex: 1, minWidth: 200, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -176,12 +179,12 @@ export default function DirectorCampuses() {
           }}
         />
         <FormControl size="small" sx={SX_INPUT}>
-          <InputLabel>Status</InputLabel>
-          <Select label="Status" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
-            <MenuItem value="archived">Archived</MenuItem>
+          <InputLabel>{t('common:field.status')}</InputLabel>
+          <Select label={t('common:field.status')} value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+            <MenuItem value="">{t('common:all')}</MenuItem>
+            <MenuItem value="active">{t('common:status.active')}</MenuItem>
+            <MenuItem value="inactive">{t('common:status.inactive')}</MenuItem>
+            <MenuItem value="archived">{t('common:status.archived')}</MenuItem>
           </Select>
         </FormControl>
         <Button
@@ -189,7 +192,7 @@ export default function DirectorCampuses() {
           onClick={handleReset}
           sx={{ borderRadius: 2, textTransform: 'none', alignSelf: { xs: 'flex-start', sm: 'center' } }}
         >
-          Reset
+          {t('common:action.reset')}
         </Button>
       </Stack>
 
@@ -201,11 +204,11 @@ export default function DirectorCampuses() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700 }}>Campus</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Manager</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Created</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.campus')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.manager')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.location')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('common:field.status')}</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{t('campusTable.created')}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 700 }} />
               </TableRow>
             </TableHead>
@@ -221,7 +224,7 @@ export default function DirectorCampuses() {
               ) : campuses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 6, color: 'text.secondary' }}>
-                    No campuses found.
+                    {t('campuses.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -261,10 +264,10 @@ export default function DirectorCampuses() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={c.status}
+                        label={t(`common:status.${c.status}`)}
                         color={CAMPUS_STATUS_COLOR[c.status] ?? 'default'}
                         size="small"
-                        sx={{ fontWeight: 600, textTransform: 'capitalize' }}
+                        sx={{ fontWeight: 600 }}
                       />
                     </TableCell>
                     <TableCell>
@@ -273,7 +276,7 @@ export default function DirectorCampuses() {
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="View campus portal">
+                      <Tooltip title={t('campuses.action.viewPortal')}>
                         <IconButton size="small" onClick={() => navigate(`/campus/${c._id}`)}>
                           <Visibility fontSize="small" />
                         </IconButton>
@@ -297,7 +300,7 @@ export default function DirectorCampuses() {
           </Stack>
         ) : campuses.length === 0 ? (
           <Paper variant="outlined" sx={{ p: 4, borderRadius: 2, textAlign: 'center' }}>
-            <Typography color="text.secondary">No campuses found.</Typography>
+            <Typography color="text.secondary">{t('campuses.empty')}</Typography>
           </Paper>
         ) : (
           <Stack spacing={1.5}>
@@ -306,6 +309,7 @@ export default function DirectorCampuses() {
                 key={c._id}
                 campus={c}
                 onView={(id) => navigate(`/campus/${id}`)}
+                t={t}
               />
             ))}
           </Stack>

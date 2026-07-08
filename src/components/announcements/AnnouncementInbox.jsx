@@ -24,6 +24,7 @@ import {
   markAllAsRead,
 } from '../../services/announcementService';
 import { TYPE_META, TYPE_FILTERS } from './announcementConstants';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 import { fDate, fDateTime } from '../../utils/dateFormat';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ const LIMIT = 10;
 
 function AnnouncementCard({ announcement, onRead, onClick }) {
   const theme  = useTheme();
+  const { t }  = useAppTranslation('announcements');
   const meta   = TYPE_META[announcement.type] || TYPE_META.info;
   const isRead = announcement.isRead;
 
@@ -76,7 +78,7 @@ function AnnouncementCard({ announcement, onRead, onClick }) {
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" mb={0.5}>
             <Chip
               icon={<meta.Icon sx={{ fontSize: '14px !important' }} />}
-              label={meta.label}
+              label={t(meta.labelKey)}
               size="small"
               color={meta.color}
               variant="outlined"
@@ -135,6 +137,7 @@ function AnnouncementCard({ announcement, onRead, onClick }) {
 // ─── Detail Dialog ────────────────────────────────────────────────────────────
 
 function AnnouncementDetailDialog({ announcement, onClose }) {
+  const { t } = useAppTranslation('announcements');
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -157,7 +160,7 @@ function AnnouncementDetailDialog({ announcement, onClose }) {
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ flex: 1 }}>
             <Chip
               icon={<meta.Icon />}
-              label={meta.label}
+              label={t(meta.labelKey)}
               color={meta.color}
               size="small"
               sx={{ fontWeight: 700 }}
@@ -232,6 +235,7 @@ function InboxSkeleton() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function AnnouncementInbox() {
+  const { t } = useAppTranslation('announcements');
   const [announcements, setAnnouncements] = useState([]);
   const [total,         setTotal]         = useState(0);
   const [unreadCount,   setUnreadCount]   = useState(0);
@@ -366,7 +370,7 @@ export default function AnnouncementInbox() {
           size="small"
           sx={{ gap: 0.5, flexWrap: 'wrap' }}
         >
-          {TYPE_FILTERS.map(({ value, label }) => (
+          {TYPE_FILTERS.map(({ value, labelKey }) => (
             <ToggleButton
               key={value}
               value={value}
@@ -379,7 +383,7 @@ export default function AnnouncementInbox() {
                 fontWeight: 600,
               }}
             >
-              {label}
+              {t(labelKey)}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>

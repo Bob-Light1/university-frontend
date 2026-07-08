@@ -5,7 +5,7 @@
  *
  * Features:
  *  - Dynamic page title per role
- *  - AI Chat button → Dialog (coming soon placeholder with chat UI shell)
+ *  - AI button → the role's AI hub (hidden for roles that have no hub)
  *  - Notification badge
  *  - Profile avatar with dropdown menu (My Profile + Logout)
  *  - Breadcrumb trail based on current route
@@ -17,7 +17,7 @@
  *  @prop {string}   pageTitle    – Title shown in the AppBar center/left
  */
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
@@ -32,12 +32,7 @@ import {
   MenuItem,
   ListItemIcon,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Chip,
   Stack,
-  Paper,
   alpha,
   styled,
 } from '@mui/material';
@@ -47,8 +42,6 @@ import AutoAwesomeIcon     from '@mui/icons-material/AutoAwesome';
 import LogoutIcon          from '@mui/icons-material/Logout';
 import PersonIcon          from '@mui/icons-material/Person';
 import SettingsIcon        from '@mui/icons-material/Settings';
-import CloseIcon           from '@mui/icons-material/Close';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import NavigateNextIcon    from '@mui/icons-material/NavigateNext';
 import HomeIcon            from '@mui/icons-material/Home';
 
@@ -84,170 +77,6 @@ export const StyledAppBar = styled(MuiAppBar, {
   }),
 }));
 
-// ─── AI Chat Coming Soon Dialog ───────────────────────────────────────────────
-
-const AiChatDialog = ({ open, onClose }) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    maxWidth="sm"
-    fullWidth
-    disableEnforceFocus
-    closeAfterTransition={false}
-    slotProps={{
-      paper: {
-        sx: {
-          borderRadius: 3,
-          overflow: 'hidden',
-          height: 520,
-          display: 'flex',
-          flexDirection: 'column',
-        },
-      },
-    }}
-  >
-    {/* Dialog header — chat style */}
-    <DialogTitle
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        bgcolor: 'primary.main',
-        color: 'primary.contrastText',
-        py: 1.5,
-        px: 2,
-      }}
-    >
-      <Avatar sx={{ bgcolor: 'primary.dark', width: 36, height: 36 }}>
-        <SmartToyOutlinedIcon fontSize="small" />
-      </Avatar>
-      <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700} lineHeight={1.2}>
-          Campus AI Assistant
-        </Typography>
-        <Typography variant="caption" sx={{ opacity: 0.8 }}>
-          Powered by wewigo
-        </Typography>
-      </Box>
-      <Chip
-        label="Coming soon"
-        size="small"
-        sx={{
-          bgcolor: alpha('#fff', 0.2),
-          color: 'primary.contrastText',
-          fontWeight: 600,
-          fontSize: '0.65rem',
-        }}
-      />
-      <IconButton size="small" onClick={onClose} sx={{ color: 'primary.contrastText' }}>
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </DialogTitle>
-
-    {/* Chat area */}
-    <DialogContent
-      sx={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        gap: 2,
-        bgcolor: (t) => alpha(t.palette.primary.main, 0.04),
-        px: 2,
-        py: 2,
-      }}
-    >
-      {/* AI bubble */}
-      <Stack direction="row" spacing={1.5} alignItems="flex-end">
-        <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
-          <SmartToyOutlinedIcon sx={{ fontSize: 18 }} />
-        </Avatar>
-        <Paper
-          elevation={0}
-          sx={{
-            maxWidth: '78%',
-            px: 2,
-            py: 1.5,
-            borderRadius: '16px 16px 16px 4px',
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          <Typography variant="body2" color="text.primary" sx={{ lineHeight: 1.6 }}>
-            👋 Bonjour ! Je suis <strong>Campus AI</strong>, votre assistant intelligent.
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, lineHeight: 1.6 }}>
-            Le module de chat avec l'IA sera bientôt disponible. Vous pourrez bientôt me poser
-            toutes vos questions sur les étudiants, les résultats, les plannings et bien plus encore !
-          </Typography>
-        </Paper>
-      </Stack>
-
-      {/* Typing indicator placeholder */}
-      <Stack direction="row" spacing={1.5} alignItems="center">
-        <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
-          <SmartToyOutlinedIcon sx={{ fontSize: 18 }} />
-        </Avatar>
-        <Box
-          sx={{
-            px: 2,
-            py: 1,
-            borderRadius: '16px 16px 16px 4px',
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'divider',
-            display: 'flex',
-            gap: 0.5,
-            alignItems: 'center',
-          }}
-        >
-          {[0, 1, 2].map((i) => (
-            <Box
-              key={i}
-              sx={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                bgcolor: 'text.disabled',
-                animation: 'pulse 1.4s ease-in-out infinite',
-                animationDelay: `${i * 0.2}s`,
-                '@keyframes pulse': {
-                  '0%, 80%, 100%': { opacity: 0.3, transform: 'scale(0.9)' },
-                  '40%': { opacity: 1, transform: 'scale(1.1)' },
-                },
-              }}
-            />
-          ))}
-        </Box>
-      </Stack>
-
-      {/* Disabled input bar */}
-      <Paper
-        elevation={0}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          px: 2,
-          py: 1,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: 3,
-          bgcolor: 'action.disabledBackground',
-          opacity: 0.6,
-          mt: 1,
-        }}
-      >
-        <Typography variant="body2" color="text.disabled" sx={{ flex: 1 }}>
-          Posez votre question…
-        </Typography>
-        <AutoAwesomeIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
-      </Paper>
-    </DialogContent>
-  </Dialog>
-);
-
 // ─── Breadcrumb helpers ────────────────────────────────────────────────────────
 
 /**
@@ -273,11 +102,6 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   const { t } = useAppTranslation('common');
 
   const [profileAnchor, setProfileAnchor] = useState(null);
-  const [aiDialogOpen,  setAiDialogOpen]  = useState(false);
-
-  const handleCloseAiDialog = useCallback(() => {
-    setAiDialogOpen(false);
-  }, []);
 
   const navigate     = useNavigate();
   const breadcrumbs  = useBreadcrumbs();
@@ -332,6 +156,17 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   const settingsRoute = user?.role === 'CAMPUS_MANAGER'
     ? `/campus/${user?.id}/settings`
     : null;
+
+  // AI hub route, keyed on the JWT role. Global roles reach the platform
+  // workspace (which picks the target campus); a Campus Manager reaches their
+  // own campus hub — user.id is the campus _id for that role (see CampusGuard).
+  // null = this role has no AI surface yet → the button is not rendered rather
+  // than opening something inert.
+  const aiRoute = {
+    ADMIN:          '/admin/ai',
+    DIRECTOR:       '/director/ai',
+    CAMPUS_MANAGER: user?.id ? `/campus/${user.id}/ai` : null,
+  }[user?.role] ?? null;
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -409,32 +244,34 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
             )}
           </Box>
 
-          {/* ── AI Button ── */}
-          <Tooltip title="Campus AI Assistant">
-            <IconButton
-              color="inherit"
-              onClick={() => setAiDialogOpen(true)}
-              aria-label="Open AI assistant"
-              sx={{
-                bgcolor: alpha('#fff', 0.12),
-                '&:hover': { bgcolor: alpha('#fff', 0.22) },
-                borderRadius: 2,
-                px: 1.5,
-                gap: 0.75,
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <AutoAwesomeIcon fontSize="small" />
-              <Typography
-                variant="caption"
-                fontWeight={600}
-                sx={{ display: { xs: 'none', sm: 'block' }, lineHeight: 1 }}
+          {/* ── AI Button — direct entry to the role's AI hub ── */}
+          {aiRoute && (
+            <Tooltip title={t('user.aiAssistant')}>
+              <IconButton
+                color="inherit"
+                onClick={() => navigate(aiRoute)}
+                aria-label={t('user.aiAssistant')}
+                sx={{
+                  bgcolor: alpha('#fff', 0.12),
+                  '&:hover': { bgcolor: alpha('#fff', 0.22) },
+                  borderRadius: 2,
+                  px: 1.5,
+                  gap: 0.75,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
               >
-                AI
-              </Typography>
-            </IconButton>
-          </Tooltip>
+                <AutoAwesomeIcon fontSize="small" />
+                <Typography
+                  variant="caption"
+                  fontWeight={600}
+                  sx={{ display: { xs: 'none', sm: 'block' }, lineHeight: 1 }}
+                >
+                  AI
+                </Typography>
+              </IconButton>
+            </Tooltip>
+          )}
 
           {/* ── Notifications ── */}
           <NotificationBell />
@@ -564,12 +401,6 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
           </Menu>
         </Toolbar>
       </StyledAppBar>
-
-      {/* ── AI Chat Dialog ── */}
-      <AiChatDialog
-        open={aiDialogOpen}
-        onClose={handleCloseAiDialog}
-      />
     </>
   );
 };

@@ -33,8 +33,9 @@ import {
 } from '../../services/announcementService';
 import { getAllCampuses } from '../../services/admin_service';
 import AnnouncementFormDialog from './AnnouncementFormDialog';
-import { TYPE_META, TYPE_FILTERS, STATUS_META, TARGET_LABELS } from './announcementConstants';
+import { TYPE_META, TYPE_FILTERS, STATUS_META, TARGET_LABEL_KEYS } from './announcementConstants';
 import { fDate } from '../../utils/dateFormat';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -43,6 +44,8 @@ const LIMIT = 15;
 // ─── Confirm Dialog ───────────────────────────────────────────────────────────
 
 function ConfirmDialog({ open, title, message, onConfirm, onClose, loading, severity = 'warning' }) {
+  const { t } = useAppTranslation('common');
+
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth
       disableEnforceFocus closeAfterTransition={false}
@@ -53,7 +56,7 @@ function ConfirmDialog({ open, title, message, onConfirm, onClose, loading, seve
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} disabled={loading} sx={{ textTransform: 'none' }}>
-          Cancel
+          {t('action.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -63,7 +66,7 @@ function ConfirmDialog({ open, title, message, onConfirm, onClose, loading, seve
           startIcon={loading ? <CircularProgress size={16} /> : null}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
-          Confirm
+          {t('action.confirm')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -112,6 +115,7 @@ function RowSkeleton() {
 function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, onDelete }) {
   const theme      = useTheme();
   const isMobile   = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }      = useAppTranslation('announcements');
   const typeMeta   = TYPE_META[announcement.type]   || TYPE_META.info;
   const statusMeta = STATUS_META[announcement.status] || STATUS_META.draft;
 
@@ -145,14 +149,14 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
         {/* Status + type chips */}
         <Stack direction="row" spacing={0.5} flexShrink={0}>
           <Chip
-            label={statusMeta.label}
+            label={t(statusMeta.labelKey)}
             size="small"
             color={statusMeta.color}
             sx={{ fontWeight: 700, fontSize: 11 }}
           />
           <Chip
             icon={<typeMeta.Icon sx={{ fontSize: '14px !important' }} />}
-            label={typeMeta.label}
+            label={t(typeMeta.labelKey)}
             size="small"
             color={typeMeta.color}
             variant="outlined"
@@ -173,22 +177,22 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
           <Stack direction="row" spacing={1} flexWrap="wrap">
             <Typography variant="caption" color="text.secondary">
               {announcement.targetRoles
-                .map((r) => TARGET_LABELS[r] || r)
+                .map((r) => (TARGET_LABEL_KEYS[r] ? t(TARGET_LABEL_KEYS[r]) : r))
                 .join(', ')}
             </Typography>
             {announcement.expiresAt && (
               <Typography variant="caption" color="warning.main">
-                · Expires {fDate(announcement.expiresAt)}
+                {t('row.expires', { date: fDate(announcement.expiresAt) })}
               </Typography>
             )}
             {isPublished && (
               <Typography variant="caption" color="text.disabled">
-                · Published {fDate(announcement.publishedAt)}
+                {t('row.published', { date: fDate(announcement.publishedAt) })}
               </Typography>
             )}
             {isArchived && (
               <Typography variant="caption" color="text.disabled">
-                · Archived {fDate(announcement.archivedAt)}
+                {t('row.archived', { date: fDate(announcement.archivedAt) })}
               </Typography>
             )}
           </Stack>
@@ -200,7 +204,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
         <Stack direction="row" spacing={0.5} flexShrink={0} sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}>
           {/* Publish */}
           {(isDraft || isArchived) && (
-            <Tooltip title="Publish">
+            <Tooltip title={t('action.publish')}>
               <IconButton size="small" color="success" onClick={() => onPublish(announcement)}>
                 <Publish fontSize="small" />
               </IconButton>
@@ -209,7 +213,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
 
           {/* Archive */}
           {isPublished && (
-            <Tooltip title="Archive">
+            <Tooltip title={t('action.archive')}>
               <IconButton size="small" color="warning" onClick={() => onArchive(announcement)}>
                 <Archive fontSize="small" />
               </IconButton>
@@ -217,7 +221,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
           )}
 
           {/* Pin toggle */}
-          <Tooltip title={announcement.pinned ? 'Unpin' : 'Pin'}>
+          <Tooltip title={announcement.pinned ? t('action.unpin') : t('action.pin')}>
             <IconButton size="small" color="primary" onClick={() => onPin(announcement)}>
               {announcement.pinned
                 ? <PushPin fontSize="small" />
@@ -226,7 +230,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
           </Tooltip>
 
           {/* Edit */}
-          <Tooltip title={canEdit ? 'Edit' : 'Archive first to edit'}>
+          <Tooltip title={canEdit ? t('action.edit') : t('action.editDisabled')}>
             <span>
               <IconButton size="small" onClick={() => onEdit(announcement)} disabled={!canEdit}>
                 <Edit fontSize="small" />
@@ -235,7 +239,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
           </Tooltip>
 
           {/* Delete */}
-          <Tooltip title="Delete">
+          <Tooltip title={t('action.delete')}>
             <IconButton size="small" color="error" onClick={() => onDelete(announcement)}>
               <Delete fontSize="small" />
             </IconButton>
@@ -251,6 +255,7 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
 export default function AnnouncementAdmin({ isAdminGlobal = false }) {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['announcements', 'common']);
 
   const [announcements, setAnnouncements] = useState([]);
   const [total,         setTotal]         = useState(0);
@@ -300,11 +305,11 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
       setAnnouncements(data.data || []);
       setTotal(data.pagination?.total || 0);
     } catch {
-      setError('Failed to load announcements.');
+      setError(t('loadError'));
     } finally {
       setLoading(false);
     }
-  }, [page, status, typeFilter, pinnedOnly, debouncedSearch, isAdminGlobal, selectedCampusId]);
+  }, [page, status, typeFilter, pinnedOnly, debouncedSearch, isAdminGlobal, selectedCampusId, t]);
 
   // Debounce search input — also resets page so the user lands on page 1.
   useEffect(() => {
@@ -329,34 +334,34 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
       ? { ...values, campusId: selectedCampusId }
       : values;
     await createAnnouncement(payload);
-    showSnack('Announcement created (draft).');
+    showSnack(t('toast.created'));
     fetchAnnouncements();
   };
 
   const handleEdit = async (values) => {
     await updateAnnouncement(editTarget._id, values);
-    showSnack('Announcement updated.');
+    showSnack(t('toast.updated'));
     fetchAnnouncements();
   };
 
   const handlePublish = (ann) => setConfirmData({
-    title: 'Publish Announcement',
-    message: `"${ann.title}" will become visible to the targeted audience.`,
+    title: t('confirm.publishTitle'),
+    message: t('confirm.publishMessage', { title: ann.title }),
     severity: 'success',
     action: async () => {
       await publishAnnouncement(ann._id);
-      showSnack('Announcement published.');
+      showSnack(t('toast.published'));
       fetchAnnouncements();
     },
   });
 
   const handleArchive = (ann) => setConfirmData({
-    title: 'Archive Announcement',
-    message: `"${ann.title}" will be hidden from users immediately.`,
+    title: t('confirm.archiveTitle'),
+    message: t('confirm.archiveMessage', { title: ann.title }),
     severity: 'warning',
     action: async () => {
       await archiveAnnouncement(ann._id);
-      showSnack('Announcement archived.');
+      showSnack(t('toast.archived'));
       fetchAnnouncements();
     },
   });
@@ -364,20 +369,20 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
   const handlePin = async (ann) => {
     try {
       await togglePin(ann._id);
-      showSnack(ann.pinned ? 'Unpinned.' : 'Pinned.');
+      showSnack(ann.pinned ? t('toast.unpinned') : t('toast.pinned'));
       fetchAnnouncements();
     } catch (e) {
-      showSnack(e.response?.data?.message || 'Failed to toggle pin.', 'error');
+      showSnack(e.response?.data?.message || t('toast.pinFailed'), 'error');
     }
   };
 
   const handleDelete = (ann) => setConfirmData({
-    title: 'Delete Announcement',
-    message: `"${ann.title}" will be permanently removed for all users. This cannot be undone.`,
+    title: t('confirm.deleteTitle'),
+    message: t('confirm.deleteMessage', { title: ann.title }),
     severity: 'error',
     action: async () => {
       await deleteAnnouncement(ann._id);
-      showSnack('Announcement deleted.');
+      showSnack(t('toast.deleted'));
       fetchAnnouncements();
     },
   });
@@ -388,7 +393,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
     try {
       await confirmData.action();
     } catch (e) {
-      showSnack(e.response?.data?.message || 'Action failed.', 'error');
+      showSnack(e.response?.data?.message || t('toast.actionFailed'), 'error');
     } finally {
       setActionLoading(false);
       setConfirmData(null);
@@ -412,13 +417,13 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
           <Campaign color="primary" sx={{ fontSize: 36 }} />
           <Box>
             <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="h5" fontWeight={700}>Announcements</Typography>
+              <Typography variant="h5" fontWeight={700}>{t('title')}</Typography>
               {isAdminGlobal && (
-                <Chip label="Global" size="small" color="info" variant="outlined" />
+                <Chip label={t('globalChip')} size="small" color="info" variant="outlined" />
               )}
             </Stack>
             <Typography variant="caption" color="text.secondary">
-              {total} announcement{total !== 1 ? 's' : ''}
+              {t('count', { count: total })}
             </Typography>
           </Box>
         </Stack>
@@ -427,7 +432,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
           startIcon={<Add />}
           onClick={() => {
             if (isAdminGlobal && !selectedCampusId) {
-              showSnack('Select a campus before creating an announcement.', 'warning');
+              showSnack(t('selectCampusFirst'), 'warning');
               return;
             }
             setEditTarget(null);
@@ -435,7 +440,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
           }}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700, width: { xs: '100%', sm: 'auto' } }}
         >
-          New Announcement
+          {t('new')}
         </Button>
       </Stack>
 
@@ -443,16 +448,16 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
       {isAdminGlobal && (
         <Paper elevation={0} sx={{ p: 2, borderRadius: 2, mb: 2, bgcolor: 'action.hover' }}>
           <FormControl size="small" fullWidth>
-            <InputLabel>Campus</InputLabel>
+            <InputLabel>{t('campus')}</InputLabel>
             <Select
               value={selectedCampusId}
-              label="Campus"
+              label={t('campus')}
               onChange={(e) => { setSelectedCampusId(e.target.value); setPage(1); }}
             >
-              <MenuItem value="">All campuses</MenuItem>
+              <MenuItem value="">{t('allCampuses')}</MenuItem>
               {campuses.map((c) => (
                 <MenuItem key={c._id} value={c._id}>
-                  {c.name || c._id}
+                  {c.campus_name || c._id}
                 </MenuItem>
               ))}
             </Select>
@@ -467,7 +472,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
           {/* Search — full width on every breakpoint */}
           <TextField
             size="small"
-            placeholder="Search announcements…"
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             slotProps={{
@@ -481,35 +486,35 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
             <FilterList sx={{ color: 'text.secondary', flexShrink: 0, display: { xs: 'none', sm: 'block' } }} />
 
             <FormControl size="small" sx={{ flex: 1, minWidth: 0 }}>
-              <InputLabel>Status</InputLabel>
+              <InputLabel>{t('common:field.status')}</InputLabel>
               <Select
                 value={status}
-                label="Status"
+                label={t('common:field.status')}
                 onChange={(e) => { setStatus(e.target.value); setPage(1); }}
               >
-                <MenuItem value="">All statuses</MenuItem>
-                <MenuItem value="draft">Draft</MenuItem>
-                <MenuItem value="published">Published</MenuItem>
-                <MenuItem value="archived">Archived</MenuItem>
+                <MenuItem value="">{t('filter.allStatuses')}</MenuItem>
+                <MenuItem value="draft">{t('status.draft')}</MenuItem>
+                <MenuItem value="published">{t('status.published')}</MenuItem>
+                <MenuItem value="archived">{t('status.archived')}</MenuItem>
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ flex: 1, minWidth: 0 }}>
-              <InputLabel>Type</InputLabel>
+              <InputLabel>{t('common:field.type')}</InputLabel>
               <Select
                 value={typeFilter}
-                label="Type"
+                label={t('common:field.type')}
                 onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
               >
-                {TYPE_FILTERS.map(({ value, label }) => (
-                  <MenuItem key={value} value={value}>{label}</MenuItem>
+                {TYPE_FILTERS.map(({ value, labelKey }) => (
+                  <MenuItem key={value} value={value}>{t(labelKey)}</MenuItem>
                 ))}
               </Select>
             </FormControl>
 
             {/* Pinned: icon-button on mobile, full button on desktop */}
             {isMobile ? (
-              <Tooltip title={pinnedOnly ? 'Show all' : 'Pinned only'}>
+              <Tooltip title={pinnedOnly ? t('filter.showAll') : t('filter.pinnedOnly')}>
                 <IconButton
                   size="small"
                   color={pinnedOnly ? 'primary' : 'default'}
@@ -532,7 +537,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
                 onClick={() => { setPinnedOnly((v) => !v); setPage(1); }}
                 sx={{ textTransform: 'none', borderRadius: 2, flexShrink: 0 }}
               >
-                Pinned only
+                {t('filter.pinnedOnly')}
               </Button>
             )}
           </Stack>
@@ -562,10 +567,10 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Campaign sx={{ fontSize: 56, color: 'text.disabled', mb: 1.5 }} />
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            No announcements
+            {t('empty.title')}
           </Typography>
           <Typography variant="body2" color="text.disabled">
-            Create your first announcement with the button above.
+            {t('empty.hint')}
           </Typography>
         </Box>
       ) : (

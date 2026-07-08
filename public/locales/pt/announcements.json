@@ -1,0 +1,89 @@
+{
+  "title": "Anúncios",
+  "globalChip": "Global",
+  "count": "{count, plural, one {# anúncio} other {# anúncios}}",
+  "new": "Novo anúncio",
+  "searchPlaceholder": "Pesquisar anúncios…",
+  "selectCampusFirst": "Selecione um campus antes de criar um anúncio.",
+  "allCampuses": "Todos os campi",
+  "campus": "Campus",
+  "loadError": "Falha ao carregar os anúncios.",
+  "empty": {
+    "title": "Nenhum anúncio",
+    "hint": "Crie o seu primeiro anúncio com o botão acima."
+  },
+  "filter": {
+    "allStatuses": "Todos os estados",
+    "allTypes": "Todos os tipos",
+    "pinnedOnly": "Apenas fixados",
+    "showAll": "Mostrar tudo"
+  },
+  "type": {
+    "info": "Informação",
+    "warning": "Aviso",
+    "urgent": "Urgente",
+    "event": "Evento"
+  },
+  "status": {
+    "draft": "Rascunho",
+    "published": "Publicado",
+    "archived": "Arquivado"
+  },
+  "target": {
+    "ALL": "Todos",
+    "STUDENT": "Estudantes",
+    "TEACHER": "Professores",
+    "PARENT": "Pais",
+    "PARTNER": "Parceiros",
+    "MENTOR": "Mentores",
+    "STAFF": "Equipa"
+  },
+  "action": {
+    "publish": "Publicar",
+    "archive": "Arquivar",
+    "pin": "Fixar",
+    "unpin": "Desafixar",
+    "edit": "Editar",
+    "editDisabled": "Arquive primeiro para editar",
+    "delete": "Eliminar"
+  },
+  "row": {
+    "expires": "· Expira em {date}",
+    "published": "· Publicado em {date}",
+    "archived": "· Arquivado em {date}"
+  },
+  "confirm": {
+    "publishTitle": "Publicar anúncio",
+    "publishMessage": "«{title}» ficará visível para o público-alvo.",
+    "archiveTitle": "Arquivar anúncio",
+    "archiveMessage": "«{title}» será ocultado imediatamente dos utilizadores.",
+    "deleteTitle": "Eliminar anúncio",
+    "deleteMessage": "«{title}» será removido permanentemente para todos os utilizadores. Isto não pode ser desfeito."
+  },
+  "toast": {
+    "created": "Anúncio criado (rascunho).",
+    "updated": "Anúncio atualizado.",
+    "published": "Anúncio publicado.",
+    "archived": "Anúncio arquivado.",
+    "deleted": "Anúncio eliminado.",
+    "pinned": "Fixado.",
+    "unpinned": "Desafixado.",
+    "pinFailed": "Falha ao alternar a fixação.",
+    "actionFailed": "A ação falhou."
+  },
+  "form": {
+    "newTitle": "Novo anúncio",
+    "editTitle": "Editar anúncio",
+    "title": "Título",
+    "content": "Conteúdo",
+    "type": "Tipo",
+    "targetAudience": "Público-alvo",
+    "expiresAt": "Expira em (opcional)",
+    "pin": "Fixar este anúncio",
+    "autoUnpin": "Data de desafixação automática (opcional)",
+    "createDraft": "Criar rascunho",
+    "saveChanges": "Guardar alterações",
+    "saveFailed": "Falha ao guardar.",
+    "counter": "{current}/{max}"
+  }
+}

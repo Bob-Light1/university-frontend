@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "ملفي الشخصي",
     "signOut": "تسجيل الخروج",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "aiAssistant": "مساعد الذكاء الاصطناعي"
   },
   "notifPref": {
     "title": "تفضيلات الإشعارات",
@@ -164,5 +165,19 @@
     "whatsappDesc": "تلقّي الرسائل عبر واتساب (الجوال)",
     "save": "حفظ التفضيلات",
     "saving": "جارٍ الحفظ…"
+  },
+  "a11y": {
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور"
+  },
+  "confirmDialog": {
+    "archiveTitle": "أرشفة",
+    "restoreTitle": "استعادة",
+    "archiving": "جارٍ الأرشفة…",
+    "restoring": "جارٍ الاستعادة…",
+    "archiveBody": "هل تريد حقًا أرشفة <b>{label}</b>{suffix}؟",
+    "restoreBody": "هل تريد حقًا استعادة <b>{label}</b>{suffix}؟",
+    "archiveNote": "سيُخفى السجل مع الاحتفاظ بجميع البيانات. يمكنك استعادته في أي وقت.",
+    "restoreNote": "سيصبح السجل نشطًا مرة أخرى ومرئيًا في جميع أنحاء المنصة."
   }
 }

@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "Mein Profil",
     "signOut": "Abmelden",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "aiAssistant": "KI-Assistent"
   },
   "notifPref": {
     "title": "Benachrichtigungseinstellungen",
@@ -164,5 +165,19 @@
     "whatsappDesc": "Nachrichten über WhatsApp erhalten (mobil)",
     "save": "Einstellungen speichern",
     "saving": "Wird gespeichert…"
+  },
+  "a11y": {
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort ausblenden"
+  },
+  "confirmDialog": {
+    "archiveTitle": "Archivieren",
+    "restoreTitle": "Wiederherstellen",
+    "archiving": "Wird archiviert…",
+    "restoring": "Wird wiederhergestellt…",
+    "archiveBody": "Möchten Sie <b>{label}</b>{suffix} wirklich archivieren?",
+    "restoreBody": "Möchten Sie <b>{label}</b>{suffix} wirklich wiederherstellen?",
+    "archiveNote": "Der Datensatz wird ausgeblendet, alle Daten bleiben jedoch erhalten. Sie können ihn jederzeit wiederherstellen.",
+    "restoreNote": "Der Datensatz wird wieder aktiv und plattformweit sichtbar."
   }
 }

@@ -152,7 +152,8 @@
   "user": {
     "myProfile": "Mon profil",
     "signOut": "Se déconnecter",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "aiAssistant": "Assistant IA"
   },
   "notifPref": {
     "title": "Préférences de notifications",
@@ -164,5 +165,19 @@
     "whatsappDesc": "Recevoir des messages sur WhatsApp (mobile)",
     "save": "Enregistrer les préférences",
     "saving": "Enregistrement…"
+  },
+  "a11y": {
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe"
+  },
+  "confirmDialog": {
+    "archiveTitle": "Archiver",
+    "restoreTitle": "Restaurer",
+    "archiving": "Archivage…",
+    "restoring": "Restauration…",
+    "archiveBody": "Voulez-vous vraiment archiver <b>{label}</b>{suffix} ?",
+    "restoreBody": "Voulez-vous vraiment restaurer <b>{label}</b>{suffix} ?",
+    "archiveNote": "L’enregistrement sera masqué mais toutes les données seront conservées. Vous pourrez le restaurer à tout moment.",
+    "restoreNote": "L’enregistrement redeviendra actif et visible sur toute la plateforme."
   }
 }

@@ -20,6 +20,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getAllCampuses } from '../../../services/admin_service';
 import { competitionApi } from '../../../services/portalContentService';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 const LIMIT = 15;
 
@@ -28,16 +29,18 @@ const emptyPrize  = () => ({ rank: 1, description: { fr: '', en: '' }, value: ''
 
 // ─── Confirm ────────────────────────────────────────────────────────────────────
 function ConfirmDialog({ open, title, message, color = 'error', onConfirm, onClose, loading }) {
+  const { t } = useAppTranslation('common');
+
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth
       slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ fontWeight: 700 }}>{title}</DialogTitle>
       <DialogContent><Typography variant="body2">{message}</Typography></DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={loading} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={onClose} disabled={loading} sx={{ textTransform: 'none' }}>{t('action.cancel')}</Button>
         <Button variant="contained" color={color} onClick={onConfirm} disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
-          sx={{ textTransform: 'none', borderRadius: 2 }}>Confirm</Button>
+          sx={{ textTransform: 'none', borderRadius: 2 }}>{t('action.confirm')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -47,6 +50,7 @@ function ConfirmDialog({ open, title, message, color = 'error', onConfirm, onClo
 function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['admin', 'common']);
 
   const [period, setPeriod]           = useState('');
   const [closingDate, setClosingDate] = useState('');
@@ -71,8 +75,8 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
   const removePrize = (i) => setPrizes((ps) => ps.filter((_, idx) => idx !== i));
 
   const submit = async () => {
-    if (!/^\d{4}-\d{2}$/.test(period)) { setError('Period must be YYYY-MM.'); return; }
-    if (!closingDate) { setError('Closing date is required.'); return; }
+    if (!/^\d{4}-\d{2}$/.test(period)) { setError(t('competition.form.periodError')); return; }
+    if (!closingDate) { setError(t('competition.form.closingRequired')); return; }
     setSaving(true);
     setError(null);
     try {
@@ -88,7 +92,7 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
       });
       onClose();
     } catch (e) {
-      setError(e.response?.data?.message || 'Failed to save.');
+      setError(e.response?.data?.message || t('competition.form.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -98,32 +102,32 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
     <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" fullScreen={isMobile}
       slotProps={{ paper: { sx: { borderRadius: isMobile ? 0 : 3 } } }}>
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {mode === 'edit' ? 'Edit competition' : 'New competition'}
+        {mode === 'edit' ? t('competition.form.editTitle') : t('competition.form.newTitle')}
         <IconButton onClick={onClose} size="small"><Close /></IconButton>
       </DialogTitle>
       <DialogContent dividers>
         {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
         <Stack spacing={2}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField fullWidth size="small" label="Period (YYYY-MM) *" placeholder="2026-07"
+            <TextField fullWidth size="small" label={t('competition.form.period')} placeholder={t('competition.form.periodPlaceholder')}
               value={period} onChange={(e) => setPeriod(e.target.value)} />
-            <TextField fullWidth size="small" label="Closing date *" type="date"
+            <TextField fullWidth size="small" label={t('competition.form.closingDate')} type="date"
               value={closingDate} onChange={(e) => setClosingDate(e.target.value)}
               slotProps={{ inputLabel: { shrink: true } }} />
           </Stack>
           <FormControlLabel control={<Switch checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />}
-            label="Active (visible on the portal)" />
+            label={t('competition.form.activeLabel')} />
 
-          <Divider textAlign="left"><Typography variant="caption" fontWeight={700}>PRIZES</Typography></Divider>
+          <Divider textAlign="left"><Typography variant="caption" fontWeight={700}>{t('competition.form.prizes')}</Typography></Divider>
           {prizes.map((p, i) => (
             <Paper key={i} variant="outlined" sx={{ p: 1.5, borderRadius: 2 }}>
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField size="small" label="Rank" type="number" sx={{ width: 90 }}
+                  <TextField size="small" label={t('competition.form.rank')} type="number" sx={{ width: 90 }}
                     value={p.rank} onChange={(e) => updatePrize(i, { rank: e.target.value })} />
-                  <TextField size="small" label="Value" fullWidth placeholder="-20% + certificate"
+                  <TextField size="small" label={t('competition.form.value')} fullWidth placeholder={t('competition.form.valuePlaceholder')}
                     value={p.value} onChange={(e) => updatePrize(i, { value: e.target.value })} />
-                  <Tooltip title="Remove">
+                  <Tooltip title={t('competition.form.remove')}>
                     <span>
                       <IconButton size="small" color="error" onClick={() => removePrize(i)} disabled={prizes.length === 1}>
                         <Delete fontSize="small" />
@@ -131,21 +135,21 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
                     </span>
                   </Tooltip>
                 </Stack>
-                <TextField size="small" label="Description (FR) *" fullWidth
+                <TextField size="small" label={t('competition.form.descriptionFr')} fullWidth
                   value={p.description.fr} onChange={(e) => updatePrize(i, { description: { ...p.description, fr: e.target.value } })} />
-                <TextField size="small" label="Description (EN)" fullWidth
+                <TextField size="small" label={t('competition.form.descriptionEn')} fullWidth
                   value={p.description.en} onChange={(e) => updatePrize(i, { description: { ...p.description, en: e.target.value } })} />
               </Stack>
             </Paper>
           ))}
           <Button startIcon={<Add />} onClick={addPrize} sx={{ textTransform: 'none', alignSelf: 'flex-start' }}>
-            Add prize
+            {t('competition.form.addPrize')}
           </Button>
 
           {/* Winners (read-only) */}
           {initial?.winners?.length > 0 && (
             <>
-              <Divider textAlign="left"><Typography variant="caption" fontWeight={700}>WINNERS</Typography></Divider>
+              <Divider textAlign="left"><Typography variant="caption" fontWeight={700}>{t('competition.form.winners')}</Typography></Divider>
               <Stack spacing={0.5}>
                 {initial.winners.map((w) => (
                   <Typography key={w.rank} variant="body2">
@@ -158,11 +162,11 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} disabled={saving} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={onClose} disabled={saving} sx={{ textTransform: 'none' }}>{t('common:action.cancel')}</Button>
         <Button variant="contained" onClick={submit} disabled={saving}
           startIcon={saving ? <CircularProgress size={16} /> : null}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}>
-          {mode === 'edit' ? 'Save' : 'Create'}
+          {mode === 'edit' ? t('common:action.save') : t('common:action.create')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -173,6 +177,7 @@ function CompetitionFormDialog({ open, onClose, onSubmit, initial, mode }) {
 export default function CompetitionAdmin() {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['admin', 'common']);
 
   const [items,   setItems]   = useState([]);
   const [total,   setTotal]   = useState(0);
@@ -206,10 +211,11 @@ export default function CompetitionAdmin() {
       setItems(data.data || []);
       setTotal(data.pagination?.total || 0);
     } catch {
-      setError('Failed to load competitions.');
+      setError(t('competition.loadError'));
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, activeFilter, selectedCampusId]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
@@ -222,10 +228,10 @@ export default function CompetitionAdmin() {
   const handleSubmit = async (values) => {
     if (editTarget) {
       await competitionApi.update(editTarget._id, values);
-      showSnack('Competition updated.');
+      showSnack(t('competition.toast.updated'));
     } else {
       await competitionApi.create({ ...values, campusId: selectedCampusId });
-      showSnack('Competition created.');
+      showSnack(t('competition.toast.created'));
     }
     fetchItems();
   };
@@ -233,37 +239,37 @@ export default function CompetitionAdmin() {
   const handleToggleActive = async (item) => {
     try {
       await competitionApi.toggleActive(item._id, { isActive: !item.isActive });
-      showSnack(item.isActive ? 'Deactivated.' : 'Activated.');
+      showSnack(item.isActive ? t('competition.toast.deactivated') : t('competition.toast.activated'));
       fetchItems();
     } catch (e) {
-      showSnack(e.response?.data?.message || 'Failed.', 'error');
+      showSnack(e.response?.data?.message || t('competition.toast.failed'), 'error');
     }
   };
 
   const handleClose = (item) => setConfirmData({
-    title: 'Close competition',
-    message: `Freeze winners for ${item.period} from the period's quiz scores and deactivate it? This cannot be undone.`,
+    title: t('competition.confirm.closeTitle'),
+    message: t('competition.confirm.closeMessage', { period: item.period }),
     color: 'warning',
-    action: async () => { await competitionApi.close(item._id); showSnack('Competition closed.'); fetchItems(); },
+    action: async () => { await competitionApi.close(item._id); showSnack(t('competition.toast.closed')); fetchItems(); },
   });
 
   const handleDelete = (item) => setConfirmData({
-    title: 'Delete competition',
-    message: `Competition ${item.period} will be permanently removed. This cannot be undone.`,
+    title: t('competition.confirm.deleteTitle'),
+    message: t('competition.confirm.deleteMessage', { period: item.period }),
     color: 'error',
-    action: async () => { await competitionApi.remove(item._id); showSnack('Competition deleted.'); fetchItems(); },
+    action: async () => { await competitionApi.remove(item._id); showSnack(t('competition.toast.deleted')); fetchItems(); },
   });
 
   const runConfirm = async () => {
     if (!confirmData?.action) return;
     setActionLoading(true);
     try { await confirmData.action(); }
-    catch (e) { showSnack(e.response?.data?.message || 'Action failed.', 'error'); }
+    catch (e) { showSnack(e.response?.data?.message || t('competition.toast.actionFailed'), 'error'); }
     finally { setActionLoading(false); setConfirmData(null); }
   };
 
   const openCreate = () => {
-    if (!selectedCampusId) { showSnack('Select a campus before creating.', 'warning'); return; }
+    if (!selectedCampusId) { showSnack(t('competition.toast.selectCampus'), 'warning'); return; }
     setEditTarget(null);
     setFormOpen(true);
   };
@@ -278,13 +284,13 @@ export default function CompetitionAdmin() {
         <Stack direction="row" spacing={1.5} alignItems="center">
           <EmojiEvents color="primary" sx={{ fontSize: 36 }} />
           <Box>
-            <Typography variant="h5" fontWeight={700}>Competitions</Typography>
-            <Typography variant="caption" color="text.secondary">{total} item{total !== 1 ? 's' : ''}</Typography>
+            <Typography variant="h5" fontWeight={700}>{t('competition.title')}</Typography>
+            <Typography variant="caption" color="text.secondary">{t('competition.itemCount', { count: total })}</Typography>
           </Box>
         </Stack>
         <Button variant="contained" startIcon={<Add />} onClick={openCreate}
           sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700, width: { xs: '100%', sm: 'auto' } }}>
-          New competition
+          {t('competition.new')}
         </Button>
       </Stack>
 
@@ -292,20 +298,20 @@ export default function CompetitionAdmin() {
       <Paper elevation={0} sx={{ p: 2, borderRadius: 2, mb: 2, bgcolor: 'action.hover' }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
           <FormControl size="small" fullWidth>
-            <InputLabel>Campus</InputLabel>
-            <Select value={selectedCampusId} label="Campus"
+            <InputLabel>{t('competition.campus')}</InputLabel>
+            <Select value={selectedCampusId} label={t('competition.campus')}
               onChange={(e) => { setSelectedCampusId(e.target.value); setPage(1); }}>
-              <MenuItem value="">All campuses</MenuItem>
+              <MenuItem value="">{t('competition.allCampuses')}</MenuItem>
               {campuses.map((c) => <MenuItem key={c._id} value={c._id}>{c.campus_name || c._id}</MenuItem>)}
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Status</InputLabel>
-            <Select value={activeFilter} label="Status"
+            <InputLabel>{t('common:field.status')}</InputLabel>
+            <Select value={activeFilter} label={t('common:field.status')}
               onChange={(e) => { setActiveFilter(e.target.value); setPage(1); }}>
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="true">Active</MenuItem>
-              <MenuItem value="false">Closed</MenuItem>
+              <MenuItem value="">{t('common:all')}</MenuItem>
+              <MenuItem value="true">{t('competition.statusActive')}</MenuItem>
+              <MenuItem value="false">{t('competition.statusClosed')}</MenuItem>
             </Select>
           </FormControl>
         </Stack>
@@ -328,8 +334,8 @@ export default function CompetitionAdmin() {
       ) : items.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <EmojiEvents sx={{ fontSize: 56, color: 'text.disabled', mb: 1.5 }} />
-          <Typography variant="h6" color="text.secondary" fontWeight={600}>No competitions</Typography>
-          <Typography variant="body2" color="text.disabled">Create one with the button above.</Typography>
+          <Typography variant="h6" color="text.secondary" fontWeight={600}>{t('competition.empty')}</Typography>
+          <Typography variant="body2" color="text.disabled">{t('competition.emptyHint')}</Typography>
         </Box>
       ) : (
         <Stack spacing={1}>
@@ -337,36 +343,36 @@ export default function CompetitionAdmin() {
             <Paper key={item._id} elevation={1}
               sx={{ p: 2, borderRadius: 2, borderLeft: `4px solid ${item.isActive ? theme.palette.success.main : theme.palette.grey[400]}` }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ xs: 'flex-start', sm: 'center' }}>
-                <Chip label={item.isActive ? 'Active' : 'Closed'} size="small"
+                <Chip label={item.isActive ? t('competition.statusActive') : t('competition.statusClosed')} size="small"
                   color={item.isActive ? 'success' : 'default'} sx={{ fontWeight: 700, fontSize: 11 }} />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography variant="body2" fontWeight={700}>{item.period}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {item.prizes?.length || 0} prize{(item.prizes?.length || 0) !== 1 ? 's' : ''}
-                    {' · '}Closes {new Date(item.closingDate).toLocaleDateString()}
-                    {item.winners?.length ? ` · ${item.winners.length} winners` : ''}
+                    {t('competition.prizeCount', { count: item.prizes?.length || 0 })}
+                    {' · '}{t('competition.closesOn', { date: new Date(item.closingDate).toLocaleDateString() })}
+                    {item.winners?.length ? ` · ${t('competition.winnerCount', { count: item.winners.length })}` : ''}
                   </Typography>
                 </Box>
                 {isMobile && <Divider sx={{ opacity: 0.4, width: '100%' }} />}
                 <Stack direction="row" spacing={0.5} sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}>
-                  <Tooltip title={item.isActive ? 'Deactivate' : 'Activate'}>
+                  <Tooltip title={item.isActive ? t('competition.action.deactivate') : t('competition.action.activate')}>
                     <IconButton size="small" color={item.isActive ? 'warning' : 'success'} onClick={() => handleToggleActive(item)}>
                       {item.isActive ? <Pause fontSize="small" /> : <PlayArrow fontSize="small" />}
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title={item.isActive ? 'Close now (freeze winners)' : 'Already closed'}>
+                  <Tooltip title={item.isActive ? t('competition.action.closeNow') : t('competition.action.alreadyClosed')}>
                     <span>
                       <IconButton size="small" color="primary" onClick={() => handleClose(item)} disabled={!item.isActive}>
                         <Lock fontSize="small" />
                       </IconButton>
                     </span>
                   </Tooltip>
-                  <Tooltip title="Edit">
+                  <Tooltip title={t('common:action.edit')}>
                     <IconButton size="small" onClick={() => { setEditTarget(item); setFormOpen(true); }}>
                       <Edit fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete">
+                  <Tooltip title={t('common:action.delete')}>
                     <IconButton size="small" color="error" onClick={() => handleDelete(item)}>
                       <Delete fontSize="small" />
                     </IconButton>

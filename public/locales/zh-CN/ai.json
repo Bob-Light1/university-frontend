@@ -1,6 +1,16 @@
 {
   "title": "AI 助手",
   "subtitle": "聊天、搜索、分析和顾问 — 基于您校区的数据",
+  "workspace": {
+    "title": "AI 工作台",
+    "subtitle": "选择一个校区，然后针对它进行对话、搜索、分析并获取建议。",
+    "selectCampus": "校区",
+    "noCampuses": "未找到启用中的校区。",
+    "loadError": "无法加载校区列表。",
+    "emptyTitle": "请先选择一个校区",
+    "emptyHint": "助手每次仅针对一个校区工作：该校区的文档、数据和 AI 套餐。请选择您要处理的校区。",
+    "campusCount": "{count, plural, other {# 个启用中的校区}}"
+  },
   "tabs": {
     "chat": "助手",
     "search": "搜索",

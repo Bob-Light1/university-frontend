@@ -32,18 +32,19 @@ import {
 } from '../../../services/admin_service';
 import {
   AI_PLANS, AI_FEATURES, AI_PLAN_FEATURES, AI_PLAN_BUDGETS, formatTokens,
-} from '../../../campus/components/ai/aiConstants';
+} from '../../../components/ai/aiConstants';
 import { ADMIN_GRADIENT } from '../../../theme/adminTokens';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLAN_OPTIONS = [AI_PLANS.FREE, AI_PLANS.STANDARD, AI_PLANS.PREMIUM];
 
 const FEATURE_META = [
-  { key: AI_FEATURES.CHAT, label: 'Chat (RAG assistant)' },
-  { key: AI_FEATURES.SEARCH, label: 'Semantic search' },
-  { key: AI_FEATURES.ANALYTICS, label: 'AI analytics' },
-  { key: AI_FEATURES.ADVISORS, label: 'Business advisors' },
+  { key: AI_FEATURES.CHAT, labelKey: 'feature.chat' },
+  { key: AI_FEATURES.SEARCH, labelKey: 'feature.search' },
+  { key: AI_FEATURES.ANALYTICS, labelKey: 'feature.analytics' },
+  { key: AI_FEATURES.ADVISORS, labelKey: 'feature.advisors' },
 ];
 
 /** Defaults for a campus that has never been provisioned. */
@@ -80,6 +81,9 @@ const toForm = (ent) => {
  * @param {Function} props.onSaved      - (campusName) => void, for the parent snackbar.
  */
 export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) {
+  const { t: tBase } = useAppTranslation(['admin', 'common']);
+  // Scoped translator: `t('plan')` → `aiEntitlement.plan`.
+  const t = useCallback((key, opts) => tBase(`aiEntitlement.${key}`, opts), [tBase]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -100,10 +104,11 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
       setAudit(Array.isArray(data.audit) ? data.audit : []);
       setEverProvisioned(Boolean(data.aiEntitlement));
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load AI entitlement.');
+      setError(err.response?.data?.message || t('loadError'));
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campusId]);
 
   useEffect(() => {
@@ -149,12 +154,12 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
         monthlyTokenBudget: Number(form.monthlyTokenBudget),
         features: form.features,
       });
-      onSaved?.(res.data?.data?.campusName || campus?.campus_name || 'Campus');
+      onSaved?.(res.data?.data?.campusName || campus?.campus_name || t('fallbackCampus'));
       onClose?.();
     } catch (err) {
       const errs = err.response?.data?.errors;
       const detail = Array.isArray(errs) ? errs.map((e) => e.message).join(' · ') : null;
-      setError(detail || err.response?.data?.message || 'Failed to update AI entitlement.');
+      setError(detail || err.response?.data?.message || t('saveError'));
     } finally {
       setSaving(false);
     }
@@ -174,7 +179,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
             <AutoAwesome fontSize="small" />
           </Box>
           <Box sx={{ minWidth: 0 }}>
-            <Typography variant="h6" fontWeight={700} noWrap>AI Entitlement</Typography>
+            <Typography variant="h6" fontWeight={700} noWrap>{t('title')}</Typography>
             <Typography variant="caption" color="text.secondary" noWrap>
               {campus?.campus_name}
             </Typography>
@@ -203,8 +208,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
 
             {!everProvisioned && (
               <Alert severity="info" sx={{ borderRadius: 2 }}>
-                This campus has never been provisioned. Saving will create its AI
-                entitlement with the values below.
+                {t('neverProvisioned')}
               </Alert>
             )}
 
@@ -220,10 +224,10 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
               label={
                 <Box>
                   <Typography variant="body2" fontWeight={600}>
-                    AI enabled for this campus
+                    {t('enabledLabel')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Master switch. Disabling it also opts the campus out of retention (D7).
+                    {t('enabledDesc')}
                   </Typography>
                 </Box>
               }
@@ -234,20 +238,20 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
             {/* Plan + preset */}
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'flex-end' }}>
               <FormControl size="small" fullWidth>
-                <InputLabel>Plan</InputLabel>
+                <InputLabel>{t('plan')}</InputLabel>
                 <Select
-                  label="Plan"
+                  label={t('plan')}
                   value={form.plan}
                   onChange={(e) => handlePlanChange(e.target.value)}
                 >
                   {PLAN_OPTIONS.map((p) => (
                     <MenuItem key={p} value={p} sx={{ textTransform: 'capitalize' }}>
-                      {p} — {formatTokens(AI_PLAN_BUDGETS[p])} tokens/mo
+                      {t('planOption', { plan: p, tokens: formatTokens(AI_PLAN_BUDGETS[p]) })}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <Tooltip title="Re-apply this plan's default budget and features (D10 preset)">
+              <Tooltip title={t('presetTooltip')}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -255,7 +259,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
                   onClick={applyPreset}
                   sx={{ borderRadius: 2, textTransform: 'none', whiteSpace: 'nowrap' }}
                 >
-                  Preset
+                  {t('preset')}
                 </Button>
               </Tooltip>
             </Stack>
@@ -263,11 +267,11 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
             {/* LLM profile */}
             <TextField
               size="small"
-              label="LLM profile"
+              label={t('llmProfile')}
               value={form.llmProfile}
               onChange={(e) => setField('llmProfile', e.target.value)}
               error={form.llmProfile.trim().length === 0}
-              helperText="Named provider profile (e.g. free, groq-llama, anthropic-prod). Config-driven — no code change to switch."
+              helperText={t('llmProfileHelper')}
               inputProps={{ maxLength: 50 }}
               fullWidth
             />
@@ -276,14 +280,14 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
             <TextField
               size="small"
               type="number"
-              label="Monthly token budget"
+              label={t('budget')}
               value={form.monthlyTokenBudget}
               onChange={(e) => setField('monthlyTokenBudget', e.target.value)}
               error={budgetError}
               helperText={
                 budgetError
-                  ? 'Must be an integer ≥ 0.'
-                  : `0 = unlimited. Currently ${formatTokens(form.monthlyTokenBudget)} tokens/month.`
+                  ? t('budgetError')
+                  : t('budgetHelper', { tokens: formatTokens(form.monthlyTokenBudget) })
               }
               inputProps={{ min: 0, step: 100000 }}
               fullWidth
@@ -291,13 +295,12 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
 
             {/* Features */}
             <Box>
-              <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>Features</Typography>
+              <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>{t('features')}</Typography>
               <Typography variant="caption" color="text.secondary">
-                Overrides the plan preset. Each panel still degrades on
-                AI_FEATURE_NOT_IN_PLAN at runtime.
+                {t('featuresHelper')}
               </Typography>
               <FormGroup sx={{ mt: 1 }}>
-                {FEATURE_META.map(({ key, label }) => (
+                {FEATURE_META.map(({ key, labelKey }) => (
                   <FormControlLabel
                     key={key}
                     control={
@@ -307,7 +310,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
                         onChange={() => toggleFeature(key)}
                       />
                     }
-                    label={<Typography variant="body2">{label}</Typography>}
+                    label={<Typography variant="body2">{t(labelKey)}</Typography>}
                   />
                 ))}
               </FormGroup>
@@ -323,7 +326,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
                 <Stack direction="row" spacing={1} alignItems="center">
                   <HistoryToggleOff fontSize="small" color="action" />
                   <Typography variant="body2" fontWeight={600}>
-                    Change history
+                    {t('changeHistory')}
                   </Typography>
                   <Chip size="small" label={audit.length} />
                 </Stack>
@@ -331,7 +334,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
               <AccordionDetails sx={{ pt: 0 }}>
                 {audit.length === 0 ? (
                   <Typography variant="caption" color="text.secondary">
-                    No changes recorded yet.
+                    {t('noChanges')}
                   </Typography>
                 ) : (
                   <Stack spacing={1} divider={<Divider flexItem />}>
@@ -339,7 +342,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
                       <Box key={a._id || i}>
                         <Stack direction="row" justifyContent="space-between" spacing={1}>
                           <Typography variant="caption" fontWeight={600}>
-                            {a.actorRole || 'unknown'}
+                            {a.actorRole || t('unknownActor')}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {a.at ? new Date(a.at).toLocaleString() : ''}
@@ -367,7 +370,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
 
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button onClick={onClose} disabled={saving} sx={{ textTransform: 'none', borderRadius: 2 }}>
-          Cancel
+          {tBase('common:action.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -379,7 +382,7 @@ export default function AiEntitlementDialog({ open, campus, onClose, onSaved }) 
             background: ADMIN_GRADIENT, '&.Mui-disabled': { background: undefined },
           }}
         >
-          {saving ? 'Saving…' : 'Save entitlement'}
+          {saving ? t('saving') : t('save')}
         </Button>
       </DialogActions>
     </Dialog>

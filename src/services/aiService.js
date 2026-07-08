@@ -9,33 +9,46 @@
  * The chat endpoint is the ONLY SSE stream of the app: axios cannot consume
  * it in the browser, so streamAiChat uses fetch + ReadableStream with the
  * same Bearer token as the axios instance.
+ *
+ * `campusId` (optional on every call) is the tenant a GLOBAL role (ADMIN /
+ * DIRECTOR) targets. Scoped roles (CAMPUS_MANAGER, TEACHER, …) must omit it —
+ * the gateway derives their campus from the JWT and ignores the query
+ * parameter. Omitting it as a global role yields the platform context, which
+ * has no document corpus and no ERP aggregates: the Admin/Director AI
+ * workspace therefore always targets an explicitly selected campus.
  */
 
 import api from '../api/axiosInstance';
 import { API_BASE_URL } from '../config/env';
+
+/** Builds the campus-scope query for a global role; `{}` when unset. */
+const campusScope = (campusId) => (campusId ? { campusId } : {});
 
 // ─── JSON endpoints (project response shape { success, message, data }) ──────
 
 /**
  * Hybrid semantic search with verified citations.
  * @param {Object} payload - { query: string 1..500, types?: ['document'], limit?: number ≤ 50 }
+ * @param {string} [campusId] - Target campus (global roles only).
  */
-export const searchAi = (payload) =>
-  api.post('/ai/search', payload);
+export const searchAi = (payload, campusId) =>
+  api.post('/ai/search', payload, { params: campusScope(campusId) });
 
 /**
  * Paginated chat history of the current user (sendPaginated shape).
  * @param {Object} params - { page?, limit? }
+ * @param {string} [campusId] - Target campus (global roles only).
  */
-export const listAiConversations = (params = {}) =>
-  api.get('/ai/conversations', { params });
+export const listAiConversations = (params = {}, campusId) =>
+  api.get('/ai/conversations', { params: { ...params, ...campusScope(campusId) } });
 
 /**
  * One conversation with its messages and citations.
  * @param {string} id - Conversation uuid (ai-service id, not a Mongo ObjectId).
+ * @param {string} [campusId] - Target campus (global roles only).
  */
-export const getAiConversation = (id) =>
-  api.get(`/ai/conversations/${id}`);
+export const getAiConversation = (id, campusId) =>
+  api.get(`/ai/conversations/${id}`, { params: campusScope(campusId) });
 
 /**
  * Monthly AI consumption gauge of the campus (CAMPUS_MANAGER+).
@@ -54,9 +67,11 @@ export const getAiUsage = (params = {}) =>
  *   (backend AI_ANALYTICS_REPORTS is the source of truth).
  * @param {Object} params - Report filters, validated per report server-side
  *   (e.g. { academicYear: '2025-2026', semester: 'S1' }).
+ * @param {string} [campusId] - Target campus (global roles only). Required in
+ *   practice: aggregates need a campus scope in the S2S token.
  */
-export const runAiAnalytics = (report, params = {}) =>
-  api.post(`/ai/analytics/${report}`, { params });
+export const runAiAnalytics = (report, params = {}, campusId) =>
+  api.post(`/ai/analytics/${report}`, { params }, { params: campusScope(campusId) });
 
 /**
  * Business advisor proposals (M5b — ADMIN/DIRECTOR/CAMPUS_MANAGER, campus
@@ -68,9 +83,11 @@ export const runAiAnalytics = (report, params = {}) =>
  *   (backend AI_ADVISORS is the source of truth).
  * @param {Object} params - Advisor filters, whitelisted server-side
  *   (finance: { months? }, academic: { academicYear?, semester? }).
+ * @param {string} [campusId] - Target campus (global roles only). Required in
+ *   practice: the advisor engine reads campus-scoped aggregates.
  */
-export const runAiAdvisor = (advisor, params = {}) =>
-  api.post(`/ai/advisors/${advisor}`, { params });
+export const runAiAdvisor = (advisor, params = {}, campusId) =>
+  api.post(`/ai/advisors/${advisor}`, { params }, { params: campusScope(campusId) });
 
 // ─── Chat (SSE) ───────────────────────────────────────────────────────────────
 
@@ -95,7 +112,10 @@ const parseSseBlock = (block) => {
  * done / error). Handlers are all optional; onError also receives transport
  * and HTTP failures (shape { code, message }).
  *
- * @param {Object} payload - { message: string 1..4000, conversationId?: string|null }
+ * @param {Object} payload - { message: string 1..4000, conversationId?: string|null,
+ *   campusId?: string } — campusId is the target campus of a global role and is
+ *   sent as a query parameter, never in the body (the gateway only ever reads
+ *   scope from the JWT or the query, §4.1).
  * @param {Object} handlers
  * @param {Function} [handlers.onMessageStart] - ({ conversationId })
  * @param {Function} [handlers.onDelta]        - ({ text })
@@ -111,10 +131,14 @@ export const streamAiChat = (payload, handlers = {}) => {
     if (handlers.onError) handlers.onError({ code, message });
   };
 
+  const query = payload.campusId
+    ? `?${new URLSearchParams({ campusId: payload.campusId })}`
+    : '';
+
   const finished = (async () => {
     let response;
     try {
-      response = await fetch(`${API_BASE_URL}/ai/chat`, {
+      response = await fetch(`${API_BASE_URL}/ai/chat${query}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

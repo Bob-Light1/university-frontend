@@ -1,6 +1,16 @@
 {
   "title": "AI Assistant",
   "subtitle": "Chat, search, analytics and advisors — grounded in your campus data",
+  "workspace": {
+    "title": "AI Workspace",
+    "subtitle": "Select a campus, then chat, search, analyse and get proposals for it.",
+    "selectCampus": "Campus",
+    "noCampuses": "No active campus found.",
+    "loadError": "Campuses could not be loaded.",
+    "emptyTitle": "Pick a campus to begin",
+    "emptyHint": "The assistant is grounded in one campus at a time: its documents, its figures, its AI plan. Choose the campus you want to work on.",
+    "campusCount": "{count, plural, one {# active campus} other {# active campuses}}"
+  },
   "tabs": {
     "chat": "Assistant",
     "search": "Search",

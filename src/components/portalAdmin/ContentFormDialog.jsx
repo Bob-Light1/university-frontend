@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 
 function buildInitialValues(fields, init) {
   const v = {};
@@ -30,14 +31,14 @@ function buildInitialValues(fields, init) {
   return v;
 }
 
-function validate(fields, values) {
+function validate(fields, values, requiredMsg) {
   const errors = {};
   for (const f of fields) {
     if (!f.required) continue;
     if (f.type === 'bilingual') {
-      if (!values[f.name]?.fr?.trim()) errors[f.name] = { fr: 'Required' };
+      if (!values[f.name]?.fr?.trim()) errors[f.name] = { fr: requiredMsg };
     } else if (f.type !== 'switch' && (values[f.name] === '' || values[f.name] === undefined)) {
-      errors[f.name] = 'Required';
+      errors[f.name] = requiredMsg;
     }
   }
   return errors;
@@ -59,21 +60,22 @@ function sanitize(fields, values) {
 }
 
 export default function ContentFormDialog({
-  open, onClose, onSubmit, initialValues, mode = 'create', title, fields,
+  open, onClose, onSubmit, initialValues, mode = 'create', i18nKey, fields,
 }) {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t }    = useAppTranslation(['admin', 'common']);
 
   const formik = useFormik({
     initialValues: buildInitialValues(fields, initialValues),
     enableReinitialize: true,
-    validate: (values) => validate(fields, values),
+    validate: (values) => validate(fields, values, t('content.required')),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
         await onSubmit(sanitize(fields, values));
         onClose();
       } catch (err) {
-        setStatus({ error: err.response?.data?.message || 'Failed to save.' });
+        setStatus({ error: err.response?.data?.message || t('content.saveFailed') });
       } finally {
         setSubmitting(false);
       }
@@ -94,7 +96,7 @@ export default function ContentFormDialog({
                 onChange={(e) => formik.setFieldValue(f.name, e.target.checked)}
               />
             }
-            label={f.label}
+            label={t(f.labelKey)}
           />
         );
 
@@ -103,13 +105,13 @@ export default function ContentFormDialog({
           <TextField
             key={f.name}
             select fullWidth size="small"
-            label={f.label}
+            label={t(f.labelKey)}
             name={f.name}
             value={formik.values[f.name]}
             onChange={formik.handleChange}
           >
             {f.options.map((o) => (
-              <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
+              <MenuItem key={o.value} value={o.value}>{t(o.labelKey)}</MenuItem>
             ))}
           </TextField>
         );
@@ -118,11 +120,11 @@ export default function ContentFormDialog({
         return (
           <Box key={f.name}>
             <Typography variant="caption" fontWeight={700} color="text.secondary">
-              {f.label}{f.required ? ' *' : ''}
+              {t(f.labelKey)}{f.required ? ' *' : ''}
             </Typography>
             <Stack spacing={1.5} sx={{ mt: 0.5 }}>
               <TextField
-                fullWidth size="small" label="Français"
+                fullWidth size="small" label={t('content.french')}
                 name={`${f.name}.fr`}
                 value={formik.values[f.name].fr}
                 onChange={formik.handleChange}
@@ -131,7 +133,7 @@ export default function ContentFormDialog({
                 multiline={f.multiline} minRows={f.multiline ? 3 : undefined}
               />
               <TextField
-                fullWidth size="small" label="English"
+                fullWidth size="small" label={t('content.english')}
                 name={`${f.name}.en`}
                 value={formik.values[f.name].en}
                 onChange={formik.handleChange}
@@ -146,7 +148,7 @@ export default function ContentFormDialog({
           <TextField
             key={f.name}
             fullWidth size="small"
-            label={f.label + (f.required ? ' *' : '')}
+            label={t(f.labelKey) + (f.required ? ' *' : '')}
             name={f.name}
             type={f.type === 'number' ? 'number' : 'text'}
             value={formik.values[f.name]}
@@ -168,7 +170,7 @@ export default function ContentFormDialog({
       slotProps={{ paper: { sx: { borderRadius: isMobile ? 0 : 3 } } }}
     >
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {mode === 'edit' ? `Edit ${title}` : `New ${title}`}
+        {mode === 'edit' ? t(`content.${i18nKey}.edit`) : t(`content.${i18nKey}.new`)}
         <IconButton onClick={onClose} size="small"><Close /></IconButton>
       </DialogTitle>
 
@@ -184,7 +186,7 @@ export default function ContentFormDialog({
 
         <DialogActions sx={{ px: 3, py: 2 }}>
           <Button onClick={onClose} disabled={formik.isSubmitting} sx={{ textTransform: 'none' }}>
-            Cancel
+            {t('common:action.cancel')}
           </Button>
           <Button
             type="submit" variant="contained"
@@ -192,7 +194,7 @@ export default function ContentFormDialog({
             startIcon={formik.isSubmitting ? <CircularProgress size={16} /> : null}
             sx={{ textTransform: 'none', borderRadius: 2, fontWeight: 700 }}
           >
-            {mode === 'edit' ? 'Save' : 'Create'}
+            {mode === 'edit' ? t('common:action.save') : t('common:action.create')}
           </Button>
         </DialogActions>
       </form>

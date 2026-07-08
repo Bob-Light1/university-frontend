@@ -1,18 +1,24 @@
 import * as Yup from 'yup';
+import i18n from '../i18n/i18n';
 import { yupEmail, yupPassword, yupConfirmPassword, yupPhone } from '../utils/validationRules';
 
+/**
+ * Campus creation schema (admin portal).
+ * Messages are lazy thunks so a language switch is reflected on the next
+ * validation pass — see validationRules.js for the rationale.
+ */
 export const createCampusSchema = Yup.object({
   campus_name: Yup.string()
     .trim()
-    .min(4, 'Campus name must contain at least 4 characters.')
-    .required('Campus name is required.'),
+    .min(4, () => i18n.t('errors:validation.campusNameMin', { min: 4 }))
+    .required(() => i18n.t('errors:validation.campusNameRequired')),
 
   campus_number: Yup.string().trim().nullable(),
 
   manager_name: Yup.string()
     .trim()
-    .min(6, 'Manager name must be at least 6 characters long.')
-    .required('Manager name is required.'),
+    .min(6, () => i18n.t('errors:validation.managerNameMin', { min: 6 }))
+    .required(() => i18n.t('errors:validation.managerNameRequired')),
 
   manager_phone: yupPhone(true),
 
@@ -32,12 +38,12 @@ export const createCampusSchema = Yup.object({
 
     coordinates: Yup.object({
       lat: Yup.number()
-        .min(-90,  'Latitude must be between -90 and 90')
-        .max(90,   'Latitude must be between -90 and 90')
+        .min(-90, () => i18n.t('errors:validation.latitudeRange'))
+        .max(90,  () => i18n.t('errors:validation.latitudeRange'))
         .nullable(),
       lng: Yup.number()
-        .min(-180, 'Longitude must be between -180 and 180')
-        .max(180,  'Longitude must be between -180 and 180')
+        .min(-180, () => i18n.t('errors:validation.longitudeRange'))
+        .max(180,  () => i18n.t('errors:validation.longitudeRange'))
         .nullable(),
     }).nullable(),
   }).nullable(),

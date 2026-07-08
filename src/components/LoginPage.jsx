@@ -33,69 +33,53 @@ import {
 } from '@mui/icons-material';
 
 import { useAuth }                    from '../hooks/useAuth';
+import { useAppTranslation }          from '../hooks/useAppTranslation';
 import { loginSchema }                from '../yupSchema/loginSchema';
 import { yupEmail, yupPasswordLogin } from '../utils/validationRules';
 
 // ── User types ────────────────────────────────────────────────────────────────
+// Visual/behavioural metadata only. Human-readable copy (label, description,
+// tagline, sub) lives in the `auth` namespace under `login.roles.<value>`.
 
 const USER_TYPES = [
   {
-    value: 'manager', label: 'Manager', icon: Business,
+    value: 'manager', icon: Business,
     gradient: 'linear-gradient(135deg, #003285 0%, #2a629a 100%)', color: '#003285',
-    description: 'Campus management & administration',
     supportsUsername: false,
   },
   {
-    value: 'student', label: 'Student', icon: School,
+    value: 'student', icon: School,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #4989c8 100%)', color: '#2a629a',
-    description: 'Access your results, schedule & attendance',
     supportsUsername: true,
   },
   {
-    value: 'teacher', label: 'Teacher', icon: RecordVoiceOver,
+    value: 'teacher', icon: RecordVoiceOver,
     gradient: 'linear-gradient(135deg, #2a629a 0%, #003285 100%)', color: '#2a629a',
-    description: 'Courses, evaluations & class management',
     supportsUsername: true,
   },
   {
-    value: 'parent', label: 'Parent', icon: FamilyRestroom,
+    value: 'parent', icon: FamilyRestroom,
     gradient: 'linear-gradient(135deg, #311b92 0%, #c2185b 100%)', color: '#7b1fa2',
-    description: "Monitor your child's progress in real time",
     supportsUsername: true,
   },
   {
-    value: 'mentor', label: 'Mentor', icon: Psychology,
+    value: 'mentor', icon: Psychology,
     gradient: 'linear-gradient(135deg, #003285 0%, #4989c8 100%)', color: '#003285',
-    description: 'Guide and track your assigned students',
     supportsUsername: true,
   },
   {
-    value: 'partner', label: 'Partner', icon: Handshake,
+    value: 'partner', icon: Handshake,
     // #e65100 only reached 3.79:1 on white — too low for the small bold tab
     // labels that use it. #c2410c keeps the gradient's orange family at 5.18:1.
     gradient: 'linear-gradient(135deg, #1a1a2e 0%, #bf360c 100%)', color: '#c2410c',
-    description: 'Leads, commissions & affiliate kit',
     supportsUsername: false,
   },
   {
-    value: 'staff', label: 'Staff', icon: Badge,
+    value: 'staff', icon: Badge,
     gradient: 'linear-gradient(135deg, #00695C 0%, #26A69A 100%)', color: '#00695C',
-    description: 'Access the tools assigned to your role',
     supportsUsername: true,
   },
 ];
-
-// ── Adaptive left-panel copy per role ─────────────────────────────────────────
-
-const ROLE_COPY = {
-  manager: { tagline: 'Manage your campus',          sub: 'Complete oversight of your institution from a single dashboard.' },
-  student: { tagline: 'Track your journey',          sub: 'Results, schedule, attendance — your entire curriculum at a glance.' },
-  teacher: { tagline: 'Manage your classes',         sub: 'Courses, attendance, evaluations — organise your teaching with efficiency.' },
-  parent:  { tagline: 'Stay connected',              sub: "Follow your child's progress and attendance in real time." },
-  mentor:  { tagline: 'Guide your students',         sub: 'Access profiles and track the progress of your mentees.' },
-  partner: { tagline: 'Manage your partnerships',   sub: 'Leads, commissions, affiliate kit — your dedicated partner space.' },
-  staff:   { tagline: 'Access your tools',           sub: 'Manage the tasks assigned to your role within the campus.' },
-};
 
 // ── Redirect map ──────────────────────────────────────────────────────────────
 
@@ -151,6 +135,7 @@ export default function LoginPage({ variant = 'public' }) {
   const navigate  = useNavigate();
   const { state } = useLocation();
   const { login } = useAuth();
+  const { t }     = useAppTranslation(['auth', 'common']);
   const { palette: { mode } } = useTheme();
 
   const [step,           setStep]           = useState(1); // 1 = role picker, 2 = form
@@ -160,9 +145,11 @@ export default function LoginPage({ variant = 'public' }) {
   const [forgotOpen,     setForgotOpen]     = useState(false);
   const [snackbar,       setSnackbar]       = useState({ open: false, message: '', severity: 'success' });
 
-  const currentType = USER_TYPES.find((t) => t.value === userType) ?? USER_TYPES[0];
+  const currentType = USER_TYPES.find((ut) => ut.value === userType) ?? USER_TYPES[0];
   const RoleIcon    = currentType.icon;
-  const roleCopy    = ROLE_COPY[userType] ?? ROLE_COPY.manager;
+  const roleLabel   = t(`login.roles.${userType}.label`);
+  const roleTagline = t(`login.roles.${userType}.tagline`);
+  const roleSub     = t(`login.roles.${userType}.sub`);
   const activeGrad  = isAdmin ? ADMIN_GRADIENT : currentType.gradient;
   const activeColor = isAdmin ? ADMIN_COLOR    : currentType.color;
   // Same hue, but legible when it lands on the `paper` surface (form panel,
@@ -195,10 +182,10 @@ export default function LoginPage({ variant = 'public' }) {
           const userData = result.data.user;
           dest = state?.from ?? (REDIRECT_MAP[userType]?.(userData) || '/');
         }
-        setSnackbar({ open: true, message: 'Welcome back!', severity: 'success' });
+        setSnackbar({ open: true, message: t('login.welcomeBack'), severity: 'success' });
         setTimeout(() => navigate(dest, { replace: true }), 900);
       } catch (err) {
-        setSnackbar({ open: true, message: err.message || 'Login failed. Please check your credentials.', severity: 'error' });
+        setSnackbar({ open: true, message: err.message || t('login.failed'), severity: 'error' });
       } finally {
         setSubmitting(false);
       }
@@ -288,7 +275,7 @@ export default function LoginPage({ variant = 'public' }) {
               wewigo
             </Typography>
             <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 300, mb: 5 }}>
-              Who are you?
+              {t('login.step1.whoAreYou')}
             </Typography>
 
             {/* Role cards grid */}
@@ -298,7 +285,7 @@ export default function LoginPage({ variant = 'public' }) {
               gap: { xs: 1.5, sm: 2 },
               mb: 4,
             }}>
-              {USER_TYPES.map(({ value, label, icon: Icon, color, description }) => {
+              {USER_TYPES.map(({ value, icon: Icon, color }) => {
                 const sel = userType === value;
                 const cardAccent = roleAccent(mode, color);
                 return (
@@ -338,10 +325,10 @@ export default function LoginPage({ variant = 'public' }) {
                       <Icon sx={{ fontSize: 30, color: cardAccent }} />
                     </Box>
                     <Typography variant="subtitle1" fontWeight={700} color="text.primary">
-                      {label}
+                      {t(`login.roles.${value}.label`)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4, textAlign: 'center' }}>
-                      {description}
+                      {t(`login.roles.${value}.description`)}
                     </Typography>
                   </Box>
                 );
@@ -352,7 +339,7 @@ export default function LoginPage({ variant = 'public' }) {
                 role="button" tabIndex={0}
                 onClick={() => navigate('/')}
                 onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-                aria-label="Back to wewigo home"
+                aria-label={t('login.step1.backToHomeAria')}
                 sx={{
                   cursor: 'pointer', outline: 'none',
                   borderRadius: 3,
@@ -383,13 +370,13 @@ export default function LoginPage({ variant = 'public' }) {
                   wewigo
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, textAlign: 'center' }}>
-                  Back to home
+                  {t('login.step1.backToHome')}
                 </Typography>
               </Box>
             </Box>
 
             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-              Click your role to continue
+              {t('login.step1.clickRole')}
             </Typography>
           </Box>
         </Fade>
@@ -413,7 +400,7 @@ export default function LoginPage({ variant = 'public' }) {
             color: 'rgba(255,255,255,0.55)', fontSize: '0.78rem', textTransform: 'none',
             '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
           }}>
-          Back to site
+          {t('login.admin.backToSite')}
         </Button>
       )}
 
@@ -462,12 +449,10 @@ export default function LoginPage({ variant = 'public' }) {
                 <Fade key={userType} in timeout={400}>
                   <Box>
                     <Typography variant="h5" fontWeight={700} sx={{ mb: 1, opacity: 0.97 }}>
-                      {isAdmin ? 'Administration Portal' : roleCopy.tagline}
+                      {isAdmin ? t('login.admin.portalTitle') : roleTagline}
                     </Typography>
                     <Typography variant="body1" sx={{ opacity: 0.82, fontWeight: 300, mb: 4, maxWidth: 340, mx: 'auto', lineHeight: 1.6 }}>
-                      {isAdmin
-                        ? 'Manage campuses, accounts and platform configuration.'
-                        : roleCopy.sub}
+                      {isAdmin ? t('login.admin.portalSub') : roleSub}
                     </Typography>
                   </Box>
                 </Fade>
@@ -514,7 +499,7 @@ export default function LoginPage({ variant = 'public' }) {
                       '&:hover': { color: activeAccent, bgcolor: 'transparent' },
                     }}
                   >
-                    Change role
+                    {t('login.public.changeRole')}
                   </Button>
                 )}
 
@@ -546,12 +531,12 @@ export default function LoginPage({ variant = 'public' }) {
                             WebkitTextFillColor: 'transparent',
                           }),
                     }}>
-                      {isAdmin ? 'Administration' : `Sign in as ${currentType.label}`}
+                      {isAdmin ? t('login.admin.heading') : t('login.public.signInAs', { role: roleLabel })}
                     </Typography>
                   </Stack>
 
                   <Typography variant="body2" color="text.secondary" sx={{ pl: isAdmin ? 0 : 6.5 }}>
-                    {isAdmin ? 'Sign in to access the management portal' : 'Enter your credentials to continue'}
+                    {isAdmin ? t('login.admin.subheading') : t('login.public.enterCredentials')}
                   </Typography>
 
                   {isAdmin && (
@@ -563,7 +548,7 @@ export default function LoginPage({ variant = 'public' }) {
                     }}>
                       <Shield sx={{ fontSize: 13, color: activeAccent }} />
                       <Typography variant="caption" sx={{ color: activeAccent, fontWeight: 600, fontSize: '0.7rem' }}>
-                        Restricted access — authorised personnel only
+                        {t('login.admin.restricted')}
                       </Typography>
                     </Box>
                   )}
@@ -586,18 +571,18 @@ export default function LoginPage({ variant = 'public' }) {
                             '& .MuiTabs-indicator': { backgroundColor: activeAccent, transition: 'background-color 0.5s ease' },
                           }}
                         >
-                          <Tab value="email"    label="Email"    icon={<MailOutline sx={{ fontSize: 15 }} />} iconPosition="start" />
-                          <Tab value="username" label="Username" icon={<Badge sx={{ fontSize: 15 }} />}       iconPosition="start" />
+                          <Tab value="email"    label={t('login.emailTab')} icon={<MailOutline sx={{ fontSize: 15 }} />} iconPosition="start" />
+                          <Tab value="username" label={t('login.username')} icon={<Badge sx={{ fontSize: 15 }} />}       iconPosition="start" />
                         </Tabs>
                       )}
 
                       <FormControl fullWidth error={formik.touched.identifier && Boolean(formik.errors.identifier)}>
                         <InputLabel htmlFor="login-identifier">
-                          {isAdmin || identifierMode === 'email' ? 'Email address' : 'Username'}
+                          {isAdmin || identifierMode === 'email' ? t('login.email') : t('login.username')}
                         </InputLabel>
                         <OutlinedInput
                           id="login-identifier" name="identifier"
-                          label={isAdmin || identifierMode === 'email' ? 'Email address' : 'Username'}
+                          label={isAdmin || identifierMode === 'email' ? t('login.email') : t('login.username')}
                           value={formik.values.identifier}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           disabled={isLoading}
@@ -624,11 +609,11 @@ export default function LoginPage({ variant = 'public' }) {
 
                     {/* Password field */}
                     <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)}>
-                      <InputLabel htmlFor="login-password">Password</InputLabel>
+                      <InputLabel htmlFor="login-password">{t('login.password')}</InputLabel>
                       <OutlinedInput
                         id="login-password" name="password"
                         type={showPassword ? 'text' : 'password'}
-                        label="Password"
+                        label={t('login.password')}
                         value={formik.values.password}
                         onChange={formik.handleChange} onBlur={formik.handleBlur}
                         disabled={isLoading} autoComplete="current-password"
@@ -641,7 +626,7 @@ export default function LoginPage({ variant = 'public' }) {
                           <InputAdornment position="end">
                             <IconButton onClick={() => setShowPassword((p) => !p)}
                               edge="end" disabled={isLoading}
-                              aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                              aria-label={showPassword ? t('common:a11y.hidePassword') : t('common:a11y.showPassword')}>
                               {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>
                           </InputAdornment>
@@ -672,7 +657,7 @@ export default function LoginPage({ variant = 'public' }) {
                         '&:active': { transform: 'translateY(0)' },
                       }}
                     >
-                      {isLoading ? 'Connecting…' : isAdmin ? 'Sign in' : `Sign in as ${currentType.label}`}
+                      {isLoading ? t('login.connecting') : isAdmin ? t('login.admin.submit') : t('login.public.signInAs', { role: roleLabel })}
                     </Button>
                   </Stack>
                 </Box>
@@ -680,14 +665,14 @@ export default function LoginPage({ variant = 'public' }) {
                 {/* Footer */}
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
                   <Typography variant="body2" color="text.secondary">
-                    {isAdmin ? 'Need help? Contact your system administrator.' : 'Need help? Contact your campus administrator.'}
+                    {isAdmin ? t('login.admin.needHelp') : t('login.public.needHelp')}
                   </Typography>
                   <Button
                     size="small"
                     onClick={() => setForgotOpen(true)}
                     sx={{ textTransform: 'none', fontSize: '0.78rem', color: 'text.secondary', whiteSpace: 'nowrap', ml: 1 }}
                   >
-                    Forgot password?
+                    {t('login.forgotPassword')}
                   </Button>
                 </Stack>
 
@@ -710,13 +695,11 @@ export default function LoginPage({ variant = 'public' }) {
           }}>
             <LockReset sx={{ fontSize: 22, color: activeAccent }} />
           </Box>
-          Forgot your password?
+          {t('login.forgot.title')}
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-            {isAdmin
-              ? 'To reset your password, please contact your system administrator. They can reset it from the admin dashboard.'
-              : 'To reset your password, contact the administrator of your campus. They can reset it directly from their dashboard under your account.'}
+            {isAdmin ? t('login.forgot.adminBody') : t('login.forgot.publicBody')}
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -728,7 +711,7 @@ export default function LoginPage({ variant = 'public' }) {
               background: activeGrad,
             }}
           >
-            Got it
+            {t('login.forgot.gotIt')}
           </Button>
         </DialogActions>
       </Dialog>

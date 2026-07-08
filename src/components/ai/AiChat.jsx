@@ -10,6 +10,11 @@
  * upstream — are surfaced inline without breaking the thread.
  *
  * The AI never writes to the ERP: it answers over authorized documents only.
+ *
+ * Props:
+ *  campusId  string|undefined — campus targeted by a GLOBAL role (ADMIN /
+ *    DIRECTOR). Scoped roles omit it: the gateway derives their campus from
+ *    the JWT and ignores the query parameter.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -26,7 +31,7 @@ import {
 import CitationList from './CitationList';
 import {
   streamAiChat, listAiConversations, getAiConversation,
-} from '../../../services/aiService';
+} from '../../services/aiService';
 import { extractAiError, errorKey, isUnavailableError } from './aiConstants';
 import AiUnavailable from './AiUnavailable';
 
@@ -75,7 +80,7 @@ function MessageBubble({ role, content, citations, streaming }) {
   );
 }
 
-export default function AiChat() {
+export default function AiChat({ campusId }) {
   const theme = useTheme();
   const { t } = useTranslation('ai');
 
@@ -98,19 +103,21 @@ export default function AiChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  // Abort any in-flight stream on unmount.
+  // Abort any in-flight stream on unmount — including the unmount triggered by
+  // a campus switch (AiAssistant keys every panel on campusId), which is what
+  // guarantees a thread grounded in campus A never continues against campus B.
   useEffect(() => () => streamRef.current?.abort(), []);
 
   const loadHistory = useCallback(() => {
     setHistoryLoading(true);
-    listAiConversations({ page: 1, limit: 30 })
+    listAiConversations({ page: 1, limit: 30 }, campusId)
       .then((res) => setConversations(res.data?.data ?? []))
       .catch((err) => {
         const { code } = extractAiError(err);
         if (isUnavailableError(code)) setBlocked(code);
       })
       .finally(() => setHistoryLoading(false));
-  }, []);
+  }, [campusId]);
 
   const toggleHistory = () => {
     const next = !historyOpen;
@@ -121,7 +128,7 @@ export default function AiChat() {
   const openConversation = (id) => {
     if (streaming) return;
     setError(null);
-    getAiConversation(id)
+    getAiConversation(id, campusId)
       .then((res) => {
         const conv = res.data?.data;
         setConversationId(conv?.id ?? id);
@@ -165,7 +172,7 @@ export default function AiChat() {
       });
 
     streamRef.current = streamAiChat(
-      { message: text, conversationId },
+      { message: text, conversationId, campusId },
       {
         onMessageStart: ({ conversationId: id }) => { if (id) setConversationId(id); },
         onDelta: ({ text: delta }) => patchAssistant((cur) => ({ content: cur.content + (delta || '') })),
