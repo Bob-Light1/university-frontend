@@ -1,0 +1,126 @@
+{
+  "title": "AI 助手",
+  "subtitle": "聊天、搜索、分析和顾问 — 基于您校区的数据",
+  "tabs": {
+    "chat": "助手",
+    "search": "搜索",
+    "analytics": "分析",
+    "advisors": "顾问"
+  },
+  "plans": {
+    "free": "免费版",
+    "standard": "标准版",
+    "premium": "高级版"
+  },
+  "actions": {
+    "retry": "重试"
+  },
+  "usage": {
+    "title": "本月用量",
+    "unavailable": "用量计数暂时不可用。",
+    "unlimited": "已使用 {used} 个令牌 · 无限套餐",
+    "breakdown": "输入：{in} · 输出：{out}",
+    "used": "{used} / {budget} 个令牌",
+    "remaining": "剩余 {remaining}"
+  },
+  "citations": {
+    "title": "{count, plural, other {#}} 个已验证来源",
+    "untitled": "无标题来源",
+    "relevance": "相关性评分"
+  },
+  "chat": {
+    "history": "历史记录",
+    "new": "新对话",
+    "noHistory": "暂无对话。",
+    "untitled": "无标题对话",
+    "messageCount": "{count, plural, other {#}} 条消息",
+    "toggleHistory": "切换历史记录",
+    "groundedNote": "回答仅引用已授权的文档",
+    "emptyTitle": "咨询您的校区",
+    "emptyHint": "就您的文档、学生、课表或流程提出问题。助手会用您的语言回答并注明来源。",
+    "placeholder": "输入您的消息…",
+    "send": "发送",
+    "stop": "停止"
+  },
+  "search": {
+    "title": "语义搜索",
+    "subtitle": "按含义而非仅按关键词搜索校区文档库。",
+    "placeholder": "搜索文档…",
+    "resultCount": "{count, plural, other {#}} 个结果",
+    "for": "“{query}”的搜索结果",
+    "empty": "未找到匹配的文档。",
+    "hint": "输入查询以按含义搜索您已授权的文档。"
+  },
+  "params": {
+    "academicYear": "学年",
+    "semester": "学期",
+    "months": "月份",
+    "any": "任意",
+    "semesterOptions": {
+      "S1": "第一学期",
+      "S2": "第二学期",
+      "Annual": "全年"
+    }
+  },
+  "analytics": {
+    "title": "AI 辅助分析",
+    "subtitle": "AI 解读已验证的 ERP 数据 — 绝不计算或编造。",
+    "reports": {
+      "class-performance": "班级表现",
+      "attendance-summary": "考勤汇总",
+      "dropout-risk": "辍学风险"
+    },
+    "run": "运行报告",
+    "refresh": "刷新",
+    "narrative": "AI 摘要",
+    "noNarrative": "未生成任何摘要。",
+    "figures": "数据",
+    "generatedAt": "生成于 {date}"
+  },
+  "advisors": {
+    "title": "业务顾问",
+    "subtitle": "基于您 ERP 数据的确定性建议 — 由您决策并执行。",
+    "names": {
+      "finance": "财务",
+      "academic": "教学",
+      "marketing": "市场营销"
+    },
+    "run": "获取建议",
+    "openScreen": "打开页面",
+    "proposalOnly": "建议 — 不会自动执行任何操作",
+    "proposalCount": "{count, plural, other {#}} 条建议",
+    "engine": "引擎 {version}",
+    "noProposalsTitle": "无需提示",
+    "noProposalsHint": "顾问在当前数据中未发现可操作的信号。",
+    "disclaimer": "顾问只提供建议，绝不修改 ERP 数据。每个操作都会打开一个受权限控制的页面，并应用您自己的访问权限。",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "打开逾期费用",
+      "OPEN_FINANCIAL_SUMMARY": "打开财务摘要",
+      "OPEN_DROPOUT_RISK_LIST": "打开风险名单",
+      "OPEN_ATTENDANCE_DASHBOARD": "打开考勤",
+      "OPEN_LEAD_PIPELINE": "打开潜在客户漏斗",
+      "OPEN_LEAD_FRAUD_REVIEW": "打开欺诈审核",
+      "OPEN_LEAD_ANALYTICS": "打开潜在客户分析"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "AI 不可用",
+      "description": "本平台未配置 AI 服务。请联系您的管理员启用。"
+    },
+    "AI_NOT_ENABLED": {
+      "title": "此校区未启用 AI",
+      "description": "此校区没有有效的 AI 订阅。请让您的管理员启用 AI 套餐。"
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "未包含在您的套餐中",
+      "description": "此功能需要更高级的 AI 套餐。请让您的管理员升级校区套餐。"
+    },
+    "AI_BUDGET_EXCEEDED": "此校区的每月 AI 令牌预算已用尽。",
+    "UPSTREAM_TIMEOUT": "AI 服务超时。请重试。",
+    "NETWORK": "网络错误 — 无法连接到 AI 服务。",
+    "STREAM": "响应流已中断。请重试。",
+    "HTTP_ERROR": "AI 服务返回错误。请重试。",
+    "INTERNAL": "出现问题。请重试。"
+  }
+}

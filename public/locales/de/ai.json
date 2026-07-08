@@ -1,0 +1,126 @@
+{
+  "title": "KI-Assistent",
+  "subtitle": "Chat, Suche, Analysen und Berater — basierend auf den Daten Ihres Campus",
+  "tabs": {
+    "chat": "Assistent",
+    "search": "Suche",
+    "analytics": "Analysen",
+    "advisors": "Berater"
+  },
+  "plans": {
+    "free": "Kostenlos",
+    "standard": "Standard",
+    "premium": "Premium"
+  },
+  "actions": {
+    "retry": "Erneut versuchen"
+  },
+  "usage": {
+    "title": "Monatlicher Verbrauch",
+    "unavailable": "Die Verbrauchszähler sind vorübergehend nicht verfügbar.",
+    "unlimited": "{used} Tokens verwendet · unbegrenzter Tarif",
+    "breakdown": "Eingabe: {in} · Ausgabe: {out}",
+    "used": "{used} / {budget} Tokens",
+    "remaining": "{remaining} übrig"
+  },
+  "citations": {
+    "title": "{count, plural, one {# geprüfte Quelle} other {# geprüfte Quellen}}",
+    "untitled": "Quelle ohne Titel",
+    "relevance": "Relevanzwert"
+  },
+  "chat": {
+    "history": "Verlauf",
+    "new": "Neuer Chat",
+    "noHistory": "Noch keine Unterhaltungen.",
+    "untitled": "Unterhaltung ohne Titel",
+    "messageCount": "{count, plural, one {# Nachricht} other {# Nachrichten}}",
+    "toggleHistory": "Verlauf ein-/ausblenden",
+    "groundedNote": "Antworten zitieren nur autorisierte Dokumente",
+    "emptyTitle": "Fragen Sie zu Ihrem Campus",
+    "emptyHint": "Stellen Sie eine Frage zu Ihren Dokumenten, Studierenden, Stundenplänen oder Verfahren. Der Assistent antwortet in Ihrer Sprache und nennt seine Quellen.",
+    "placeholder": "Geben Sie Ihre Nachricht ein…",
+    "send": "Senden",
+    "stop": "Stoppen"
+  },
+  "search": {
+    "title": "Semantische Suche",
+    "subtitle": "Durchsuchen Sie die Dokumentbibliothek des Campus nach Bedeutung, nicht nur nach Schlüsselwörtern.",
+    "placeholder": "Dokumente suchen…",
+    "resultCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
+    "for": "für „{query}“",
+    "empty": "Keine passenden Dokumente gefunden.",
+    "hint": "Geben Sie eine Anfrage ein, um Ihre autorisierten Dokumente nach Bedeutung zu durchsuchen."
+  },
+  "params": {
+    "academicYear": "Studienjahr",
+    "semester": "Semester",
+    "months": "Monate",
+    "any": "Beliebig",
+    "semesterOptions": {
+      "S1": "Semester 1",
+      "S2": "Semester 2",
+      "Annual": "Jährlich"
+    }
+  },
+  "analytics": {
+    "title": "KI-gestützte Analysen",
+    "subtitle": "Die KI erläutert geprüfte ERP-Zahlen — sie berechnet oder erfindet sie niemals.",
+    "reports": {
+      "class-performance": "Klassenleistung",
+      "attendance-summary": "Anwesenheitsübersicht",
+      "dropout-risk": "Abbruchrisiko"
+    },
+    "run": "Bericht ausführen",
+    "refresh": "Aktualisieren",
+    "narrative": "KI-Zusammenfassung",
+    "noNarrative": "Es wurde keine Zusammenfassung erstellt.",
+    "figures": "Zahlen",
+    "generatedAt": "Erstellt am {date}"
+  },
+  "advisors": {
+    "title": "Fachberater",
+    "subtitle": "Deterministische Vorschläge auf Basis Ihrer ERP-Daten — Sie entscheiden und handeln.",
+    "names": {
+      "finance": "Finanzen",
+      "academic": "Lehre",
+      "marketing": "Marketing"
+    },
+    "run": "Vorschläge abrufen",
+    "openScreen": "Bildschirm öffnen",
+    "proposalOnly": "Vorschlag — es wird nichts automatisch ausgeführt",
+    "proposalCount": "{count, plural, one {# Vorschlag} other {# Vorschläge}}",
+    "engine": "Engine {version}",
+    "noProposalsTitle": "Nichts zu melden",
+    "noProposalsHint": "Der Berater hat in den aktuellen Daten kein umsetzbares Signal gefunden.",
+    "disclaimer": "Berater schlagen vor; sie ändern niemals ERP-Daten. Jede Aktion öffnet einen berechtigungsgeschützten Bildschirm, auf dem Ihre eigenen Zugriffsrechte gelten.",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "Überfällige Gebühren öffnen",
+      "OPEN_FINANCIAL_SUMMARY": "Finanzübersicht öffnen",
+      "OPEN_DROPOUT_RISK_LIST": "Risikoliste öffnen",
+      "OPEN_ATTENDANCE_DASHBOARD": "Anwesenheit öffnen",
+      "OPEN_LEAD_PIPELINE": "Lead-Pipeline öffnen",
+      "OPEN_LEAD_FRAUD_REVIEW": "Betrugsprüfung öffnen",
+      "OPEN_LEAD_ANALYTICS": "Lead-Analysen öffnen"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "KI ist nicht verfügbar",
+      "description": "Der KI-Dienst ist auf dieser Plattform nicht konfiguriert. Wenden Sie sich an Ihren Administrator, um ihn zu aktivieren."
+    },
+    "AI_NOT_ENABLED": {
+      "title": "KI ist für diesen Campus nicht aktiviert",
+      "description": "Dieser Campus hat kein aktives KI-Abonnement. Bitten Sie Ihren Administrator, einen KI-Tarif zu aktivieren."
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "Nicht in Ihrem Tarif enthalten",
+      "description": "Diese Funktion erfordert einen höheren KI-Tarif. Bitten Sie Ihren Administrator, den Campus-Tarif zu erweitern."
+    },
+    "AI_BUDGET_EXCEEDED": "Das monatliche KI-Token-Budget für diesen Campus ist aufgebraucht.",
+    "UPSTREAM_TIMEOUT": "Zeitüberschreitung beim KI-Dienst. Bitte versuchen Sie es erneut.",
+    "NETWORK": "Netzwerkfehler — der KI-Dienst konnte nicht erreicht werden.",
+    "STREAM": "Der Antwort-Stream wurde unterbrochen. Bitte versuchen Sie es erneut.",
+    "HTTP_ERROR": "Der KI-Dienst hat einen Fehler zurückgegeben. Bitte versuchen Sie es erneut.",
+    "INTERNAL": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  }
+}

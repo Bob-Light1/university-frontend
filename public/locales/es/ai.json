@@ -1,0 +1,126 @@
+{
+  "title": "Asistente de IA",
+  "subtitle": "Chat, búsqueda, analíticas y asesores — basados en los datos de tu campus",
+  "tabs": {
+    "chat": "Asistente",
+    "search": "Búsqueda",
+    "analytics": "Analíticas",
+    "advisors": "Asesores"
+  },
+  "plans": {
+    "free": "Gratuito",
+    "standard": "Estándar",
+    "premium": "Premium"
+  },
+  "actions": {
+    "retry": "Reintentar"
+  },
+  "usage": {
+    "title": "Consumo mensual",
+    "unavailable": "Los contadores de consumo no están disponibles temporalmente.",
+    "unlimited": "{used} tokens usados · plan ilimitado",
+    "breakdown": "Entrada: {in} · Salida: {out}",
+    "used": "{used} / {budget} tokens",
+    "remaining": "{remaining} restantes"
+  },
+  "citations": {
+    "title": "{count, plural, one {# fuente verificada} other {# fuentes verificadas}}",
+    "untitled": "Fuente sin título",
+    "relevance": "Puntuación de relevancia"
+  },
+  "chat": {
+    "history": "Historial",
+    "new": "Nuevo chat",
+    "noHistory": "Aún no hay conversaciones.",
+    "untitled": "Conversación sin título",
+    "messageCount": "{count, plural, one {# mensaje} other {# mensajes}}",
+    "toggleHistory": "Mostrar historial",
+    "groundedNote": "Las respuestas citan únicamente documentos autorizados",
+    "emptyTitle": "Pregunta sobre tu campus",
+    "emptyHint": "Haz una pregunta sobre tus documentos, estudiantes, horarios o procedimientos. El asistente responde en tu idioma y cita sus fuentes.",
+    "placeholder": "Escribe tu mensaje…",
+    "send": "Enviar",
+    "stop": "Detener"
+  },
+  "search": {
+    "title": "Búsqueda semántica",
+    "subtitle": "Busca en la biblioteca documental del campus por significado, no solo por palabras clave.",
+    "placeholder": "Buscar documentos…",
+    "resultCount": "{count, plural, one {# resultado} other {# resultados}}",
+    "for": "para «{query}»",
+    "empty": "No se encontraron documentos coincidentes.",
+    "hint": "Introduce una consulta para buscar tus documentos autorizados por significado."
+  },
+  "params": {
+    "academicYear": "Año académico",
+    "semester": "Semestre",
+    "months": "Meses",
+    "any": "Cualquiera",
+    "semesterOptions": {
+      "S1": "Semestre 1",
+      "S2": "Semestre 2",
+      "Annual": "Anual"
+    }
+  },
+  "analytics": {
+    "title": "Analíticas asistidas por IA",
+    "subtitle": "La IA describe cifras verificadas del ERP — nunca las calcula ni las inventa.",
+    "reports": {
+      "class-performance": "Rendimiento de las clases",
+      "attendance-summary": "Resumen de asistencia",
+      "dropout-risk": "Riesgo de abandono"
+    },
+    "run": "Ejecutar informe",
+    "refresh": "Actualizar",
+    "narrative": "Resumen de IA",
+    "noNarrative": "No se generó ningún resumen.",
+    "figures": "Cifras",
+    "generatedAt": "Generado el {date}"
+  },
+  "advisors": {
+    "title": "Asesores de negocio",
+    "subtitle": "Propuestas deterministas sobre tus datos del ERP — tú decides y actúas.",
+    "names": {
+      "finance": "Finanzas",
+      "academic": "Académico",
+      "marketing": "Marketing"
+    },
+    "run": "Obtener propuestas",
+    "openScreen": "Abrir pantalla",
+    "proposalOnly": "Propuesta — no se ejecuta nada automáticamente",
+    "proposalCount": "{count, plural, one {# propuesta} other {# propuestas}}",
+    "engine": "Motor {version}",
+    "noProposalsTitle": "Nada que señalar",
+    "noProposalsHint": "El asesor no encontró ninguna señal accionable en los datos actuales.",
+    "disclaimer": "Los asesores proponen; nunca modifican los datos del ERP. Cada acción abre una pantalla protegida por permisos donde se aplica tu propio acceso.",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "Abrir cuotas vencidas",
+      "OPEN_FINANCIAL_SUMMARY": "Abrir resumen financiero",
+      "OPEN_DROPOUT_RISK_LIST": "Abrir lista de riesgo",
+      "OPEN_ATTENDANCE_DASHBOARD": "Abrir asistencia",
+      "OPEN_LEAD_PIPELINE": "Abrir embudo de prospectos",
+      "OPEN_LEAD_FRAUD_REVIEW": "Abrir revisión de fraude",
+      "OPEN_LEAD_ANALYTICS": "Abrir analíticas de prospectos"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "La IA no está disponible",
+      "description": "El servicio de IA no está configurado en esta plataforma. Contacta con tu administrador para activarlo."
+    },
+    "AI_NOT_ENABLED": {
+      "title": "La IA no está activada para este campus",
+      "description": "Este campus no tiene una suscripción de IA activa. Pide a tu administrador que active un plan de IA."
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "No incluido en tu plan",
+      "description": "Esta funcionalidad requiere un plan de IA superior. Pide a tu administrador que mejore el plan del campus."
+    },
+    "AI_BUDGET_EXCEEDED": "El presupuesto mensual de tokens de IA de este campus está agotado.",
+    "UPSTREAM_TIMEOUT": "El servicio de IA agotó el tiempo de espera. Inténtalo de nuevo.",
+    "NETWORK": "Error de red — no se pudo conectar con el servicio de IA.",
+    "STREAM": "El flujo de respuesta se interrumpió. Inténtalo de nuevo.",
+    "HTTP_ERROR": "El servicio de IA devolvió un error. Inténtalo de nuevo.",
+    "INTERNAL": "Algo salió mal. Inténtalo de nuevo."
+  }
+}

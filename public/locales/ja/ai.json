@@ -1,0 +1,126 @@
+{
+  "title": "AIアシスタント",
+  "subtitle": "チャット、検索、分析、アドバイザー — キャンパスのデータに基づいています",
+  "tabs": {
+    "chat": "アシスタント",
+    "search": "検索",
+    "analytics": "分析",
+    "advisors": "アドバイザー"
+  },
+  "plans": {
+    "free": "無料",
+    "standard": "スタンダード",
+    "premium": "プレミアム"
+  },
+  "actions": {
+    "retry": "再試行"
+  },
+  "usage": {
+    "title": "月間使用量",
+    "unavailable": "使用量カウンターは一時的に利用できません。",
+    "unlimited": "{used} トークン使用済み · 無制限プラン",
+    "breakdown": "入力: {in} · 出力: {out}",
+    "used": "{used} / {budget} トークン",
+    "remaining": "残り {remaining}"
+  },
+  "citations": {
+    "title": "{count, plural, other {#}}件の検証済みソース",
+    "untitled": "無題のソース",
+    "relevance": "関連度スコア"
+  },
+  "chat": {
+    "history": "履歴",
+    "new": "新しいチャット",
+    "noHistory": "まだ会話がありません。",
+    "untitled": "無題の会話",
+    "messageCount": "{count, plural, other {#}}件のメッセージ",
+    "toggleHistory": "履歴の表示切り替え",
+    "groundedNote": "回答は承認された書類のみを引用します",
+    "emptyTitle": "キャンパスについて質問する",
+    "emptyHint": "書類、学生、時間割、手続きについて質問してください。アシスタントはあなたの言語で回答し、出典を示します。",
+    "placeholder": "メッセージを入力…",
+    "send": "送信",
+    "stop": "停止"
+  },
+  "search": {
+    "title": "セマンティック検索",
+    "subtitle": "キーワードだけでなく、意味からキャンパスの書類ライブラリを検索します。",
+    "placeholder": "書類を検索…",
+    "resultCount": "{count, plural, other {#}}件の結果",
+    "for": "「{query}」の検索結果",
+    "empty": "一致する書類が見つかりませんでした。",
+    "hint": "クエリを入力して、承認された書類を意味から検索します。"
+  },
+  "params": {
+    "academicYear": "学年度",
+    "semester": "学期",
+    "months": "月",
+    "any": "指定なし",
+    "semesterOptions": {
+      "S1": "前期",
+      "S2": "後期",
+      "Annual": "通年"
+    }
+  },
+  "analytics": {
+    "title": "AI支援分析",
+    "subtitle": "AIは検証済みのERPの数値を説明します — 計算したり作り出したりすることは決してありません。",
+    "reports": {
+      "class-performance": "クラスの成績",
+      "attendance-summary": "出席の概要",
+      "dropout-risk": "中退リスク"
+    },
+    "run": "レポートを実行",
+    "refresh": "更新",
+    "narrative": "AIによる要約",
+    "noNarrative": "要約は生成されませんでした。",
+    "figures": "数値",
+    "generatedAt": "{date} に生成"
+  },
+  "advisors": {
+    "title": "業務アドバイザー",
+    "subtitle": "ERPデータに基づく確定的な提案 — 判断と実行はあなたが行います。",
+    "names": {
+      "finance": "財務",
+      "academic": "学務",
+      "marketing": "マーケティング"
+    },
+    "run": "提案を取得",
+    "openScreen": "画面を開く",
+    "proposalOnly": "提案 — 自動的には何も実行されません",
+    "proposalCount": "{count, plural, other {#}}件の提案",
+    "engine": "エンジン {version}",
+    "noProposalsTitle": "指摘事項なし",
+    "noProposalsHint": "アドバイザーは現在のデータで実行可能なシグナルを検出しませんでした。",
+    "disclaimer": "アドバイザーは提案するだけで、ERPデータを変更することはありません。各アクションは権限で保護された画面を開き、あなた自身のアクセス権が適用されます。",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "延滞料金を開く",
+      "OPEN_FINANCIAL_SUMMARY": "財務概要を開く",
+      "OPEN_DROPOUT_RISK_LIST": "リスク一覧を開く",
+      "OPEN_ATTENDANCE_DASHBOARD": "出席を開く",
+      "OPEN_LEAD_PIPELINE": "リードパイプラインを開く",
+      "OPEN_LEAD_FRAUD_REVIEW": "不正レビューを開く",
+      "OPEN_LEAD_ANALYTICS": "リード分析を開く"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "AIは利用できません",
+      "description": "このプラットフォームではAIサービスが構成されていません。有効にするには管理者にお問い合わせください。"
+    },
+    "AI_NOT_ENABLED": {
+      "title": "このキャンパスではAIが有効になっていません",
+      "description": "このキャンパスには有効なAIサブスクリプションがありません。管理者にAIプランの有効化を依頼してください。"
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "お使いのプランに含まれていません",
+      "description": "この機能にはより上位のAIプランが必要です。管理者にキャンパスプランのアップグレードを依頼してください。"
+    },
+    "AI_BUDGET_EXCEEDED": "このキャンパスの月間AIトークン予算が使い切られました。",
+    "UPSTREAM_TIMEOUT": "AIサービスがタイムアウトしました。もう一度お試しください。",
+    "NETWORK": "ネットワークエラー — AIサービスに接続できませんでした。",
+    "STREAM": "応答ストリームが中断されました。もう一度お試しください。",
+    "HTTP_ERROR": "AIサービスがエラーを返しました。もう一度お試しください。",
+    "INTERNAL": "問題が発生しました。もう一度お試しください。"
+  }
+}

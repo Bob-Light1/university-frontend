@@ -39,6 +39,8 @@ export const getAiConversation = (id) =>
 
 /**
  * Monthly AI consumption gauge of the campus (CAMPUS_MANAGER+).
+ * data = { period, plan, features, tokensIn, tokensOut, budget, remaining } —
+ * `features` are the campus's effective toggles (may override the plan preset).
  * @param {Object} params - { campusId? } (global roles narrowing to one campus)
  */
 export const getAiUsage = (params = {}) =>

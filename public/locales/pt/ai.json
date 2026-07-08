@@ -1,0 +1,126 @@
+{
+  "title": "Assistente de IA",
+  "subtitle": "Chat, pesquisa, análises e consultores — baseados nos dados do seu campus",
+  "tabs": {
+    "chat": "Assistente",
+    "search": "Pesquisa",
+    "analytics": "Análises",
+    "advisors": "Consultores"
+  },
+  "plans": {
+    "free": "Gratuito",
+    "standard": "Padrão",
+    "premium": "Premium"
+  },
+  "actions": {
+    "retry": "Tentar novamente"
+  },
+  "usage": {
+    "title": "Consumo mensal",
+    "unavailable": "Os contadores de consumo estão temporariamente indisponíveis.",
+    "unlimited": "{used} tokens usados · plano ilimitado",
+    "breakdown": "Entrada: {in} · Saída: {out}",
+    "used": "{used} / {budget} tokens",
+    "remaining": "{remaining} restantes"
+  },
+  "citations": {
+    "title": "{count, plural, one {# fonte verificada} other {# fontes verificadas}}",
+    "untitled": "Fonte sem título",
+    "relevance": "Pontuação de relevância"
+  },
+  "chat": {
+    "history": "Histórico",
+    "new": "Novo chat",
+    "noHistory": "Ainda não há conversas.",
+    "untitled": "Conversa sem título",
+    "messageCount": "{count, plural, one {# mensagem} other {# mensagens}}",
+    "toggleHistory": "Mostrar histórico",
+    "groundedNote": "As respostas citam apenas documentos autorizados",
+    "emptyTitle": "Pergunte sobre o seu campus",
+    "emptyHint": "Faça uma pergunta sobre os seus documentos, estudantes, horários ou procedimentos. O assistente responde no seu idioma e cita as suas fontes.",
+    "placeholder": "Digite a sua mensagem…",
+    "send": "Enviar",
+    "stop": "Parar"
+  },
+  "search": {
+    "title": "Pesquisa semântica",
+    "subtitle": "Pesquise na biblioteca de documentos do campus por significado, não apenas por palavras-chave.",
+    "placeholder": "Pesquisar documentos…",
+    "resultCount": "{count, plural, one {# resultado} other {# resultados}}",
+    "for": "para “{query}”",
+    "empty": "Nenhum documento correspondente encontrado.",
+    "hint": "Insira uma consulta para pesquisar os seus documentos autorizados por significado."
+  },
+  "params": {
+    "academicYear": "Ano letivo",
+    "semester": "Semestre",
+    "months": "Meses",
+    "any": "Qualquer",
+    "semesterOptions": {
+      "S1": "Semestre 1",
+      "S2": "Semestre 2",
+      "Annual": "Anual"
+    }
+  },
+  "analytics": {
+    "title": "Análises assistidas por IA",
+    "subtitle": "A IA descreve números verificados do ERP — nunca os calcula nem os inventa.",
+    "reports": {
+      "class-performance": "Desempenho das turmas",
+      "attendance-summary": "Resumo de frequência",
+      "dropout-risk": "Risco de evasão"
+    },
+    "run": "Executar relatório",
+    "refresh": "Atualizar",
+    "narrative": "Resumo da IA",
+    "noNarrative": "Nenhum resumo foi gerado.",
+    "figures": "Números",
+    "generatedAt": "Gerado em {date}"
+  },
+  "advisors": {
+    "title": "Consultores de negócios",
+    "subtitle": "Propostas determinísticas sobre os seus dados do ERP — você decide e age.",
+    "names": {
+      "finance": "Financeiro",
+      "academic": "Acadêmico",
+      "marketing": "Marketing"
+    },
+    "run": "Obter propostas",
+    "openScreen": "Abrir tela",
+    "proposalOnly": "Proposta — nada é executado automaticamente",
+    "proposalCount": "{count, plural, one {# proposta} other {# propostas}}",
+    "engine": "Motor {version}",
+    "noProposalsTitle": "Nada a assinalar",
+    "noProposalsHint": "O consultor não encontrou nenhum sinal acionável nos dados atuais.",
+    "disclaimer": "Os consultores propõem; nunca modificam os dados do ERP. Cada ação abre uma tela protegida por permissões onde se aplica o seu próprio acesso.",
+    "actions": {
+      "OPEN_OVERDUE_FEES": "Abrir taxas em atraso",
+      "OPEN_FINANCIAL_SUMMARY": "Abrir resumo financeiro",
+      "OPEN_DROPOUT_RISK_LIST": "Abrir lista de risco",
+      "OPEN_ATTENDANCE_DASHBOARD": "Abrir frequência",
+      "OPEN_LEAD_PIPELINE": "Abrir funil de leads",
+      "OPEN_LEAD_FRAUD_REVIEW": "Abrir revisão de fraude",
+      "OPEN_LEAD_ANALYTICS": "Abrir análises de leads"
+    }
+  },
+  "errors": {
+    "AI_DISABLED": {
+      "title": "A IA não está disponível",
+      "description": "O serviço de IA não está configurado nesta plataforma. Contacte o seu administrador para o ativar."
+    },
+    "AI_NOT_ENABLED": {
+      "title": "A IA não está ativada para este campus",
+      "description": "Este campus não tem uma assinatura de IA ativa. Peça ao seu administrador para ativar um plano de IA."
+    },
+    "AI_FEATURE_NOT_IN_PLAN": {
+      "title": "Não incluído no seu plano",
+      "description": "Este recurso requer um plano de IA superior. Peça ao seu administrador para atualizar o plano do campus."
+    },
+    "AI_BUDGET_EXCEEDED": "O orçamento mensal de tokens de IA deste campus está esgotado.",
+    "UPSTREAM_TIMEOUT": "O serviço de IA excedeu o tempo limite. Tente novamente.",
+    "NETWORK": "Erro de rede — não foi possível contactar o serviço de IA.",
+    "STREAM": "O fluxo de resposta foi interrompido. Tente novamente.",
+    "HTTP_ERROR": "O serviço de IA retornou um erro. Tente novamente.",
+    "INTERNAL": "Algo deu errado. Tente novamente."
+  }
+}

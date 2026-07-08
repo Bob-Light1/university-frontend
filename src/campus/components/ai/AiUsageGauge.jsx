@@ -5,8 +5,9 @@
  * remaining balance. A budget of 0 means unlimited (ADMIN); counters may be
  * temporarily unavailable (UPSTREAM_TIMEOUT) — reported, never invented.
  *
- * Reports the resolved plan up via `onLoaded({ plan, code })` so the parent hub
- * can pick which feature tabs to show optimistically.
+ * Reports the resolved plan and effective feature toggles up via
+ * `onLoaded({ plan, features, code })` so the parent hub can pick which feature
+ * tabs to show (features may override the plan preset).
  */
 
 import { useEffect, useState, useCallback } from 'react';
@@ -32,13 +33,13 @@ export default function AiUsageGauge({ campusId, onLoaded, compact = false }) {
         if (cancelled) return;
         const data = res.data?.data ?? null;
         setState({ loading: false, data, code: null });
-        onLoaded?.({ plan: data?.plan ?? null, code: null });
+        onLoaded?.({ plan: data?.plan ?? null, features: data?.features ?? null, code: null });
       })
       .catch((err) => {
         if (cancelled) return;
         const { code } = extractAiError(err);
         setState({ loading: false, data: null, code });
-        onLoaded?.({ plan: null, code });
+        onLoaded?.({ plan: null, features: null, code });
       });
     return () => { cancelled = true; };
   }, [campusId, onLoaded]);

@@ -45,11 +45,13 @@ export default function AiAssistant() {
 
   const [tab, setTab] = useState(0);
   const [plan, setPlan] = useState(null);
+  const [features, setFeatures] = useState(null); // effective per-campus toggles
   const [campusBlocked, setCampusBlocked] = useState(null); // AI_DISABLED / AI_NOT_ENABLED
 
   // The gauge is the single source that probes entitlement on mount.
-  const onUsageLoaded = useCallback(({ plan: p, code }) => {
+  const onUsageLoaded = useCallback(({ plan: p, features: f, code }) => {
     setPlan(p);
+    setFeatures(f ?? null);
     if (code === AI_ERROR_CODES.AI_DISABLED || code === AI_ERROR_CODES.AI_NOT_ENABLED) {
       setCampusBlocked(code);
     } else {
@@ -57,10 +59,11 @@ export default function AiAssistant() {
     }
   }, []);
 
-  // Which feature tabs to show optimistically. Unknown plan → show all; the
-  // panels themselves gate on AI_FEATURE_NOT_IN_PLAN.
-  const features = plan ? AI_PLAN_FEATURES[plan] : null;
-  const has = (f) => !features || features[f];
+  // Which feature tabs to show. Prefer the campus's effective feature toggles
+  // (which may override the plan preset); fall back to the plan preset, then to
+  // showing all. The panels themselves still gate on AI_FEATURE_NOT_IN_PLAN.
+  const effectiveFeatures = features ?? (plan ? AI_PLAN_FEATURES[plan] : null);
+  const has = (f) => !effectiveFeatures || effectiveFeatures[f];
 
   const TABS = [
     { key: AI_FEATURES.CHAT, label: t('tabs.chat'), icon: <Forum sx={{ fontSize: 18 }} />, color: theme.palette.primary.main, node: <AiChat /> },
