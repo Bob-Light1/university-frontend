@@ -4,6 +4,12 @@
  *
  * Nav items are computed at render time from user.permissions (injected at
  * login from the assigned StaffRole). Each permission key maps to a module.
+ *
+ * TWO filters apply here, and they answer different questions — both must pass:
+ *   - `keys`    → what this STAFF MEMBER was granted by their role;
+ *   - `feature` → what this CAMPUS bought (entitlement design doc §8.2).
+ * The second is applied by AppShell, not here: it is the same rule for all
+ * eight portals and belongs in one place.
  */
 
 import HomeIcon        from '@mui/icons-material/Home';
@@ -28,13 +34,13 @@ const PERMISSION_NAV_CONFIG = [
   { keys: ['students.read',     'students.manage'],     link: '/staff/students',      tKey: 'common:nav.students',     icon: GroupIcon          },
   { keys: ['teachers.read',     'teachers.manage'],     link: '/staff/teachers',      tKey: 'common:nav.teachers',     icon: RecordVoiceOverIcon },
   { keys: ['attendance.read',   'attendance.manage'],   link: '/staff/attendance',    tKey: 'common:nav.attendance',   icon: ChecklistIcon      },
-  { keys: ['results.read',      'results.manage'],      link: '/staff/results',       tKey: 'common:nav.results',      icon: AssessmentIcon     },
-  { keys: ['courses.read',      'courses.manage'],      link: '/staff/courses',       tKey: 'common:nav.courses',      icon: MenuBookIcon       },
+  { keys: ['results.read',      'results.manage'],      link: '/staff/results',       tKey: 'common:nav.results',      icon: AssessmentIcon,     feature: 'result' },
+  { keys: ['courses.read',      'courses.manage'],      link: '/staff/courses',       tKey: 'common:nav.courses',      icon: MenuBookIcon,       feature: 'course' },
   { keys: ['schedule.read',     'schedule.manage'],     link: '/staff/schedule',      tKey: 'common:nav.schedule',     icon: EventNoteIcon      },
-  { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',     tKey: 'common:nav.documents',    icon: DescriptionIcon    },
-  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',         tKey: 'common:nav.examinations', icon: QuizIcon           },
-  { keys: ['print'],                                    link: '/staff/print',         tKey: 'common:nav.print',        icon: PrintIcon          },
-  { keys: ['announcements'],                            link: '/staff/announcements', tKey: 'common:nav.announcements',icon: CampaignIcon       },
+  { keys: ['documents.read',    'documents.manage'],    link: '/staff/documents',     tKey: 'common:nav.documents',    icon: DescriptionIcon,    feature: 'document' },
+  { keys: ['examinations.read', 'examinations.manage'], link: '/staff/exams',         tKey: 'common:nav.examinations', icon: QuizIcon,           feature: 'exam' },
+  { keys: ['print'],                                    link: '/staff/print',         tKey: 'common:nav.print',        icon: PrintIcon,          feature: 'academic-print' },
+  { keys: ['announcements'],                            link: '/staff/announcements', tKey: 'common:nav.announcements',icon: CampaignIcon,       feature: 'announcement' },
   // NOTE: 'finance' and 'messages' permissions exist but have no staff portal
   // page/route yet — omitted from nav to avoid routing to a blank screen.
 ];
@@ -46,7 +52,7 @@ export default function Staff() {
 
   const dynamicItems = PERMISSION_NAV_CONFIG
     .filter(({ keys }) => keys.some((k) => perms.includes(k)))
-    .map(({ link, tKey, icon }) => ({ link, label: t(tKey), icon }));
+    .map(({ link, tKey, icon, feature }) => ({ link, label: t(tKey), icon, feature }));
 
   const navItems = [
     { link: '/',      label: t('common:nav.home'),      icon: HomeIcon      },

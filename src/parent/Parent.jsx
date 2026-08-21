@@ -1,6 +1,14 @@
 /**
  * @file Parent.jsx
  * @description Parent layout — fetches first child then delegates to AppShell.
+ *
+ * `feature` is the entitlement registry key AppShell filters on (design doc
+ * §8.2). Note that these screens READ through the parent facade
+ * (`/api/parents/me/children/...`), so the server gate on `/api/results` never
+ * fires for them: the key here states which module OWNS the data, which is what
+ * decides whether a parent should be offered it at all. A campus that hides
+ * Results hides its children's results from parents too — that is the point of
+ * §4.1.2, not a side effect.
  */
 
 import { useState, useEffect } from 'react';
@@ -46,10 +54,10 @@ export default function Parent() {
   const navItems = [
     { link: '/',                     label: 'Home',       icon: HomeIcon,               disabled: false },
     { link: '/parent',               label: 'Dashboard',  icon: DashboardCustomizeIcon, disabled: false },
-    { link: childLink('results'),    label: 'Results',    icon: TrendingUpIcon,         disabled: !firstChildId },
+    { link: childLink('results'),    label: 'Results',    icon: TrendingUpIcon,         disabled: !firstChildId, feature: 'result' },
     { link: childLink('attendance'), label: 'Attendance', icon: AccessTimeIcon,         disabled: !firstChildId },
     { link: childLink('schedule'),   label: 'Schedule',   icon: EventNoteIcon,          disabled: !firstChildId },
-    { link: childLink('transcripts'),label: 'Transcripts',icon: DescriptionIcon,        disabled: !firstChildId },
+    { link: childLink('transcripts'),label: 'Transcripts',icon: DescriptionIcon,        disabled: !firstChildId, feature: 'result' },
   ];
 
   return (

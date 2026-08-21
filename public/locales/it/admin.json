@@ -1,0 +1,379 @@
+{
+  "portal": {
+    "label": "Portale amministratore",
+    "pageTitle": "Portale amministratore"
+  },
+  "director": {
+    "label": "Portale direttore",
+    "pageTitle": "Portale direttore"
+  },
+  "nav": {
+    "campuses": "Campus",
+    "newCampus": "Nuovo campus",
+    "adminAccounts": "Account amministratore",
+    "aiWorkspace": "Spazio IA",
+    "testimonials": "Testimonianze",
+    "faq": "FAQ",
+    "coursePreviews": "Anteprime dei corsi",
+    "competition": "Concorso",
+    "applications": "Candidature"
+  },
+  "dashboard": {
+    "welcome": "Bentornato, {name}",
+    "subtitleAdmin": "Amministratore della piattaforma — wewigo ERP",
+    "subtitleDirector": "Direttore — wewigo ERP",
+    "loadError": "Impossibile caricare i dati della dashboard.",
+    "fallbackAdmin": "Admin",
+    "fallbackDirector": "Direttore",
+    "kpi": {
+      "totalCampuses": "Totale campus",
+      "active": "Attivi",
+      "inactive": "Inattivi",
+      "platformGrowth": "Crescita della piattaforma",
+      "platformReach": "Portata della piattaforma",
+      "sites": "{count, plural, one {# sede} other {# sedi}}"
+    },
+    "quickAction": {
+      "newCampus": "Nuovo campus",
+      "manageCampuses": "Gestisci campus",
+      "adminAccounts": "Account amministratore"
+    },
+    "recent": {
+      "title": "Campus recenti",
+      "viewAll": "Vedi tutti",
+      "empty": "Ancora nessun campus. Crea il primo.",
+      "emptyShort": "Ancora nessun campus.",
+      "emptyDirector": "Ancora nessun campus sulla piattaforma."
+    }
+  },
+  "campusTable": {
+    "campus": "Campus",
+    "manager": "Responsabile",
+    "location": "Posizione",
+    "created": "Creato"
+  },
+  "campuses": {
+    "title": "Campus",
+    "subtitleAdmin": "Tutti i campus registrati sulla piattaforma.",
+    "subtitleDirector": "Panoramica di tutti i campus registrati sulla piattaforma.",
+    "newCampus": "Nuovo campus",
+    "searchPlaceholder": "Cerca nome, responsabile, e-mail…",
+    "loadError": "Impossibile caricare i campus.",
+    "empty": "Nessun campus trovato.",
+    "entityType": "campus",
+    "action": {
+      "viewPortal": "Visualizza portale del campus",
+      "restore": "Ripristina campus",
+      "archive": "Archivia campus",
+      "entitlement": "Moduli e piano"
+    },
+    "toast": {
+      "archived": "{name} archiviato.",
+      "restored": "{name} ripristinato.",
+      "archiveFailed": "Impossibile archiviare il campus.",
+      "restoreFailed": "Impossibile ripristinare il campus.",
+      "permanentlyDeleted": "Campus eliminato definitivamente.",
+      "entitlementUpdated": "Diritti aggiornati per {name}."
+    }
+  },
+  "newCampus": {
+    "backToDashboard": "Dashboard amministratore",
+    "backToDashboardAria": "Torna alla dashboard amministratore",
+    "title": "Crea nuovo campus",
+    "subtitle": "Fonda un nuovo campus d’eccellenza",
+    "step": {
+      "campusInfo": "Informazioni sul campus",
+      "managerDetails": "Dettagli del responsabile",
+      "locationImage": "Posizione e immagine"
+    },
+    "section": {
+      "campusInfo": "Informazioni sul campus",
+      "managerDetails": "Dettagli del responsabile",
+      "locationImage": "Posizione e immagine del campus"
+    },
+    "field": {
+      "campusName": "Nome del campus *",
+      "campusNumber": "Numero del campus (facoltativo)",
+      "managerName": "Nome completo del responsabile *",
+      "email": "Indirizzo e-mail *",
+      "phone": "Numero di telefono",
+      "password": "Password *",
+      "confirmPassword": "Conferma password *",
+      "city": "Città (facoltativo)",
+      "country": "Paese",
+      "address": "Indirizzo (facoltativo)",
+      "campusImage": "Immagine del campus *"
+    },
+    "button": {
+      "creating": "Creazione…",
+      "connecting": "Connessione…",
+      "create": "Crea campus"
+    },
+    "toast": {
+      "imageRequired": "Carica prima un’immagine del campus.",
+      "created": "✨ Campus creato con successo!",
+      "timeout": "La richiesta è scaduta. Controlla la connessione e riprova.",
+      "failed": "Si è verificato un errore durante la creazione del campus."
+    }
+  },
+  "accounts": {
+    "title": "Account amministratore",
+    "subtitle": "Crea e gestisci gli account Amministratore e Direttore a livello di piattaforma.",
+    "roleInfo": {
+      "title": "Differenze tra i ruoli",
+      "admin": "Accesso completo alla piattaforma — può creare campus e altri account amministratore.",
+      "director": "Supervisione e reportistica dei campus — nessun diritto di creazione account."
+    },
+    "create": {
+      "title": "Crea nuovo account",
+      "fullName": "Nome completo",
+      "email": "Indirizzo e-mail",
+      "role": "Ruolo",
+      "roleAdmin": "Amministratore",
+      "roleDirector": "Direttore",
+      "password": "Password",
+      "confirmPassword": "Conferma password",
+      "passwordHint": "La password deve contenere almeno 8 caratteri e includere una maiuscola, una minuscola, un numero e un carattere speciale.",
+      "submitting": "Creazione…",
+      "submit": "Crea account"
+    },
+    "existing": {
+      "title": "Account esistenti",
+      "empty": "Nessun account trovato.",
+      "account": "Account",
+      "role": "Ruolo",
+      "createdBy": "Creato da",
+      "lastLogin": "Ultimo accesso",
+      "selfBootstrap": "Sé stesso (bootstrap)",
+      "bootstrapChip": "Bootstrap",
+      "bootstrapTooltip": "Account di bootstrap — lo stato è protetto in modo permanente",
+      "youChip": "Tu",
+      "noHistory": "Nessuna cronologia"
+    },
+    "action": {
+      "activate": "Attiva",
+      "suspend": "Sospendi",
+      "deactivate": "Disattiva"
+    },
+    "toast": {
+      "loadFailed": "Impossibile caricare gli account.",
+      "activated": "Account attivato.",
+      "suspended": "Account sospeso.",
+      "deactivated": "Account disattivato.",
+      "statusFailed": "Impossibile aggiornare lo stato.",
+      "createdAdmin": "Account amministratore creato con successo.",
+      "createdDirector": "Account direttore creato con successo.",
+      "createFailed": "Impossibile creare l’account."
+    },
+    "validation": {
+      "nameMin": "Minimo 3 caratteri",
+      "nameRequired": "Il nome è obbligatorio",
+      "roleRequired": "Il ruolo è obbligatorio"
+    }
+  },
+  "profile": {
+    "title": "Il mio profilo",
+    "subtitleDirector": "Dettagli del tuo account direttore, sicurezza e preferenze personali.",
+    "personalInfo": "Informazioni personali",
+    "roleAdmin": "Amministratore della piattaforma",
+    "roleDirector": "Direttore",
+    "email": "E-mail",
+    "role": "Ruolo",
+    "status": "Stato",
+    "lastLogin": "Ultimo accesso",
+    "notRecorded": "Non registrato",
+    "displayName": "Nome visualizzato",
+    "saving": "Salvataggio…",
+    "saveProfile": "Salva profilo",
+    "changePassword": "Cambia password",
+    "currentPassword": "Password attuale",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "passwordHint": "La password deve contenere almeno 8 caratteri e includere una maiuscola, una minuscola, un numero e un carattere speciale.",
+    "updating": "Aggiornamento…",
+    "updatePassword": "Aggiorna password",
+    "validation": {
+      "nameMin": "Min. 2 caratteri",
+      "nameRequired": "Il nome è obbligatorio"
+    },
+    "toast": {
+      "loadFailed": "Impossibile caricare il profilo.",
+      "updated": "Profilo aggiornato.",
+      "updateFailed": "Impossibile aggiornare il profilo.",
+      "passwordUpdated": "Password aggiornata con successo.",
+      "passwordFailed": "Impossibile aggiornare la password.",
+      "photoUpdated": "Foto aggiornata.",
+      "photoFailed": "Impossibile salvare la foto.",
+      "prefsSaved": "Preferenze salvate.",
+      "prefsFailed": "Impossibile salvare le preferenze."
+    }
+  },
+  "competition": {
+    "title": "Concorsi",
+    "itemCount": "{count, plural, one {# elemento} other {# elementi}}",
+    "new": "Nuovo concorso",
+    "campus": "Campus",
+    "allCampuses": "Tutti i campus",
+    "statusActive": "Attivo",
+    "statusClosed": "Chiuso",
+    "empty": "Nessun concorso",
+    "emptyHint": "Creane uno con il pulsante sopra.",
+    "loadError": "Impossibile caricare i concorsi.",
+    "prizeCount": "{count, plural, one {# premio} other {# premi}}",
+    "closesOn": "Chiude il {date}",
+    "winnerCount": "{count, plural, one {# vincitore} other {# vincitori}}",
+    "action": {
+      "activate": "Attiva",
+      "deactivate": "Disattiva",
+      "closeNow": "Chiudi ora (congela i vincitori)",
+      "alreadyClosed": "Già chiuso"
+    },
+    "form": {
+      "editTitle": "Modifica concorso",
+      "newTitle": "Nuovo concorso",
+      "period": "Periodo (AAAA-MM) *",
+      "periodPlaceholder": "2026-07",
+      "closingDate": "Data di chiusura *",
+      "activeLabel": "Attivo (visibile sul portale)",
+      "prizes": "PREMI",
+      "winners": "VINCITORI",
+      "rank": "Posizione",
+      "value": "Valore",
+      "valuePlaceholder": "-20% + certificato",
+      "remove": "Rimuovi",
+      "descriptionFr": "Descrizione (FR) *",
+      "descriptionEn": "Descrizione (EN)",
+      "addPrize": "Aggiungi premio",
+      "periodError": "Il periodo deve essere AAAA-MM.",
+      "closingRequired": "La data di chiusura è obbligatoria.",
+      "saveFailed": "Salvataggio non riuscito."
+    },
+    "confirm": {
+      "closeTitle": "Chiudi concorso",
+      "closeMessage": "Congelare i vincitori di {period} dai punteggi del quiz del periodo e disattivarlo? L’operazione non può essere annullata.",
+      "deleteTitle": "Elimina concorso",
+      "deleteMessage": "Il concorso {period} verrà rimosso definitivamente. L’operazione non può essere annullata."
+    },
+    "toast": {
+      "created": "Concorso creato.",
+      "updated": "Concorso aggiornato.",
+      "closed": "Concorso chiuso.",
+      "deleted": "Concorso eliminato.",
+      "activated": "Attivato.",
+      "deactivated": "Disattivato.",
+      "failed": "Non riuscito.",
+      "actionFailed": "Azione non riuscita.",
+      "selectCampus": "Seleziona un campus prima di creare."
+    }
+  },
+  "applications": {
+    "title": "Candidature dei partner",
+    "totalChip": "{count} in totale",
+    "empty": "Nessuna candidatura trovata.",
+    "loadError": "Impossibile caricare le candidature.",
+    "reviewFailed": "Revisione non riuscita.",
+    "note": "Nota: {note}",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "type": {
+      "influencer": "Influencer",
+      "church_leader": "Leader religioso",
+      "student_leader": "Leader studentesco",
+      "teacher": "Insegnante",
+      "parent": "Genitore",
+      "other": "Altro"
+    },
+    "channel": {
+      "online": "Online",
+      "offline": "Offline",
+      "hybrid": "Ibrido"
+    },
+    "dialog": {
+      "approveTitle": "Approva candidatura",
+      "rejectTitle": "Rifiuta candidatura",
+      "internalNote": "Nota interna (facoltativa)",
+      "notePlaceholder": "Motivo dell’approvazione / del rifiuto…",
+      "confirmApprove": "Conferma approvazione",
+      "confirmReject": "Conferma rifiuto"
+    }
+  },
+  "content": {
+    "campus": "Campus",
+    "allCampuses": "Tutti i campus",
+    "statusPublished": "Pubblicato",
+    "statusDraft": "Bozza",
+    "itemCount": "{count, plural, one {# elemento} other {# elementi}}",
+    "selectCampusFirst": "Seleziona un campus prima di creare.",
+    "publish": "Pubblica",
+    "unpublish": "Annulla pubblicazione",
+    "published": "Pubblicato.",
+    "unpublished": "Pubblicazione annullata.",
+    "statusFailed": "Impossibile aggiornare lo stato.",
+    "actionFailed": "Azione non riuscita.",
+    "saveFailed": "Salvataggio non riuscito.",
+    "deleteMessage": "Questo elemento verrà rimosso definitivamente. L’operazione non può essere annullata.",
+    "emptyHint": "Crea il tuo primo elemento con il pulsante sopra.",
+    "required": "Obbligatorio",
+    "french": "Francese",
+    "english": "Inglese",
+    "testimonial": {
+      "plural": "Testimonianze",
+      "new": "Nuova testimonianza",
+      "edit": "Modifica testimonianza",
+      "deleteTitle": "Elimina testimonianza",
+      "search": "Cerca testimonianze…",
+      "empty": "Nessuna testimonianza",
+      "loadError": "Impossibile caricare le testimonianze.",
+      "created": "Testimonianza creata.",
+      "updated": "Testimonianza aggiornata.",
+      "deleted": "Testimonianza eliminata."
+    },
+    "faq": {
+      "plural": "FAQ",
+      "new": "Nuova voce FAQ",
+      "edit": "Modifica voce FAQ",
+      "deleteTitle": "Elimina voce FAQ",
+      "search": "Cerca nelle FAQ…",
+      "empty": "Nessuna voce FAQ",
+      "loadError": "Impossibile caricare le voci FAQ.",
+      "created": "Voce FAQ creata.",
+      "updated": "Voce FAQ aggiornata.",
+      "deleted": "Voce FAQ eliminata."
+    },
+    "course": {
+      "plural": "Anteprime dei corsi",
+      "new": "Nuova anteprima del corso",
+      "edit": "Modifica anteprima del corso",
+      "deleteTitle": "Elimina anteprima del corso",
+      "search": "Cerca anteprime dei corsi…",
+      "empty": "Nessuna anteprima del corso",
+      "loadError": "Impossibile caricare le anteprime dei corsi.",
+      "created": "Anteprima del corso creata.",
+      "updated": "Anteprima del corso aggiornata.",
+      "deleted": "Anteprima del corso eliminata."
+    },
+    "field": {
+      "firstName": "Nome",
+      "city": "Città",
+      "graduationYear": "Anno di diploma",
+      "program": "Programma",
+      "quote": "Citazione",
+      "photoUrl": "URL della foto",
+      "employer": "Datore di lavoro",
+      "order": "Ordine di visualizzazione",
+      "isPublished": "Pubblicato",
+      "question": "Domanda",
+      "answer": "Risposta",
+      "category": "Categoria",
+      "title": "Titolo",
+      "content": "Contenuto (estratto)",
+      "videoUrl": "URL del video"
+    },
+    "faqCategory": {
+      "general": "Generale",
+      "inscription": "Iscrizione",
+      "tarifs": "Prezzi",
+      "formations": "Programmi"
+    }
+  }
+}

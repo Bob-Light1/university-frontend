@@ -1,6 +1,11 @@
 /**
  * @file Teacher.jsx
  * @description Teacher layout — thin wrapper around AppShell.
+ *
+ * `feature` is the entitlement registry key of the module an entry opens.
+ * AppShell removes the entries this campus does not have (design doc §8.2);
+ * entries without a key belong to no single module (Home, Dashboard) or are
+ * served by `core` ones (Schedule, Attendance → `student` / `teacher`).
  */
 
 import HomeIcon               from '@mui/icons-material/Home';
@@ -17,12 +22,12 @@ import AppShell from '../components/AppShell';
 const navItems = [
   { link: '/',                    label: 'Home',        icon: HomeIcon },
   { link: '/teacher',             label: 'Dashboard',   icon: DashboardCustomizeIcon },
-  { link: '/teacher/examination', label: 'Examination', icon: ExplicitIcon },
-  { link: '/teacher/results',     label: 'Results',     icon: AssessmentIcon },
+  { link: '/teacher/examination', label: 'Examination', icon: ExplicitIcon,    feature: 'exam' },
+  { link: '/teacher/results',     label: 'Results',     icon: AssessmentIcon,  feature: 'result' },
   { link: '/teacher/schedule',    label: 'Schedule',    icon: EventNoteIcon },
   { link: '/teacher/attendance',  label: 'Attendance',  icon: ChecklistRtlIcon },
-  { link: '/teacher/courses',     label: 'Courses',     icon: MenuBookIcon },
-  { link: '/teacher/documents',   label: 'Documents',   icon: DescriptionIcon },
+  { link: '/teacher/courses',     label: 'Courses',     icon: MenuBookIcon,    feature: 'course' },
+  { link: '/teacher/documents',   label: 'Documents',   icon: DescriptionIcon, feature: 'document' },
 ];
 
 export default function Teacher() {

@@ -6,6 +6,13 @@
  *   navItems uses the 'group' type to organise the 15 modules into 5
  *   collapsible sections, reducing visual density from 20 flat items to
  *   ~8 visible rows at any time.
+ *
+ *   `feature` carries the entitlement registry key of the module an entry
+ *   opens; AppShell removes the entries this campus does not have and badges
+ *   the ones a global role may still open (entitlement design doc §8.2).
+ *   Entries with NO key are deliberately ungated: Home and Dashboard belong to
+ *   no module, and Schedule / Attendance are served by `student` + `teacher`,
+ *   both `core` — a key there would claim a single owner they do not have.
  */
 
 import { useParams } from 'react-router-dom';
@@ -59,9 +66,9 @@ export default function Campus() {
     {
       type: 'group', label: 'People', icon: GroupIcon,
       items: [
-        { link: `/campus/${campusId}/students`, label: 'Students', icon: GroupIcon },
-        { link: `/campus/${campusId}/teachers`, label: 'Teachers', icon: RecordVoiceOverIcon },
-        { link: `/campus/${campusId}/parents`,  label: 'Parents',  icon: FamilyRestroomIcon },
+        { link: `/campus/${campusId}/students`, label: 'Students', icon: GroupIcon,          feature: 'student' },
+        { link: `/campus/${campusId}/teachers`, label: 'Teachers', icon: RecordVoiceOverIcon, feature: 'teacher' },
+        { link: `/campus/${campusId}/parents`,  label: 'Parents',  icon: FamilyRestroomIcon,  feature: 'parent' },
       ],
     },
 
@@ -69,11 +76,11 @@ export default function Campus() {
     {
       type: 'group', label: 'Academic', icon: LibraryBooksIcon,
       items: [
-        { link: `/campus/${campusId}/classes`,       label: 'Classes',    icon: LibraryBooksIcon },
-        { link: `/campus/${campusId}/subjects`,    label: 'Subjects',   icon: SubjectIcon },
-        { link: `/campus/${campusId}/schedule`,    label: 'Schedule',   icon: EventNoteIcon },
-        { link: `/campus/${campusId}/schedule-gaet`, label: 'GAET',   icon: AutoAwesomeIcon },
-        { link: `/campus/${campusId}/attendance`,  label: 'Attendance', icon: ChecklistRtlIcon },
+        { link: `/campus/${campusId}/classes`,       label: 'Classes',    icon: LibraryBooksIcon, feature: 'class' },
+        { link: `/campus/${campusId}/subjects`,      label: 'Subjects',   icon: SubjectIcon,      feature: 'subject' },
+        { link: `/campus/${campusId}/schedule`,      label: 'Schedule',   icon: EventNoteIcon },
+        { link: `/campus/${campusId}/schedule-gaet`, label: 'GAET',       icon: AutoAwesomeIcon,  feature: 'gaet' },
+        { link: `/campus/${campusId}/attendance`,    label: 'Attendance', icon: ChecklistRtlIcon },
       ],
     },
 
@@ -81,8 +88,8 @@ export default function Campus() {
     {
       type: 'group', label: 'Evaluation', icon: AssessmentIcon,
       items: [
-        { link: `/campus/${campusId}/examination`, label: 'Examination', icon: ExplicitIcon },
-        { link: `/campus/${campusId}/results`,     label: 'Results',     icon: AssessmentIcon },
+        { link: `/campus/${campusId}/examination`, label: 'Examination', icon: ExplicitIcon,   feature: 'exam' },
+        { link: `/campus/${campusId}/results`,     label: 'Results',     icon: AssessmentIcon, feature: 'result' },
       ],
     },
 
@@ -90,9 +97,9 @@ export default function Campus() {
     {
       type: 'group', label: 'Resources', icon: MenuBookIcon,
       items: [
-        { link: `/campus/${campusId}/courses`,   label: 'Courses',   icon: MenuBookIcon },
-        { link: `/campus/${campusId}/documents`, label: 'Documents', icon: DescriptionIcon },
-        { link: `/campus/${campusId}/print`,     label: 'Print',     icon: PrintIcon },
+        { link: `/campus/${campusId}/courses`,   label: 'Courses',   icon: MenuBookIcon,    feature: 'course' },
+        { link: `/campus/${campusId}/documents`, label: 'Documents', icon: DescriptionIcon, feature: 'document' },
+        { link: `/campus/${campusId}/print`,     label: 'Print',     icon: PrintIcon,       feature: 'academic-print' },
       ],
     },
 
@@ -100,8 +107,8 @@ export default function Campus() {
     {
       type: 'group', label: 'Business', icon: HandshakeIcon,
       items: [
-        { link: `/campus/${campusId}/partners`, label: 'Partners', icon: HandshakeIcon },
-        { link: `/campus/${campusId}/finance`,  label: 'Finance',  icon: AccountBalanceWalletIcon },
+        { link: `/campus/${campusId}/partners`, label: 'Partners', icon: HandshakeIcon,             feature: 'partner' },
+        { link: `/campus/${campusId}/finance`,  label: 'Finance',  icon: AccountBalanceWalletIcon, feature: 'finance' },
       ],
     },
 
@@ -109,24 +116,24 @@ export default function Campus() {
     {
       type: 'group', label: 'Personnel', icon: BadgeIcon,
       items: [
-        { link: `/campus/${campusId}/staff`,   label: 'Staff',   icon: BadgeIcon },
-        { link: `/campus/${campusId}/mentors`, label: 'Mentors', icon: PsychologyIcon },
+        { link: `/campus/${campusId}/staff`,   label: 'Staff',   icon: BadgeIcon,      feature: 'staff' },
+        { link: `/campus/${campusId}/mentors`, label: 'Mentors', icon: PsychologyIcon, feature: 'mentor' },
       ],
     },
 
     // ── Announcements & notification delivery log ───────────────────────────
     // ── AI Assistant (Phase 3 — chat · search · analytics · advisors) ───────
     { type: 'divider', label: 'divider-ai' },
-    { link: `/campus/${campusId}/ai`, label: 'AI Assistant', icon: AutoAwesomeIcon, accent: '#7b2ff7' },
+    { link: `/campus/${campusId}/ai`, label: 'AI Assistant', icon: AutoAwesomeIcon, accent: '#7b2ff7', feature: 'ai' },
 
     // ── Announcements & notification delivery log ───────────────────────────
     { type: 'divider', label: 'divider-announcements' },
-    { link: `/campus/${campusId}/notification`,     label: 'Announcements', icon: CampaignIcon },
-    { link: `/campus/${campusId}/notification-log`, label: 'Delivery Log',  icon: MarkEmailReadIcon },
+    { link: `/campus/${campusId}/notification`,     label: 'Announcements', icon: CampaignIcon,      feature: 'announcement' },
+    { link: `/campus/${campusId}/notification-log`, label: 'Delivery Log',  icon: MarkEmailReadIcon, feature: 'notification' },
 
     // ── Always-visible bottom item ──────────────────────────────────────────
     { type: 'divider', label: 'divider-settings' },
-    { link: `/campus/${campusId}/settings`, label: 'Settings', icon: SettingsIcon },
+    { link: `/campus/${campusId}/settings`, label: 'Settings', icon: SettingsIcon, feature: 'settings' },
   ];
 
   return (

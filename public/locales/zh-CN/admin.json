@@ -1,0 +1,379 @@
+{
+  "portal": {
+    "label": "管理员门户",
+    "pageTitle": "管理员门户"
+  },
+  "director": {
+    "label": "总监门户",
+    "pageTitle": "总监门户"
+  },
+  "nav": {
+    "campuses": "校区",
+    "newCampus": "新建校区",
+    "adminAccounts": "管理员账户",
+    "aiWorkspace": "AI 工作区",
+    "testimonials": "用户评价",
+    "faq": "常见问题",
+    "coursePreviews": "课程预览",
+    "competition": "竞赛",
+    "applications": "申请"
+  },
+  "dashboard": {
+    "welcome": "欢迎回来，{name}",
+    "subtitleAdmin": "平台管理员 — wewigo ERP",
+    "subtitleDirector": "总监 — wewigo ERP",
+    "loadError": "加载仪表板数据失败。",
+    "fallbackAdmin": "管理员",
+    "fallbackDirector": "总监",
+    "kpi": {
+      "totalCampuses": "校区总数",
+      "active": "活跃",
+      "inactive": "非活跃",
+      "platformGrowth": "平台增长",
+      "platformReach": "平台覆盖",
+      "sites": "{count, plural, other {# 个校区}}"
+    },
+    "quickAction": {
+      "newCampus": "新建校区",
+      "manageCampuses": "管理校区",
+      "adminAccounts": "管理员账户"
+    },
+    "recent": {
+      "title": "最近的校区",
+      "viewAll": "查看全部",
+      "empty": "暂无校区。请创建第一个。",
+      "emptyShort": "暂无校区。",
+      "emptyDirector": "平台上暂无校区。"
+    }
+  },
+  "campusTable": {
+    "campus": "校区",
+    "manager": "负责人",
+    "location": "位置",
+    "created": "创建时间"
+  },
+  "campuses": {
+    "title": "校区",
+    "subtitleAdmin": "平台上注册的所有校区。",
+    "subtitleDirector": "平台上注册的所有校区概览。",
+    "newCampus": "新建校区",
+    "searchPlaceholder": "搜索名称、负责人、邮箱…",
+    "loadError": "加载校区失败。",
+    "empty": "未找到校区。",
+    "entityType": "校区",
+    "action": {
+      "viewPortal": "查看校区门户",
+      "restore": "恢复校区",
+      "archive": "归档校区",
+      "entitlement": "模块与套餐"
+    },
+    "toast": {
+      "archived": "已归档 {name}。",
+      "restored": "已恢复 {name}。",
+      "archiveFailed": "归档校区失败。",
+      "restoreFailed": "恢复校区失败。",
+      "permanentlyDeleted": "校区已永久删除。",
+      "entitlementUpdated": "已更新 {name} 的权限。"
+    }
+  },
+  "newCampus": {
+    "backToDashboard": "管理员仪表板",
+    "backToDashboardAria": "返回管理员仪表板",
+    "title": "创建新校区",
+    "subtitle": "建立一个卓越的新校区",
+    "step": {
+      "campusInfo": "校区信息",
+      "managerDetails": "负责人详情",
+      "locationImage": "位置与图片"
+    },
+    "section": {
+      "campusInfo": "校区信息",
+      "managerDetails": "负责人详情",
+      "locationImage": "位置与校区图片"
+    },
+    "field": {
+      "campusName": "校区名称 *",
+      "campusNumber": "校区编号（可选）",
+      "managerName": "负责人全名 *",
+      "email": "电子邮箱 *",
+      "phone": "电话号码",
+      "password": "密码 *",
+      "confirmPassword": "确认密码 *",
+      "city": "城市（可选）",
+      "country": "国家/地区",
+      "address": "地址（可选）",
+      "campusImage": "校区图片 *"
+    },
+    "button": {
+      "creating": "创建中…",
+      "connecting": "连接中…",
+      "create": "创建校区"
+    },
+    "toast": {
+      "imageRequired": "请先上传校区图片。",
+      "created": "✨ 校区创建成功！",
+      "timeout": "请求超时。请检查网络连接后重试。",
+      "failed": "创建校区时发生错误。"
+    }
+  },
+  "accounts": {
+    "title": "管理员账户",
+    "subtitle": "创建和管理平台级的管理员和总监账户。",
+    "roleInfo": {
+      "title": "角色差异",
+      "admin": "完全的平台访问权限 — 可创建校区和其他管理员账户。",
+      "director": "校区监督和报告 — 无账户创建权限。"
+    },
+    "create": {
+      "title": "创建新账户",
+      "fullName": "全名",
+      "email": "电子邮箱",
+      "role": "角色",
+      "roleAdmin": "管理员",
+      "roleDirector": "总监",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "passwordHint": "密码至少需 8 个字符，并包含一个大写字母、一个小写字母、一个数字和一个特殊字符。",
+      "submitting": "创建中…",
+      "submit": "创建账户"
+    },
+    "existing": {
+      "title": "现有账户",
+      "empty": "未找到账户。",
+      "account": "账户",
+      "role": "角色",
+      "createdBy": "创建者",
+      "lastLogin": "上次登录",
+      "selfBootstrap": "本人（初始化）",
+      "bootstrapChip": "初始化",
+      "bootstrapTooltip": "初始化账户 — 状态受永久保护",
+      "youChip": "您",
+      "noHistory": "无历史记录"
+    },
+    "action": {
+      "activate": "激活",
+      "suspend": "暂停",
+      "deactivate": "停用"
+    },
+    "toast": {
+      "loadFailed": "加载账户失败。",
+      "activated": "账户已激活。",
+      "suspended": "账户已暂停。",
+      "deactivated": "账户已停用。",
+      "statusFailed": "更新状态失败。",
+      "createdAdmin": "管理员账户创建成功。",
+      "createdDirector": "总监账户创建成功。",
+      "createFailed": "创建账户失败。"
+    },
+    "validation": {
+      "nameMin": "至少 3 个字符",
+      "nameRequired": "姓名为必填项",
+      "roleRequired": "角色为必填项"
+    }
+  },
+  "profile": {
+    "title": "我的资料",
+    "subtitleDirector": "您的总监账户详情、安全与个人偏好。",
+    "personalInfo": "个人信息",
+    "roleAdmin": "平台管理员",
+    "roleDirector": "总监",
+    "email": "邮箱",
+    "role": "角色",
+    "status": "状态",
+    "lastLogin": "上次登录",
+    "notRecorded": "未记录",
+    "displayName": "显示名称",
+    "saving": "保存中…",
+    "saveProfile": "保存资料",
+    "changePassword": "更改密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "passwordHint": "密码至少需 8 个字符，并包含一个大写字母、一个小写字母、一个数字和一个特殊字符。",
+    "updating": "更新中…",
+    "updatePassword": "更新密码",
+    "validation": {
+      "nameMin": "至少 2 个字符",
+      "nameRequired": "姓名为必填项"
+    },
+    "toast": {
+      "loadFailed": "加载资料失败。",
+      "updated": "资料已更新。",
+      "updateFailed": "更新资料失败。",
+      "passwordUpdated": "密码更新成功。",
+      "passwordFailed": "更新密码失败。",
+      "photoUpdated": "照片已更新。",
+      "photoFailed": "保存照片失败。",
+      "prefsSaved": "偏好已保存。",
+      "prefsFailed": "保存偏好失败。"
+    }
+  },
+  "competition": {
+    "title": "竞赛",
+    "itemCount": "{count, plural, other {# 个项目}}",
+    "new": "新建竞赛",
+    "campus": "校区",
+    "allCampuses": "所有校区",
+    "statusActive": "进行中",
+    "statusClosed": "已结束",
+    "empty": "暂无竞赛",
+    "emptyHint": "使用上方按钮创建一个。",
+    "loadError": "加载竞赛失败。",
+    "prizeCount": "{count, plural, other {# 个奖项}}",
+    "closesOn": "{date} 结束",
+    "winnerCount": "{count, plural, other {# 名获奖者}}",
+    "action": {
+      "activate": "激活",
+      "deactivate": "停用",
+      "closeNow": "立即结束（锁定获奖者）",
+      "alreadyClosed": "已结束"
+    },
+    "form": {
+      "editTitle": "编辑竞赛",
+      "newTitle": "新建竞赛",
+      "period": "周期（YYYY-MM）*",
+      "periodPlaceholder": "2026-07",
+      "closingDate": "结束日期 *",
+      "activeLabel": "进行中（在门户上可见）",
+      "prizes": "奖项",
+      "winners": "获奖者",
+      "rank": "排名",
+      "value": "内容",
+      "valuePlaceholder": "-20% + 证书",
+      "remove": "移除",
+      "descriptionFr": "描述（法语）*",
+      "descriptionEn": "描述（英语）",
+      "addPrize": "添加奖项",
+      "periodError": "周期必须为 YYYY-MM。",
+      "closingRequired": "结束日期为必填项。",
+      "saveFailed": "保存失败。"
+    },
+    "confirm": {
+      "closeTitle": "结束竞赛",
+      "closeMessage": "根据本周期的测验分数锁定 {period} 的获奖者并将其停用？此操作无法撤销。",
+      "deleteTitle": "删除竞赛",
+      "deleteMessage": "竞赛 {period} 将被永久删除。此操作无法撤销。"
+    },
+    "toast": {
+      "created": "竞赛已创建。",
+      "updated": "竞赛已更新。",
+      "closed": "竞赛已结束。",
+      "deleted": "竞赛已删除。",
+      "activated": "已激活。",
+      "deactivated": "已停用。",
+      "failed": "失败。",
+      "actionFailed": "操作失败。",
+      "selectCampus": "创建前请先选择校区。"
+    }
+  },
+  "applications": {
+    "title": "合作伙伴申请",
+    "totalChip": "共 {count} 个",
+    "empty": "未找到申请。",
+    "loadError": "加载申请失败。",
+    "reviewFailed": "审核失败。",
+    "note": "备注：{note}",
+    "approve": "批准",
+    "reject": "拒绝",
+    "type": {
+      "influencer": "网红",
+      "church_leader": "宗教领袖",
+      "student_leader": "学生领袖",
+      "teacher": "教师",
+      "parent": "家长",
+      "other": "其他"
+    },
+    "channel": {
+      "online": "线上",
+      "offline": "线下",
+      "hybrid": "混合"
+    },
+    "dialog": {
+      "approveTitle": "批准申请",
+      "rejectTitle": "拒绝申请",
+      "internalNote": "内部备注（可选）",
+      "notePlaceholder": "批准/拒绝的理由…",
+      "confirmApprove": "确认批准",
+      "confirmReject": "确认拒绝"
+    }
+  },
+  "content": {
+    "campus": "校区",
+    "allCampuses": "所有校区",
+    "statusPublished": "已发布",
+    "statusDraft": "草稿",
+    "itemCount": "{count, plural, other {# 个项目}}",
+    "selectCampusFirst": "创建前请先选择校区。",
+    "publish": "发布",
+    "unpublish": "取消发布",
+    "published": "已发布。",
+    "unpublished": "已取消发布。",
+    "statusFailed": "更新状态失败。",
+    "actionFailed": "操作失败。",
+    "saveFailed": "保存失败。",
+    "deleteMessage": "此项目将被永久删除。此操作无法撤销。",
+    "emptyHint": "使用上方按钮创建您的第一个项目。",
+    "required": "必填",
+    "french": "法语",
+    "english": "英语",
+    "testimonial": {
+      "plural": "用户评价",
+      "new": "新建评价",
+      "edit": "编辑评价",
+      "deleteTitle": "删除评价",
+      "search": "搜索评价…",
+      "empty": "暂无评价",
+      "loadError": "加载评价失败。",
+      "created": "评价已创建。",
+      "updated": "评价已更新。",
+      "deleted": "评价已删除。"
+    },
+    "faq": {
+      "plural": "常见问题",
+      "new": "新建常见问题",
+      "edit": "编辑常见问题",
+      "deleteTitle": "删除常见问题",
+      "search": "搜索常见问题…",
+      "empty": "暂无常见问题",
+      "loadError": "加载常见问题失败。",
+      "created": "常见问题已创建。",
+      "updated": "常见问题已更新。",
+      "deleted": "常见问题已删除。"
+    },
+    "course": {
+      "plural": "课程预览",
+      "new": "新建课程预览",
+      "edit": "编辑课程预览",
+      "deleteTitle": "删除课程预览",
+      "search": "搜索课程预览…",
+      "empty": "暂无课程预览",
+      "loadError": "加载课程预览失败。",
+      "created": "课程预览已创建。",
+      "updated": "课程预览已更新。",
+      "deleted": "课程预览已删除。"
+    },
+    "field": {
+      "firstName": "名字",
+      "city": "城市",
+      "graduationYear": "毕业年份",
+      "program": "项目",
+      "quote": "引言",
+      "photoUrl": "照片 URL",
+      "employer": "雇主",
+      "order": "显示顺序",
+      "isPublished": "已发布",
+      "question": "问题",
+      "answer": "答案",
+      "category": "类别",
+      "title": "标题",
+      "content": "内容（摘录）",
+      "videoUrl": "视频 URL"
+    },
+    "faqCategory": {
+      "general": "通用",
+      "inscription": "注册",
+      "tarifs": "价格",
+      "formations": "项目"
+    }
+  }
+}

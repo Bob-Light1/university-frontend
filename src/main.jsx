@@ -6,6 +6,7 @@ import './i18n/i18n.js'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { EntitlementProvider } from './context/EntitlementContext.jsx'
 import { RtlProvider } from './theme/RtlProvider.jsx'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
@@ -24,7 +25,15 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <RtlProvider>
           <Suspense fallback={<I18nLoader />}>
-            <App />
+            {/* Placement is constrained on three sides, not a preference:
+                inside BrowserRouter (it reads `/campus/:campusId` to know which
+                tenant an ADMIN is browsing), inside AuthProvider (it keys its
+                cache on the signed-in identity), and inside RtlProvider + the
+                i18n Suspense boundary (it renders a themed, translated Snackbar
+                for the write-in-flight case). */}
+            <EntitlementProvider>
+              <App />
+            </EntitlementProvider>
           </Suspense>
         </RtlProvider>
       </AuthProvider>

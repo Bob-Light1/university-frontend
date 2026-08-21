@@ -15,6 +15,7 @@ import MenuBookIcon        from '@mui/icons-material/MenuBook';
 import EmojiEventsIcon     from '@mui/icons-material/EmojiEvents';
 import HandshakeIcon       from '@mui/icons-material/Handshake';
 import AutoAwesomeIcon     from '@mui/icons-material/AutoAwesome';
+import TuneIcon            from '@mui/icons-material/Tune';
 
 import AppShell from '../components/AppShell';
 import { useAppTranslation } from '../hooks/useAppTranslation';
@@ -26,6 +27,7 @@ const NAV_CONFIG = [
   { link: '/admin/dashboard',      tKey: 'common:nav.dashboard',     icon: DashboardIcon      },
   { link: '/admin/campuses',       tKey: 'nav.campuses',             icon: BusinessIcon       },
   { link: '/admin/new-campus',     tKey: 'nav.newCampus',            icon: AddBusinessIcon    },
+  { link: '/admin/entitlement',    tKey: 'common:features.pilot.estate.nav', icon: TuneIcon    },
   { link: '/admin/accounts',       tKey: 'nav.adminAccounts',        icon: ManageAccountsIcon },
   { link: '/admin/announcements',  tKey: 'common:nav.announcements', icon: CampaignIcon       },
 

@@ -1,6 +1,11 @@
 /**
  * @file Mentor.jsx
  * @description Mentor portal layout — thin wrapper around AppShell.
+ *
+ * `feature` is the entitlement registry key of the module an entry opens.
+ * AppShell removes the entries this campus does not have (design doc §8.2);
+ * entries without a key belong to no single module (Home, Dashboard) or are
+ * served by `core` ones (Schedule, Attendance → `student` / `teacher`).
  */
 
 import HomeIcon         from '@mui/icons-material/Home';
@@ -17,10 +22,10 @@ const navItems = [
   { link: '/',                    label: 'Home',           icon: HomeIcon },
   { link: '/mentor',              label: 'Dashboard',      icon: DashboardIcon },
   { link: '/mentor/students',     label: 'My Students',    icon: GroupIcon },
-  { link: '/mentor/results',      label: 'Results',        icon: AssessmentIcon },
+  { link: '/mentor/results',      label: 'Results',        icon: AssessmentIcon,   feature: 'result' },
   { link: '/mentor/attendance',   label: 'Attendance',     icon: ChecklistIcon },
-  { link: '/mentor/courses',      label: 'Courses',        icon: MenuBookIcon },
-  { link: '/mentor/notification', label: 'Announcements',  icon: NotificationsIcon },
+  { link: '/mentor/courses',      label: 'Courses',        icon: MenuBookIcon,     feature: 'course' },
+  { link: '/mentor/notification', label: 'Announcements',  icon: NotificationsIcon, feature: 'announcement' },
 ];
 
 export default function Mentor() {

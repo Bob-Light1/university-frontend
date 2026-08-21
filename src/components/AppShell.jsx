@@ -8,20 +8,36 @@
  *                           240 px on hamburger click.
  *
  * navItems types:
- *   { link, label, icon, disabled?, accent? }       — regular item
+ *   { link, label, icon, disabled?, accent?, feature? } — regular item
  *   { type: 'divider', label: '<unique-key>' }       — horizontal separator
  *   { type: 'group', label, icon, items: [...] }     — collapsible section
  *     └ items follow the same shape as regular items
+ *
+ * Entitlement (`feature`) — design doc §8.2:
+ *   An item may declare the registry key of the module it opens. Filtering
+ *   happens HERE and nowhere else: eight portals declaring ~80 entries would be
+ *   eight copies of the same rule, and the copy that drifts is the one that
+ *   leaves a dead entry pointing at a module the campus no longer has.
+ *   · hidden for this campus → the entry is REMOVED, not greyed out: §4.1.2
+ *     requires a hidden module to be indiscernible from one that never existed.
+ *   · global roles (ADMIN / DIRECTOR) are bound by no entitlement (§5.2), so
+ *     the entry stays and carries a "disabled for this campus" badge instead.
+ *   · while the states are loading, gated entries are withheld rather than
+ *     shown: an entry that appears late is unremarkable, one that vanishes
+ *     under the cursor is a bug report.
+ *   · a group whose children are all filtered out disappears with them, and so
+ *     do the dividers that would otherwise stack up around it.
  *
  * Group state (open/closed) is persisted in localStorage under the key
  * 'appshell_groups'.  The group that contains the active route is
  * automatically expanded on mount and on navigation.
  */
 
-import { useState, useEffect, useRef, Fragment, Suspense } from 'react';
+import { useState, useEffect, useMemo, useRef, Fragment, Suspense } from 'react';
 import { styled, useTheme }   from '@mui/material/styles';
 import {
   Box,
+  Chip,
   Collapse,
   Drawer as MuiDrawer,
   List,
@@ -44,6 +60,9 @@ import ExpandMoreIcon   from '@mui/icons-material/ExpandMore';
 
 import AppNavBar from './AppNavBar';
 import Loader    from './Loader';
+import { useEntitlement } from '../hooks/useFeature';
+import { useAppTranslation } from '../hooks/useAppTranslation';
+import { FEATURE_STATES } from '../config/featureConstants';
 
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
@@ -108,13 +127,111 @@ const writeGroupState = (state) => {
   catch {}
 };
 
+/**
+ * "Disabled for this campus" marker, shown to global roles only (§5.2). They
+ * are bound by no entitlement, so the entry stays reachable; what they need is
+ * to know that what they are looking at is not what the campus manager sees.
+ *
+ * @param {{label: string}} props
+ */
+const NavStateBadge = ({ label }) => (
+  <Chip
+    label={label}
+    size="small"
+    variant="outlined"
+    sx={{
+      ml: 1, height: 18, fontSize: '0.62rem', fontWeight: 600,
+      letterSpacing: '0.04em', textTransform: 'uppercase',
+      color: 'text.secondary', borderColor: 'divider',
+      '& .MuiChip-label': { px: 0.75 },
+    }}
+  />
+);
+
+// ─── Entitlement filtering ────────────────────────────────────────────────────
+
+/**
+ * Drops the nav entries whose module this campus does not have, and annotates
+ * the ones a global role may still open on a campus that has switched them off.
+ *
+ * Kept as a hook rather than a pure function so the states are read from the
+ * shared context (one hydration for the whole session) instead of each portal
+ * fetching its own.
+ *
+ * @param {Array} items - Declared `navItems`, entitlement keys included.
+ * @returns {Array} the same shape, filtered and badged.
+ */
+const useEntitledNav = (items) => {
+  const { ready, stateOf, unrestricted } = useEntitlement();
+  const { t } = useAppTranslation('common');
+
+  return useMemo(() => {
+    /**
+     * @returns {Object|null} the entry to render, or null to drop it.
+     */
+    const keep = (item) => {
+      if (!item.feature) return item;
+      // Withheld until the answer is in — see the note in the file header.
+      if (!ready) return null;
+
+      const state = stateOf(item.feature);
+      if (state === FEATURE_STATES.ENABLED) return item;
+
+      // Global roles keep the entry and are TOLD what the campus's state is,
+      // rather than silently browsing a module its manager switched off (§5.2).
+      if (unrestricted) {
+        return {
+          ...item,
+          badge: state === FEATURE_STATES.READ_ONLY
+            ? t('features.badgeReadOnly')
+            : t('features.badgeDisabled'),
+        };
+      }
+
+      // `read_only` keeps its entry: the history must stay reachable, and the
+      // mutating actions inside the page are what disappear (§4.1).
+      return state === FEATURE_STATES.READ_ONLY ? item : null;
+    };
+
+    const filtered = items.reduce((acc, item) => {
+      if (item.type === 'divider') { acc.push(item); return acc; }
+
+      if (item.type === 'group') {
+        const children = (item.items || []).map(keep).filter(Boolean);
+        // An empty group is an empty menu section — exactly the "onglet vide"
+        // §4.1.2 rules out. It goes with its children.
+        if (children.length) acc.push({ ...item, items: children });
+        return acc;
+      }
+
+      const kept = keep(item);
+      if (kept) acc.push(kept);
+      return acc;
+    }, []);
+
+    // Collapse the separators that filtering left stranded — two in a row, one
+    // leading, one trailing. A drawer of orphan rules is its own leftover from
+    // a module that is supposed to be invisible.
+    const cleaned = [];
+    for (const item of filtered) {
+      if (item.type !== 'divider') { cleaned.push(item); continue; }
+      const last = cleaned[cleaned.length - 1];
+      if (last && last.type !== 'divider') cleaned.push(item);
+    }
+    while (cleaned.length && cleaned[cleaned.length - 1].type === 'divider') cleaned.pop();
+    return cleaned;
+  }, [items, ready, stateOf, unrestricted, t]);
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
+const AppShell = ({ navItems: declaredItems = [], drawerLabel = '', pageTitle = '' }) => {
   const theme     = useTheme();
   const location  = useLocation();
   const navigate  = useNavigate();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const navItems = useEntitledNav(declaredItems);
 
   const [open,      setOpen]      = useState(false);
   const [groupOpen, setGroupOpen] = useState(readGroupState);
@@ -191,7 +308,13 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
 
     return (
       <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
-        <Tooltip title={showText ? '' : item.label} placement="right">
+        {/* In mini mode the badge has nowhere to render, so it joins the
+            tooltip — a global role must never learn the campus state only by
+            widening the drawer. */}
+        <Tooltip
+          title={showText ? '' : [item.label, item.badge].filter(Boolean).join(' — ')}
+          placement="right"
+        >
           <ListItemButton
             onClick={() => item.link && !item.disabled && handleNavigate(item.link)}
             selected={isActive}
@@ -222,6 +345,7 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
               primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: isActive ? 600 : 400 }}
               sx={showText ? { opacity: 1 } : { opacity: 0 }}
             />
+            {showText && item.badge && <NavStateBadge label={item.badge} />}
           </ListItemButton>
         </Tooltip>
       </ListItem>
@@ -323,6 +447,7 @@ const AppShell = ({ navItems = [], drawerLabel = '', pageTitle = '' }) => {
                         fontWeight: childActive ? 600 : 400,
                       }}
                     />
+                    {child.badge && <NavStateBadge label={child.badge} />}
                   </ListItemButton>
                 </ListItem>
               );

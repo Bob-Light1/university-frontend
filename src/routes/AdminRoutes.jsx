@@ -11,6 +11,7 @@ const Admin           = lazy(() => import('../admin/Admin'));
 const AdminDashboard  = lazy(() => import('../admin/components/dashboard/AdminDashboard'));
 const CampusList      = lazy(() => import('../admin/components/campuses/CampusList'));
 const NewCampus       = lazy(() => import('../admin/components/newCampus/NewCampus'));
+const EntitlementEstate = lazy(() => import('../admin/components/campuses/EntitlementEstate'));
 const AdminAccounts       = lazy(() => import('../admin/components/accounts/AdminAccounts'));
 const AdminProfile        = lazy(() => import('../admin/components/profile/AdminProfile'));
 const AdminAnnouncements  = lazy(() => import('../admin/components/announcements/AdminAnnouncements'));
@@ -42,6 +43,8 @@ export const adminRoutes = (
       <Route element={<Admin />}>
         <Route path="dashboard"  element={<AdminDashboard />} />
         <Route path="campuses"   element={<CampusList />}     />
+        {/* Phase 4 — estate matrix: every campus × every module (§13.1) */}
+        <Route path="entitlement" element={<EntitlementEstate />} />
         <Route path="new-campus" element={<NewCampus />}      />
         <Route path="accounts"       element={<AdminAccounts />}      />
         <Route path="profile"        element={<AdminProfile />}       />

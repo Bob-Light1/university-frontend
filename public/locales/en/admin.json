@@ -63,16 +63,17 @@
     "entityType": "campus",
     "action": {
       "viewPortal": "View campus portal",
-      "aiEntitlement": "AI entitlement",
       "restore": "Restore campus",
-      "archive": "Archive campus"
+      "archive": "Archive campus",
+      "entitlement": "Modules & plan"
     },
     "toast": {
       "archived": "{name} archived.",
       "restored": "{name} restored.",
       "archiveFailed": "Failed to archive campus.",
       "restoreFailed": "Failed to restore campus.",
-      "aiEntitlementUpdated": "AI entitlement updated for {name}."
+      "permanentlyDeleted": "Campus permanently deleted.",
+      "entitlementUpdated": "Entitlement updated for {name}."
     }
   },
   "newCampus": {
@@ -206,37 +207,6 @@
       "prefsSaved": "Preferences saved.",
       "prefsFailed": "Failed to save preferences."
     }
-  },
-  "aiEntitlement": {
-    "title": "AI Entitlement",
-    "neverProvisioned": "This campus has never been provisioned. Saving will create its AI entitlement with the values below.",
-    "enabledLabel": "AI enabled for this campus",
-    "enabledDesc": "Master switch. Disabling it also opts the campus out of retention (D7).",
-    "plan": "Plan",
-    "planOption": "{plan} — {tokens} tokens/mo",
-    "presetTooltip": "Re-apply this plan's default budget and features (D10 preset)",
-    "preset": "Preset",
-    "llmProfile": "LLM profile",
-    "llmProfileHelper": "Named provider profile (e.g. free, groq-llama, anthropic-prod). Config-driven — no code change to switch.",
-    "budget": "Monthly token budget",
-    "budgetError": "Must be an integer ≥ 0.",
-    "budgetHelper": "0 = unlimited. Currently {tokens} tokens/month.",
-    "features": "Features",
-    "featuresHelper": "Overrides the plan preset. Each panel still degrades on AI_FEATURE_NOT_IN_PLAN at runtime.",
-    "feature": {
-      "chat": "Chat (RAG assistant)",
-      "search": "Semantic search",
-      "analytics": "AI analytics",
-      "advisors": "Business advisors"
-    },
-    "changeHistory": "Change history",
-    "noChanges": "No changes recorded yet.",
-    "unknownActor": "unknown",
-    "saving": "Saving…",
-    "save": "Save entitlement",
-    "loadError": "Failed to load AI entitlement.",
-    "saveError": "Failed to update AI entitlement.",
-    "fallbackCampus": "Campus"
   },
   "competition": {
     "title": "Competitions",

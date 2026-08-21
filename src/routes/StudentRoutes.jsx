@@ -1,6 +1,16 @@
 import { Route } from 'react-router-dom';
 import { lazy } from 'react';
 
+/**
+ * `FeatureGuard` is composed with the `ProtectedRoute` already wrapping this
+ * table in `App.jsx`, never substituted for it: the role check and the
+ * entitlement check answer different questions (design doc §8.2). It turns a
+ * direct URL to a module this campus does not have into an explicit
+ * "not activated" screen rather than a page that loads and then 403s.
+ * `read_only` passes — the history stays readable (§4.1).
+ */
+import FeatureGuard from './FeatureGuard';
+
 const StudentDashboard = lazy(() =>
   import('../student/components/dashboard/StudentDashboard')
 );
@@ -36,13 +46,13 @@ export const studentRoutes = (
   <>
     <Route index element={<StudentDashboard />} />
     <Route path="schedule"    element={<ScheduleStudent />} />
-    <Route path="examination" element={<ExamStudent />} />
-    <Route path="results"     element={<ResultStudent />} />
-    <Route path="courses"     element={<CourseStudent />} />
+    <Route path="examination" element={<FeatureGuard feature="exam"><ExamStudent /></FeatureGuard>} />
+    <Route path="results"     element={<FeatureGuard feature="result"><ResultStudent /></FeatureGuard>} />
+    <Route path="courses"     element={<FeatureGuard feature="course"><CourseStudent /></FeatureGuard>} />
     <Route path="attendance"  element={<AttendanceStudent />} />
-    <Route path="notification" element={<NotifStudent />} />
-    <Route path="documents"   element={<DocumentStudent />} />
-    <Route path="finance"     element={<StudentFinance />} />
+    <Route path="notification" element={<FeatureGuard feature="announcement"><NotifStudent /></FeatureGuard>} />
+    <Route path="documents"   element={<FeatureGuard feature="document"><DocumentStudent /></FeatureGuard>} />
+    <Route path="finance"     element={<FeatureGuard feature="finance"><StudentFinance /></FeatureGuard>} />
     <Route path="profile"     element={<StudentProfile />} />
   </>
 );

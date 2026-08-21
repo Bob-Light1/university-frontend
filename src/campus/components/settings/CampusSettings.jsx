@@ -3,12 +3,14 @@ import {
   Box, Typography, Tabs, Tab, Paper, Stack,
 } from '@mui/material';
 import {
-  AdminPanelSettings, Settings, Language,
+  AdminPanelSettings, Settings, Language, Tune,
 } from '@mui/icons-material';
 
 import StaffRolesManager from './StaffRolesManager';
 import LanguagePreferencesSection from '../../../components/shared/LanguagePreferencesSection';
 import CampusDefaultsSection from './CampusDefaultsSection';
+import CampusModulesSection from './CampusModulesSection';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
@@ -16,6 +18,7 @@ function TabPanel({ children, value, index }) {
 
 export default function CampusSettings() {
   const [tab, setTab] = useState(0);
+  const { t } = useAppTranslation('common');
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 960, mx: 'auto' }}>
@@ -47,6 +50,14 @@ export default function CampusSettings() {
             label="Staff Roles"
             sx={{ textTransform: 'none', fontWeight: 600, minHeight: 56 }}
           />
+          {/* The usage layer of the entitlement — what this campus switches on
+              inside the offer sold to it (design doc §5, phase 4). */}
+          <Tab
+            icon={<Tune fontSize="small" />}
+            iconPosition="start"
+            label={t('features.pilot.tab.modules')}
+            sx={{ textTransform: 'none', fontWeight: 600, minHeight: 56 }}
+          />
           <Tab
             icon={<Language fontSize="small" />}
             iconPosition="start"
@@ -67,13 +78,17 @@ export default function CampusSettings() {
           </TabPanel>
 
           <TabPanel value={tab} index={1}>
+            <CampusModulesSection />
+          </TabPanel>
+
+          <TabPanel value={tab} index={2}>
             <Stack spacing={4}>
               <LanguagePreferencesSection />
               <CampusDefaultsSection />
             </Stack>
           </TabPanel>
 
-          <TabPanel value={tab} index={2}>
+          <TabPanel value={tab} index={3}>
             <Box
               sx={{
                 border: '2px dashed',

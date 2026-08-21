@@ -1,6 +1,16 @@
 import { Route } from 'react-router-dom';
 import { lazy } from 'react';
 
+/**
+ * `FeatureGuard` is composed with the `ProtectedRoute` already wrapping this
+ * table in `App.jsx`, never substituted for it: the role check and the
+ * entitlement check answer different questions (design doc §8.2). It turns a
+ * direct URL to a module this campus does not have into an explicit
+ * "not activated" screen rather than a page that loads and then 403s.
+ * `read_only` passes — the history stays readable (§4.1).
+ */
+import FeatureGuard from './FeatureGuard';
+
 // ─── Parent portal pages ──────────────────────────────────────────────────────
 
 const ParentDashboard  = lazy(() => import('../parent/components/dashboard/ParentDashboard'));
@@ -35,12 +45,12 @@ export const parentRoutes = (
 
     {/* Self-service */}
     <Route path="profile"      element={<ParentProfile />} />
-    <Route path="notification" element={<NotifParent />} />
+    <Route path="notification" element={<FeatureGuard feature="announcement"><NotifParent /></FeatureGuard>} />
 
     {/* Child-scoped — all require :studentId */}
-    <Route path="children/:studentId/results"      element={<ChildResults />} />
+    <Route path="children/:studentId/results"      element={<FeatureGuard feature="result"><ChildResults /></FeatureGuard>} />
     <Route path="children/:studentId/attendance"   element={<ChildAttendance />} />
     <Route path="children/:studentId/schedule"     element={<ChildSchedule />} />
-    <Route path="children/:studentId/transcripts"  element={<ChildTranscripts />} />
+    <Route path="children/:studentId/transcripts"  element={<FeatureGuard feature="result"><ChildTranscripts /></FeatureGuard>} />
   </>
 );

@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../config/env';
+import { GATE_ERROR_CODES } from '../config/featureConstants';
+import { emitFeatureRefusal } from './featureRefusal';
 
 /**
  * Default request timeout for regular API calls (10 s).
@@ -110,6 +112,27 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
+      }
+    }
+
+    // Entitlement gate refusal → tell the provider before rejecting.
+    //
+    // A 403 carrying FEATURE_DISABLED / FEATURE_READ_ONLY is NOT a role
+    // refusal: the module was switched off (or frozen) for this campus while
+    // the page was open. The provider re-hydrates the flags and shows an
+    // explicit message, so the navigation and the buttons catch up instead of
+    // leaving the user in front of a screen that no longer exists (§8.3).
+    //
+    // The error is still rejected: the caller's own error handling runs as
+    // usual, this only adds the platform-level reaction on top.
+    if (error.response?.status === 403) {
+      const code = error.response?.data?.errors?.code;
+      if (GATE_ERROR_CODES.includes(code)) {
+        emitFeatureRefusal({
+          code,
+          feature: error.response?.data?.errors?.feature ?? null,
+          message: error.response?.data?.message ?? '',
+        });
       }
     }
 

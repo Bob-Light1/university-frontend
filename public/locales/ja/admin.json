@@ -1,0 +1,379 @@
+{
+  "portal": {
+    "label": "管理者ポータル",
+    "pageTitle": "管理者ポータル"
+  },
+  "director": {
+    "label": "ディレクターポータル",
+    "pageTitle": "ディレクターポータル"
+  },
+  "nav": {
+    "campuses": "キャンパス",
+    "newCampus": "新規キャンパス",
+    "adminAccounts": "管理者アカウント",
+    "aiWorkspace": "AI ワークスペース",
+    "testimonials": "体験談",
+    "faq": "よくある質問",
+    "coursePreviews": "コースプレビュー",
+    "competition": "コンテスト",
+    "applications": "申請"
+  },
+  "dashboard": {
+    "welcome": "おかえりなさい、{name} さん",
+    "subtitleAdmin": "プラットフォーム管理者 — wewigo ERP",
+    "subtitleDirector": "ディレクター — wewigo ERP",
+    "loadError": "ダッシュボードのデータを読み込めませんでした。",
+    "fallbackAdmin": "管理者",
+    "fallbackDirector": "ディレクター",
+    "kpi": {
+      "totalCampuses": "キャンパス総数",
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "platformGrowth": "プラットフォームの成長",
+      "platformReach": "プラットフォームのリーチ",
+      "sites": "{count, plural, other {# 拠点}}"
+    },
+    "quickAction": {
+      "newCampus": "新規キャンパス",
+      "manageCampuses": "キャンパス管理",
+      "adminAccounts": "管理者アカウント"
+    },
+    "recent": {
+      "title": "最近のキャンパス",
+      "viewAll": "すべて表示",
+      "empty": "キャンパスはまだありません。最初のものを作成してください。",
+      "emptyShort": "キャンパスはまだありません。",
+      "emptyDirector": "プラットフォームにキャンパスはまだありません。"
+    }
+  },
+  "campusTable": {
+    "campus": "キャンパス",
+    "manager": "マネージャー",
+    "location": "所在地",
+    "created": "作成日"
+  },
+  "campuses": {
+    "title": "キャンパス",
+    "subtitleAdmin": "プラットフォームに登録されているすべてのキャンパス。",
+    "subtitleDirector": "プラットフォームに登録されているすべてのキャンパスの概要。",
+    "newCampus": "新規キャンパス",
+    "searchPlaceholder": "名前、マネージャー、メールで検索…",
+    "loadError": "キャンパスを読み込めませんでした。",
+    "empty": "キャンパスが見つかりません。",
+    "entityType": "キャンパス",
+    "action": {
+      "viewPortal": "キャンパスポータルを表示",
+      "restore": "キャンパスを復元",
+      "archive": "キャンパスをアーカイブ",
+      "entitlement": "モジュールとプラン"
+    },
+    "toast": {
+      "archived": "{name} をアーカイブしました。",
+      "restored": "{name} を復元しました。",
+      "archiveFailed": "キャンパスのアーカイブに失敗しました。",
+      "restoreFailed": "キャンパスの復元に失敗しました。",
+      "permanentlyDeleted": "キャンパスを完全に削除しました。",
+      "entitlementUpdated": "{name} の利用権を更新しました。"
+    }
+  },
+  "newCampus": {
+    "backToDashboard": "管理者ダッシュボード",
+    "backToDashboardAria": "管理者ダッシュボードに戻る",
+    "title": "新規キャンパスを作成",
+    "subtitle": "卓越した新しいキャンパスを設立",
+    "step": {
+      "campusInfo": "キャンパス情報",
+      "managerDetails": "マネージャーの詳細",
+      "locationImage": "所在地と画像"
+    },
+    "section": {
+      "campusInfo": "キャンパス情報",
+      "managerDetails": "マネージャーの詳細",
+      "locationImage": "所在地とキャンパス画像"
+    },
+    "field": {
+      "campusName": "キャンパス名 *",
+      "campusNumber": "キャンパス番号（任意）",
+      "managerName": "マネージャーの氏名 *",
+      "email": "メールアドレス *",
+      "phone": "電話番号",
+      "password": "パスワード *",
+      "confirmPassword": "パスワードの確認 *",
+      "city": "市区町村（任意）",
+      "country": "国",
+      "address": "住所（任意）",
+      "campusImage": "キャンパス画像 *"
+    },
+    "button": {
+      "creating": "作成中…",
+      "connecting": "接続中…",
+      "create": "キャンパスを作成"
+    },
+    "toast": {
+      "imageRequired": "先にキャンパス画像をアップロードしてください。",
+      "created": "✨ キャンパスを作成しました！",
+      "timeout": "リクエストがタイムアウトしました。接続を確認して再試行してください。",
+      "failed": "キャンパスの作成中にエラーが発生しました。"
+    }
+  },
+  "accounts": {
+    "title": "管理者アカウント",
+    "subtitle": "プラットフォームレベルの管理者およびディレクターのアカウントを作成・管理します。",
+    "roleInfo": {
+      "title": "役割の違い",
+      "admin": "完全なプラットフォームアクセス — キャンパスや他の管理者アカウントを作成できます。",
+      "director": "キャンパスの監督とレポート作成 — アカウント作成権限はありません。"
+    },
+    "create": {
+      "title": "新規アカウントを作成",
+      "fullName": "氏名",
+      "email": "メールアドレス",
+      "role": "役割",
+      "roleAdmin": "管理者",
+      "roleDirector": "ディレクター",
+      "password": "パスワード",
+      "confirmPassword": "パスワードの確認",
+      "passwordHint": "パスワードは 8 文字以上で、大文字・小文字・数字・特殊文字を含める必要があります。",
+      "submitting": "作成中…",
+      "submit": "アカウントを作成"
+    },
+    "existing": {
+      "title": "既存のアカウント",
+      "empty": "アカウントが見つかりません。",
+      "account": "アカウント",
+      "role": "役割",
+      "createdBy": "作成者",
+      "lastLogin": "最終ログイン",
+      "selfBootstrap": "本人（初期設定）",
+      "bootstrapChip": "初期設定",
+      "bootstrapTooltip": "初期設定アカウント — ステータスは恒久的に保護されます",
+      "youChip": "あなた",
+      "noHistory": "履歴なし"
+    },
+    "action": {
+      "activate": "有効化",
+      "suspend": "停止",
+      "deactivate": "無効化"
+    },
+    "toast": {
+      "loadFailed": "アカウントを読み込めませんでした。",
+      "activated": "アカウントを有効化しました。",
+      "suspended": "アカウントを停止しました。",
+      "deactivated": "アカウントを無効化しました。",
+      "statusFailed": "ステータスの更新に失敗しました。",
+      "createdAdmin": "管理者アカウントを作成しました。",
+      "createdDirector": "ディレクターアカウントを作成しました。",
+      "createFailed": "アカウントの作成に失敗しました。"
+    },
+    "validation": {
+      "nameMin": "3 文字以上",
+      "nameRequired": "名前は必須です",
+      "roleRequired": "役割は必須です"
+    }
+  },
+  "profile": {
+    "title": "マイプロフィール",
+    "subtitleDirector": "ディレクターアカウントの詳細、セキュリティ、個人設定。",
+    "personalInfo": "個人情報",
+    "roleAdmin": "プラットフォーム管理者",
+    "roleDirector": "ディレクター",
+    "email": "メール",
+    "role": "役割",
+    "status": "ステータス",
+    "lastLogin": "最終ログイン",
+    "notRecorded": "記録なし",
+    "displayName": "表示名",
+    "saving": "保存中…",
+    "saveProfile": "プロフィールを保存",
+    "changePassword": "パスワードを変更",
+    "currentPassword": "現在のパスワード",
+    "newPassword": "新しいパスワード",
+    "confirmPassword": "パスワードの確認",
+    "passwordHint": "パスワードは 8 文字以上で、大文字・小文字・数字・特殊文字を含める必要があります。",
+    "updating": "更新中…",
+    "updatePassword": "パスワードを更新",
+    "validation": {
+      "nameMin": "2 文字以上",
+      "nameRequired": "名前は必須です"
+    },
+    "toast": {
+      "loadFailed": "プロフィールを読み込めませんでした。",
+      "updated": "プロフィールを更新しました。",
+      "updateFailed": "プロフィールの更新に失敗しました。",
+      "passwordUpdated": "パスワードを更新しました。",
+      "passwordFailed": "パスワードの更新に失敗しました。",
+      "photoUpdated": "写真を更新しました。",
+      "photoFailed": "写真の保存に失敗しました。",
+      "prefsSaved": "設定を保存しました。",
+      "prefsFailed": "設定の保存に失敗しました。"
+    }
+  },
+  "competition": {
+    "title": "コンテスト",
+    "itemCount": "{count, plural, other {# 件}}",
+    "new": "新規コンテスト",
+    "campus": "キャンパス",
+    "allCampuses": "すべてのキャンパス",
+    "statusActive": "開催中",
+    "statusClosed": "終了",
+    "empty": "コンテストはありません",
+    "emptyHint": "上のボタンで作成してください。",
+    "loadError": "コンテストを読み込めませんでした。",
+    "prizeCount": "{count, plural, other {# 件の賞}}",
+    "closesOn": "{date} に終了",
+    "winnerCount": "{count, plural, other {# 名の受賞者}}",
+    "action": {
+      "activate": "有効化",
+      "deactivate": "無効化",
+      "closeNow": "今すぐ終了（受賞者を確定）",
+      "alreadyClosed": "すでに終了"
+    },
+    "form": {
+      "editTitle": "コンテストを編集",
+      "newTitle": "新規コンテスト",
+      "period": "期間（YYYY-MM）*",
+      "periodPlaceholder": "2026-07",
+      "closingDate": "締切日 *",
+      "activeLabel": "開催中（ポータルに表示）",
+      "prizes": "賞",
+      "winners": "受賞者",
+      "rank": "順位",
+      "value": "内容",
+      "valuePlaceholder": "-20% + 証明書",
+      "remove": "削除",
+      "descriptionFr": "説明（FR）*",
+      "descriptionEn": "説明（EN）",
+      "addPrize": "賞を追加",
+      "periodError": "期間は YYYY-MM 形式である必要があります。",
+      "closingRequired": "締切日は必須です。",
+      "saveFailed": "保存に失敗しました。"
+    },
+    "confirm": {
+      "closeTitle": "コンテストを終了",
+      "closeMessage": "期間のクイズスコアから {period} の受賞者を確定し、無効化しますか？この操作は元に戻せません。",
+      "deleteTitle": "コンテストを削除",
+      "deleteMessage": "コンテスト {period} は完全に削除されます。この操作は元に戻せません。"
+    },
+    "toast": {
+      "created": "コンテストを作成しました。",
+      "updated": "コンテストを更新しました。",
+      "closed": "コンテストを終了しました。",
+      "deleted": "コンテストを削除しました。",
+      "activated": "有効化しました。",
+      "deactivated": "無効化しました。",
+      "failed": "失敗しました。",
+      "actionFailed": "操作に失敗しました。",
+      "selectCampus": "作成前にキャンパスを選択してください。"
+    }
+  },
+  "applications": {
+    "title": "パートナー申請",
+    "totalChip": "合計 {count} 件",
+    "empty": "申請が見つかりません。",
+    "loadError": "申請を読み込めませんでした。",
+    "reviewFailed": "審査に失敗しました。",
+    "note": "メモ: {note}",
+    "approve": "承認",
+    "reject": "却下",
+    "type": {
+      "influencer": "インフルエンサー",
+      "church_leader": "宗教指導者",
+      "student_leader": "学生リーダー",
+      "teacher": "教師",
+      "parent": "保護者",
+      "other": "その他"
+    },
+    "channel": {
+      "online": "オンライン",
+      "offline": "オフライン",
+      "hybrid": "ハイブリッド"
+    },
+    "dialog": {
+      "approveTitle": "申請を承認",
+      "rejectTitle": "申請を却下",
+      "internalNote": "内部メモ（任意）",
+      "notePlaceholder": "承認 / 却下の理由…",
+      "confirmApprove": "承認を確定",
+      "confirmReject": "却下を確定"
+    }
+  },
+  "content": {
+    "campus": "キャンパス",
+    "allCampuses": "すべてのキャンパス",
+    "statusPublished": "公開済み",
+    "statusDraft": "下書き",
+    "itemCount": "{count, plural, other {# 件}}",
+    "selectCampusFirst": "作成前にキャンパスを選択してください。",
+    "publish": "公開",
+    "unpublish": "非公開",
+    "published": "公開しました。",
+    "unpublished": "非公開にしました。",
+    "statusFailed": "ステータスの更新に失敗しました。",
+    "actionFailed": "操作に失敗しました。",
+    "saveFailed": "保存に失敗しました。",
+    "deleteMessage": "この項目は完全に削除されます。この操作は元に戻せません。",
+    "emptyHint": "上のボタンで最初の項目を作成してください。",
+    "required": "必須",
+    "french": "フランス語",
+    "english": "英語",
+    "testimonial": {
+      "plural": "体験談",
+      "new": "新規体験談",
+      "edit": "体験談を編集",
+      "deleteTitle": "体験談を削除",
+      "search": "体験談を検索…",
+      "empty": "体験談はありません",
+      "loadError": "体験談を読み込めませんでした。",
+      "created": "体験談を作成しました。",
+      "updated": "体験談を更新しました。",
+      "deleted": "体験談を削除しました。"
+    },
+    "faq": {
+      "plural": "よくある質問",
+      "new": "新規 FAQ 項目",
+      "edit": "FAQ 項目を編集",
+      "deleteTitle": "FAQ 項目を削除",
+      "search": "FAQ を検索…",
+      "empty": "FAQ 項目はありません",
+      "loadError": "FAQ 項目を読み込めませんでした。",
+      "created": "FAQ 項目を作成しました。",
+      "updated": "FAQ 項目を更新しました。",
+      "deleted": "FAQ 項目を削除しました。"
+    },
+    "course": {
+      "plural": "コースプレビュー",
+      "new": "新規コースプレビュー",
+      "edit": "コースプレビューを編集",
+      "deleteTitle": "コースプレビューを削除",
+      "search": "コースプレビューを検索…",
+      "empty": "コースプレビューはありません",
+      "loadError": "コースプレビューを読み込めませんでした。",
+      "created": "コースプレビューを作成しました。",
+      "updated": "コースプレビューを更新しました。",
+      "deleted": "コースプレビューを削除しました。"
+    },
+    "field": {
+      "firstName": "名",
+      "city": "市区町村",
+      "graduationYear": "卒業年",
+      "program": "プログラム",
+      "quote": "引用",
+      "photoUrl": "写真 URL",
+      "employer": "勤務先",
+      "order": "表示順",
+      "isPublished": "公開済み",
+      "question": "質問",
+      "answer": "回答",
+      "category": "カテゴリ",
+      "title": "タイトル",
+      "content": "内容（抜粋）",
+      "videoUrl": "動画 URL"
+    },
+    "faqCategory": {
+      "general": "一般",
+      "inscription": "登録",
+      "tarifs": "料金",
+      "formations": "プログラム"
+    }
+  }
+}

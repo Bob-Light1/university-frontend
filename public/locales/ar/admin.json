@@ -1,0 +1,379 @@
+{
+  "portal": {
+    "label": "بوابة المشرف",
+    "pageTitle": "بوابة المشرف"
+  },
+  "director": {
+    "label": "بوابة المدير",
+    "pageTitle": "بوابة المدير"
+  },
+  "nav": {
+    "campuses": "الحرم الجامعي",
+    "newCampus": "حرم جديد",
+    "adminAccounts": "حسابات المشرفين",
+    "aiWorkspace": "مساحة عمل الذكاء الاصطناعي",
+    "testimonials": "الشهادات",
+    "faq": "الأسئلة الشائعة",
+    "coursePreviews": "معاينات الدورات",
+    "competition": "المسابقة",
+    "applications": "الطلبات"
+  },
+  "dashboard": {
+    "welcome": "مرحبًا بعودتك، {name}",
+    "subtitleAdmin": "مشرف المنصة — wewigo ERP",
+    "subtitleDirector": "المدير — wewigo ERP",
+    "loadError": "فشل تحميل بيانات لوحة التحكم.",
+    "fallbackAdmin": "مشرف",
+    "fallbackDirector": "مدير",
+    "kpi": {
+      "totalCampuses": "إجمالي الأحرام",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "platformGrowth": "نمو المنصة",
+      "platformReach": "مدى وصول المنصة",
+      "sites": "{count, plural, zero {لا مواقع} one {موقع واحد} two {موقعان} few {# مواقع} many {# موقعًا} other {# موقع}}"
+    },
+    "quickAction": {
+      "newCampus": "حرم جديد",
+      "manageCampuses": "إدارة الأحرام",
+      "adminAccounts": "حسابات المشرفين"
+    },
+    "recent": {
+      "title": "الأحرام الأخيرة",
+      "viewAll": "عرض الكل",
+      "empty": "لا توجد أحرام بعد. أنشئ الأول.",
+      "emptyShort": "لا توجد أحرام بعد.",
+      "emptyDirector": "لا توجد أحرام على المنصة بعد."
+    }
+  },
+  "campusTable": {
+    "campus": "الحرم",
+    "manager": "المدير",
+    "location": "الموقع",
+    "created": "تاريخ الإنشاء"
+  },
+  "campuses": {
+    "title": "الأحرام الجامعية",
+    "subtitleAdmin": "جميع الأحرام المسجلة على المنصة.",
+    "subtitleDirector": "نظرة عامة على جميع الأحرام المسجلة على المنصة.",
+    "newCampus": "حرم جديد",
+    "searchPlaceholder": "ابحث بالاسم أو المدير أو البريد…",
+    "loadError": "فشل تحميل الأحرام.",
+    "empty": "لم يتم العثور على أحرام.",
+    "entityType": "حرم",
+    "action": {
+      "viewPortal": "عرض بوابة الحرم",
+      "restore": "استعادة الحرم",
+      "archive": "أرشفة الحرم",
+      "entitlement": "الوحدات والباقة"
+    },
+    "toast": {
+      "archived": "تمت أرشفة {name}.",
+      "restored": "تمت استعادة {name}.",
+      "archiveFailed": "فشلت أرشفة الحرم.",
+      "restoreFailed": "فشلت استعادة الحرم.",
+      "permanentlyDeleted": "تم حذف الحرم الجامعي نهائيًا.",
+      "entitlementUpdated": "تم تحديث صلاحيات {name}."
+    }
+  },
+  "newCampus": {
+    "backToDashboard": "لوحة تحكم المشرف",
+    "backToDashboardAria": "العودة إلى لوحة تحكم المشرف",
+    "title": "إنشاء حرم جديد",
+    "subtitle": "أنشئ حرمًا جامعيًا متميزًا جديدًا",
+    "step": {
+      "campusInfo": "معلومات الحرم",
+      "managerDetails": "تفاصيل المدير",
+      "locationImage": "الموقع والصورة"
+    },
+    "section": {
+      "campusInfo": "معلومات الحرم",
+      "managerDetails": "تفاصيل المدير",
+      "locationImage": "موقع وصورة الحرم"
+    },
+    "field": {
+      "campusName": "اسم الحرم *",
+      "campusNumber": "رقم الحرم (اختياري)",
+      "managerName": "الاسم الكامل للمدير *",
+      "email": "عنوان البريد الإلكتروني *",
+      "phone": "رقم الهاتف",
+      "password": "كلمة المرور *",
+      "confirmPassword": "تأكيد كلمة المرور *",
+      "city": "المدينة (اختياري)",
+      "country": "الدولة",
+      "address": "العنوان (اختياري)",
+      "campusImage": "صورة الحرم *"
+    },
+    "button": {
+      "creating": "جارٍ الإنشاء…",
+      "connecting": "جارٍ الاتصال…",
+      "create": "إنشاء الحرم"
+    },
+    "toast": {
+      "imageRequired": "يرجى رفع صورة للحرم أولاً.",
+      "created": "✨ تم إنشاء الحرم بنجاح!",
+      "timeout": "انتهت مهلة الطلب. تحقق من اتصالك وحاول مرة أخرى.",
+      "failed": "حدث خطأ أثناء إنشاء الحرم."
+    }
+  },
+  "accounts": {
+    "title": "حسابات المشرفين",
+    "subtitle": "أنشئ وأدر حسابات المشرف والمدير على مستوى المنصة.",
+    "roleInfo": {
+      "title": "الفروق بين الأدوار",
+      "admin": "وصول كامل إلى المنصة — يمكنه إنشاء أحرام وحسابات مشرفين أخرى.",
+      "director": "الإشراف على الأحرام وإعداد التقارير — دون صلاحيات إنشاء حسابات."
+    },
+    "create": {
+      "title": "إنشاء حساب جديد",
+      "fullName": "الاسم الكامل",
+      "email": "عنوان البريد الإلكتروني",
+      "role": "الدور",
+      "roleAdmin": "مشرف",
+      "roleDirector": "مدير",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "passwordHint": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل وتتضمن حرفًا كبيرًا وحرفًا صغيرًا ورقمًا ورمزًا خاصًا.",
+      "submitting": "جارٍ الإنشاء…",
+      "submit": "إنشاء الحساب"
+    },
+    "existing": {
+      "title": "الحسابات الحالية",
+      "empty": "لم يتم العثور على حسابات.",
+      "account": "الحساب",
+      "role": "الدور",
+      "createdBy": "أنشأه",
+      "lastLogin": "آخر تسجيل دخول",
+      "selfBootstrap": "ذاتي (تهيئة)",
+      "bootstrapChip": "تهيئة",
+      "bootstrapTooltip": "حساب تهيئة — الحالة محمية بشكل دائم",
+      "youChip": "أنت",
+      "noHistory": "لا يوجد سجل"
+    },
+    "action": {
+      "activate": "تفعيل",
+      "suspend": "تعليق",
+      "deactivate": "إلغاء التفعيل"
+    },
+    "toast": {
+      "loadFailed": "فشل تحميل الحسابات.",
+      "activated": "تم تفعيل الحساب.",
+      "suspended": "تم تعليق الحساب.",
+      "deactivated": "تم إلغاء تفعيل الحساب.",
+      "statusFailed": "فشل تحديث الحالة.",
+      "createdAdmin": "تم إنشاء حساب المشرف بنجاح.",
+      "createdDirector": "تم إنشاء حساب المدير بنجاح.",
+      "createFailed": "فشل إنشاء الحساب."
+    },
+    "validation": {
+      "nameMin": "3 أحرف كحد أدنى",
+      "nameRequired": "الاسم مطلوب",
+      "roleRequired": "الدور مطلوب"
+    }
+  },
+  "profile": {
+    "title": "ملفي الشخصي",
+    "subtitleDirector": "تفاصيل حساب المدير والأمان والتفضيلات الشخصية.",
+    "personalInfo": "المعلومات الشخصية",
+    "roleAdmin": "مشرف المنصة",
+    "roleDirector": "مدير",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "status": "الحالة",
+    "lastLogin": "آخر تسجيل دخول",
+    "notRecorded": "غير مسجل",
+    "displayName": "الاسم المعروض",
+    "saving": "جارٍ الحفظ…",
+    "saveProfile": "حفظ الملف الشخصي",
+    "changePassword": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordHint": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل وتتضمن حرفًا كبيرًا وحرفًا صغيرًا ورقمًا ورمزًا خاصًا.",
+    "updating": "جارٍ التحديث…",
+    "updatePassword": "تحديث كلمة المرور",
+    "validation": {
+      "nameMin": "حرفان على الأقل",
+      "nameRequired": "الاسم مطلوب"
+    },
+    "toast": {
+      "loadFailed": "فشل تحميل الملف الشخصي.",
+      "updated": "تم تحديث الملف الشخصي.",
+      "updateFailed": "فشل تحديث الملف الشخصي.",
+      "passwordUpdated": "تم تحديث كلمة المرور بنجاح.",
+      "passwordFailed": "فشل تحديث كلمة المرور.",
+      "photoUpdated": "تم تحديث الصورة.",
+      "photoFailed": "فشل حفظ الصورة.",
+      "prefsSaved": "تم حفظ التفضيلات.",
+      "prefsFailed": "فشل حفظ التفضيلات."
+    }
+  },
+  "competition": {
+    "title": "المسابقات",
+    "itemCount": "{count, plural, zero {لا عناصر} one {عنصر واحد} two {عنصران} few {# عناصر} many {# عنصرًا} other {# عنصر}}",
+    "new": "مسابقة جديدة",
+    "campus": "الحرم",
+    "allCampuses": "جميع الأحرام",
+    "statusActive": "نشطة",
+    "statusClosed": "مغلقة",
+    "empty": "لا توجد مسابقات",
+    "emptyHint": "أنشئ واحدة بالزر أعلاه.",
+    "loadError": "فشل تحميل المسابقات.",
+    "prizeCount": "{count, plural, zero {لا جوائز} one {جائزة واحدة} two {جائزتان} few {# جوائز} many {# جائزة} other {# جائزة}}",
+    "closesOn": "تُغلق في {date}",
+    "winnerCount": "{count, plural, zero {لا فائزين} one {فائز واحد} two {فائزان} few {# فائزين} many {# فائزًا} other {# فائز}}",
+    "action": {
+      "activate": "تفعيل",
+      "deactivate": "إلغاء التفعيل",
+      "closeNow": "إغلاق الآن (تجميد الفائزين)",
+      "alreadyClosed": "مغلقة بالفعل"
+    },
+    "form": {
+      "editTitle": "تعديل المسابقة",
+      "newTitle": "مسابقة جديدة",
+      "period": "الفترة (سنة-شهر) *",
+      "periodPlaceholder": "2026-07",
+      "closingDate": "تاريخ الإغلاق *",
+      "activeLabel": "نشطة (ظاهرة على البوابة)",
+      "prizes": "الجوائز",
+      "winners": "الفائزون",
+      "rank": "الترتيب",
+      "value": "القيمة",
+      "valuePlaceholder": "-20% + شهادة",
+      "remove": "إزالة",
+      "descriptionFr": "الوصف (FR) *",
+      "descriptionEn": "الوصف (EN)",
+      "addPrize": "إضافة جائزة",
+      "periodError": "يجب أن تكون الفترة بصيغة سنة-شهر.",
+      "closingRequired": "تاريخ الإغلاق مطلوب.",
+      "saveFailed": "فشل الحفظ."
+    },
+    "confirm": {
+      "closeTitle": "إغلاق المسابقة",
+      "closeMessage": "تجميد الفائزين للفترة {period} من نتائج اختبار الفترة وإلغاء تفعيلها؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteTitle": "حذف المسابقة",
+      "deleteMessage": "ستُحذف المسابقة {period} نهائيًا. لا يمكن التراجع عن هذا الإجراء."
+    },
+    "toast": {
+      "created": "تم إنشاء المسابقة.",
+      "updated": "تم تحديث المسابقة.",
+      "closed": "تم إغلاق المسابقة.",
+      "deleted": "تم حذف المسابقة.",
+      "activated": "تم التفعيل.",
+      "deactivated": "تم إلغاء التفعيل.",
+      "failed": "فشل.",
+      "actionFailed": "فشل الإجراء.",
+      "selectCampus": "اختر حرمًا قبل الإنشاء."
+    }
+  },
+  "applications": {
+    "title": "طلبات الشركاء",
+    "totalChip": "{count} إجمالاً",
+    "empty": "لم يتم العثور على طلبات.",
+    "loadError": "فشل تحميل الطلبات.",
+    "reviewFailed": "فشلت المراجعة.",
+    "note": "ملاحظة: {note}",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "type": {
+      "influencer": "مؤثر",
+      "church_leader": "قائد ديني",
+      "student_leader": "قائد طلابي",
+      "teacher": "معلم",
+      "parent": "ولي أمر",
+      "other": "أخرى"
+    },
+    "channel": {
+      "online": "عبر الإنترنت",
+      "offline": "دون اتصال",
+      "hybrid": "مختلط"
+    },
+    "dialog": {
+      "approveTitle": "الموافقة على الطلب",
+      "rejectTitle": "رفض الطلب",
+      "internalNote": "ملاحظة داخلية (اختياري)",
+      "notePlaceholder": "سبب الموافقة / الرفض…",
+      "confirmApprove": "تأكيد الموافقة",
+      "confirmReject": "تأكيد الرفض"
+    }
+  },
+  "content": {
+    "campus": "الحرم",
+    "allCampuses": "جميع الأحرام",
+    "statusPublished": "منشور",
+    "statusDraft": "مسودة",
+    "itemCount": "{count, plural, zero {لا عناصر} one {عنصر واحد} two {عنصران} few {# عناصر} many {# عنصرًا} other {# عنصر}}",
+    "selectCampusFirst": "اختر حرمًا قبل الإنشاء.",
+    "publish": "نشر",
+    "unpublish": "إلغاء النشر",
+    "published": "تم النشر.",
+    "unpublished": "تم إلغاء النشر.",
+    "statusFailed": "فشل تحديث الحالة.",
+    "actionFailed": "فشل الإجراء.",
+    "saveFailed": "فشل الحفظ.",
+    "deleteMessage": "سيُحذف هذا العنصر نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+    "emptyHint": "أنشئ عنصرك الأول بالزر أعلاه.",
+    "required": "مطلوب",
+    "french": "الفرنسية",
+    "english": "الإنجليزية",
+    "testimonial": {
+      "plural": "الشهادات",
+      "new": "شهادة جديدة",
+      "edit": "تعديل الشهادة",
+      "deleteTitle": "حذف الشهادة",
+      "search": "البحث في الشهادات…",
+      "empty": "لا توجد شهادات",
+      "loadError": "فشل تحميل الشهادات.",
+      "created": "تم إنشاء الشهادة.",
+      "updated": "تم تحديث الشهادة.",
+      "deleted": "تم حذف الشهادة."
+    },
+    "faq": {
+      "plural": "الأسئلة الشائعة",
+      "new": "إدخال أسئلة شائعة جديد",
+      "edit": "تعديل إدخال الأسئلة الشائعة",
+      "deleteTitle": "حذف إدخال الأسئلة الشائعة",
+      "search": "البحث في الأسئلة الشائعة…",
+      "empty": "لا توجد إدخالات أسئلة شائعة",
+      "loadError": "فشل تحميل إدخالات الأسئلة الشائعة.",
+      "created": "تم إنشاء إدخال الأسئلة الشائعة.",
+      "updated": "تم تحديث إدخال الأسئلة الشائعة.",
+      "deleted": "تم حذف إدخال الأسئلة الشائعة."
+    },
+    "course": {
+      "plural": "معاينات الدورات",
+      "new": "معاينة دورة جديدة",
+      "edit": "تعديل معاينة الدورة",
+      "deleteTitle": "حذف معاينة الدورة",
+      "search": "البحث في معاينات الدورات…",
+      "empty": "لا توجد معاينات دورات",
+      "loadError": "فشل تحميل معاينات الدورات.",
+      "created": "تم إنشاء معاينة الدورة.",
+      "updated": "تم تحديث معاينة الدورة.",
+      "deleted": "تم حذف معاينة الدورة."
+    },
+    "field": {
+      "firstName": "الاسم الأول",
+      "city": "المدينة",
+      "graduationYear": "سنة التخرج",
+      "program": "البرنامج",
+      "quote": "اقتباس",
+      "photoUrl": "رابط الصورة",
+      "employer": "جهة العمل",
+      "order": "ترتيب العرض",
+      "isPublished": "منشور",
+      "question": "السؤال",
+      "answer": "الإجابة",
+      "category": "الفئة",
+      "title": "العنوان",
+      "content": "المحتوى (مقتطف)",
+      "videoUrl": "رابط الفيديو"
+    },
+    "faqCategory": {
+      "general": "عام",
+      "inscription": "التسجيل",
+      "tarifs": "الأسعار",
+      "formations": "البرامج"
+    }
+  }
+}

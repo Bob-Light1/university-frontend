@@ -19,14 +19,17 @@ import {
 import {
   Search, FilterListOff, AddBusiness,
   Visibility, Business, Inventory2, Unarchive,
-  LocationOn, Person, CalendarToday, AutoAwesome,
+  LocationOn, Person, CalendarToday, Tune,
 } from '@mui/icons-material';
 
 import { getAllCampuses, archiveCampus, restoreCampus } from '../../../services/admin_service';
 import useFormSnackbar from '../../../hooks/useFormSnackBar';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
-import AiEntitlementDialog from './AiEntitlementDialog';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
+import EntitlementDialog from './EntitlementDialog';
 import {
   ADMIN_PRIMARY, ADMIN_GRADIENT, ADMIN_SHADOW, CAMPUS_STATUS_COLOR,
 } from '../../../theme/adminTokens';
@@ -38,7 +41,11 @@ const SX_INPUT = { minWidth: 140, '& .MuiOutlinedInput-root': { borderRadius: 2 
 
 // ─── Mobile campus card ───────────────────────────────────────────────────────
 
-const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement, t }) => (
+/**
+ * @param {Function|null} [onHardDelete] - Permanent-deletion trigger, or null when the operator
+ *                                         may not run one on this campus (see `useHardDelete`).
+ */
+const CampusCard = ({ campus: c, onView, onArchive, onRestore, onEntitlement, onHardDelete = null, t }) => (
   <Paper
     variant="outlined"
     sx={{ p: 2, borderRadius: 2, '&:hover': { boxShadow: 2 } }}
@@ -101,9 +108,9 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement, 
           <Visibility fontSize="small" />
         </IconButton>
       </Tooltip>
-      <Tooltip title={t('campuses.action.aiEntitlement')}>
-        <IconButton size="medium" color="primary" onClick={() => onAiEntitlement(c)}>
-          <AutoAwesome fontSize="small" />
+      <Tooltip title={t('campuses.action.entitlement')}>
+        <IconButton size="medium" color="primary" onClick={() => onEntitlement(c)}>
+          <Tune fontSize="small" />
         </IconButton>
       </Tooltip>
       {c.status === 'archived' ? (
@@ -119,6 +126,7 @@ const CampusCard = ({ campus: c, onView, onArchive, onRestore, onAiEntitlement, 
           </IconButton>
         </Tooltip>
       )}
+      <HardDeleteAction onHardDelete={onHardDelete} size="medium" />
     </Stack>
   </Paper>
 );
@@ -136,7 +144,7 @@ export default function CampusList() {
   const [loading,       setLoading]       = useState(true);
   const [error,         setError]         = useState('');
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: 'archive', campus: null, busy: false });
-  const [aiDialog,      setAiDialog]      = useState({ open: false, campus: null });
+  const [entitlementDialog, setEntitlementDialog] = useState({ open: false, campus: null });
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -169,8 +177,8 @@ export default function CampusList() {
   const handleAskRestore = (campus) =>
     setConfirmDialog({ open: true, action: 'restore', campus, busy: false });
 
-  const handleOpenAiEntitlement = (campus) =>
-    setAiDialog({ open: true, campus });
+  const handleOpenEntitlement = (campus) =>
+    setEntitlementDialog({ open: true, campus });
 
   const handleConfirmAction = async () => {
     const { action, campus } = confirmDialog;
@@ -193,6 +201,15 @@ export default function CampusList() {
       setConfirmDialog((prev) => ({ ...prev, open: false, busy: false }));
     }
   };
+
+  // Permanent deletion — a campus is the tenant boundary, so the registry restricts it and
+  // demands an archive first; both rules are read from `GET /danger-zone/entities`.
+  const hardDelete = useHardDelete('campus', {
+    onDeleted: () => {
+      showSnackbar(t('campuses.toast.permanentlyDeleted'), 'success');
+      fetch();
+    },
+  });
 
   const paginationEl = (
     <TablePagination
@@ -359,9 +376,9 @@ export default function CampusList() {
                             <Visibility fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title={t('campuses.action.aiEntitlement')}>
-                          <IconButton size="small" color="primary" onClick={() => handleOpenAiEntitlement(c)}>
-                            <AutoAwesome fontSize="small" />
+                        <Tooltip title={t('campuses.action.entitlement')}>
+                          <IconButton size="small" color="primary" onClick={() => handleOpenEntitlement(c)}>
+                            <Tune fontSize="small" />
                           </IconButton>
                         </Tooltip>
                         {c.status === 'archived' ? (
@@ -377,6 +394,13 @@ export default function CampusList() {
                             </IconButton>
                           </Tooltip>
                         )}
+                        <HardDeleteAction
+                          onHardDelete={
+                            hardDelete.canDelete(c.status === 'archived')
+                              ? () => hardDelete.requestDelete(c._id, c.campus_name)
+                              : null
+                          }
+                        />
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -408,7 +432,12 @@ export default function CampusList() {
                 onView={(id) => navigate(`/campus/${id}`)}
                 onArchive={handleAskArchive}
                 onRestore={handleAskRestore}
-                onAiEntitlement={handleOpenAiEntitlement}
+                onEntitlement={handleOpenEntitlement}
+                onHardDelete={
+                  hardDelete.canDelete(c.status === 'archived')
+                    ? () => hardDelete.requestDelete(c._id, c.campus_name)
+                    : null
+                }
                 t={t}
               />
             ))}
@@ -428,12 +457,15 @@ export default function CampusList() {
         onConfirm={handleConfirmAction}
       />
 
-      {/* ── AI entitlement dialog ───────────────────────────────────────────────── */}
-      <AiEntitlementDialog
-        open={aiDialog.open}
-        campus={aiDialog.campus}
-        onClose={() => setAiDialog({ open: false, campus: null })}
-        onSaved={(name) => showSnackbar(t('campuses.toast.aiEntitlementUpdated', { name }), 'success')}
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ────── */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
+
+      {/* ── Entitlement dialog — tier, module matrix, AI values, audit (phase 4) ── */}
+      <EntitlementDialog
+        open={entitlementDialog.open}
+        campus={entitlementDialog.campus}
+        onClose={() => setEntitlementDialog({ open: false, campus: null })}
+        onSaved={(name) => showSnackbar(t('campuses.toast.entitlementUpdated', { name }), 'success')}
       />
 
       {/* ── Snackbar ────────────────────────────────────────────────────────────── */}
