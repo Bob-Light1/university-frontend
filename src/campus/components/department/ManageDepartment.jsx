@@ -29,6 +29,7 @@ import { Formik, Form } from 'formik';
 import { useParams } from 'react-router-dom';
 import { departmentSchema } from '../../../yupSchema/departmentSchema';
 import api from '../../../api/axiosInstance';
+import FeatureFrozenNotice from '../../../components/shared/FeatureFrozenNotice';
 
 /**
  * MANAGE DEPARTMENT MODAL
@@ -205,6 +206,7 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
 
       <Divider />
 
+      <FeatureFrozenNotice feature="department" />
       <DialogContent sx={{ pt: 2 }}>
         {errorMsg && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErrorMsg(null)}>

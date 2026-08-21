@@ -57,6 +57,7 @@ import api from '../../../api/axiosInstance';
 import ManageLevel from '../levels/ManageLevel';
 import MobileClassCard from './MobileClassCard';
 import { useParams } from 'react-router-dom';
+import FeatureGate from '../../../components/shared/FeatureGate';
 
 const Classes = () => {
   const theme = useTheme();
@@ -267,15 +268,21 @@ const Classes = () => {
             New Class
           </Button>
 
-          <Button
-            variant="outlined"
-            startIcon={<LayersIcon />}
-            onClick={() => setOpenLevels(true)}
-            fullWidth={isMobile}
-            sx={{ borderRadius: 2 }}
-          >
-            Manage Levels
-          </Button>
+          {/* `level` is a registry module with no route and no menu entry of
+              its own — this shortcut is its only entry point, and it sits
+              inside `class`, which is core and never hides. Ungated, a hidden
+              `level` left a live button answering 403 (design doc §4.1.2). */}
+          <FeatureGate feature="level">
+            <Button
+              variant="outlined"
+              startIcon={<LayersIcon />}
+              onClick={() => setOpenLevels(true)}
+              fullWidth={isMobile}
+              sx={{ borderRadius: 2 }}
+            >
+              Manage Levels
+            </Button>
+          </FeatureGate>
         </Stack>
       </Box>
 

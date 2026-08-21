@@ -6,6 +6,7 @@ import TeacherForm from './TeacherForm';
 import TeacherDetailDrawer from './TeacherDetailDrawer';
 import ManageDepartment from '../department/ManageDepartment';
 import { teacherConfig } from './TeacherConfig';
+import FeatureGate from '../../../components/shared/FeatureGate';
 
 /**
  * TEACHERS PAGE
@@ -17,7 +18,12 @@ import { teacherConfig } from './TeacherConfig';
 const Teachers = () => {
   const [deptModalOpen, setDeptModalOpen] = useState(false);
 
+  // `department` is a registry module with no route and no menu entry of its
+  // own — this shortcut is its only entry point, and it sits inside `teacher`,
+  // which is core and never hides. Ungated, a hidden `department` left a live
+  // button whose every call answered 403 (design doc §4.1.2).
   const extraHeaderActions = (
+    <FeatureGate feature="department">
     <Button
       variant="outlined"
       startIcon={<BusinessIcon />}
@@ -26,6 +32,7 @@ const Teachers = () => {
     >
       Manage Departments
     </Button>
+    </FeatureGate>
   );
 
   return (

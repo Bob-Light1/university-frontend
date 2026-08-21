@@ -29,6 +29,7 @@ import {
 import { Formik, Form } from 'formik';
 import api from '../../../api/axiosInstance';
 import { createLevelSchema } from '../../../yupSchema/createLevelSchema';
+import FeatureFrozenNotice from '../../../components/shared/FeatureFrozenNotice';
 
 const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
   const [levels, setLevels] = useState([]);
@@ -128,6 +129,7 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
 
       <Divider />
 
+      <FeatureFrozenNotice feature="level" />
       <DialogContent>
         {errorMsg && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErrorMsg(null)}>

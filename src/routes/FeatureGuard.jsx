@@ -29,11 +29,12 @@
  * mode="write"`.
  */
 
-import { Alert, Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import Loader from '../components/Loader';
+import FeatureFrozenNotice from '../components/shared/FeatureFrozenNotice';
 import { useFeature } from '../hooks/useFeature';
 import { useAppTranslation } from '../hooks/useAppTranslation';
 
@@ -82,9 +83,7 @@ const FeatureGuard = ({ feature, children }) => {
 
   return (
     <>
-      <Alert severity="info" square sx={{ borderRadius: 0 }}>
-        {t('features.frozenBody', { module: label || feature })}
-      </Alert>
+      <FeatureFrozenNotice feature={feature} />
       {page}
     </>
   );
