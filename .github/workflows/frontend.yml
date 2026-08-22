@@ -1,20 +1,18 @@
 name: Frontend CI
 
+# The repository root IS the frontend, so this workflow must not filter on a
+# `frontend/` sub-path: there is none. The previous version did, and could
+# therefore never trigger.
 on:
   push:
     branches: [main]
-    paths: ['frontend/**']
   pull_request:
     branches: [main]
-    paths: ['frontend/**']
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: frontend
 
     steps:
       - name: Checkout code
@@ -25,11 +23,15 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
+      # No test step: this codebase carries no test file and no test runner.
+      # No lint step either — `npx eslint .` currently reports 91 errors, so
+      # adding it would make the build red before it has ever been green.
+      # Both are tracked as work, not hidden here.
       - name: Build project
         run: npm run build
         env:
