@@ -36,3 +36,11 @@ jobs:
         run: npm run build
         env:
           VITE_API_BASE_URL: https://university-backend-7b75.onrender.com/api
+
+      # Blocking, and green: the 19 findings this repository carried (15 high —
+      # axios, vite, react-router-dom and twelve transitive) were all in-range and
+      # cleared by `npm audit fix` alone, so nothing here needs an exception. The
+      # backend needs one and runs scripts/audit-gate.js instead; this side does
+      # not, and a plain audit is the honest shape while that stays true.
+      - name: Security audit
+        run: npm audit --audit-level=high
