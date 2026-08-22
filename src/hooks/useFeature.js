@@ -34,6 +34,25 @@ export const useEntitlement = () => {
 };
 
 /**
+ * Should a surface for a module in this state be drawn at all?
+ *
+ * The single expression of §4.1.2 + §5.2: `hidden` removes the surface, a
+ * global role keeps it (they are bound by no entitlement), and `read_only`
+ * keeps it because the history it holds must stay reachable — only the
+ * mutating actions inside disappear (§4.1).
+ *
+ * Exported because three surfaces answer this question — `useFeature` below,
+ * the navigation in `AppShell`, and the campus dashboard's module grid — and
+ * a rule copied three times is a rule that drifts twice.
+ *
+ * @param {string} state - One of FEATURE_STATES.
+ * @param {boolean} unrestricted - The caller is a global role (§5.2).
+ * @returns {boolean}
+ */
+export const isVisibleState = (state, unrestricted) =>
+  unrestricted || state !== FEATURE_STATES.HIDDEN;
+
+/**
  * Effective state of one module for the current caller.
  *
  * `visible` and `canWrite` already fold in the unrestricted-role rule (§5.2),
@@ -68,7 +87,7 @@ export const useFeature = (key) => {
     state,
     // Global roles are bound by no entitlement, on the server as here: hiding a
     // module from an admin would hide the very thing they are there to fix.
-    visible:  unrestricted || state !== FEATURE_STATES.HIDDEN,
+    visible:  isVisibleState(state, unrestricted),
     canWrite: unrestricted || state === FEATURE_STATES.ENABLED,
     readOnly: state === FEATURE_STATES.READ_ONLY,
     hidden:   state === FEATURE_STATES.HIDDEN,

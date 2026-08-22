@@ -60,7 +60,7 @@ import ExpandMoreIcon   from '@mui/icons-material/ExpandMore';
 
 import AppNavBar from './AppNavBar';
 import Loader    from './Loader';
-import { useEntitlement } from '../hooks/useFeature';
+import { useEntitlement, isVisibleState } from '../hooks/useFeature';
 import { useAppTranslation } from '../hooks/useAppTranslation';
 import { FEATURE_STATES } from '../config/featureConstants';
 
@@ -175,6 +175,9 @@ const useEntitledNav = (items) => {
       if (!ready) return null;
 
       const state = stateOf(item.feature);
+      // `hidden` removes the entry; `read_only` keeps it, because the history
+      // must stay reachable and only the actions inside the page disappear.
+      if (!isVisibleState(state, unrestricted)) return null;
       if (state === FEATURE_STATES.ENABLED) return item;
 
       // Global roles keep the entry and are TOLD what the campus's state is,
@@ -188,9 +191,7 @@ const useEntitledNav = (items) => {
         };
       }
 
-      // `read_only` keeps its entry: the history must stay reachable, and the
-      // mutating actions inside the page are what disappear (§4.1).
-      return state === FEATURE_STATES.READ_ONLY ? item : null;
+      return item;
     };
 
     const filtered = items.reduce((acc, item) => {

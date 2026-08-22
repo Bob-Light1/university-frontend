@@ -41,6 +41,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../../api/axiosInstance';
 import { IMAGE_BASE_URL } from '../../../config/env';
 import EditCampusModal from './EditCampusModal';
+import { useEntitlement, isVisibleState } from '../../../hooks/useFeature';
 
 // ─── Status chip color map ────────────────────────────────────────────────────
 
@@ -52,15 +53,25 @@ const STATUS_COLOR = {
 
 // ─── Module definitions (built once per campusId) ─────────────────────────────
 
+/**
+ * The dashboard's module grid is a SECOND navigation surface, next to the
+ * drawer. It therefore carries the same registry keys and is filtered by the
+ * same rule (§8.2): ungated, hiding a module left its card on the campus
+ * manager's landing page, opening a route that answers "not activated".
+ *
+ * `schedule` and `attendance` declare no key on purpose — their routes are
+ * ungated too, so naming one here would invent a rule the backend does not
+ * have.
+ */
 const buildModules = (campusId) => [
-  { id: 1, name: 'Class Management', type: 'Academic',   path: `/campus/${campusId}/classes`,     Icon: Class,             color: '#4989c8', description: 'Manage classes and levels'       },
+  { id: 1, name: 'Class Management', type: 'Academic',   path: `/campus/${campusId}/classes`,     feature: 'class', Icon: Class,             color: '#4989c8', description: 'Manage classes and levels'       },
   { id: 2, name: 'Schedule',         type: 'Academic',   path: `/campus/${campusId}/schedule`,    Icon: CalendarMonth,     color: '#4989c8', description: 'Class timetables'               },
-  { id: 3, name: 'Subjects & Units', type: 'Academic',   path: `/campus/${campusId}/subjects`,    Icon: MenuBook,          color: '#4989c8', description: 'Course curriculum'              },
-  { id: 4, name: 'Courses Catalog',  type: 'Academic',   path: `/campus/${campusId}/courses`,     Icon: LibraryBooks,      color: '#14b8a6', description: 'Global academic courses'        },
-  { id: 5, name: 'Exams & Grades',   type: 'Evaluation', path: `/campus/${campusId}/examination`, Icon: Assignment,        color: '#f59e0b', description: 'Assessment management'         },
-  { id: 6, name: 'Student Reports',  type: 'Evaluation', path: `/campus/${campusId}/results`,     Icon: EmojiEvents,       color: '#f59e0b', description: 'Academic transcripts'          },
-  { id: 7, name: 'Student Register', type: 'Users',      path: `/campus/${campusId}/students`,    Icon: People,            color: '#10b981', description: 'Student database'              },
-  { id: 8, name: 'Teaching Staff',   type: 'Users',      path: `/campus/${campusId}/teachers`,    Icon: SupervisorAccount, color: '#10b981', description: 'Faculty members'               },
+  { id: 3, name: 'Subjects & Units', type: 'Academic',   path: `/campus/${campusId}/subjects`,    feature: 'subject', Icon: MenuBook,          color: '#4989c8', description: 'Course curriculum'              },
+  { id: 4, name: 'Courses Catalog',  type: 'Academic',   path: `/campus/${campusId}/courses`,     feature: 'course', Icon: LibraryBooks,      color: '#14b8a6', description: 'Global academic courses'        },
+  { id: 5, name: 'Exams & Grades',   type: 'Evaluation', path: `/campus/${campusId}/examination`, feature: 'exam', Icon: Assignment,        color: '#f59e0b', description: 'Assessment management'         },
+  { id: 6, name: 'Student Reports',  type: 'Evaluation', path: `/campus/${campusId}/results`,     feature: 'result', Icon: EmojiEvents,       color: '#f59e0b', description: 'Academic transcripts'          },
+  { id: 7, name: 'Student Register', type: 'Users',      path: `/campus/${campusId}/students`,    feature: 'student', Icon: People,            color: '#10b981', description: 'Student database'              },
+  { id: 8, name: 'Teaching Staff',   type: 'Users',      path: `/campus/${campusId}/teachers`,    feature: 'teacher', Icon: SupervisorAccount, color: '#10b981', description: 'Faculty members'               },
   { id: 9, name: 'Attendance',       type: 'Management', path: `/campus/${campusId}/attendance`,  Icon: FactCheck,         color: '#6366f1', description: 'Daily attendance tracking'     },
 ];
 
@@ -78,7 +89,16 @@ export default function CampusDashboard() {
   const [modalOpen,  setModalOpen]  = useState(false);
 
   // ── Modules (stable as long as campusId doesn't change) ──────────────────
-  const modules = useMemo(() => buildModules(campusId), [campusId]);
+  const { ready, stateOf, unrestricted } = useEntitlement();
+
+  // Withheld until the states are in, like the drawer: a card that appears late
+  // is unremarkable, one that vanishes under the cursor is a bug report.
+  const modules = useMemo(
+    () => buildModules(campusId).filter(
+      (m) => !m.feature || (ready && isVisibleState(stateOf(m.feature), unrestricted))
+    ),
+    [campusId, ready, stateOf, unrestricted],
+  );
 
   // ── KPI cards (rebuilt when stats arrives) ────────────────────────────────
   const kpis = useMemo(() => [
