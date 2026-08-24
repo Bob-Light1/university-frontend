@@ -7,6 +7,7 @@ import {
   ManageAccounts,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
@@ -71,7 +72,7 @@ const STATUS_COLOR = {
 };
 
 export const renderTableRow = (mentor, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, onHardDelete } = helpers;
 
   const imgUrl = mentor.profileImage
     ? mentor.profileImage.startsWith('http')
@@ -144,6 +145,7 @@ export const renderTableRow = (mentor, helpers) => {
               <IconButton size="small" color="error" onClick={onArchive}><ManageAccounts fontSize="small" /></IconButton>
             </Tooltip>
           )}
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </TableCell>
     </TableRow>
@@ -156,6 +158,9 @@ export const mentorConfig = {
   entityName:       'Mentor',
   entityNamePlural: 'Mentors',
   apiEndpoint:      'mentors',
+  // Backend hard-delete registry key (shared/lib/hard-delete/hard-delete.registry.js).
+  // Enables the ADMIN-only permanent-deletion action on ARCHIVED rows.
+  dangerZoneEntityType: 'mentor',
 
   addButtonText:     'Add Mentor',
   addButtonIcon:     <PersonAdd />,

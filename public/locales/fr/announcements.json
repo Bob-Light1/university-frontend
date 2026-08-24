@@ -10,13 +10,17 @@
   "loadError": "Échec du chargement des annonces.",
   "empty": {
     "title": "Aucune annonce",
-    "hint": "Créez votre première annonce avec le bouton ci-dessus."
+    "hint": "Créez votre première annonce avec le bouton ci-dessus.",
+    "deletedTitle": "Corbeille vide",
+    "deletedHint": "Les annonces supprimées restent ici jusqu’à leur destruction définitive."
   },
   "filter": {
     "allStatuses": "Tous les statuts",
     "allTypes": "Tous les types",
     "pinnedOnly": "Épinglées seulement",
-    "showAll": "Tout afficher"
+    "showAll": "Tout afficher",
+    "showDeleted": "Afficher les supprimées",
+    "showLive": "Afficher les actives"
   },
   "type": {
     "info": "Info",
@@ -69,7 +73,8 @@
     "pinned": "Épinglée.",
     "unpinned": "Désépinglée.",
     "pinFailed": "Échec du basculement de l’épinglage.",
-    "actionFailed": "Échec de l’action."
+    "actionFailed": "Échec de l’action.",
+    "permanentlyDeleted": "Annonce définitivement supprimée."
   },
   "form": {
     "newTitle": "Nouvelle annonce",

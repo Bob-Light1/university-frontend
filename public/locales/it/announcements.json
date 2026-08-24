@@ -10,13 +10,17 @@
   "loadError": "Impossibile caricare gli annunci.",
   "empty": {
     "title": "Nessun annuncio",
-    "hint": "Crea il tuo primo annuncio con il pulsante qui sopra."
+    "hint": "Crea il tuo primo annuncio con il pulsante qui sopra.",
+    "deletedTitle": "Il cestino è vuoto",
+    "deletedHint": "Gli annunci eliminati restano qui finché non vengono distrutti definitivamente."
   },
   "filter": {
     "allStatuses": "Tutti gli stati",
     "allTypes": "Tutti i tipi",
     "pinnedOnly": "Solo fissati",
-    "showAll": "Mostra tutto"
+    "showAll": "Mostra tutto",
+    "showDeleted": "Mostra eliminati",
+    "showLive": "Mostra attivi"
   },
   "type": {
     "info": "Info",
@@ -69,7 +73,8 @@
     "pinned": "Fissato.",
     "unpinned": "Rimosso.",
     "pinFailed": "Impossibile modificare il fissaggio.",
-    "actionFailed": "Azione non riuscita."
+    "actionFailed": "Azione non riuscita.",
+    "permanentlyDeleted": "Annuncio eliminato definitivamente."
   },
   "form": {
     "newTitle": "Nuovo annuncio",

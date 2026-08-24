@@ -73,12 +73,18 @@ export const restoreStudent = (id) =>
   api.patch(`/students/${id}/restore`);
 
 /**
- * DELETE /students/:id/permanent
- * Permanently delete a student record (ADMIN only).
+ * Permanent deletion — compatibility alias for `DELETE /danger-zone/student/:id`.
+ *
+ * Requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('student', id)`, the exact phrase, the operator's password and a written
+ * justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is the
+ * canonical entry point and the one HardDeleteDialog uses.
+ *
  * @param {string} id
+ * @param {Object} confirmation - `{ ticket, confirmationPhrase, password, reason }`
  */
-export const deleteStudentPermanently = (id) =>
-  api.delete(`/students/${id}/permanent`);
+export const deleteStudentPermanently = (id, confirmation) =>
+  api.delete(`/students/${id}/permanent`, { data: confirmation });
 
 // ─── BULK ─────────────────────────────────────────────────────────────────────
 

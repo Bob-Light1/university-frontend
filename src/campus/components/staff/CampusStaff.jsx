@@ -16,6 +16,7 @@ export default function CampusStaff() {
       entityName={t('staff:list.entityName')}
       entityNamePlural={t('staff:list.entityNamePlural')}
       apiEndpoint={staffConfig.apiEndpoint}
+      dangerZoneEntityType={staffConfig.dangerZoneEntityType}
 
       tableColumns={getTableColumns(t)}
       renderTableRow={(staff, helpers) => renderTableRow(staff, helpers, t)}

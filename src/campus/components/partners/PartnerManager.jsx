@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { Add, FileDownload, Handshake, People, TrendingUp, EmojiEvents } from '@mui/icons-material';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import { BRAND_ORANGE, BRAND_GRADIENT_BTN, BRAND_SHADOW } from '../../../theme/partnerTokens';
 
 import usePartner from '../../../hooks/usePartner';
@@ -153,6 +155,16 @@ const PartnerManager = () => {
     }
   };
 
+  // Permanent deletion — the role gate and the archive-first rule come from
+  // `GET /danger-zone/entities`, so this screen never restates the registry's policy.
+  const hardDelete = useHardDelete('partner', {
+    onDeleted: () => {
+      showSnackbar('Partner permanently deleted.', 'success');
+      setDrawerOpen(false);
+      fetch();
+    },
+  });
+
   const handleDownloadCSV = async () => {
     try {
       await downloadCSV();
@@ -241,6 +253,11 @@ const PartnerManager = () => {
         onArchive={(partner) => handleAskArchive(partner)}
         onRestore={(partner) => handleAskRestore(partner)}
         onOpenCreate={handleOpenCreate}
+        canHardDelete={(partner) => hardDelete.canDelete(partner.status === 'archived')}
+        onHardDelete={(partner) => hardDelete.requestDelete(
+          partner._id,
+          partner.companyName || [partner.firstName, partner.lastName].filter(Boolean).join(' '),
+        )}
       />
 
       {/* ── Create / Edit Dialog ──────────────────────────────────────────────── */}
@@ -283,6 +300,9 @@ const PartnerManager = () => {
         onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
         onConfirm={handleConfirmAction}
       />
+
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ──── */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       {/* ── Snackbar ──────────────────────────────────────────────────────────── */}
       <Snackbar

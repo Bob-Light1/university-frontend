@@ -181,8 +181,12 @@ const useDocument = (mode = 'manager') => {
     return res.data?.data ?? res.data;
   }, []);
 
-  const hardRemove = useCallback(async (id, reason) => {
-    const res = await hardDeleteDocument(id, reason);
+  /**
+   * Permanent deletion. `confirmation` must carry the full danger-zone payload
+   * ({ ticket, confirmationPhrase, password, reason }) — HardDeleteDialog builds it.
+   */
+  const hardRemove = useCallback(async (id, confirmation) => {
+    const res = await hardDeleteDocument(id, confirmation);
     return res.data?.data ?? res.data;
   }, []);
 

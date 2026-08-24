@@ -16,6 +16,7 @@ const Students = () => (
     entityName={studentConfig.entityName}
     entityNamePlural={studentConfig.entityNamePlural}
     apiEndpoint={studentConfig.apiEndpoint}
+    dangerZoneEntityType={studentConfig.dangerZoneEntityType}
 
     // ── Table ─────────────────────────────────────────────────────────────────
     tableColumns={studentConfig.tableColumns}

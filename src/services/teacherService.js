@@ -33,7 +33,19 @@ export const archiveTeacher = (id) => api.delete(`/teachers/${id}`);
 
 export const restoreTeacher = (id) => api.patch(`/teachers/${id}/restore`);
 
-export const deleteTeacherPermanently = (id) => api.delete(`/teachers/${id}/permanent`);
+/**
+ * Permanent deletion — compatibility alias for `DELETE /danger-zone/teacher/:id`.
+ *
+ * Requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('teacher', id)`, the exact phrase, the operator's password and a written
+ * justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is the
+ * canonical entry point and the one HardDeleteDialog uses.
+ *
+ * @param {string} id
+ * @param {Object} confirmation - `{ ticket, confirmationPhrase, password, reason }`
+ */
+export const deleteTeacherPermanently = (id, confirmation) =>
+  api.delete(`/teachers/${id}/permanent`, { data: confirmation });
 
 // ─── FORM DATA ────────────────────────────────────────────────────────────────
 

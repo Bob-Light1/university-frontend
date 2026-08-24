@@ -9,6 +9,7 @@ export default function CampusMentors() {
       entityName={mentorConfig.entityName}
       entityNamePlural={mentorConfig.entityNamePlural}
       apiEndpoint={mentorConfig.apiEndpoint}
+      dangerZoneEntityType={mentorConfig.dangerZoneEntityType}
 
       tableColumns={mentorConfig.tableColumns}
       renderTableRow={mentorConfig.renderTableRow}

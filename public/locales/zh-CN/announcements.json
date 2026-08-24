@@ -10,13 +10,17 @@
   "loadError": "加载公告失败。",
   "empty": {
     "title": "暂无公告",
-    "hint": "使用上方按钮创建您的第一条公告。"
+    "hint": "使用上方按钮创建您的第一条公告。",
+    "deletedTitle": "回收站为空",
+    "deletedHint": "已删除的公告会保留在此处，直至被永久销毁。"
   },
   "filter": {
     "allStatuses": "所有状态",
     "allTypes": "所有类型",
     "pinnedOnly": "仅置顶",
-    "showAll": "显示全部"
+    "showAll": "显示全部",
+    "showDeleted": "显示已删除",
+    "showLive": "显示有效项"
   },
   "type": {
     "info": "信息",
@@ -69,7 +73,8 @@
     "pinned": "已置顶。",
     "unpinned": "已取消置顶。",
     "pinFailed": "切换置顶失败。",
-    "actionFailed": "操作失败。"
+    "actionFailed": "操作失败。",
+    "permanentlyDeleted": "公告已永久删除。"
   },
   "form": {
     "newTitle": "新建公告",

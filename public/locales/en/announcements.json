@@ -10,13 +10,17 @@
   "loadError": "Failed to load announcements.",
   "empty": {
     "title": "No announcements",
-    "hint": "Create your first announcement with the button above."
+    "hint": "Create your first announcement with the button above.",
+    "deletedTitle": "Nothing in the trash",
+    "deletedHint": "Deleted announcements stay here until they are permanently destroyed."
   },
   "filter": {
     "allStatuses": "All statuses",
     "allTypes": "All types",
     "pinnedOnly": "Pinned only",
-    "showAll": "Show all"
+    "showAll": "Show all",
+    "showDeleted": "Show deleted",
+    "showLive": "Show live"
   },
   "type": {
     "info": "Info",
@@ -69,7 +73,8 @@
     "pinned": "Pinned.",
     "unpinned": "Unpinned.",
     "pinFailed": "Failed to toggle pin.",
-    "actionFailed": "Action failed."
+    "actionFailed": "Action failed.",
+    "permanentlyDeleted": "Announcement permanently deleted."
   },
   "form": {
     "newTitle": "New Announcement",

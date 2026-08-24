@@ -10,13 +10,17 @@
   "loadError": "Error al cargar los anuncios.",
   "empty": {
     "title": "Sin anuncios",
-    "hint": "Cree su primer anuncio con el botón de arriba."
+    "hint": "Cree su primer anuncio con el botón de arriba.",
+    "deletedTitle": "La papelera está vacía",
+    "deletedHint": "Los anuncios eliminados permanecen aquí hasta su destrucción definitiva."
   },
   "filter": {
     "allStatuses": "Todos los estados",
     "allTypes": "Todos los tipos",
     "pinnedOnly": "Solo fijados",
-    "showAll": "Mostrar todo"
+    "showAll": "Mostrar todo",
+    "showDeleted": "Mostrar eliminados",
+    "showLive": "Mostrar activos"
   },
   "type": {
     "info": "Información",
@@ -69,7 +73,8 @@
     "pinned": "Fijado.",
     "unpinned": "Desfijado.",
     "pinFailed": "Error al cambiar la fijación.",
-    "actionFailed": "La acción falló."
+    "actionFailed": "La acción falló.",
+    "permanentlyDeleted": "Anuncio eliminado permanentemente."
   },
   "form": {
     "newTitle": "Nuevo anuncio",

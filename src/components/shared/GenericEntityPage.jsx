@@ -49,8 +49,11 @@ import {
   FileDownload,
   FileUpload,
   Unarchive,
+  DeleteForever,
 } from '@mui/icons-material';
 import ConfirmActionDialog from './ConfirmActionDialog';
+import HardDeleteDialog from './HardDeleteDialog';
+import { useHardDelete } from '../../hooks/useHardDelete';
 import { useParams } from 'react-router-dom';
 
 import KPICards from './KpiCard';
@@ -87,6 +90,13 @@ import api from '../../api/axiosInstance';
  *                                            e.g. { departments: '/department', subjects: '/subject' }
  *                                            Each endpoint receives campusId as query param.
  *                                            Result is passed to filterConfig(relatedData).
+ * @param {string}   dangerZoneEntityType    - Backend hard-delete registry key (e.g. 'student').
+ *                                            When set, operators the registry allows get a
+ *                                            "delete permanently" action — on archived rows only
+ *                                            wherever the entry demands it, because permanent
+ *                                            deletion is a second decision taken after archiving,
+ *                                            never the first thing that happens to a live record.
+ *                                            Both rules are read from `GET /danger-zone/entities`.
  */
 const GenericEntityPage = ({
   entityName,
@@ -108,6 +118,7 @@ const GenericEntityPage = ({
   relatedDataEndpoints = {},
   extraHeaderActions = null,    // Optional ReactNode rendered next to Add button
   kpiEndpoint,                  // Optional override for the KPI fetch URL
+  dangerZoneEntityType = null,  // Backend hard-delete registry key — enables permanent deletion
 }) => {
   const { campusId } = useParams();
   const theme = useTheme();
@@ -267,6 +278,21 @@ const GenericEntityPage = ({
     setConfirmDialog({ open: true, action: 'restore', id, label: getEntityLabel(id), busy: false });
   }, [getEntityLabel]);
 
+  const handleHardDeleted = useCallback(() => {
+    showSnackbar(`${entityName} permanently deleted`, 'success');
+    fetchEntities();
+    fetchKPIs();
+  }, [entityName, fetchEntities, fetchKPIs, showSnackbar]);
+
+  // Who may hard-delete, and whether the row must be archived first, are declared per entity in
+  // the backend registry and read from `GET /danger-zone/entities` — never assumed here.
+  const hardDelete = useHardDelete(dangerZoneEntityType, { onDeleted: handleHardDeleted });
+  const { canDelete: canHardDeleteRow, requestDelete: requestHardDelete } = hardDelete;
+
+  const handleHardDelete = useCallback((id) => {
+    requestHardDelete(id, getEntityLabel(id));
+  }, [requestHardDelete, getEntityLabel]);
+
   const handleConfirmAction = useCallback(async () => {
     const { action, id } = confirmDialog;
     setConfirmDialog((prev) => ({ ...prev, busy: true }));
@@ -422,6 +448,17 @@ const GenericEntityPage = ({
               <Delete fontSize="small" />
             </IconButton>
           )
+        )}
+        {/* Permanent deletion is offered on archived rows only — never as the first action. */}
+        {canHardDeleteRow(entity.status === 'archived') && (
+          <IconButton
+            size="small"
+            onClick={() => handleHardDelete(entity._id)}
+            sx={{ color: 'error.dark' }}
+            aria-label="Delete permanently"
+          >
+            <DeleteForever fontSize="small" />
+          </IconButton>
         )}
       </CardActions>
     </Card>
@@ -583,6 +620,11 @@ const GenericEntityPage = ({
                         onEdit:    () => handleOpenFormModal(entity),
                         onArchive: canArchiveRestore ? () => handleArchive(entity._id) : null,
                         onRestore: canArchiveRestore ? () => handleRestore(entity._id) : null,
+                        // Null unless the registry allows this operator and, when it demands an
+                        // archive first, the row is already archived.
+                        onHardDelete: canHardDeleteRow(entity.status === 'archived')
+                          ? () => handleHardDelete(entity._id)
+                          : null,
                         theme,
                         isMobile,
                       })
@@ -674,6 +716,9 @@ const GenericEntityPage = ({
             onEdit={() => { setIsDrawerOpen(false); handleOpenFormModal(viewEntity); }}
             onArchive={canArchiveRestore ? () => { setIsDrawerOpen(false); handleArchive(viewEntity._id); } : null}
             onRestore={canArchiveRestore ? () => { setIsDrawerOpen(false); handleRestore(viewEntity._id); } : null}
+            onHardDelete={canHardDeleteRow(viewEntity.status === 'archived')
+              ? () => { setIsDrawerOpen(false); handleHardDelete(viewEntity._id); }
+              : null}
             onRefresh={() => { fetchEntities(); fetchKPIs(); }}
           />
         )}
@@ -765,6 +810,9 @@ const GenericEntityPage = ({
         onClose={() => setBulkConfirmOpen(false)}
         onConfirm={handleBulkConfirmAction}
       />
+
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ── */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       {/* ── Snackbar ── */}
       <Snackbar

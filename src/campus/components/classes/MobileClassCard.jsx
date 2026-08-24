@@ -19,7 +19,13 @@ import {
   Restore as RestoreIcon,
 } from '@mui/icons-material';
 
-const MobileClassCard = ({ cls, edit, archive, restore }) => (
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+
+/**
+ * @param {Function|null} [onHardDelete] - Permanent-deletion trigger, or null when the operator
+ *                                         may not run one on this row (see `useHardDelete`).
+ */
+const MobileClassCard = ({ cls, edit, archive, restore, onHardDelete = null }) => (
   <Card 
     sx={{ 
       mb: 2, 
@@ -114,7 +120,8 @@ const MobileClassCard = ({ cls, edit, archive, restore }) => (
               Restore
             </Button>
           )}
-          
+
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </Stack>
     </CardContent>

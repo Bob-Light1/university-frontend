@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import {
   Add, Search, Publish, Archive, PushPin, PushPinOutlined,
-  Edit, Delete, Campaign, FilterList, CheckCircle,
+  Edit, Delete, DeleteSweep, Campaign, FilterList, CheckCircle,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -33,6 +33,9 @@ import {
 } from '../../services/announcementService';
 import { getAllCampuses } from '../../services/admin_service';
 import AnnouncementFormDialog from './AnnouncementFormDialog';
+import HardDeleteAction from '../shared/HardDeleteAction';
+import HardDeleteDialog from '../shared/HardDeleteDialog';
+import { useHardDelete } from '../../hooks/useHardDelete';
 import { TYPE_META, TYPE_FILTERS, STATUS_META, TARGET_LABEL_KEYS } from './announcementConstants';
 import { fDate } from '../../utils/dateFormat';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
@@ -112,7 +115,17 @@ function RowSkeleton() {
 
 // ─── Announcement Row ─────────────────────────────────────────────────────────
 
-function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, onDelete }) {
+/**
+ * @param {boolean}       [deleted]      - The row comes from the trash view. Every lifecycle
+ *                                         action is meaningless on a soft-deleted announcement,
+ *                                         so only permanent deletion is offered.
+ * @param {Function|null} [onHardDelete] - Permanent-deletion trigger, or null when the operator
+ *                                         may not run one (see `useHardDelete`).
+ */
+function AnnouncementRow({
+  announcement, onPublish, onArchive, onPin, onEdit, onDelete,
+  deleted = false, onHardDelete = null,
+}) {
   const theme      = useTheme();
   const isMobile   = useMediaQuery(theme.breakpoints.down('sm'));
   const { t }      = useAppTranslation('announcements');
@@ -202,6 +215,10 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
 
         {/* Actions */}
         <Stack direction="row" spacing={0.5} flexShrink={0} sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}>
+          {deleted ? (
+            <HardDeleteAction onHardDelete={onHardDelete} />
+          ) : (
+          <>
           {/* Publish */}
           {(isDraft || isArchived) && (
             <Tooltip title={t('action.publish')}>
@@ -244,6 +261,8 @@ function AnnouncementRow({ announcement, onPublish, onArchive, onPin, onEdit, on
               <Delete fontSize="small" />
             </IconButton>
           </Tooltip>
+          </>
+          )}
         </Stack>
       </Stack>
     </Paper>
@@ -273,6 +292,9 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
   const [status,          setStatus]          = useState('');
   const [typeFilter,      setTypeFilter]      = useState('');
   const [pinnedOnly,      setPinnedOnly]      = useState(false);
+  // Trash view. A soft-deleted announcement is invisible in every other listing, so without it
+  // the archive-first rule of the danger zone would have nothing to act on.
+  const [showDeleted,     setShowDeleted]     = useState(false);
 
   // Dialogs
   const [formOpen,     setFormOpen]     = useState(false);
@@ -299,6 +321,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
         ...(status         && { status }),
         ...(typeFilter     && { type: typeFilter }),
         ...(pinnedOnly     && { pinned: 'true' }),
+        ...(showDeleted    && { deleted: 'true' }),
         ...(debouncedSearch && { search: debouncedSearch }),
         ...(isAdminGlobal && selectedCampusId && { campusId: selectedCampusId }),
       });
@@ -309,7 +332,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
     } finally {
       setLoading(false);
     }
-  }, [page, status, typeFilter, pinnedOnly, debouncedSearch, isAdminGlobal, selectedCampusId, t]);
+  }, [page, status, typeFilter, pinnedOnly, showDeleted, debouncedSearch, isAdminGlobal, selectedCampusId, t]);
 
   // Debounce search input — also resets page so the user lands on page 1.
   useEffect(() => {
@@ -383,6 +406,15 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
     action: async () => {
       await deleteAnnouncement(ann._id);
       showSnack(t('toast.deleted'));
+      fetchAnnouncements();
+    },
+  });
+
+  // Permanent deletion — the registry opens `announcement` to ADMIN and DIRECTOR; the gate is
+  // read from `GET /danger-zone/entities` rather than re-stated here.
+  const hardDelete = useHardDelete('announcement', {
+    onDeleted: () => {
+      showSnack(t('toast.permanentlyDeleted'));
       fetchAnnouncements();
     },
   });
@@ -540,6 +572,27 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
                 {t('filter.pinnedOnly')}
               </Button>
             )}
+
+            {/* Trash — offered only to operators the danger-zone registry allows, since
+                permanent deletion is the only thing that can be done from this view. */}
+            {hardDelete.enabled && (
+              <Tooltip title={showDeleted ? t('filter.showLive') : t('filter.showDeleted')}>
+                <IconButton
+                  size="small"
+                  color={showDeleted ? 'error' : 'default'}
+                  onClick={() => { setShowDeleted((v) => !v); setPage(1); }}
+                  sx={{
+                    border: '1px solid',
+                    borderColor: showDeleted ? 'error.main' : 'divider',
+                    borderRadius: 1.5,
+                    flexShrink: 0,
+                  }}
+                  aria-label={showDeleted ? t('filter.showLive') : t('filter.showDeleted')}
+                >
+                  <DeleteSweep fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
         </Stack>
       </Paper>
@@ -567,10 +620,10 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Campaign sx={{ fontSize: 56, color: 'text.disabled', mb: 1.5 }} />
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            {t('empty.title')}
+            {showDeleted ? t('empty.deletedTitle') : t('empty.title')}
           </Typography>
           <Typography variant="body2" color="text.disabled">
-            {t('empty.hint')}
+            {showDeleted ? t('empty.deletedHint') : t('empty.hint')}
           </Typography>
         </Box>
       ) : (
@@ -584,6 +637,12 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
               onPin={handlePin}
               onEdit={(a) => { setEditTarget(a); setFormOpen(true); }}
               onDelete={handleDelete}
+              deleted={showDeleted}
+              onHardDelete={
+                hardDelete.canDelete(showDeleted)
+                  ? () => hardDelete.requestDelete(ann._id, ann.title)
+                  : null
+              }
             />
           ))}
         </Stack>
@@ -623,6 +682,9 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
         onClose={() => setConfirmData(null)}
         loading={actionLoading}
       />
+
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ── */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
     </Box>
   );
 }

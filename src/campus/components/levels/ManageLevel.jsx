@@ -29,6 +29,9 @@ import {
 import { Formik, Form } from 'formik';
 import api from '../../../api/axiosInstance';
 import { createLevelSchema } from '../../../yupSchema/createLevelSchema';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import FeatureFrozenNotice from '../../../components/shared/FeatureFrozenNotice';
 
 const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
@@ -108,7 +111,17 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
     }
   };
 
+  /* ---------------- HARD DELETE (danger zone) ---------------- */
+  // Availability and the archive-first rule come from `GET /danger-zone/entities`.
+  const hardDelete = useHardDelete('level', {
+    onDeleted: () => {
+      fetchLevels();
+      onLevelsUpdated?.();
+    },
+  });
+
   return (
+    <>
     <Dialog
       open={open}
       onClose={handleClose}
@@ -282,6 +295,14 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
                         </IconButton>
                       </Tooltip>
                     )}
+
+                    <HardDeleteAction
+                      onHardDelete={
+                        hardDelete.canDelete(lvl.status === 'archived')
+                          ? () => hardDelete.requestDelete(lvl._id, `${lvl.name} (${lvl.code})`)
+                          : null
+                      }
+                    />
                   </>
                 }
               >
@@ -298,6 +319,10 @@ const ManageLevel = ({ open, onClose, onLevelsUpdated }) => {
         )}
       </DialogContent>
     </Dialog>
+
+    {/* Permanent deletion — sibling of the manager dialog so it is never unmounted with it. */}
+    {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
+    </>
   );
 };
 

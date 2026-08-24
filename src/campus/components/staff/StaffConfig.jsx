@@ -8,6 +8,7 @@ import {
   ManageAccounts,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
@@ -79,7 +80,7 @@ const STATUS_COLOR = {
 };
 
 export const renderTableRow = (staff, helpers, t) => {
-  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, onHardDelete } = helpers;
 
   const imgUrl = staff.profileImage
     ? staff.profileImage.startsWith('http')
@@ -168,6 +169,7 @@ export const renderTableRow = (staff, helpers, t) => {
               </Tooltip>
             )
           }
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </TableCell>
     </TableRow>
@@ -180,6 +182,9 @@ export const staffConfig = {
   entityName:       'Staff',
   entityNamePlural: 'Staff Members',
   apiEndpoint:      'staff',
+  // Backend hard-delete registry key (shared/lib/hard-delete/hard-delete.registry.js).
+  // Enables the ADMIN-only permanent-deletion action on ARCHIVED rows.
+  dangerZoneEntityType: 'staff',
   bulkActions:      ['sendEmail', 'archive', 'export'],
   relatedDataEndpoints: {},
 };

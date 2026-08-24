@@ -14,6 +14,7 @@ import {
 import {
   TIER_COLOR, TIER_LABEL, partnerStatusColor,
 } from '../../../theme/partnerTokens';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ const SkeletonCard = () => (
 
 // ─── Mobile card for one partner ──────────────────────────────────────────────
 
-const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRestore }) => {
+const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRestore, onHardDelete = null }) => {
   const tierColor  = TIER_COLOR[partner.tier] ?? TIER_COLOR.silver;
   const conversion = partner.totalLeads > 0
     ? Math.round((partner.totalConverted / partner.totalLeads) * 100)
@@ -152,6 +153,7 @@ const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRes
             </IconButton>
           </Tooltip>
         )}
+        <HardDeleteAction onHardDelete={onHardDelete} size="medium" />
       </Stack>
     </Paper>
   );
@@ -159,10 +161,18 @@ const PartnerCard = ({ partner, onView, onEdit, onToggleStatus, onArchive, onRes
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * @param {Function} [canHardDelete] - `(partner) => boolean`; whether the danger-zone action is
+ *                                     offered on that row. Defaults to never, so a caller that
+ *                                     has not wired the danger zone cannot show the button.
+ * @param {Function} [onHardDelete]  - `(partner) => void`; opens the confirmation dialog.
+ */
 const PartnerList = ({
   partners, loading, pagination, onPageChange, onLimitChange,
   onView, onEdit, onToggleStatus, onArchive, onRestore,
   onOpenCreate,
+  canHardDelete = () => false,
+  onHardDelete = () => {},
 }) => {
   const { page, limit, total } = pagination;
 
@@ -348,6 +358,11 @@ const PartnerList = ({
                               </IconButton>
                             </Tooltip>
                           )}
+                          <HardDeleteAction
+                            onHardDelete={
+                              canHardDelete(partner) ? () => onHardDelete(partner) : null
+                            }
+                          />
                         </Stack>
                       </TableCell>
                     </TableRow>
@@ -378,6 +393,7 @@ const PartnerList = ({
                 onToggleStatus={onToggleStatus}
                 onArchive={onArchive}
                 onRestore={onRestore}
+                onHardDelete={canHardDelete(partner) ? () => onHardDelete(partner) : null}
               />
             ))}
           </Stack>

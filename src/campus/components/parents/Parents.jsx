@@ -15,6 +15,7 @@ const Parents = () => (
     entityName={parentConfig.entityName}
     entityNamePlural={parentConfig.entityNamePlural}
     apiEndpoint={parentConfig.apiEndpoint}
+    dangerZoneEntityType={parentConfig.dangerZoneEntityType}
     tableColumns={parentConfig.tableColumns}
     renderTableRow={parentConfig.renderTableRow}
     filterConfig={parentConfig.getFilterConfig}

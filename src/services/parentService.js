@@ -74,12 +74,22 @@ export const resetParentPassword = (id) =>
 
 /**
  * DELETE /parents/:id
- * Soft-delete (all managers) or hard-delete (?hard=true, ADMIN only).
+ * Soft-delete (all managers) or permanent deletion (`?hard=true`, ADMIN only).
+ *
+ * Permanent deletion requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('parent', id)`, the exact phrase, the operator's password and a written
+ * justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is the
+ * canonical entry point and the one HardDeleteDialog uses.
+ *
  * @param {string}  id
- * @param {boolean} hard - Pass true for permanent deletion
+ * @param {boolean} hard         - Pass true for permanent deletion
+ * @param {Object}  confirmation - `{ ticket, confirmationPhrase, password, reason }` (hard only)
  */
-export const deleteParent = (id, hard = false) =>
-  api.delete(`/parents/${id}`, { params: hard ? { hard: 'true' } : {} });
+export const deleteParent = (id, hard = false, confirmation = undefined) =>
+  api.delete(`/parents/${id}`, {
+    params: hard ? { hard: 'true' } : {},
+    ...(hard ? { data: confirmation } : {}),
+  });
 
 // ─── ANALYTICS ────────────────────────────────────────────────────────────────
 

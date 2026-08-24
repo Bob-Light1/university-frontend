@@ -79,13 +79,18 @@ export const softDeleteDocument = (id, reason = '') =>
   api.delete(`/documents/${id}`, { data: { reason } });
 
 /**
- * Permanently destroy a document and its storage artefacts.
- * ADMIN only. Pass { hard: true } in the query string.
+ * Permanently destroy a document, its versions and its storage artefacts (ADMIN | DIRECTOR).
+ *
+ * Requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('document', id)`, the exact phrase, the operator's password and a
+ * written justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is
+ * the canonical entry point and the one HardDeleteDialog uses.
+ *
  * @param {string} id
- * @param {string} [reason] - Optional justification recorded in the audit trail
+ * @param {Object} confirmation - `{ ticket, confirmationPhrase, password, reason }`
  */
-export const hardDeleteDocument = (id, reason = '') =>
-  api.delete(`/documents/${id}`, { params: { hard: true }, data: { reason } });
+export const hardDeleteDocument = (id, confirmation) =>
+  api.delete(`/documents/${id}`, { params: { hard: true }, data: confirmation });
 
 // ─── WORKFLOW ─────────────────────────────────────────────────────────────────
 

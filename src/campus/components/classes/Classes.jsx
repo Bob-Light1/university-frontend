@@ -56,6 +56,9 @@ import { createClassSchema } from '../../../yupSchema/createClassSchema';
 import api from '../../../api/axiosInstance';
 import ManageLevel from '../levels/ManageLevel';
 import MobileClassCard from './MobileClassCard';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import { useParams } from 'react-router-dom';
 import FeatureGate from '../../../components/shared/FeatureGate';
 
@@ -186,6 +189,16 @@ const Classes = () => {
       showNotification(e.response?.data?.message || 'Failed to restore class', 'error');
     }
   };
+
+  /* ---------------- HARD DELETE (danger zone) ---------------- */
+  // Availability and the archive-first rule come from `GET /danger-zone/entities`, so this
+  // screen never restates a policy the backend registry already owns.
+  const hardDelete = useHardDelete('class', {
+    onDeleted: () => {
+      showNotification('Class permanently deleted', 'success');
+      fetchData();
+    },
+  });
 
   const handleOpenCreate = () => {
     setSelectedClass(null);
@@ -350,12 +363,17 @@ const Classes = () => {
             </Paper>
           ) : (
             classes.map((cls) => 
-              <MobileClassCard 
-                key={cls._id} 
-                cls={cls} 
-                edit={handleOpenEdit} 
+              <MobileClassCard
+                key={cls._id}
+                cls={cls}
+                edit={handleOpenEdit}
                 archive={handleArchive}
                 restore={handleRestore}
+                onHardDelete={
+                  hardDelete.canDelete(cls.status === 'archived')
+                    ? () => hardDelete.requestDelete(cls._id, cls.className)
+                    : null
+                }
               />
             )
           )}
@@ -469,6 +487,14 @@ const Classes = () => {
                         </IconButton>
                       </Tooltip>
                       )}
+
+                      <HardDeleteAction
+                        onHardDelete={
+                          hardDelete.canDelete(cls.status === 'archived')
+                            ? () => hardDelete.requestDelete(cls._id, cls.className)
+                            : null
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))
@@ -710,11 +736,14 @@ const Classes = () => {
       </Snackbar>
 
       {/* Manage Levels Dialog */}
-      <ManageLevel 
+      <ManageLevel
         open={openLevels}
         onClose={() => setOpenLevels(false)}
         onLevelsUpdated={fetchData}
       />
+
+      {/* Permanent deletion (impact preview → phrase + password + reason) */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
     </Container>
   );
 };

@@ -6,13 +6,16 @@ import {
   Snackbar,
 } from '@mui/material';
 import {
-  Add, Edit, Delete, AdminPanelSettings, Security,
+  Add, Edit, AdminPanelSettings, Security,
 } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 
-import { getStaffRoles, toggleStaffRole, deleteStaffRole } from '../../../services/staffService';
+import { getStaffRoles, toggleStaffRole } from '../../../services/staffService';
 import StaffRoleForm    from './StaffRoleForm';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
 import useFormSnackbar  from '../../../hooks/useFormSnackBar';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 
 export default function StaffRolesManager() {
@@ -63,16 +66,16 @@ export default function StaffRolesManager() {
     }
   };
 
-  const handleDelete = async (role) => {
-    if (!window.confirm(t('staff:roles.deleteConfirm', { name: role.name }))) return;
-    try {
-      await deleteStaffRole(role._id);
-      setRoles((prev) => prev.filter((r) => r._id !== role._id));
+  // `DELETE /staff-roles/:id` is a danger-zone alias: it delegates to the same guarded
+  // `execute()` as `/api/danger-zone`, so it refuses any call without a ticket, the typed
+  // confirmation phrase, the operator's password and a reason. A `window.confirm` sent none of
+  // them, which made this button fail every time. The full flow lives in HardDeleteDialog.
+  const hardDelete = useHardDelete('staff-role', {
+    onDeleted: () => {
       showSnackbar(t('staff:roles.deleted'), 'success');
-    } catch (err) {
-      showSnackbar(err.response?.data?.message || t('staff:roles.deleteError'), 'error');
-    }
-  };
+      load();
+    },
+  });
 
   if (loading) {
     return (
@@ -198,11 +201,15 @@ export default function StaffRolesManager() {
                     <Edit fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={t('common:action.delete')}>
-                  <IconButton size="small" color="error" onClick={() => handleDelete(role)}>
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+                {/* A staff role has no soft-delete marker, so the registry does not demand an
+                    archive first — the confirmation dialog is the whole safeguard. */}
+                <HardDeleteAction
+                  onHardDelete={
+                    hardDelete.canDelete(true)
+                      ? () => hardDelete.requestDelete(role._id, role.name)
+                      : null
+                  }
+                />
               </CardActions>
             </Card>
           ))}
@@ -216,6 +223,9 @@ export default function StaffRolesManager() {
         onSaved={handleSaved}
         role={editTarget}
       />
+
+      {/* Permanent deletion (impact preview → phrase + password + reason) */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       <Snackbar
         open={snackbar.open}

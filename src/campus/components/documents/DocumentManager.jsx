@@ -82,6 +82,9 @@ import {
   getMimeLabel,
 } from '../../../components/documents/DocumentShared';
 import { fDate } from '../../../utils/dateFormat';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 
 // ─── KPI config ───────────────────────────────────────────────────────────────
 
@@ -95,11 +98,17 @@ const buildKpis = (docs, total) => ({
 
 // ─── Delete confirm dialog ────────────────────────────────────────────────────
 
-const DeleteDialog = ({ open, doc, onConfirm, onClose, isAdmin }) => {
-  const [reason,    setReason]    = useState('');
-  const [hardDelete, setHardDelete] = useState(false);
+/**
+ * Soft-delete confirmation. Permanent deletion is deliberately NOT reachable from here: the
+ * registry demands a document be deleted *first* (`requireArchivedFirst`), so a "delete
+ * permanently" shortcut on a live document could only ever produce a refusal. It lives in the
+ * Deleted tab instead, one deliberate step later, behind the impact → phrase → password →
+ * justification flow.
+ */
+const DeleteDialog = ({ open, doc, onConfirm, onClose, canHardDelete }) => {
+  const [reason, setReason] = useState('');
 
-  const handleClose = () => { setReason(''); setHardDelete(false); onClose(); };
+  const handleClose = () => { setReason(''); onClose(); };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth
@@ -119,28 +128,17 @@ const DeleteDialog = ({ open, doc, onConfirm, onClose, isAdmin }) => {
           value={reason}
           onChange={(e) => setReason(e.target.value)}
         />
-        {isAdmin && (
-          <Box sx={{ mt: 1.5 }}>
-            <Typography
-              component="label"
-              variant="caption"
-              color="error"
-              sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
-            >
-              <input
-                type="checkbox"
-                checked={hardDelete}
-                onChange={(e) => setHardDelete(e.target.checked)}
-              />
-              Permanent delete (irreversible — ADMIN only)
-            </Typography>
-          </Box>
+        {canHardDelete && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+            This keeps the document recoverable. To destroy it and every version irreversibly,
+            delete it first, then use the <strong>Deleted</strong> tab.
+          </Typography>
         )}
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" color="inherit" onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" color="error" onClick={() => onConfirm(reason, hardDelete)}>
-          {hardDelete ? 'Delete Permanently' : 'Delete'}
+        <Button variant="contained" color="error" onClick={() => onConfirm(reason)}>
+          Delete
         </Button>
       </DialogActions>
     </Dialog>
@@ -148,6 +146,13 @@ const DeleteDialog = ({ open, doc, onConfirm, onClose, isAdmin }) => {
 };
 
 // ─── Status tabs config ───────────────────────────────────────────────────────
+
+/**
+ * The trash tab. It is NOT a `status` value — `Document.status` is a workflow state and stays
+ * PUBLISHED on a soft-deleted document (CLAUDE.md §5.1); deletion is `deletedAt`. The tab
+ * therefore switches the `deleted` query flag rather than the status filter.
+ */
+const DELETED_TAB = '__deleted';
 
 const STATUS_TABS = [
   { value: '',          label: 'All' },
@@ -172,7 +177,7 @@ const DocumentManager = () => {
   const {
     documents, total, loading, error,
     filters, fetch, handleFilterChange, handleReset, setPage,
-    remove, hardRemove,
+    remove,
   } = hookRef;
 
   // ── Local UI state ─────────────────────────────────────────────────────────
@@ -183,6 +188,8 @@ const DocumentManager = () => {
   const [snack,       setSnack]       = useState(null);
   const [statusTab,   setStatusTab]   = useState('');
 
+  const inTrash = statusTab === DELETED_TAB;
+
   // ── Fetch on filter change ─────────────────────────────────────────────────
   useEffect(() => { fetch(); }, [fetch, filters]);
 
@@ -190,8 +197,20 @@ const DocumentManager = () => {
 
   const handleStatusTab = (_, val) => {
     setStatusTab(val);
-    handleFilterChange('status', val);
+    // The two filters are mutually exclusive: the trash lists soft-deleted documents whatever
+    // their workflow status, and every other tab lists live ones.
+    handleFilterChange('status',  val === DELETED_TAB ? '' : val);
+    handleFilterChange('deleted', val === DELETED_TAB ? 'true' : '');
   };
+
+  /**
+   * Resetting the filters clears `deleted` along with everything else, so the tab has to follow
+   * it back to All — otherwise the trash tab would stay selected over a list of live documents.
+   */
+  const handleResetFilters = useCallback(() => {
+    setStatusTab('');
+    handleReset();
+  }, [handleReset]);
 
   const handleFormSuccess = useCallback((doc) => {
     setFormOpen(false);
@@ -200,13 +219,9 @@ const DocumentManager = () => {
     fetch();
   }, [fetch]);
 
-  const handleDelete = useCallback(async (reason, hard) => {
+  const handleDelete = useCallback(async (reason) => {
     try {
-      if (hard) {
-        await hardRemove(deleteDoc._id, reason);
-      } else {
-        await remove(deleteDoc._id, reason);
-      }
+      await remove(deleteDoc._id, reason);
       setDeleteDoc(null);
       setSnack({ severity: 'success', message: 'Document deleted.' });
       if (drawerDoc?._id === deleteDoc._id) setDrawerDoc(null);
@@ -214,7 +229,17 @@ const DocumentManager = () => {
     } catch (err) {
       setSnack({ severity: 'error', message: err?.response?.data?.message ?? 'Delete failed.' });
     }
-  }, [deleteDoc, remove, hardRemove, drawerDoc, fetch]);
+  }, [deleteDoc, remove, drawerDoc, fetch]);
+
+  // Permanent deletion — the registry opens `document` to ADMIN and DIRECTOR and demands the
+  // document be deleted first; both rules are read from `GET /danger-zone/entities`.
+  const hardDelete = useHardDelete('document', {
+    onDeleted: () => {
+      setDrawerDoc(null);
+      setSnack({ severity: 'success', message: 'Document permanently deleted.' });
+      fetch();
+    },
+  });
 
   const handleRefresh = useCallback(() => { fetch(); }, [fetch]);
 
@@ -243,6 +268,16 @@ const DocumentManager = () => {
         </Stack>
       </CardContent>
       <CardActions sx={{ pt: 0, justifyContent: 'flex-end' }}>
+        {inTrash ? (
+          <HardDeleteAction
+            onHardDelete={
+              hardDelete.canDelete(true)
+                ? () => hardDelete.requestDelete(doc._id, doc.title)
+                : null
+            }
+          />
+        ) : (
+        <>
         <Tooltip title="View details">
           <span>
             <IconButton size="small" onClick={() => setDrawerDoc(doc)}>
@@ -271,6 +306,8 @@ const DocumentManager = () => {
             </IconButton>
           </span>
         </Tooltip>
+        </>
+        )}
       </CardActions>
     </Card>
   );
@@ -328,13 +365,22 @@ const DocumentManager = () => {
         {STATUS_TABS.map((t) => (
           <Tab key={t.value} value={t.value} label={t.label} sx={{ minHeight: 40, py: 0 }} />
         ))}
+        {/* Offered only to operators the registry lets act on a deleted document — permanent
+            deletion is the only thing this tab can do. */}
+        {hardDelete.enabled && (
+          <Tab
+            value={DELETED_TAB}
+            label="Deleted"
+            sx={{ minHeight: 40, py: 0, color: 'error.main' }}
+          />
+        )}
       </Tabs>
 
       {/* ── Filters ───────────────────────────────────────────────────────────── */}
       <DocumentFilters
         filters={filters}
         onFilterChange={handleFilterChange}
-        onReset={handleReset}
+        onReset={handleResetFilters}
         userRole={userRole}
         hideStatusFilter  // Status is controlled by the tabs above
       />
@@ -347,8 +393,10 @@ const DocumentManager = () => {
             {loading && <CircularProgress size={24} sx={{ display: 'block', mx: 'auto', my: 3 }} />}
             {!loading && documents.length === 0 && (
               <DocumentEmptyState
-                message="No documents found"
-                subtext="Create a new document or adjust your filters."
+                message={inTrash ? 'The trash is empty' : 'No documents found'}
+                subtext={inTrash
+                  ? 'Deleted documents appear here until they are permanently destroyed.'
+                  : 'Create a new document or adjust your filters.'}
               />
             )}
             {!loading && documents.map(renderMobileCard)}
@@ -385,14 +433,17 @@ const DocumentManager = () => {
                   key={doc._id}
                   hover
                   sx={{
-                    cursor: 'pointer',
+                    // A soft-deleted document is not readable: every detail endpoint filters on
+                    // `deletedAt: null`, so opening the drawer here would only 404.
+                    cursor: inTrash ? 'default' : 'pointer',
+                    opacity: inTrash ? 0.65 : 1,
                     bgcolor:
                       doc.status === 'LOCKED'    ? alpha(theme.palette.error.main, 0.04)   :
                       doc.status === 'PUBLISHED' ? alpha(theme.palette.success.main, 0.04) :
                       doc.status === 'ARCHIVED'  ? alpha(theme.palette.action.selected, 1) :
                       'inherit',
                   }}
-                  onClick={() => setDrawerDoc(doc)}
+                  onClick={() => { if (!inTrash) setDrawerDoc(doc); }}
                 >
                   <TableCell>
                     <Stack direction="row" alignItems="center" spacing={0.75}>
@@ -428,6 +479,16 @@ const DocumentManager = () => {
                   </TableCell>
                   <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                     <Stack direction="row" spacing={0} justifyContent="flex-end">
+                      {inTrash ? (
+                        <HardDeleteAction
+                          onHardDelete={
+                            hardDelete.canDelete(true)
+                              ? () => hardDelete.requestDelete(doc._id, doc.title)
+                              : null
+                          }
+                        />
+                      ) : (
+                      <>
                       <Tooltip title="View details">
                         <span>
                           <IconButton size="small" onClick={() => setDrawerDoc(doc)}>
@@ -474,6 +535,8 @@ const DocumentManager = () => {
                           <Delete fontSize="small" />
                         </IconButton>
                       </Tooltip>
+                      </>
+                      )}
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -522,8 +585,11 @@ const DocumentManager = () => {
         doc={deleteDoc}
         onConfirm={handleDelete}
         onClose={() => setDeleteDoc(null)}
-        isAdmin={isAdmin}
+        canHardDelete={hardDelete.enabled}
       />
+
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ───── */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       {/* ── Snackbar ───────────────────────────────────────────────────────────── */}
       <Snackbar

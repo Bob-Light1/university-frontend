@@ -19,7 +19,19 @@ export const createMentor            = (data)        => api.post('/mentors', dat
 export const updateMentor            = (id, data)    => api.put(`/mentors/${id}`, data);
 export const archiveMentor           = (id)          => api.delete(`/mentors/${id}`);
 export const restoreMentor           = (id)          => api.patch(`/mentors/${id}/restore`);
-export const deleteMentorPermanently = (id)          => api.delete(`/mentors/${id}/permanent`);
+/**
+ * Permanent deletion — compatibility alias for `DELETE /danger-zone/mentor/:id`.
+ *
+ * Requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('mentor', id)`, the exact phrase, the operator's password and a written
+ * justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is the
+ * canonical entry point and the one HardDeleteDialog uses.
+ *
+ * @param {string} id
+ * @param {Object} confirmation - `{ ticket, confirmationPhrase, password, reason }`
+ */
+export const deleteMentorPermanently = (id, confirmation) =>
+  api.delete(`/mentors/${id}/permanent`, { data: confirmation });
 export const updateMentorStatus      = (id, status)  => api.patch(`/mentors/${id}/status`, { status });
 export const getCMUploadSignature    = ()            => api.get('/mentors/upload-signature');
 

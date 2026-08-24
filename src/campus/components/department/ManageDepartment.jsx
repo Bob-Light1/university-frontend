@@ -29,6 +29,9 @@ import { Formik, Form } from 'formik';
 import { useParams } from 'react-router-dom';
 import { departmentSchema } from '../../../yupSchema/departmentSchema';
 import api from '../../../api/axiosInstance';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import FeatureFrozenNotice from '../../../components/shared/FeatureFrozenNotice';
 
 /**
@@ -156,6 +159,15 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
     }
   };
 
+  // ─── HARD DELETE (danger zone) ───────────────────────────
+  // Availability and the archive-first rule come from `GET /danger-zone/entities`.
+  const hardDelete = useHardDelete('department', {
+    onDeleted: () => {
+      fetchDepartments();
+      onDepartmentsUpdated?.();
+    },
+  });
+
   // ─── HELPERS ─────────────────────────────────────────────
   const handleEdit = (dept) => {
     setEditingDept(dept);
@@ -174,6 +186,7 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
 
   // ─── RENDER ───────────────────────────────────────────────
   return (
+    <>
     <Dialog
       open={open}
       onClose={handleClose}
@@ -447,6 +460,14 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
                       </IconButton>
                     </Tooltip>
                   )}
+
+                  <HardDeleteAction
+                    onHardDelete={
+                      hardDelete.canDelete(dept.status === 'archived')
+                        ? () => hardDelete.requestDelete(dept._id, dept.name)
+                        : null
+                    }
+                  />
                 </Stack>
               </Box>
             ))}
@@ -454,6 +475,10 @@ const ManageDepartment = ({ open, onClose, onDepartmentsUpdated }) => {
         )}
       </DialogContent>
     </Dialog>
+
+    {/* Permanent deletion — sibling of the manager dialog so it is never unmounted with it. */}
+    {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
+    </>
   );
 };
 

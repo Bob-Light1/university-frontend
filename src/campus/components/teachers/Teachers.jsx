@@ -41,6 +41,7 @@ const Teachers = () => {
         entityName={teacherConfig.entityName}
         entityNamePlural={teacherConfig.entityNamePlural}
         apiEndpoint={teacherConfig.apiEndpoint}
+        dangerZoneEntityType={teacherConfig.dangerZoneEntityType}
 
         tableColumns={teacherConfig.tableColumns}
         renderTableRow={teacherConfig.renderTableRow}

@@ -17,7 +17,19 @@ export const createStaff              = (data)        => api.post('/staff', data
 export const updateStaff              = (id, data)    => api.put(`/staff/${id}`, data);
 export const archiveStaff             = (id)          => api.delete(`/staff/${id}`);
 export const restoreStaff             = (id)          => api.patch(`/staff/${id}/restore`);
-export const deleteStaffPermanently   = (id)          => api.delete(`/staff/${id}/permanent`);
+/**
+ * Permanent deletion — compatibility alias for `DELETE /danger-zone/staff/:id`.
+ *
+ * Requires the full confirmation payload: the ticket returned by
+ * `getDeletionImpact('staff', id)`, the exact phrase, the operator's password and a written
+ * justification. Prefer `dangerZoneService.executeHardDelete()` for new code — it is the
+ * canonical entry point and the one HardDeleteDialog uses.
+ *
+ * @param {string} id
+ * @param {Object} confirmation - `{ ticket, confirmationPhrase, password, reason }`
+ */
+export const deleteStaffPermanently   = (id, confirmation) =>
+  api.delete(`/staff/${id}/permanent`, { data: confirmation });
 export const assignStaffRole          = (id, subRoleId) => api.patch(`/staff/${id}/assign-role`, { subRoleId });
 export const updateStaffStatus        = (id, status)  => api.patch(`/staff/${id}/status`, { status });
 // Secure reset: the backend re-issues an activation link/code (returned in the
@@ -32,8 +44,12 @@ export const getStaffRoles    = (params)      => api.get('/staff-roles', { param
 export const createStaffRole  = (data)        => api.post('/staff-roles', data);
 export const updateStaffRole  = (id, data)    => api.put(`/staff-roles/${id}`, data);
 export const toggleStaffRole  = (id)          => api.patch(`/staff-roles/${id}/toggle`);
-export const deleteStaffRole  = (id)          => api.delete(`/staff-roles/${id}`);
 export const getOneStaffRole  = (id)          => api.get(`/staff-roles/${id}`);
+
+// Deleting a staff role is a PERMANENT deletion: `DELETE /staff-roles/:id` is a danger-zone
+// alias that requires a ticket, the typed confirmation phrase, the operator's password and a
+// reason. Go through `dangerZoneService` + `HardDeleteDialog` — a bare `api.delete()` here
+// would only ever return 400.
 
 // ─── 4. STAFF SELF-SERVICE PORTAL (/me/*) ────────────────────────────────────
 

@@ -10,13 +10,17 @@
   "loadError": "Ankündigungen konnten nicht geladen werden.",
   "empty": {
     "title": "Keine Ankündigungen",
-    "hint": "Erstellen Sie Ihre erste Ankündigung mit der Schaltfläche oben."
+    "hint": "Erstellen Sie Ihre erste Ankündigung mit der Schaltfläche oben.",
+    "deletedTitle": "Der Papierkorb ist leer",
+    "deletedHint": "Gelöschte Ankündigungen bleiben hier, bis sie endgültig vernichtet werden."
   },
   "filter": {
     "allStatuses": "Alle Status",
     "allTypes": "Alle Typen",
     "pinnedOnly": "Nur angeheftete",
-    "showAll": "Alle anzeigen"
+    "showAll": "Alle anzeigen",
+    "showDeleted": "Gelöschte anzeigen",
+    "showLive": "Aktive anzeigen"
   },
   "type": {
     "info": "Info",
@@ -69,7 +73,8 @@
     "pinned": "Angeheftet.",
     "unpinned": "Gelöst.",
     "pinFailed": "Anheften konnte nicht umgeschaltet werden.",
-    "actionFailed": "Aktion fehlgeschlagen."
+    "actionFailed": "Aktion fehlgeschlagen.",
+    "permanentlyDeleted": "Ankündigung endgültig gelöscht."
   },
   "form": {
     "newTitle": "Neue Ankündigung",

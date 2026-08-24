@@ -18,8 +18,13 @@ import {
   Book as BookIcon,
 } from '@mui/icons-material';
 
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
-const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
+/**
+ * @param {Function|null} [onHardDelete] - Permanent-deletion trigger, or null when the operator
+ *                                         may not run one on this row (see `useHardDelete`).
+ */
+const MobileSubjectCard = ({ subject, edit, archive, restore, onHardDelete = null }) => (
   
   <Card
   sx={{
@@ -127,6 +132,8 @@ const MobileSubjectCard = ({ subject, edit, archive, restore }) => (
             Restore
           </Button>
         )}
+
+        <HardDeleteAction onHardDelete={onHardDelete} />
       </Stack>
     </Stack>
   </CardContent>

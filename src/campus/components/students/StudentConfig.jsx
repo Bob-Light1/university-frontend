@@ -23,6 +23,7 @@ import {
   Badge as BadgeIcon,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
@@ -124,7 +125,7 @@ export const getFilterConfig = (relatedData = {}) => {
 // ─── Table Row Renderer ───────────────────────────────────────────────────────
 
 export const renderTableRow = (student, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile, onHardDelete } = helpers;
 
   const profileImageUrl = student.profileImage
     ? (student.profileImage.startsWith('http')
@@ -223,6 +224,7 @@ export const renderTableRow = (student, helpers) => {
               </IconButton>
             </Tooltip>
           )}
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </TableCell>
     </TableRow>
@@ -236,6 +238,9 @@ export const studentConfig = {
   entityName:       'Student',
   entityNamePlural: 'Students',
   apiEndpoint:      'students',
+  // Backend hard-delete registry key (shared/lib/hard-delete/hard-delete.registry.js).
+  // Enables the ADMIN-only permanent-deletion action on ARCHIVED rows.
+  dangerZoneEntityType: 'student',
 
   // UI customisation
   addButtonText:     'Enroll New Student',

@@ -25,6 +25,7 @@ import {
   Class as ClassIcon,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
@@ -131,7 +132,7 @@ export const getFilterConfig = (relatedData = {}) => {
 // ─── Table Row Renderer ───────────────────────────────────────────────────────
 
 export const renderTableRow = (teacher, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile, onHardDelete } = helpers;
 
   const profileImageUrl = teacher.profileImage
     ? teacher.profileImage.startsWith('http')
@@ -314,6 +315,7 @@ export const renderTableRow = (teacher, helpers) => {
               </IconButton>
             </Tooltip>
           )}
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </TableCell>
 
@@ -327,6 +329,9 @@ export const teacherConfig = {
   entityName:       'Teacher',
   entityNamePlural: 'Teachers',
   apiEndpoint:      'teachers',
+  // Backend hard-delete registry key (shared/lib/hard-delete/hard-delete.registry.js).
+  // Enables the ADMIN-only permanent-deletion action on ARCHIVED rows.
+  dangerZoneEntityType: 'teacher',
 
   addButtonText:       'Add New Teacher',
   addButtonIcon:       <PersonAdd />,

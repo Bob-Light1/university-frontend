@@ -10,13 +10,17 @@
   "loadError": "Falha ao carregar os anúncios.",
   "empty": {
     "title": "Nenhum anúncio",
-    "hint": "Crie o seu primeiro anúncio com o botão acima."
+    "hint": "Crie o seu primeiro anúncio com o botão acima.",
+    "deletedTitle": "A lixeira está vazia",
+    "deletedHint": "Os anúncios excluídos permanecem aqui até serem destruídos definitivamente."
   },
   "filter": {
     "allStatuses": "Todos os estados",
     "allTypes": "Todos os tipos",
     "pinnedOnly": "Apenas fixados",
-    "showAll": "Mostrar tudo"
+    "showAll": "Mostrar tudo",
+    "showDeleted": "Mostrar excluídos",
+    "showLive": "Mostrar ativos"
   },
   "type": {
     "info": "Informação",
@@ -69,7 +73,8 @@
     "pinned": "Fixado.",
     "unpinned": "Desafixado.",
     "pinFailed": "Falha ao alternar a fixação.",
-    "actionFailed": "A ação falhou."
+    "actionFailed": "A ação falhou.",
+    "permanentlyDeleted": "Anúncio excluído permanentemente."
   },
   "form": {
     "newTitle": "Novo anúncio",

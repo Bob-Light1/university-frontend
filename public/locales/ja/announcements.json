@@ -10,13 +10,17 @@
   "loadError": "お知らせの読み込みに失敗しました。",
   "empty": {
     "title": "お知らせはありません",
-    "hint": "上のボタンで最初のお知らせを作成してください。"
+    "hint": "上のボタンで最初のお知らせを作成してください。",
+    "deletedTitle": "ゴミ箱は空です",
+    "deletedHint": "削除されたお知らせは、完全に破棄されるまでここに残ります。"
   },
   "filter": {
     "allStatuses": "すべてのステータス",
     "allTypes": "すべてのタイプ",
     "pinnedOnly": "固定のみ",
-    "showAll": "すべて表示"
+    "showAll": "すべて表示",
+    "showDeleted": "削除済みを表示",
+    "showLive": "有効なものを表示"
   },
   "type": {
     "info": "情報",
@@ -69,7 +73,8 @@
     "pinned": "固定しました。",
     "unpinned": "固定を解除しました。",
     "pinFailed": "固定の切り替えに失敗しました。",
-    "actionFailed": "操作に失敗しました。"
+    "actionFailed": "操作に失敗しました。",
+    "permanentlyDeleted": "お知らせを完全に削除しました。"
   },
   "form": {
     "newTitle": "新規お知らせ",

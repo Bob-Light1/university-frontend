@@ -29,6 +29,9 @@ import api from '../../../api/axiosInstance';
 import { createSubjectSchema } from '../../../yupSchema/createSubjectSchema';
 import MobileSubjectCard from './MobileSubjectCard';
 import ConfirmActionDialog from '../../../components/shared/ConfirmActionDialog';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete } from '../../../hooks/useHardDelete';
 import { useParams } from 'react-router-dom';
 
 // Subject categories — mirrors the backend Subject model enum (source of truth).
@@ -210,6 +213,15 @@ const Subject = () => {
     }
   };
 
+  /* ---------------- HARD DELETE (danger zone) ---------------- */
+  // Both the role gate and the archive-first rule are read from `GET /danger-zone/entities`.
+  const hardDelete = useHardDelete('subject', {
+    onDeleted: () => {
+      showNotification('Subject permanently deleted', 'success');
+      fetchData();
+    },
+  });
+
   const handleOpenCreate = () => {
     setSelectedSubject(null);
     setOpen(true);
@@ -340,12 +352,17 @@ const Subject = () => {
             </Paper>
           ) : (
             subjects.map((subj) => (
-              <MobileSubjectCard 
-                key={subj._id} 
-                subject={subj} 
-                edit={handleOpenEdit} 
-                archive={handleArchive} 
+              <MobileSubjectCard
+                key={subj._id}
+                subject={subj}
+                edit={handleOpenEdit}
+                archive={handleArchive}
                 restore={handleRestore}
+                onHardDelete={
+                  hardDelete.canDelete(subj.status === 'archived')
+                    ? () => hardDelete.requestDelete(subj._id, subj.subject_name)
+                    : null
+                }
               />
             ))
           )}
@@ -474,6 +491,14 @@ const Subject = () => {
                           </IconButton>
                         </Tooltip>
                       )}
+
+                      <HardDeleteAction
+                        onHardDelete={
+                          hardDelete.canDelete(subj.status === 'archived')
+                            ? () => hardDelete.requestDelete(subj._id, subj.subject_name)
+                            : null
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))
@@ -775,6 +800,9 @@ const Subject = () => {
         onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
         onConfirm={handleConfirmAction}
       />
+
+      {/* Permanent deletion (impact preview → phrase + password + reason) */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       {/* Enhanced Snackbar Notifications */}
       <Snackbar

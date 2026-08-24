@@ -72,6 +72,9 @@ import api from '../../../api/axiosInstance';
 import CourseFilters       from '../../../components/courses/CourseFilters';
 import CourseForm          from '../../../components/courses/CourseForm';
 import CourseDetailDrawer  from '../../../components/courses/CourseDetailDrawer';
+import HardDeleteAction    from '../../../components/shared/HardDeleteAction';
+import HardDeleteDialog    from '../../../components/shared/HardDeleteDialog';
+import { useHardDelete }   from '../../../hooks/useHardDelete';
 import {
   ApprovalStatusChip,
   DifficultyChip,
@@ -192,7 +195,11 @@ const VersionHistoryDialog = ({ open, onClose, courseId, courseCode }) => {
 
 // ─── Mobile course card ───────────────────────────────────────────────────────
 
-const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, isAdmin }) => {
+/**
+ * @param {Function|null} [onHardDelete] - Permanent-deletion trigger, or null when the operator
+ *                                         may not run one on this course (see `useHardDelete`).
+ */
+const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, onHardDelete = null, isGlobal, isAdmin }) => {
   const { palette: { mode } } = useTheme();
   const sm = statusMeta(mode, c.approvalStatus);
   const archived = isArchived(c);
@@ -257,11 +264,14 @@ const CourseCard = ({ course: c, onView, onEdit, onHistory, onDelete, isGlobal, 
             )}
           </Stack>
         ) : (
-          isAdmin && (
-            <Tooltip title="Restore">
-              <IconButton size="small" color="success" onClick={() => onDelete(c)}><Restore fontSize="small" /></IconButton>
-            </Tooltip>
-          )
+          <Stack direction="row" spacing={0.5}>
+            {isAdmin && (
+              <Tooltip title="Restore">
+                <IconButton size="small" color="success" onClick={() => onDelete(c)}><Restore fontSize="small" /></IconButton>
+              </Tooltip>
+            )}
+            <HardDeleteAction onHardDelete={onHardDelete} />
+          </Stack>
         )}
       </CardActions>
     </Card>
@@ -373,6 +383,15 @@ const CourseManager = () => {
       setActionLoading(false);
     }
   };
+
+  // Permanent deletion — availability and the archive-first rule are declared in the backend
+  // registry and read from `GET /danger-zone/entities`, never restated here.
+  const hardDelete = useHardDelete('course', {
+    onDeleted: () => {
+      showSnackbar('Course permanently deleted.');
+      reload();
+    },
+  });
 
   const handleRestore = async () => {
     setActionLoading(true);
@@ -549,6 +568,11 @@ const CourseManager = () => {
                     if (isArchived(c)) { setDeleteTarget(c); setRestoreDialogOpen(true); }
                     else openDelete(c);
                   }}
+                  onHardDelete={
+                    hardDelete.canDelete(isArchived(c))
+                      ? () => hardDelete.requestDelete(c._id, `${c.courseCode} — ${c.title}`)
+                      : null
+                  }
                   isGlobal={isGlobal}
                   isAdmin={isAdmin}
                 />
@@ -707,17 +731,26 @@ const CourseManager = () => {
                               )}
                             </Stack>
                           ) : (
-                            isAdmin && (
-                              <Tooltip title="Restore">
-                                <IconButton
-                                  size="small"
-                                  color="success"
-                                  onClick={() => { setDeleteTarget(c); setRestoreDialogOpen(true); }}
-                                >
-                                  <Restore fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            )
+                            <Stack direction="row" spacing={0.25} justifyContent="flex-end">
+                              {isAdmin && (
+                                <Tooltip title="Restore">
+                                  <IconButton
+                                    size="small"
+                                    color="success"
+                                    onClick={() => { setDeleteTarget(c); setRestoreDialogOpen(true); }}
+                                  >
+                                    <Restore fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                              <HardDeleteAction
+                                onHardDelete={
+                                  hardDelete.canDelete(archived)
+                                    ? () => hardDelete.requestDelete(c._id, `${c.courseCode} — ${c.title}`)
+                                    : null
+                                }
+                              />
+                            </Stack>
                           )}
                         </TableCell>
                       </TableRow>
@@ -819,6 +852,9 @@ const CourseManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ── Permanent deletion (impact preview → phrase + password + reason) ─ */}
+      {hardDelete.enabled && <HardDeleteDialog {...hardDelete.dialogProps} />}
 
       {/* ── Snackbar ─────────────────────────────────────────────────────── */}
       <Snackbar

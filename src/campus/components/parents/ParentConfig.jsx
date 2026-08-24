@@ -24,6 +24,7 @@ import {
   ChildCare,
 } from '@mui/icons-material';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import HardDeleteAction from '../../../components/shared/HardDeleteAction';
 
 // ─── KPI Metrics ──────────────────────────────────────────────────────────────
 
@@ -107,7 +108,7 @@ export const getFilterConfig = () => [
 // ─── Table Row Renderer ───────────────────────────────────────────────────────
 
 export const renderTableRow = (parent, helpers) => {
-  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile } = helpers;
+  const { selected, onSelect, onView, onEdit, onArchive, onRestore, theme, isMobile, onHardDelete } = helpers;
 
   const profileImageUrl = parent.profileImage
     ? parent.profileImage.startsWith('http')
@@ -241,6 +242,7 @@ export const renderTableRow = (parent, helpers) => {
               </IconButton>
             </Tooltip>
           )}
+          <HardDeleteAction onHardDelete={onHardDelete} />
         </Stack>
       </TableCell>
 
@@ -254,6 +256,9 @@ export const parentConfig = {
   entityName:       'Parent',
   entityNamePlural: 'Parents',
   apiEndpoint:      'parents',
+  // Backend hard-delete registry key (shared/lib/hard-delete/hard-delete.registry.js).
+  // Enables the ADMIN-only permanent-deletion action on ARCHIVED rows.
+  dangerZoneEntityType: 'parent',
 
   addButtonText:     'Add New Parent',
   addButtonIcon:     <PersonAdd />,
