@@ -47,7 +47,8 @@
     "month": "Month",
     "period": "Period",
     "recurring": "Recurring",
-    "actions": "Actions"
+    "actions": "Actions",
+    "receipt": "Receipt"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Failed to load expenses.",
     "loadLedger": "Failed to load the ledger.",
     "loadSummary": "Failed to load the financial summary."
+  },
+  "receipt": {
+    "download": "Download the receipt (PDF)",
+    "error": "The receipt could not be downloaded. Please try again."
   }
 }

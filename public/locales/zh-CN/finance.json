@@ -47,7 +47,8 @@
     "month": "月份",
     "period": "周期",
     "recurring": "周期性",
-    "actions": "操作"
+    "actions": "操作",
+    "receipt": "收据"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "加载支出失败。",
     "loadLedger": "加载明细账失败。",
     "loadSummary": "加载财务概览失败。"
+  },
+  "receipt": {
+    "download": "下载收据（PDF）",
+    "error": "收据下载失败，请重试。"
   }
 }

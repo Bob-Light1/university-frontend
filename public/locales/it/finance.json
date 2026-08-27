@@ -47,7 +47,8 @@
     "month": "Mese",
     "period": "Periodo",
     "recurring": "Ricorrente",
-    "actions": "Azioni"
+    "actions": "Azioni",
+    "receipt": "Ricevuta"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Impossibile caricare le spese.",
     "loadLedger": "Impossibile caricare il mastro.",
     "loadSummary": "Impossibile caricare il riepilogo finanziario."
+  },
+  "receipt": {
+    "download": "Scarica la ricevuta (PDF)",
+    "error": "Non è stato possibile scaricare la ricevuta. Riprova."
   }
 }

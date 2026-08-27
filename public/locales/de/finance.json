@@ -47,7 +47,8 @@
     "month": "Monat",
     "period": "Zeitraum",
     "recurring": "Wiederkehrend",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "receipt": "Beleg"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Ausgaben konnten nicht geladen werden.",
     "loadLedger": "Kontobuch konnte nicht geladen werden.",
     "loadSummary": "Finanzübersicht konnte nicht geladen werden."
+  },
+  "receipt": {
+    "download": "Beleg herunterladen (PDF)",
+    "error": "Der Beleg konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
   }
 }

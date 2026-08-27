@@ -17,7 +17,7 @@ import { AccountBalanceWallet, WarningAmber } from '@mui/icons-material';
 
 import KPICards from '../../../components/shared/KpiCard';
 import useStudentLedger from '../../../hooks/useStudentLedger';
-import { StatusChip } from '../../../campus/components/finance/financeShared';
+import { StatusChip, ReceiptButton } from '../../../campus/components/finance/financeShared';
 import { useFinanceLabels } from '../../../campus/components/finance/useFinanceLabels';
 import {
   FEE_STATUS_COLOR, formatMoney, formatDate,
@@ -142,6 +142,7 @@ const StudentFinance = () => {
                     <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t('fields.reference')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.receipt')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -154,6 +155,10 @@ const StudentFinance = () => {
                         <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
                           {p.reference || '—'}
                         </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        {/* No campusId: a student is always scoped to their own campus by the JWT. */}
+                        <ReceiptButton paymentId={p._id} />
                       </TableCell>
                     </TableRow>
                   ))}

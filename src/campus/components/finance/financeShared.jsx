@@ -2,6 +2,7 @@
  * @file financeShared.jsx
  * @description Small reusable UI primitives shared across the Finance pages:
  *   - StatusChip          — coloured status badge driven by label/colour maps
+ *   - ReceiptButton       — per-row PDF receipt download of a payment
  *   - CurrencySelect      — currency dropdown (XAF / USD / EUR)
  *   - PaymentMethodSelect — payment-method dropdown
  *   - PeriodSelector      — year + (optional) month filter
@@ -12,10 +13,12 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Chip, FormControl, InputLabel, Select, MenuItem, Stack,
-  Autocomplete, TextField, CircularProgress,
+  Autocomplete, TextField, CircularProgress, IconButton, Tooltip, Snackbar, Alert,
 } from '@mui/material';
+import { ReceiptLong } from '@mui/icons-material';
 
 import { getStudents } from '../../../services/studentService';
+import usePaymentReceipt from '../../../hooks/usePaymentReceipt';
 import {
   CURRENCIES, PAYMENT_METHODS, MONTHS, recentYears,
 } from './financeConstants';
@@ -34,6 +37,56 @@ export const StatusChip = ({ status, labelMap = {}, colorMap = {}, size = 'small
     sx={{ fontWeight: 600 }}
   />
 );
+
+// ─── Receipt download ───────────────────────────────────────────────────────────
+/**
+ * Downloads the PDF receipt of one payment.
+ *
+ * Self-contained on purpose: it carries its own spinner AND its own error
+ * surface, so the three payment tables that render it (campus fee detail,
+ * campus student ledger, the student's own page) drop it into a cell without
+ * each wiring a failure path — three wirings would be three chances to swallow
+ * the server's message, which is how the commission receipt ended up reporting
+ * every failure as "not yet available".
+ *
+ * The route is open to the campus roles AND to the paying student; nothing is
+ * gated here, because the server answers 404 for a payment outside the caller's
+ * scope and the button is only ever rendered next to a payment the caller can
+ * already read.
+ *
+ * @param {{ paymentId: string, campusId?: string, size?: 'small'|'medium' }} props
+ */
+export const ReceiptButton = ({ paymentId, campusId, size = 'small' }) => {
+  const { t } = useTranslation('finance');
+  const { download, downloadingId, error, clearError } = usePaymentReceipt({ campusId });
+  const busy = downloadingId === paymentId;
+
+  return (
+    <>
+      <Tooltip title={t('receipt.download')}>
+        {/* The span keeps the tooltip alive while the button is disabled. */}
+        <span>
+          <IconButton
+            size={size}
+            onClick={() => download(paymentId)}
+            disabled={busy}
+            aria-label={t('receipt.download')}
+          >
+            {busy ? <CircularProgress size={18} /> : <ReceiptLong fontSize={size} />}
+          </IconButton>
+        </span>
+      </Tooltip>
+      <Snackbar
+        open={Boolean(error)}
+        autoHideDuration={6000}
+        onClose={clearError}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="error" onClose={clearError} sx={{ borderRadius: 2 }}>{error}</Alert>
+      </Snackbar>
+    </>
+  );
+};
 
 // ─── Currency select ──────────────────────────────────────────────────────────────
 export const CurrencySelect = ({ value, onChange, name = 'currency', label, size = 'small', fullWidth = false }) => {

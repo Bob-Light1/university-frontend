@@ -15,7 +15,7 @@ import {
 import { Close, AccountBalanceWallet } from '@mui/icons-material';
 
 import useStudentLedger from '../../../hooks/useStudentLedger';
-import { StatusChip } from './financeShared';
+import { StatusChip, ReceiptButton } from './financeShared';
 import { useFinanceLabels } from './useFinanceLabels';
 import {
   FEE_STATUS_COLOR, formatMoney, formatDate,
@@ -125,6 +125,7 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
                       <TableCell sx={{ fontWeight: 700 }}>{t('fields.date')}</TableCell>
                       <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.receipt')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -133,6 +134,9 @@ const StudentLedgerDrawer = ({ open, studentId, campusId, studentName, onClose }
                         <TableCell>{formatDate(p.paidAt)}</TableCell>
                         <TableCell align="right">{formatMoney(p.amount, p.currency)}</TableCell>
                         <TableCell><Chip size="small" variant="outlined" label={p.method ? t(`enums.paymentMethod.${p.method}`) : '—'} /></TableCell>
+                        <TableCell align="right">
+                          <ReceiptButton paymentId={p._id} campusId={campusId} />
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

@@ -47,7 +47,8 @@
     "month": "Mes",
     "period": "Período",
     "recurring": "Recurrente",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "receipt": "Recibo"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Error al cargar los gastos.",
     "loadLedger": "Error al cargar el libro mayor.",
     "loadSummary": "Error al cargar el resumen financiero."
+  },
+  "receipt": {
+    "download": "Descargar el recibo (PDF)",
+    "error": "No se pudo descargar el recibo. Inténtalo de nuevo."
   }
 }

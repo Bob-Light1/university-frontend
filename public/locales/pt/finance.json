@@ -47,7 +47,8 @@
     "month": "Mês",
     "period": "Período",
     "recurring": "Recorrente",
-    "actions": "Ações"
+    "actions": "Ações",
+    "receipt": "Recibo"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Falha ao carregar as despesas.",
     "loadLedger": "Falha ao carregar o livro-razão.",
     "loadSummary": "Falha ao carregar o resumo financeiro."
+  },
+  "receipt": {
+    "download": "Transferir o recibo (PDF)",
+    "error": "Não foi possível transferir o recibo. Tente novamente."
   }
 }

@@ -14,7 +14,7 @@
  * local roles must never send it from a free field.
  */
 
-import api from '../api/axiosInstance';
+import api, { EXPORT_TIMEOUT } from '../api/axiosInstance';
 
 // ─── Student debts (fees) ──────────────────────────────────────────────────────
 
@@ -61,6 +61,29 @@ export const remindFee = (id) => api.post(`/finance/fees/${id}/remind`);
  * @param {string} id
  */
 export const deleteFee = (id) => api.delete(`/finance/fees/${id}`);
+
+// ─── Payment receipt ────────────────────────────────────────────────────────────
+
+/**
+ * GET /finance/payments/:id/receipt
+ * PDF receipt of one payment, as a blob.
+ *
+ * Access is server-side: the campus filter for every role, plus ownership of the
+ * payment for a STUDENT. A payment outside that scope answers 404, never 403.
+ *
+ * `EXPORT_TIMEOUT` rather than the 10 s default: the PDF is rendered on demand
+ * by the platform's Puppeteer pool, and a cold browser launch alone can outlast
+ * the default timeout.
+ *
+ * @param {string} paymentId
+ * @param {{ campusId? }} params  campusId is only honoured for global roles.
+ */
+export const getPaymentReceipt = (paymentId, params = {}) =>
+  api.get(`/finance/payments/${paymentId}/receipt`, {
+    params,
+    responseType: 'blob',
+    timeout: EXPORT_TIMEOUT,
+  });
 
 // ─── Ledgers ────────────────────────────────────────────────────────────────────
 

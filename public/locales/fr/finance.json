@@ -47,7 +47,8 @@
     "month": "Mois",
     "period": "Période",
     "recurring": "Récurrent",
-    "actions": "Actions"
+    "actions": "Actions",
+    "receipt": "Reçu"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "Échec du chargement des dépenses.",
     "loadLedger": "Échec du chargement du grand livre.",
     "loadSummary": "Échec du chargement du résumé financier."
+  },
+  "receipt": {
+    "download": "Télécharger le reçu (PDF)",
+    "error": "Le reçu n'a pas pu être téléchargé. Veuillez réessayer."
   }
 }

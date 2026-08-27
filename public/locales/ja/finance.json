@@ -47,7 +47,8 @@
     "month": "月",
     "period": "期間",
     "recurring": "定期",
-    "actions": "操作"
+    "actions": "操作",
+    "receipt": "領収書"
   },
   "placeholders": {
     "academicYear": "2025-2026",
@@ -281,5 +282,9 @@
     "loadExpenses": "支出の読み込みに失敗しました。",
     "loadLedger": "元帳の読み込みに失敗しました。",
     "loadSummary": "財務サマリーの読み込みに失敗しました。"
+  },
+  "receipt": {
+    "download": "領収書をダウンロード（PDF）",
+    "error": "領収書をダウンロードできませんでした。もう一度お試しください。"
   }
 }

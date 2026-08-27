@@ -17,7 +17,7 @@ import {
 import { Receipt, Payment, Close, InsertDriveFile } from '@mui/icons-material';
 
 import { getFee } from '../../../services/financeService';
-import { StatusChip } from './financeShared';
+import { StatusChip, ReceiptButton } from './financeShared';
 import { useFinanceLabels } from './useFinanceLabels';
 import {
   FEE_STATUS_COLOR, formatMoney, formatDate,
@@ -159,6 +159,7 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
                       <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.amount')}</TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>{t('fields.method')}</TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>{t('fields.reference')}</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }} align="right">{t('fields.receipt')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -168,6 +169,9 @@ const FeeDetailDialog = ({ open, feeId, campusId, onClose, onPay }) => {
                         <TableCell align="right">{formatMoney(p.amount, p.currency || fee.currency)}</TableCell>
                         <TableCell>{p.method}</TableCell>
                         <TableCell>{p.reference || '—'}</TableCell>
+                        <TableCell align="right">
+                          <ReceiptButton paymentId={p._id} campusId={campusId} />
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
