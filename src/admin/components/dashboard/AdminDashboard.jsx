@@ -1,5 +1,10 @@
 /**
  * @file AdminDashboard.jsx
+ * @description Application component with shared deployment branding.
+ */
+import { BRAND } from '../../../config/brand';
+/**
+ * @file AdminDashboard.jsx
  * @description Admin / Director portal — platform overview dashboard.
  *
  * Data: GET /campus/all  (paginated, status breakdown computed client-side)
@@ -119,7 +124,7 @@ export default function AdminDashboard() {
             {t('dashboard.welcome', { name: adminName })}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {isDirector ? t('dashboard.subtitleDirector') : t('dashboard.subtitleAdmin')}
+            {isDirector ? t('dashboard.subtitleDirector', { brand: BRAND.name }) : t('dashboard.subtitleAdmin', { brand: BRAND.name })}
           </Typography>
         </Box>
       </Stack>

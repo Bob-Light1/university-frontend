@@ -30,7 +30,7 @@ import { Close, Tune, AutoAwesome } from '@mui/icons-material';
 import {
   getCampusOffer, updateCampusOffer,
 } from '../../../services/entitlementService';
-import { useEntitlementPilot } from '../../../hooks/useEntitlementPilot';
+import { useEntitlementPilot, NO_DRAFT } from '../../../hooks/useEntitlementPilot';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import EntitlementMatrix from '../../../components/entitlement/EntitlementMatrix';
 import EntitlementRefusal from '../../../components/entitlement/EntitlementRefusal';
@@ -74,7 +74,7 @@ export default function EntitlementDialog({ open, campus, onClose, onSaved }) {
   // or the reload that follows a save — drops the draft on its own, where an
   // effect would leave one render showing the previous campus's budget.
   const aiPristine = useMemo(() => toAiForm(report?.ai), [report]);
-  const [aiDraft, setAiDraft] = useState({ source: null, value: null });
+  const [aiDraft, setAiDraft] = useState({ source: NO_DRAFT, value: null });
   const ai = aiDraft.source === report ? aiDraft.value : aiPristine;
 
   const aiChanged = useMemo(

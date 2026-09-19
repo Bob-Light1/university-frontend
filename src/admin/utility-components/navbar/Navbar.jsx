@@ -1,5 +1,11 @@
 /**
  * @file Navbar.jsx
+ * @description Application component with shared deployment branding.
+ */
+import Brand from '../../../components/shared/Brand';
+import { BRAND } from '../../../config/brand';
+/**
+ * @file Navbar.jsx
  * @description Public-facing navigation bar — used on the marketing/home pages.
  *   Fully separate from the authenticated layout NavBars (AppNavBar.jsx).
  *
@@ -335,7 +341,7 @@ const Navbar = () => {
               <LogoMark />
             </span>
             <span className="nav-logo-wordmark">
-              wewi<em>go</em>
+              <Brand />
             </span>
           </button>
 
@@ -422,7 +428,7 @@ const Navbar = () => {
                 color: 'rgba(255,255,255,0.25)',
                 textAlign: 'center', fontFamily: 'DM Sans, sans-serif',
               }}>
-                © {new Date().getFullYear()} wewigo Elite Services
+                © {new Date().getFullYear()} {BRAND.name}
               </p>
             </motion.div>
           </>

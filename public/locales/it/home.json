@@ -1,0 +1,128 @@
+{
+  "product": "Gestione accademica",
+  "home": "Home",
+  "skip": "Vai al contenuto",
+  "navigation": "Navigazione principale",
+  "menu": "Menu",
+  "language": "Lingua",
+  "login": "Accedi",
+  "features": "Funzionalità",
+  "preview": "Anteprima",
+  "faq": "Domande frequenti",
+  "requestDemo": "Richiedi una demo",
+  "explore": "Esplora la piattaforma",
+  "contact": "Contatti",
+  "privacy": "Privacy",
+  "terms": "Condizioni",
+  "enrollment": "Vuoi iscriverti?",
+  "eyebrow": "Per gli istituti di formazione",
+  "heroTitle": "Il tuo istituto.",
+  "heroAccent": "Un unico spazio connesso.",
+  "heroBody": "Riunisci didattica, finanze e team dei campus. Offri a ogni persona gli strumenti necessari per lavorare meglio.",
+  "roleAccess": "Accesso per ruolo",
+  "multiCampus": "Gestione multicampus",
+  "previewEyebrow": "Uno sguardo al tuo spazio di lavoro",
+  "tryTabs": "Prova le schede",
+  "previewFootnote": "Una visione chiara delle attività quotidiane.",
+  "workspace": "Spazio di lavoro",
+  "overview": "Panoramica",
+  "academics": "Didattica",
+  "finance": "Finanze",
+  "sampleCampus": "Campus di esempio",
+  "illustration": "Illustrazione",
+  "sampleData": "Dati fittizi",
+  "sampleRecord": "Attività illustrativa",
+  "chartDescription": "Attività illustrativa su sette periodi",
+  "previewDisclaimer": "Anteprima interattiva · Dati fittizi · Nessun account reale",
+  "featuresEyebrow": "L'essenziale, connesso",
+  "featuresTitle": "Meno frammentazione. Più chiarezza.",
+  "featuresBody": "Dall'amministrazione quotidiana al coordinamento dei campus, riunisci le attività importanti.",
+  "availability": "I moduli disponibili dipendono dalla configurazione e dall'offerta del campus.",
+  "rolesEyebrow": "Una piattaforma, uno spazio per ciascuno",
+  "rolesTitle": "Gli strumenti giusti per ogni ruolo.",
+  "rolesBody": "Collega direzione, team e famiglie con accessi adeguati alle loro responsabilità.",
+  "accessWorkspace": "Accedi al tuo spazio",
+  "faqEyebrow": "Risposte utili",
+  "faqTitle": "Chiarezza fin dall'inizio.",
+  "faqBody": "Scopri come la piattaforma si adatta al tuo istituto.",
+  "closingEyebrow": "Spazio a ciò che conta",
+  "closingTitle": "Connetti i tuoi team.",
+  "closingBody": "Scopri una gestione più integrata del tuo istituto.",
+  "footerBody": "Didattica, persone e campus. Connessi.",
+  "contactTitle": "Parliamo del tuo istituto.",
+  "contactBody": "Esplora la piattaforma o utilizza il contatto disponibile per discutere le tue esigenze.",
+  "facts": {
+    "title0": "Pensata per più campus",
+    "body0": "Mantieni connessi i tuoi istituti.",
+    "title1": "Spazi multilingue",
+    "body1": "Lavora nella tua lingua.",
+    "title2": "Accessi adatti ai ruoli",
+    "body2": "Strumenti per ogni responsabilità."
+  },
+  "featureTitles": {
+    "0": "Amministrazione accademica",
+    "1": "Orari e presenze",
+    "2": "Risultati ed esami",
+    "3": "Monitoraggio finanziario",
+    "4": "Documenti e comunicazione",
+    "5": "Supervisione dei campus"
+  },
+  "featureBodies": {
+    "0": "Organizza fascicoli, classi, materie e team didattici.",
+    "1": "Coordina gli orari e registra le presenze nello stesso spazio.",
+    "2": "Gestisci esami, voti e pubblicazione dei risultati.",
+    "3": "Monitora rette, pagamenti registrati, saldi e ricevute.",
+    "4": "Rendi documenti e comunicazioni accessibili ai tuoi team.",
+    "5": "Riunisci le attività dei campus con accessi delimitati."
+  },
+  "roleTitles": {
+    "0": "Direzione e responsabili",
+    "1": "Docenti e amministrazione",
+    "2": "Studenti e famiglie"
+  },
+  "roleBodies": {
+    "0": "Segui le attività dei campus e coordina i team.",
+    "1": "Organizza lezioni, presenze, risultati e documenti in spazi dedicati.",
+    "2": "Consulta orari, risultati pubblicati e informazioni disponibili per il tuo ruolo."
+  },
+  "questions": {
+    "0": "Posso gestire più campus?",
+    "1": "Tutti vedono le stesse informazioni?",
+    "2": "Quali lingue sono disponibili?",
+    "3": "Tutti possono accedere a tutti i moduli?",
+    "4": "Dove si iscrivono i candidati?"
+  },
+  "answers": {
+    "0": "Sì. La piattaforma offre supervisione multicampus e spazi riservati a ogni campus.",
+    "1": "No. Gli accessi dipendono dal ruolo autenticato, dal campus e dalle regole di appartenenza.",
+    "2": "L’ERP supporta dieci lingue, incluso l’arabo con layout da destra a sinistra. Usa il selettore per scoprirle.",
+    "3": "La disponibilità dipende dall’offerta e dalla configurazione del campus. Le illustrazioni non concedono accesso ai moduli.",
+    "4": "Candidature, programmi e attività dei candidati appartengono al portale pubblico separato. Usa il link di iscrizione nel piè di pagina."
+  },
+  "previewTitles": {
+    "overview": "Il tuo campus a colpo d’occhio",
+    "academics": "Attività accademica",
+    "finance": "Panoramica finanziaria"
+  },
+  "charts": {
+    "overview": "Attività del campus",
+    "academics": "Panoramica presenze",
+    "finance": "Pagamenti registrati"
+  },
+  "records": {
+    "overview": "Fascicoli aggiornati",
+    "academics": "Risultati pubblicati",
+    "finance": "Ricevuta di pagamento emessa"
+  },
+  "metricLabels": {
+    "overview0": "Studenti",
+    "overview1": "Classi",
+    "overview2": "Campus",
+    "academics0": "Classi",
+    "academics1": "Docenti",
+    "academics2": "Esami",
+    "finance0": "Tasso di riscossione",
+    "finance1": "Saldi in sospeso",
+    "finance2": "Ricevute"
+  }
+}

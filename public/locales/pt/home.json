@@ -1,0 +1,128 @@
+{
+  "product": "Gestão académica",
+  "home": "Início",
+  "skip": "Ir para o conteúdo",
+  "navigation": "Navegação principal",
+  "menu": "Menu",
+  "language": "Idioma",
+  "login": "Entrar",
+  "features": "Funcionalidades",
+  "preview": "Prévia",
+  "faq": "Perguntas frequentes",
+  "requestDemo": "Solicitar demonstração",
+  "explore": "Explorar a plataforma",
+  "contact": "Contacto",
+  "privacy": "Privacidade",
+  "terms": "Termos",
+  "enrollment": "Pretende inscrever-se?",
+  "eyebrow": "Para instituições de ensino",
+  "heroTitle": "A sua instituição.",
+  "heroAccent": "Um espaço conectado.",
+  "heroBody": "Reúna a gestão académica, as finanças e as equipas dos campus. Dê a cada pessoa as ferramentas de que precisa.",
+  "roleAccess": "Acesso por função",
+  "multiCampus": "Gestão multicampus",
+  "previewEyebrow": "O seu espaço de trabalho na prática",
+  "tryTabs": "Experimente os separadores",
+  "previewFootnote": "Uma visão clara das atividades diárias.",
+  "workspace": "Espaço de trabalho",
+  "overview": "Visão geral",
+  "academics": "Área académica",
+  "finance": "Finanças",
+  "sampleCampus": "Campus de exemplo",
+  "illustration": "Ilustração",
+  "sampleData": "Dados fictícios",
+  "sampleRecord": "Atividade ilustrativa",
+  "chartDescription": "Atividade ilustrativa em sete períodos",
+  "previewDisclaimer": "Prévia interativa · Dados fictícios · Sem conta real",
+  "featuresEyebrow": "O essencial, conectado",
+  "featuresTitle": "Menos dispersão. Mais clareza.",
+  "featuresBody": "Da administração diária à supervisão dos campus, reúna as atividades essenciais.",
+  "availability": "Os módulos disponíveis dependem da configuração e da oferta do campus.",
+  "rolesEyebrow": "Uma plataforma, um espaço para cada pessoa",
+  "rolesTitle": "As ferramentas certas para cada função.",
+  "rolesBody": "Ligue a direção, as equipas e as famílias com acessos adequados às suas responsabilidades.",
+  "accessWorkspace": "Aceder ao seu espaço",
+  "faqEyebrow": "Respostas úteis",
+  "faqTitle": "Clareza desde o início.",
+  "faqBody": "Descubra como a plataforma se adapta à sua instituição.",
+  "closingEyebrow": "Espaço para o essencial",
+  "closingTitle": "Aproxime as suas equipas.",
+  "closingBody": "Descubra uma gestão mais integrada para a sua instituição.",
+  "footerBody": "Gestão académica, pessoas e campus. Conectados.",
+  "contactTitle": "Vamos falar da sua instituição.",
+  "contactBody": "Explore a plataforma ou utilize o contacto disponível para discutir as suas necessidades.",
+  "facts": {
+    "title0": "Pensada para vários campus",
+    "body0": "Mantenha as instituições conectadas.",
+    "title1": "Espaços multilingues",
+    "body1": "Trabalhe no seu idioma.",
+    "title2": "Acessos por função",
+    "body2": "Ferramentas para cada responsabilidade."
+  },
+  "featureTitles": {
+    "0": "Administração académica",
+    "1": "Horários e presenças",
+    "2": "Resultados e exames",
+    "3": "Acompanhamento financeiro",
+    "4": "Documentos e comunicação",
+    "5": "Supervisão dos campus"
+  },
+  "featureBodies": {
+    "0": "Organize processos de estudantes, turmas, disciplinas e equipas docentes.",
+    "1": "Coordene horários e registe presenças no mesmo espaço.",
+    "2": "Gira exames, notas e publicação de resultados.",
+    "3": "Acompanhe propinas, pagamentos registados, saldos e recibos.",
+    "4": "Disponibilize documentos e comunicados às suas equipas.",
+    "5": "Reúna as operações dos campus com acessos delimitados."
+  },
+  "roleTitles": {
+    "0": "Direção e gestão",
+    "1": "Docência e administração",
+    "2": "Estudantes e famílias"
+  },
+  "roleBodies": {
+    "0": "Acompanhe a atividade dos campus e coordene as equipas.",
+    "1": "Organize aulas, presenças, resultados e documentos em espaços dedicados.",
+    "2": "Consulte horários, resultados publicados e informações disponíveis para a sua função."
+  },
+  "questions": {
+    "0": "Posso gerir vários campus?",
+    "1": "Todos veem as mesmas informações?",
+    "2": "Que idiomas estão disponíveis?",
+    "3": "Todos têm acesso a todos os módulos?",
+    "4": "Onde se inscrevem os candidatos?"
+  },
+  "answers": {
+    "0": "Sim. A plataforma oferece supervisão multicampus e espaços limitados a cada campus.",
+    "1": "Não. O acesso depende da função autenticada, do campus e das regras de associação.",
+    "2": "O ERP suporta dez idiomas, incluindo árabe com apresentação da direita para a esquerda. Utilize o seletor para os explorar.",
+    "3": "A disponibilidade depende da oferta e configuração do campus. As ilustrações não concedem acesso aos módulos.",
+    "4": "Candidaturas, programas e atividades dos candidatos pertencem ao portal público separado. Utilize o link de inscrição no rodapé."
+  },
+  "previewTitles": {
+    "overview": "O seu campus num relance",
+    "academics": "Atividade académica",
+    "finance": "Visão financeira"
+  },
+  "charts": {
+    "overview": "Atividade do campus",
+    "academics": "Resumo de presenças",
+    "finance": "Pagamentos registados"
+  },
+  "records": {
+    "overview": "Processos atualizados",
+    "academics": "Resultados publicados",
+    "finance": "Recibo de pagamento emitido"
+  },
+  "metricLabels": {
+    "overview0": "Estudantes",
+    "overview1": "Turmas",
+    "overview2": "Campus",
+    "academics0": "Turmas",
+    "academics1": "Docentes",
+    "academics2": "Exames",
+    "finance0": "Taxa de cobrança",
+    "finance1": "Saldos pendentes",
+    "finance2": "Recibos"
+  }
+}

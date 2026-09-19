@@ -1,0 +1,128 @@
+{
+  "product": "Academic management",
+  "home": "Home",
+  "skip": "Skip to content",
+  "navigation": "Main navigation",
+  "menu": "Menu",
+  "language": "Language",
+  "login": "Sign in",
+  "features": "Platform",
+  "preview": "Product tour",
+  "faq": "FAQ",
+  "requestDemo": "Request a demo",
+  "explore": "Explore the platform",
+  "contact": "Contact",
+  "privacy": "Privacy",
+  "terms": "Terms",
+  "enrollment": "Looking to enroll?",
+  "eyebrow": "Built for academic institutions",
+  "heroTitle": "Your institution.",
+  "heroAccent": "One connected workspace.",
+  "heroBody": "Bring academic operations, finances and campus teams together. Give everyone the tools they need to move education forward.",
+  "roleAccess": "Role-based access",
+  "multiCampus": "Multi-campus management",
+  "previewEyebrow": "A closer look at your workspace",
+  "tryTabs": "Try the tabs",
+  "previewFootnote": "A clear view of everyday operations.",
+  "workspace": "Workspace",
+  "overview": "Overview",
+  "academics": "Academics",
+  "finance": "Finance",
+  "sampleCampus": "Example campus",
+  "illustration": "Illustration",
+  "sampleData": "Sample data",
+  "sampleRecord": "Illustrative activity",
+  "chartDescription": "Illustrative activity across seven periods",
+  "previewDisclaimer": "Interactive illustration · Synthetic data · No live account",
+  "featuresEyebrow": "The essentials, connected",
+  "featuresTitle": "Less fragmentation. More clarity.",
+  "featuresBody": "From daily administration to campus oversight, keep the work that matters in one place.",
+  "availability": "Available modules depend on your campus configuration and offer.",
+  "rolesEyebrow": "A shared platform. A space for everyone.",
+  "rolesTitle": "The right tools, for every role.",
+  "rolesBody": "Connect leadership, teams and families around the same institution, with access appropriate to each role.",
+  "accessWorkspace": "Access your workspace",
+  "faqEyebrow": "A few useful answers",
+  "faqTitle": "Clarity from the start.",
+  "faqBody": "Understand how the platform fits your institution.",
+  "closingEyebrow": "Make room for what matters",
+  "closingTitle": "Bring your teams together.",
+  "closingBody": "Discover a more connected way to manage your institution.",
+  "footerBody": "Academic operations, people and campuses. Connected.",
+  "contactTitle": "Let's talk about your institution.",
+  "contactBody": "Discover the platform or use the configured contact channel to discuss your needs.",
+  "facts": {
+    "title0": "Multi-campus by design",
+    "body0": "Keep your institutions connected.",
+    "title1": "Multilingual workspaces",
+    "body1": "Work in the language you know.",
+    "title2": "Access that fits each role",
+    "body2": "Tools matched to responsibilities."
+  },
+  "featureTitles": {
+    "0": "Academic administration",
+    "1": "Schedules & attendance",
+    "2": "Results & examinations",
+    "3": "Financial tracking",
+    "4": "Documents & communication",
+    "5": "Campus oversight"
+  },
+  "featureBodies": {
+    "0": "Organize student records, classes, subjects and teaching teams.",
+    "1": "Coordinate timetables and record attendance in the same workspace.",
+    "2": "Manage examinations, grades and publication of results.",
+    "3": "Track fees, recorded payments, balances and receipts.",
+    "4": "Keep documents and announcements within reach of your teams.",
+    "5": "Bring campus operations together while keeping access scoped."
+  },
+  "roleTitles": {
+    "0": "Leadership & management",
+    "1": "Teaching & administration",
+    "2": "Students & families"
+  },
+  "roleBodies": {
+    "0": "Follow campus activity and coordinate the teams responsible for daily operations.",
+    "1": "Organize classes, attendance, results and documents using dedicated workspaces.",
+    "2": "Find schedules, published results and the information available to your role."
+  },
+  "questions": {
+    "0": "Can I manage several campuses?",
+    "1": "Does everyone see the same information?",
+    "2": "Which languages are available?",
+    "3": "Are all modules available to everyone?",
+    "4": "Where do applicants register?"
+  },
+  "answers": {
+    "0": "Yes. The platform includes multi-campus oversight and workspaces scoped to individual campuses.",
+    "1": "No. Access depends on the authenticated role, campus and applicable ownership rules.",
+    "2": "The ERP currently supports ten interface languages, including Arabic with right-to-left layouts. Use the language selector to explore them.",
+    "3": "Module availability depends on the offer and configuration of each campus. Product illustrations do not grant access to these modules.",
+    "4": "Applications, programs and applicant activities belong to the separate public portal. Use the enrollment link in the footer."
+  },
+  "previewTitles": {
+    "overview": "Your campus at a glance",
+    "academics": "Academic activity",
+    "finance": "Financial overview"
+  },
+  "charts": {
+    "overview": "Campus activity",
+    "academics": "Attendance overview",
+    "finance": "Recorded payments"
+  },
+  "records": {
+    "overview": "Academic records updated",
+    "academics": "Examination results published",
+    "finance": "Payment receipt issued"
+  },
+  "metricLabels": {
+    "overview0": "Students",
+    "overview1": "Classes",
+    "overview2": "Campuses",
+    "academics0": "Classes",
+    "academics1": "Teachers",
+    "academics2": "Examinations",
+    "finance0": "Collection rate",
+    "finance1": "Pending balances",
+    "finance2": "Receipts"
+  }
+}

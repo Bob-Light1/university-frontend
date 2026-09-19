@@ -1,3 +1,7 @@
+/**
+ * @file useLanguage.js
+ * @description Shared locale selection with authenticated-only server persistence.
+ */
 import { useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RTL_LANGUAGES, SUPPORTED_LANGUAGES, LANGUAGE_META } from '../i18n/i18n';
@@ -39,10 +43,10 @@ export function useLanguage() {
       if (persist) {
         document.cookie = `erp_lang=${code};path=/;SameSite=Lax;max-age=31536000${SECURE}`;
         localStorage.setItem('erp_language', code);
-        api.patch('/settings', { preferredLanguage: code }).catch(() => {});
+        if (user) api.patch('/settings', { preferredLanguage: code }).catch(() => {});
       }
     },
-    [i18n, user?.timezone, user?.preferredLocale]
+    [i18n, user]
   );
 
   return {

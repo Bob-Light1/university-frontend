@@ -1,0 +1,128 @@
+{
+  "product": "教务管理",
+  "home": "首页",
+  "skip": "跳至正文",
+  "navigation": "主导航",
+  "menu": "菜单",
+  "language": "语言",
+  "login": "登录",
+  "features": "功能",
+  "preview": "产品预览",
+  "faq": "常见问题",
+  "requestDemo": "预约演示",
+  "explore": "探索平台",
+  "contact": "联系我们",
+  "privacy": "隐私政策",
+  "terms": "使用条款",
+  "enrollment": "希望报名入学？",
+  "eyebrow": "专为教育机构打造",
+  "heroTitle": "学校的各项管理，",
+  "heroAccent": "汇聚于统一工作空间。",
+  "heroBody": "连接教务、财务和各校区团队，为每位成员提供所需工具，共同推进教学工作。",
+  "roleAccess": "按角色授权",
+  "multiCampus": "多校区管理",
+  "previewEyebrow": "了解您的工作空间",
+  "tryTabs": "试试切换选项卡",
+  "previewFootnote": "清晰掌握日常运营。",
+  "workspace": "工作空间",
+  "overview": "概览",
+  "academics": "教务",
+  "finance": "财务",
+  "sampleCampus": "示例校区",
+  "illustration": "示意",
+  "sampleData": "虚构数据",
+  "sampleRecord": "活动示例",
+  "chartDescription": "七个周期的活动示意图",
+  "previewDisclaimer": "交互预览 · 虚构数据 · 非真实账号",
+  "featuresEyebrow": "核心工作，相互连接",
+  "featuresTitle": "减少分散，让管理更清晰。",
+  "featuresBody": "从日常行政到校区管理，将重要工作集中在同一平台。",
+  "availability": "可用模块取决于校区配置和服务方案。",
+  "rolesEyebrow": "共享平台，各有所属",
+  "rolesTitle": "为每个角色提供合适的工具。",
+  "rolesBody": "连接管理层、团队和家庭，并根据各自职责提供访问权限。",
+  "accessWorkspace": "进入工作空间",
+  "faqEyebrow": "实用解答",
+  "faqTitle": "从一开始就清晰明了。",
+  "faqBody": "了解平台如何适应您的教育机构。",
+  "closingEyebrow": "专注重要的事",
+  "closingTitle": "让团队紧密协作。",
+  "closingBody": "探索更协同的学校管理方式。",
+  "footerBody": "连接教务、人员和校区。",
+  "contactTitle": "聊聊您的教育机构。",
+  "contactBody": "探索平台，或通过提供的联系方式交流您的需求。",
+  "facts": {
+    "title0": "为多校区而设计",
+    "body0": "连接各个教育机构。",
+    "title1": "多语言工作空间",
+    "body1": "使用熟悉的语言。",
+    "title2": "符合角色的权限",
+    "body2": "职责对应所需工具。"
+  },
+  "featureTitles": {
+    "0": "教务行政",
+    "1": "课表与考勤",
+    "2": "成绩与考试",
+    "3": "财务跟踪",
+    "4": "文档与沟通",
+    "5": "校区统筹"
+  },
+  "featureBodies": {
+    "0": "组织学生档案、班级、科目和教学团队。",
+    "1": "在同一工作空间协调课表并记录考勤。",
+    "2": "管理考试、分数和成绩发布。",
+    "3": "跟踪费用、已登记付款、余额和收据。",
+    "4": "让团队便捷获取文档和通知。",
+    "5": "汇总校区运营，同时保持明确的访问范围。"
+  },
+  "roleTitles": {
+    "0": "管理层与负责人",
+    "1": "教师与行政人员",
+    "2": "学生与家庭"
+  },
+  "roleBodies": {
+    "0": "了解校区运营情况，协调负责日常工作的团队。",
+    "1": "在专属空间管理课程、考勤、成绩和文档。",
+    "2": "查看课表、已发布成绩以及角色权限内的信息。"
+  },
+  "questions": {
+    "0": "可以管理多个校区吗？",
+    "1": "所有人看到的信息都一样吗？",
+    "2": "支持哪些语言？",
+    "3": "所有模块都对每个人开放吗？",
+    "4": "申请者在哪里报名？"
+  },
+  "answers": {
+    "0": "可以。平台支持多校区统筹，并提供限定于各校区的工作空间。",
+    "1": "不一样。访问权限取决于登录角色、所属校区以及适用的数据归属规则。",
+    "2": "ERP目前支持十种界面语言，包括从右到左显示的阿拉伯语。可通过语言选择器体验。",
+    "3": "可用模块取决于校区方案和配置。产品示意不提供实际模块的访问权限。",
+    "4": "申请、课程介绍及申请者活动均在独立的公开门户进行。请使用页脚的报名链接。"
+  },
+  "previewTitles": {
+    "overview": "校区一览",
+    "academics": "教务活动",
+    "finance": "财务概览"
+  },
+  "charts": {
+    "overview": "校区活动",
+    "academics": "考勤概览",
+    "finance": "已登记付款"
+  },
+  "records": {
+    "overview": "教务记录已更新",
+    "academics": "考试成绩已发布",
+    "finance": "付款收据已开具"
+  },
+  "metricLabels": {
+    "overview0": "学生",
+    "overview1": "班级",
+    "overview2": "校区",
+    "academics0": "班级",
+    "academics1": "教师",
+    "academics2": "考试",
+    "finance0": "收款率",
+    "finance1": "待结余额",
+    "finance2": "收据"
+  }
+}

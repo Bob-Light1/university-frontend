@@ -63,15 +63,25 @@ const AttendanceBar = ({ rate, total }) => {
   );
 };
 
-const GradeBandChip = ({ band }) => {
+/**
+ * The grade LETTER, never the band.
+ *
+ * `Result.gradeBand` is a denormalized snapshot OBJECT
+ * (`{ label, letterGrade, gpa, ectsGrade, ectsCredits, color }` —
+ * `result.model.js`), and MUI puts `label` straight into the DOM: handed the
+ * object, React throws #31 and the whole portal renders blank rather than
+ * losing one chip. `ChildResults.jsx` already carried that warning; this
+ * dashboard, which is the portal's landing page, did not.
+ */
+const GradeBandChip = ({ letter }) => {
   const colorMap = {
     A: 'success', B: 'primary', C: 'info', D: 'warning', E: 'error', F: 'error',
   };
   return (
     <Chip
-      label={band || '—'}
+      label={letter || '—'}
       size="small"
-      color={colorMap[band] || 'default'}
+      color={colorMap[letter] || 'default'}
       sx={{ fontWeight: 700, minWidth: 28 }}
     />
   );
@@ -153,7 +163,7 @@ const ChildCard = ({ summary, onSelect }) => {
                     disablePadding
                     sx={{ py: 0.5, borderBottom: '1px solid', borderColor: 'divider' }}
                     secondaryAction={
-                      <GradeBandChip band={r.gradeBand} />
+                      <GradeBandChip letter={r.gradeBand?.letterGrade} />
                     }
                   >
                     <ListItemText

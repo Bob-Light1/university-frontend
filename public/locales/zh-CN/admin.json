@@ -20,8 +20,8 @@
   },
   "dashboard": {
     "welcome": "欢迎回来，{name}",
-    "subtitleAdmin": "平台管理员 — wewigo ERP",
-    "subtitleDirector": "总监 — wewigo ERP",
+    "subtitleAdmin": "平台管理员 — {brand} ERP",
+    "subtitleDirector": "总监 — {brand} ERP",
     "loadError": "加载仪表板数据失败。",
     "fallbackAdmin": "管理员",
     "fallbackDirector": "总监",

@@ -20,8 +20,8 @@
   },
   "dashboard": {
     "welcome": "С возвращением, {name}",
-    "subtitleAdmin": "Администратор платформы — wewigo ERP",
-    "subtitleDirector": "Директор — wewigo ERP",
+    "subtitleAdmin": "Администратор платформы — {brand} ERP",
+    "subtitleDirector": "Директор — {brand} ERP",
     "loadError": "Не удалось загрузить данные панели.",
     "fallbackAdmin": "Администратор",
     "fallbackDirector": "Директор",

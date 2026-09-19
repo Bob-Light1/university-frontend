@@ -1,5 +1,11 @@
 /**
  * @file LoginPage.jsx
+ * @description Application component with shared deployment branding.
+ */
+import Brand from './shared/Brand';
+import { BRAND } from '../config/brand';
+/**
+ * @file LoginPage.jsx
  * @description Unified login component.
  *
  *   variant="public" — 2-step flow:
@@ -272,7 +278,7 @@ export default function LoginPage({ variant = 'public' }) {
 
             {/* Wordmark */}
             <Typography variant="h3" fontWeight={900} sx={{ color: 'white', mb: 1, letterSpacing: -1 }}>
-              wewigo
+              <Brand />
             </Typography>
             <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 300, mb: 5 }}>
               {t('login.step1.whoAreYou')}
@@ -339,7 +345,7 @@ export default function LoginPage({ variant = 'public' }) {
                 role="button" tabIndex={0}
                 onClick={() => navigate('/')}
                 onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-                aria-label={t('login.step1.backToHomeAria')}
+                aria-label={t('login.step1.backToHomeAria', { brand: BRAND.name })}
                 sx={{
                   cursor: 'pointer', outline: 'none',
                   borderRadius: 3,
@@ -367,7 +373,7 @@ export default function LoginPage({ variant = 'public' }) {
                   <HomeIcon sx={{ fontSize: 30, color: 'white' }} />
                 </Box>
                 <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white' }}>
-                  wewigo
+                  <Brand />
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, textAlign: 'center' }}>
                   {t('login.step1.backToHome')}
@@ -443,7 +449,7 @@ export default function LoginPage({ variant = 'public' }) {
                   </Box>
                 )}
 
-                <Typography variant="h2" fontWeight={900} gutterBottom>wewigo</Typography>
+                <Typography variant="h2" fontWeight={900} gutterBottom><Brand /></Typography>
 
                 {/* Adaptive tagline (public) or fixed (admin) */}
                 <Fade key={userType} in timeout={400}>

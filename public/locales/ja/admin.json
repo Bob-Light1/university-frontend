@@ -20,8 +20,8 @@
   },
   "dashboard": {
     "welcome": "おかえりなさい、{name} さん",
-    "subtitleAdmin": "プラットフォーム管理者 — wewigo ERP",
-    "subtitleDirector": "ディレクター — wewigo ERP",
+    "subtitleAdmin": "プラットフォーム管理者 — {brand} ERP",
+    "subtitleDirector": "ディレクター — {brand} ERP",
     "loadError": "ダッシュボードのデータを読み込めませんでした。",
     "fallbackAdmin": "管理者",
     "fallbackDirector": "ディレクター",

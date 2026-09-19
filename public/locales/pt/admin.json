@@ -20,8 +20,8 @@
   },
   "dashboard": {
     "welcome": "Bem-vindo de volta, {name}",
-    "subtitleAdmin": "Administrador da plataforma — wewigo ERP",
-    "subtitleDirector": "Diretor — wewigo ERP",
+    "subtitleAdmin": "Administrador da plataforma — {brand} ERP",
+    "subtitleDirector": "Diretor — {brand} ERP",
     "loadError": "Falha ao carregar os dados do painel.",
     "fallbackAdmin": "Admin",
     "fallbackDirector": "Diretor",

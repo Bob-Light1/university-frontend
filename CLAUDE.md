@@ -158,7 +158,8 @@ Mutating affordances inside are subject to §2 (`FeatureGate mode="write"`) and 
 ## 7. API — Axios
 
 - **Always** the singleton: `import api from '../api/axiosInstance'`. **Never** `fetch()` or a direct `axios` import
-  (sole exception: `AuthContext.jsx` login).
+  (exceptions: `AuthContext.jsx` login and the existing `streamAiChat` SSE transport in
+  `services/aiService.js`, which uses fetch + ReadableStream).
 - The interceptor owns three cross-cutting behaviours — never re-implement them per call: refresh-token replay,
   forced logout on refresh failure, entitlement refusal (§2).
 - One `*Service.js` per domain in `src/services/`, named exports; **no component holds a raw URL.**
@@ -180,7 +181,7 @@ const { user, login, logout, isAuthenticated, hasRole, updateUser } = useAuth();
 
 ## 9. i18n
 
-**10 languages** (Arabic the only RTL) and **18 namespaces** — the canonical lists live in `src/i18n/i18n.js`
+**10 languages** (Arabic the only RTL) and **namespaces declared in the registry** — the canonical lists live in `src/i18n/i18n.js`
 (`SUPPORTED_LANGUAGES`, `NAMESPACES`, `LANGUAGE_META`). Read them there; never restate them in code.
 Translations: `public/locales/<lng>/<ns>.json`, fetched over HTTP. **`en/` is the reference locale — add the key there first.**
 `common` + `errors` are eager, the rest lazy.
@@ -264,9 +265,9 @@ node scripts/check-missing-keys.js   # locale cross-check against en/, exit 1 on
 - **No test file and no test runner exist in this repository.** Do not invent `npm test`, do not assume Vitest/Jest.
   **`npm run build` is the verification** for any change.
 - **CI** (`.github/workflows/frontend.yml`, push/PR to `main`): `npm ci` → `npm run build` → `npm audit --audit-level=high`
-  (blocking, currently green — no exception file needed on this side, unlike the backend's `audit-gate.js`).
+  (blocking; inspect the current run for its result).
   The repo root **is** the frontend: a workflow filtering on a `frontend/` sub-path can never trigger.
-- **Lint debt: `npx eslint .` reports 91 errors / 12 warnings, all pre-existing** — which is why CI runs no lint step.
+- **Existing lint debt is documented; historical counts are not a current baseline** — which is why CI runs no lint step.
   **Lint only the files you touched** (`npx eslint <file>`) and never add a new error. A full-tree run looks like a
   regression you just caused; it isn't.
 - Deploy: Vercel (`vercel.json`, SPA rewrite to `index.html`). Node pinned by `.nvmrc`.
@@ -282,3 +283,21 @@ state, why fail-open applied, surface gated — §2) · **hard-delete decision**
 `requireArchivedFirst` — §3) · cross-brick follow-up identified but not applied (§0) · next step or pending question.
 
 Discard: JSX already written to disk, resolved stack traces, superseded design approaches.
+
+## Product home and deployment identity
+
+The public home sells the academic software; applicant recruitment remains in the
+Next.js portal configured by `VITE_PORTAL_URL`. The local preview uses synthetic
+illustrative data and performs no business API requests.
+
+`src/config/brand.js` owns public product configuration. Set `VITE_BRAND_NAME`
+(default Wewigo), optional `VITE_BRAND_LOGO_URL` and `VITE_BRAND_ICON_URL` before
+building. HTTPS asset URLs or root-relative asset paths are accepted. Rebuild after
+changing these values; branding is deployment-wide, not editable per campus.
+`VITE_SALES_URL` (HTTPS) takes priority over `VITE_SALES_EMAIL`; without either,
+actions lead to the product preview. Optional `VITE_PRIVACY_URL` and `VITE_TERMS_URL`
+are shown only when configured with valid destinations. No default sales address.
+Keep backend `PRODUCT_BRAND_NAME` and portal `NEXT_PUBLIC_PRODUCT_BRAND_NAME` aligned.
+Existing campus names/logos and the portal's establishment override remain independent.
+The public language selector stores the preference locally without an anonymous
+settings PATCH. Product texts are in the lazy `home` namespace in all ten locales.

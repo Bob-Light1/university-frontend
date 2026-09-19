@@ -55,7 +55,7 @@ src/
 ├── hooks/        useFeature · useHardDelete · useEntityManager · domain hooks
 ├── routes/       ProtectedRoute → CampusGuard → FeatureGuard, one file per portal
 ├── services/     one *Service.js per domain — no component holds a raw URL
-├── i18n/         i18next setup (10 languages, 18 namespaces)
+├── i18n/         i18next setup (10 languages; namespaces defined in the registry)
 ├── utils/        dateFormat · handleSubmitError · validationRules
 └── <role>/       admin · director · campus · teacher · student · parent · mentor · staff · partner · client
 public/locales/   <lng>/<ns>.json — `en/` is the reference locale
@@ -81,5 +81,24 @@ rewrite to `index.html`.
 
 ### Known debt
 
-`npx eslint .` currently reports 91 errors / 12 warnings, all pre-existing — which is why CI runs no lint
-step. Lint the files you touch (`npx eslint <file>`); don't add new errors.
+Existing lint debt is recorded in the engineering guide; historical totals are not a current
+baseline. CI does not run lint. Lint touched files (`npx eslint <file>`) and compare any
+failures with the existing code before attributing them to the change.
+
+## Product home and deployment identity
+
+The public home sells the academic software; applicant recruitment remains in the
+Next.js portal configured by `VITE_PORTAL_URL`. The local preview uses synthetic
+illustrative data and performs no business API requests.
+
+`src/config/brand.js` owns public product configuration. Set `VITE_BRAND_NAME`
+(default Wewigo), optional `VITE_BRAND_LOGO_URL` and `VITE_BRAND_ICON_URL` before
+building. HTTPS asset URLs or root-relative asset paths are accepted. Rebuild after
+changing these values; branding is deployment-wide, not editable per campus.
+`VITE_SALES_URL` (HTTPS) takes priority over `VITE_SALES_EMAIL`; without either,
+actions lead to the product preview. Optional `VITE_PRIVACY_URL` and `VITE_TERMS_URL`
+are shown only when configured with valid destinations. No default sales address.
+Keep backend `PRODUCT_BRAND_NAME` and portal `NEXT_PUBLIC_PRODUCT_BRAND_NAME` aligned.
+Existing campus names/logos and the portal's establishment override remain independent.
+The public language selector stores the preference locally without an anonymous
+settings PATCH. Product texts are in the lazy `home` namespace in all ten locales.

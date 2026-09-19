@@ -1,5 +1,10 @@
 /**
  * @file ActivateAccount.jsx
+ * @description Application component with shared deployment branding.
+ */
+import Brand from '../../../components/shared/Brand';
+/**
+ * @file ActivateAccount.jsx
  * @description Public account-activation page.
  *
  *   Two modes:
@@ -121,6 +126,7 @@ export default function ActivateAccount() {
     <CenterBox>
       <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 }, width: '100%', maxWidth: 460 }}>
         <Stack spacing={1} alignItems="center" sx={{ mb: 2 }}>
+          <Brand />
           <CheckCircleOutline color="primary" sx={{ fontSize: 44 }} />
           <Typography variant="h5" fontWeight={700}>Activate your account</Typography>
           <Typography color="text.secondary" textAlign="center">

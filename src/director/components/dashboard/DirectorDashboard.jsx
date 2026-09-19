@@ -1,5 +1,10 @@
 /**
  * @file DirectorDashboard.jsx
+ * @description Application component with shared deployment branding.
+ */
+import { BRAND } from '../../../config/brand';
+/**
+ * @file DirectorDashboard.jsx
  * @description Director portal — platform overview dashboard (read-only).
  *
  * Data: GET /campus/all  (status breakdown computed client-side)
@@ -115,7 +120,7 @@ export default function DirectorDashboard() {
             {t('dashboard.welcome', { name: directorName })}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('dashboard.subtitleDirector')}
+            {t('dashboard.subtitleDirector', { brand: BRAND.name })}
           </Typography>
         </Box>
       </Stack>

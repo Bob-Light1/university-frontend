@@ -1,3 +1,8 @@
+/**
+ * @file main.jsx
+ * @description Application entry with deployment-aware metadata.
+ */
+import BrandMetadata from './components/shared/BrandMetadata.jsx';
 import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -32,6 +37,7 @@ createRoot(document.getElementById('root')).render(
                 i18n Suspense boundary (it renders a themed, translated Snackbar
                 for the write-in-flight case). */}
             <EntitlementProvider>
+              <BrandMetadata />
               <App />
             </EntitlementProvider>
           </Suspense>

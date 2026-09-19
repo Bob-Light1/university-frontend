@@ -20,8 +20,8 @@
   },
   "dashboard": {
     "welcome": "مرحبًا بعودتك، {name}",
-    "subtitleAdmin": "مشرف المنصة — wewigo ERP",
-    "subtitleDirector": "المدير — wewigo ERP",
+    "subtitleAdmin": "مشرف المنصة — {brand} ERP",
+    "subtitleDirector": "المدير — {brand} ERP",
     "loadError": "فشل تحميل بيانات لوحة التحكم.",
     "fallbackAdmin": "مشرف",
     "fallbackDirector": "مدير",

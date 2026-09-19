@@ -1,3 +1,7 @@
+/**
+ * @file i18n.js
+ * @description Locale registry and ICU translation initialization.
+ */
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import Backend from 'i18next-http-backend';
@@ -10,7 +14,7 @@ export const RTL_LANGUAGES        = ['ar'];
 export const DEFAULT_LANG         = 'en';
 
 export const NAMESPACES = [
-  'common', 'auth', 'academic', 'schedule', 'results', 'attendance',
+  'home', 'common', 'auth', 'academic', 'schedule', 'results', 'attendance',
   'examination', 'documents', 'finance', 'settings', 'notifications',
   'errors', 'print', 'gaet', 'staff', 'ai', 'admin', 'announcements',
 ];

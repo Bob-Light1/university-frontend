@@ -75,6 +75,19 @@ export const readRefusal = (error) => {
  * @param {boolean}  [params.enabled] - false keeps the hook idle (a closed dialog).
  * @returns {Object} the whole editing surface — see the fields below.
  */
+/**
+ * "No draft has been made yet" — a sentinel that can never be a report.
+ *
+ * The drafts below are keyed on the report OBJECT (`draft.source === report`),
+ * which is what makes a fresh report drop a stale draft on its own. `null` is
+ * therefore the one value that must NOT stand for "no draft": `report` is null
+ * while the pilot is idle, so `null === null` matched and the draft's own null
+ * value won. `EntitlementDialog` then read `.monthlyTokenBudget` off it and
+ * threw on its first render — and both admin screens mount that dialog
+ * unconditionally, closed, so the whole page came up blank.
+ */
+export const NO_DRAFT = Object.freeze({});
+
 export const useEntitlementPilot = ({ campusId, fetcher, mutator, enabled = true }) => {
   const [report, setReport] = useState(null);
   const [draft, setDraft] = useState({});
@@ -123,7 +136,7 @@ export const useEntitlementPilot = ({ campusId, fetcher, mutator, enabled = true
 
   // ── Draft edition ──────────────────────────────────────────────────────────
 
-  const [planDraft, setPlanDraft] = useState({ source: null, value: null });
+  const [planDraft, setPlanDraft] = useState({ source: NO_DRAFT, value: null });
   // Keyed on the report OBJECT: a fresh report (another campus, or the reload
   // that follows a save) drops the draft on its own, where an effect would
   // leave one render showing the previous campus's tier.

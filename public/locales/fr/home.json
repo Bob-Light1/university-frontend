@@ -1,0 +1,128 @@
+{
+  "product": "Gestion académique",
+  "home": "Accueil",
+  "skip": "Aller au contenu",
+  "navigation": "Navigation principale",
+  "menu": "Menu",
+  "language": "Langue",
+  "login": "Se connecter",
+  "features": "Fonctionnalités",
+  "preview": "Aperçu",
+  "faq": "Questions fréquentes",
+  "requestDemo": "Demander une démonstration",
+  "explore": "Explorer la plateforme",
+  "contact": "Contact",
+  "privacy": "Confidentialité",
+  "terms": "Conditions",
+  "enrollment": "Vous souhaitez vous inscrire ?",
+  "eyebrow": "Conçu pour les établissements de formation",
+  "heroTitle": "Toute la gestion de votre établissement,",
+  "heroAccent": "dans un espace unifié.",
+  "heroBody": "Réunissez la scolarité, les finances et vos équipes. Donnez à chacun les outils nécessaires pour faire avancer votre établissement.",
+  "roleAccess": "Accès par rôle",
+  "multiCampus": "Gestion multi-campus",
+  "previewEyebrow": "Votre espace de travail, en pratique",
+  "tryTabs": "Essayez les onglets",
+  "previewFootnote": "Une vue claire sur les activités du quotidien.",
+  "workspace": "Espace de travail",
+  "overview": "Pilotage",
+  "academics": "Scolarité",
+  "finance": "Finances",
+  "sampleCampus": "Campus exemple",
+  "illustration": "Illustration",
+  "sampleData": "Données fictives",
+  "sampleRecord": "Activité illustrative",
+  "chartDescription": "Activité illustrative sur sept périodes",
+  "previewDisclaimer": "Aperçu interactif · Données fictives · Aucun compte réel",
+  "featuresEyebrow": "L'essentiel, connecté",
+  "featuresTitle": "Moins de dispersion. Plus de clarté.",
+  "featuresBody": "De l'administration quotidienne au suivi des campus, rassemblez vos activités essentielles au même endroit.",
+  "availability": "Les modules disponibles dépendent de la configuration et de l'offre de votre campus.",
+  "rolesEyebrow": "Une plateforme commune, un espace pour chacun",
+  "rolesTitle": "Les bons outils, pour chaque rôle.",
+  "rolesBody": "Réunissez la direction, les équipes et les familles autour du même établissement, avec des accès adaptés à leurs rôles.",
+  "accessWorkspace": "Accéder à votre espace",
+  "faqEyebrow": "Quelques réponses utiles",
+  "faqTitle": "Un fonctionnement clair, dès le départ.",
+  "faqBody": "Découvrez comment la plateforme s'adapte à votre établissement.",
+  "closingEyebrow": "Faites place à l'essentiel",
+  "closingTitle": "Rapprochez vos équipes.",
+  "closingBody": "Découvrez une gestion plus cohérente de votre établissement.",
+  "footerBody": "Scolarité, équipes et campus. Un espace commun.",
+  "contactTitle": "Parlons de votre établissement.",
+  "contactBody": "Explorez la plateforme ou utilisez le contact proposé pour échanger sur vos besoins.",
+  "facts": {
+    "title0": "Pensé pour plusieurs campus",
+    "body0": "Gardez vos établissements connectés.",
+    "title1": "Des espaces multilingues",
+    "body1": "Travaillez dans votre langue.",
+    "title2": "Des accès adaptés aux rôles",
+    "body2": "À chacun ses responsabilités."
+  },
+  "featureTitles": {
+    "0": "Administration académique",
+    "1": "Emplois du temps et présences",
+    "2": "Résultats et examens",
+    "3": "Suivi financier",
+    "4": "Documents et communication",
+    "5": "Supervision des campus"
+  },
+  "featureBodies": {
+    "0": "Organisez les dossiers étudiants, les classes, les matières et les équipes pédagogiques.",
+    "1": "Coordonnez les emplois du temps et enregistrez les présences dans le même espace.",
+    "2": "Gérez les examens, les notes et la publication des résultats.",
+    "3": "Suivez les frais, les paiements enregistrés, les soldes et les reçus.",
+    "4": "Gardez les documents et les annonces à portée de vos équipes.",
+    "5": "Rassemblez les activités des campus tout en conservant des accès délimités."
+  },
+  "roleTitles": {
+    "0": "Direction et responsables",
+    "1": "Équipes pédagogiques et administratives",
+    "2": "Étudiants et familles"
+  },
+  "roleBodies": {
+    "0": "Suivez les activités des campus et coordonnez les équipes chargées du quotidien.",
+    "1": "Organisez les cours, les présences, les résultats et les documents dans des espaces dédiés.",
+    "2": "Retrouvez les emplois du temps, les résultats publiés et les informations accessibles à votre rôle."
+  },
+  "questions": {
+    "0": "Puis-je gérer plusieurs campus ?",
+    "1": "Tout le monde voit-il les mêmes informations ?",
+    "2": "Quelles langues sont disponibles ?",
+    "3": "Tous les modules sont-ils accessibles à chacun ?",
+    "4": "Où les candidats doivent-ils s’inscrire ?"
+  },
+  "answers": {
+    "0": "Oui. La plateforme propose une supervision multi-campus et des espaces limités à chaque campus.",
+    "1": "Non. Les accès dépendent du rôle connecté, du campus et des règles de rattachement applicables.",
+    "2": "L’ERP propose actuellement dix langues d’interface, dont l’arabe avec un affichage de droite à gauche. Utilisez le sélecteur pour les découvrir.",
+    "3": "Les modules disponibles dépendent de l’offre et de la configuration de chaque campus. Les illustrations ne donnent aucun accès à ces modules.",
+    "4": "Les candidatures, les formations et les activités des candidats restent dans le portail public distinct. Utilisez le lien d’inscription du pied de page."
+  },
+  "previewTitles": {
+    "overview": "Votre campus en un regard",
+    "academics": "Activité académique",
+    "finance": "Vue financière"
+  },
+  "charts": {
+    "overview": "Activité du campus",
+    "academics": "Suivi des présences",
+    "finance": "Paiements enregistrés"
+  },
+  "records": {
+    "overview": "Dossiers académiques actualisés",
+    "academics": "Résultats d’examen publiés",
+    "finance": "Reçu de paiement émis"
+  },
+  "metricLabels": {
+    "overview0": "Étudiants",
+    "overview1": "Classes",
+    "overview2": "Campus",
+    "academics0": "Classes",
+    "academics1": "Enseignants",
+    "academics2": "Examens",
+    "finance0": "Taux de recouvrement",
+    "finance1": "Soldes en attente",
+    "finance2": "Reçus"
+  }
+}

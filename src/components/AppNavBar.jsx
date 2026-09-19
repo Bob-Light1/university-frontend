@@ -1,5 +1,10 @@
 /**
  * @file AppNavBar.jsx
+ * @description Application component with shared deployment branding.
+ */
+import Brand from './shared/Brand';
+/**
+ * @file AppNavBar.jsx
  * @description Shared top AppBar used across all role-based layouts:
  *   Campus (Manager/Admin/Director), Teacher, Student, Parent.
  *
@@ -208,6 +213,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
             </IconButton>
           )}
 
+          <Box sx={{ display: { xs: 'none', lg: 'flex' }, mr: 2, maxWidth: 200 }}><Brand /></Box>
           {/* ── Page title + breadcrumb ── */}
           <Box sx={{ flexGrow: 1, minWidth: 0 }}>
             <Typography

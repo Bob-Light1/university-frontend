@@ -1,0 +1,128 @@
+{
+  "product": "Bildungsverwaltung",
+  "home": "Startseite",
+  "skip": "Zum Inhalt",
+  "navigation": "Hauptnavigation",
+  "menu": "Menü",
+  "language": "Sprache",
+  "login": "Anmelden",
+  "features": "Funktionen",
+  "preview": "Einblick",
+  "faq": "Häufige Fragen",
+  "requestDemo": "Demo anfragen",
+  "explore": "Plattform entdecken",
+  "contact": "Kontakt",
+  "privacy": "Datenschutz",
+  "terms": "Nutzungsbedingungen",
+  "enrollment": "Sie möchten sich einschreiben?",
+  "eyebrow": "Für Bildungseinrichtungen",
+  "heroTitle": "Ihre Einrichtung.",
+  "heroAccent": "Ein gemeinsamer Arbeitsbereich.",
+  "heroBody": "Verbinden Sie Studienverwaltung, Finanzen und Campus-Teams. Geben Sie allen die Werkzeuge für ihre tägliche Arbeit.",
+  "roleAccess": "Rollenbasierter Zugriff",
+  "multiCampus": "Mehrere Standorte",
+  "previewEyebrow": "Ein Blick in Ihren Arbeitsbereich",
+  "tryTabs": "Registerkarten ausprobieren",
+  "previewFootnote": "Ein klarer Überblick über den Alltag.",
+  "workspace": "Arbeitsbereich",
+  "overview": "Überblick",
+  "academics": "Studienverwaltung",
+  "finance": "Finanzen",
+  "sampleCampus": "Beispielcampus",
+  "illustration": "Illustration",
+  "sampleData": "Beispieldaten",
+  "sampleRecord": "Beispielaktivität",
+  "chartDescription": "Beispielaktivität über sieben Zeiträume",
+  "previewDisclaimer": "Interaktive Vorschau · Fiktive Daten · Kein echtes Konto",
+  "featuresEyebrow": "Das Wesentliche, verbunden",
+  "featuresTitle": "Weniger Insellösungen. Mehr Überblick.",
+  "featuresBody": "Von der täglichen Verwaltung bis zur Standortübersicht: bündeln Sie Ihre wichtigsten Aufgaben.",
+  "availability": "Verfügbare Module hängen von der Campus-Konfiguration und dem gebuchten Angebot ab.",
+  "rolesEyebrow": "Eine Plattform, ein Bereich für alle",
+  "rolesTitle": "Die passenden Werkzeuge für jede Rolle.",
+  "rolesBody": "Verbinden Sie Leitung, Teams und Familien mit Zugriffsrechten passend zu ihren Aufgaben.",
+  "accessWorkspace": "Arbeitsbereich öffnen",
+  "faqEyebrow": "Hilfreiche Antworten",
+  "faqTitle": "Klarheit von Anfang an.",
+  "faqBody": "Erfahren Sie, wie die Plattform zu Ihrer Einrichtung passt.",
+  "closingEyebrow": "Raum für das Wesentliche",
+  "closingTitle": "Bringen Sie Ihre Teams zusammen.",
+  "closingBody": "Entdecken Sie eine vernetzte Verwaltung für Ihre Einrichtung.",
+  "footerBody": "Studienverwaltung, Menschen und Standorte. Verbunden.",
+  "contactTitle": "Sprechen wir über Ihre Einrichtung.",
+  "contactBody": "Entdecken Sie die Plattform oder nutzen Sie den angebotenen Kontaktweg für Ihre Fragen.",
+  "facts": {
+    "title0": "Für mehrere Standorte",
+    "body0": "Verbinden Sie Ihre Einrichtungen.",
+    "title1": "Mehrsprachige Arbeitsbereiche",
+    "body1": "Arbeiten Sie in Ihrer Sprache.",
+    "title2": "Passende Zugriffsrechte",
+    "body2": "Werkzeuge für jede Verantwortung."
+  },
+  "featureTitles": {
+    "0": "Studienverwaltung",
+    "1": "Stundenpläne und Anwesenheit",
+    "2": "Ergebnisse und Prüfungen",
+    "3": "Finanzübersicht",
+    "4": "Dokumente und Kommunikation",
+    "5": "Standortüberblick"
+  },
+  "featureBodies": {
+    "0": "Organisieren Sie Studierendenakten, Klassen, Fächer und Lehrteams.",
+    "1": "Koordinieren Sie Stundenpläne und erfassen Sie Anwesenheiten.",
+    "2": "Verwalten Sie Prüfungen, Noten und die Veröffentlichung von Ergebnissen.",
+    "3": "Verfolgen Sie Gebühren, erfasste Zahlungen, Salden und Belege.",
+    "4": "Stellen Sie Dokumente und Mitteilungen für Ihre Teams bereit.",
+    "5": "Bündeln Sie die Campus-Verwaltung mit klar begrenzten Zugriffsrechten."
+  },
+  "roleTitles": {
+    "0": "Leitung und Management",
+    "1": "Lehre und Verwaltung",
+    "2": "Studierende und Familien"
+  },
+  "roleBodies": {
+    "0": "Behalten Sie die Standorte im Blick und koordinieren Sie Ihre Teams.",
+    "1": "Organisieren Sie Unterricht, Anwesenheit, Ergebnisse und Dokumente.",
+    "2": "Finden Sie Stundenpläne, veröffentlichte Ergebnisse und Informationen für Ihre Rolle."
+  },
+  "questions": {
+    "0": "Kann ich mehrere Standorte verwalten?",
+    "1": "Sehen alle dieselben Informationen?",
+    "2": "Welche Sprachen sind verfügbar?",
+    "3": "Sind alle Module für alle verfügbar?",
+    "4": "Wo melden sich Bewerber an?"
+  },
+  "answers": {
+    "0": "Ja. Die Plattform bietet eine standortübergreifende Übersicht und Arbeitsbereiche je Campus.",
+    "1": "Nein. Der Zugriff hängt von der angemeldeten Rolle, dem Campus und den jeweiligen Zuordnungen ab.",
+    "2": "Das ERP unterstützt zehn Sprachen, darunter Arabisch mit Rechts-nach-links-Darstellung. Nutzen Sie die Sprachauswahl.",
+    "3": "Die verfügbaren Module hängen vom Angebot und der Campus-Konfiguration ab. Produktabbildungen gewähren keinen Zugriff.",
+    "4": "Bewerbungen, Programme und Bewerberaktivitäten gehören in das separate öffentliche Portal. Nutzen Sie den Einschreibungslink in der Fußzeile."
+  },
+  "previewTitles": {
+    "overview": "Ihr Campus im Überblick",
+    "academics": "Studienbetrieb",
+    "finance": "Finanzübersicht"
+  },
+  "charts": {
+    "overview": "Campus-Aktivität",
+    "academics": "Anwesenheitsübersicht",
+    "finance": "Erfasste Zahlungen"
+  },
+  "records": {
+    "overview": "Studienakten aktualisiert",
+    "academics": "Prüfungsergebnisse veröffentlicht",
+    "finance": "Zahlungsbeleg ausgestellt"
+  },
+  "metricLabels": {
+    "overview0": "Studierende",
+    "overview1": "Klassen",
+    "overview2": "Standorte",
+    "academics0": "Klassen",
+    "academics1": "Lehrkräfte",
+    "academics2": "Prüfungen",
+    "finance0": "Zahlungsquote",
+    "finance1": "Offene Salden",
+    "finance2": "Belege"
+  }
+}
