@@ -1,8 +1,30 @@
 # Current task and handoff
 
 Last updated: 2026-09-19.
-Status: COMPLETED — Home motion and footer administrator access.
+Status: COMPLETED — Frontend CI dependency security audit fix.
 Branch observed: `main`.
+
+## Dependency security audit — 2026-09-19
+
+Objective: resolve the failing GitHub Actions security audit. The working tree
+was clean at the start. A fresh npm audit reproduced two high findings
+(`browserslist`, `js-yaml`) and two moderate findings (`@humanfs/node`,
+`baseline-browser-mapping`), all in transitive development dependencies.
+
+Ran `npm audit fix` without `--force`: only `package-lock.json` changed.
+Patched versions are browserslist 4.29.0, js-yaml 4.3.2, @humanfs/node 0.16.8
+and baseline-browser-mapping 2.11.25, with their supporting dependencies.
+The immediate audit reports zero vulnerabilities. Package declarations, the
+CI security threshold and Node configuration remain unchanged.
+
+Checks run now: clean `npm ci` passed; `npm audit --audit-level=high` passed with
+zero vulnerabilities; `npm run build` passed; all 190 locale/namespace combinations
+passed. The initial build was interrupted without a final result, then rerun
+successfully. No application source changed, so touched-source lint does not
+apply. Whitespace, tracking and ignore checks passed; no documentation links
+were added. Registry access required execution outside the network-restricted
+sandbox. No commit or push has been performed.
+Next action: review and commit the lockfile and this handoff, then push to rerun CI.
 
 ## Local integration — 2026-09-19
 
