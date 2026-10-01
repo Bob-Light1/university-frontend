@@ -17,7 +17,7 @@ export function publicUrl(value, allowRelative = false) {
 
 /** Resolve configuration without exposing secrets or using database state. */
 export function resolveBrand(config = {}) {
-  const email = String(config.VITE_SALES_EMAIL || '').trim();
+  const email = String(config.VITE_SALES_EMAIL ?? 'wewigo1@gmail.com').trim();
   const salesUrl = publicUrl(config.VITE_SALES_URL);
   const salesEmail = /^[^\s@<>?&#]+@[^\s@<>?&#]+\.[^\s@<>?&#]+$/.test(email) ? email : '';
   return Object.freeze({

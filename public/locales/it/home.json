@@ -51,7 +51,7 @@
   "closingBody": "Scopri una gestione più integrata del tuo istituto.",
   "footerBody": "Didattica, persone e campus. Connessi.",
   "contactTitle": "Parliamo del tuo istituto.",
-  "contactBody": "Esplora la piattaforma o utilizza il contatto disponibile per discutere le tue esigenze.",
+  "contactBody": "Parlaci del tuo istituto e delle tue esigenze. Il nostro team è qui per aiutarti.",
   "facts": {
     "title0": "Pensata per più campus",
     "body0": "Mantieni connessi i tuoi istituti.",
@@ -125,5 +125,10 @@
     "finance0": "Tasso di riscossione",
     "finance1": "Saldi in sospeso",
     "finance2": "Ricevute"
-  }
+  },
+  "lightMode": "Passa alla modalità chiara",
+  "darkMode": "Passa alla modalità scura",
+  "contactUnavailable": "Il contatto online non è al momento disponibile. Riprova più tardi.",
+  "pauseBackground": "Metti in pausa l’animazione dello sfondo",
+  "resumeBackground": "Riprendi l’animazione dello sfondo"
 }

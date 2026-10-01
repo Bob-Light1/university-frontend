@@ -12,15 +12,16 @@
  *  - Result detail drawer with audit correction
  *  - Retake list view
  *
- * Campus isolation: enforced by the backend; campusId comes from req.user.
+ * Campus isolation: enforced by the backend; the selected route campus is sent for global actors.
  */
 
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Box, Typography, Grid, Button, Stack, Chip, Alert,
   Table, TableHead, TableRow, TableCell, TableBody,
   TablePagination, Paper, IconButton, Tooltip, TextField,
-  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
+  FormControl, InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
   CircularProgress, Divider, Tab, Tabs, Badge,
 } from '@mui/material';
 import {
@@ -34,7 +35,6 @@ import KPICards from '../../../components/shared/KpiCard';
 import useResult from '../../../hooks/useResult';
 import {
   getResultById,
-  uploadResultsCSV,
   listGradingScales,
 } from '../../../services/resultService';
 import api from '../../../api/axiosInstance';
@@ -77,16 +77,22 @@ const LockSemesterDialog = ({ open, onClose, onConfirm, loading }) => {
         </Alert>
         <Grid container spacing={2}>
           <Grid size={{ xs: 8 }}>
-            <TextField select fullWidth size="small" label="Academic Year"
-              value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="lock-academicYear-label">Academic Year</InputLabel>
+              <Select labelId="lock-academicYear-label" label="Academic Year"
+                value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}>
               {years.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-            </TextField>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid size={{ xs: 4 }}>
-            <TextField select fullWidth size="small" label="Semester"
-              value={semester} onChange={(e) => setSemester(e.target.value)}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="lock-semester-label">Semester</InputLabel>
+              <Select labelId="lock-semester-label" label="Semester"
+                value={semester} onChange={(e) => setSemester(e.target.value)}>
               {['S1', 'S2', 'Annual'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-            </TextField>
+              </Select>
+            </FormControl>
           </Grid>
         </Grid>
       </DialogContent>
@@ -107,24 +113,23 @@ const LockSemesterDialog = ({ open, onClose, onConfirm, loading }) => {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const ResultManager = () => {
-  const { user, getUserRole } = useContext(AuthContext);
+  const { getUserRole } = useContext(AuthContext);
   const role      = getUserRole();
-  const campusId  = user?.campusId ?? user?.schoolCampus ?? '';
+  const campusId  = useCampusContext();
   const isAdmin   = role === 'ADMIN' || role === 'DIRECTOR';
 
   // Data hook
   const {
-    results, overview, summary, loading, error,
+    results, summary, loading, error,
     pagination, filters,
     fetch, fetchOverview,
     handleFilterChange, handleReset, setPage,
     create, update, remove, bulkCreate,
-    submit, submitAllBatch, publish, publishAllBatch,
+    submit, publish, publishAllBatch,
     archive, lockSem, auditCorrect,
-  } = useResult('manager');
+  } = useResult('manager', { campusId });
 
   // Local state
-  const [tab,              setTab]              = useState(0);
   const [classes,          setClasses]          = useState([]);
   const [subjects,         setSubjects]         = useState([]);
   const [teachers,         setTeachers]         = useState([]);
@@ -164,10 +169,10 @@ const ResultManager = () => {
     const load = async () => {
       try {
         const [cls, sub, tch, scales] = await Promise.all([
-          api.get('/class',    { params: { limit: 200 } }),
-          api.get('/subject',  { params: { limit: 200 } }),
-          api.get('/teachers', { params: { limit: 200 } }),
-          listGradingScales(),
+          api.get('/class',    { params: { campusId, limit: 200 } }),
+          api.get('/subject',  { params: { campusId, limit: 200 } }),
+          api.get('/teachers', { params: { campusId, limit: 200 } }),
+          listGradingScales({ campusId }),
         ]);
         // Normalise response shape — backend may return data.data or data.records
         const pick = (res) =>
@@ -181,9 +186,7 @@ const ResultManager = () => {
         console.error('[ResultManager] reference data load error:', err?.response?.data?.message ?? err?.message);
       }
     };
-    // Always load reference data.
-    // ADMIN/DIRECTOR have no campusId in their JWT — the backend scopes
-    // data visibility via buildCampusFilter(req.user) server-side.
+    // Reference choices follow the selected campus for every management role.
     load();
   }, [campusId]);
 
@@ -200,7 +203,7 @@ const ResultManager = () => {
     setStudentsLoading(true);
     try {
       const res = await api.get('/students', {
-        params: { classId, status: 'active', limit: 200 },
+        params: { campusId, classId, status: 'active', limit: 200 },
       });
       const list = res.data?.data ?? res.data?.records ?? res.data?.results ?? [];
       if (target === 'bulk') setBulkStudents(list);
@@ -212,7 +215,7 @@ const ResultManager = () => {
     } finally {
       setStudentsLoading(false);
     }
-  }, []);
+  }, [campusId]);
 
   // Load overview on first render
   useEffect(() => { fetchOverview(); }, [fetchOverview]);
@@ -221,7 +224,7 @@ const ResultManager = () => {
 
   const openDetail = async (resultId) => {
     try {
-      const res = await getResultById(resultId);
+      const res = await getResultById(resultId, { campusId });
       setSelectedResult(res.data?.data ?? null);
       setDetailOpen(true);
     } catch { /* silent */ }

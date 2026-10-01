@@ -62,5 +62,9 @@
     "category": "Categoria",
     "tags": "Etiquetas",
     "date": "Data"
+  },
+  "workflow": {
+    "reason": "Motivo",
+    "optionalReason": "Motivo (opcional)"
   }
 }

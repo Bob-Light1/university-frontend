@@ -25,7 +25,7 @@ export default function Footer() {
   const portal = publicUrl(PORTAL_URL);
   return <footer className="product-footer">
     <div className="product-container">
-      <div className="product-footer-top"><div><button type="button" className="product-brand product-admin-shortcut" aria-label={`${BRAND.name} — ${t('adminShortcut')}`} onClick={openAdmin} onBlur={() => { activations.current = []; }}><Brand /></button><p>{t('footerBody')}</p></div><div className="product-footer-links"><a href="/#features">{t('features')}</a><a href="/#preview">{t('preview')}</a><Link to="/login">{t('login')}</Link>{BRAND.salesHref && <a href={BRAND.salesHref}>{t('contact')}</a>}</div></div>
+      <div className="product-footer-top"><div><button type="button" className="product-brand product-admin-shortcut" aria-label={`${BRAND.name} — ${t('adminShortcut')}`} onClick={openAdmin} onBlur={() => { activations.current = []; }}><Brand /></button><p>{t('footerBody')}</p></div><div className="product-footer-links"><a href="/#features">{t('features')}</a><a href="/#preview">{t('preview')}</a><Link to="/login">{t('login')}</Link><Link to="/contact">{t('contact')}</Link></div></div>
       <div className="product-footer-bottom"><span>© {new Date().getFullYear()} {BRAND.name}</span><div>{BRAND.privacy && <a href={BRAND.privacy}>{t('privacy')}</a>}{BRAND.terms && <a href={BRAND.terms}>{t('terms')}</a>}{portal && <a data-testid="home-enrollment" href={portal}>{t('enrollment')} ↗</a>}</div></div>
     </div>
   </footer>;

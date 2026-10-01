@@ -8,6 +8,7 @@
  * @param {Function} onSuccess   - Called with the saved partner after success
  */
 
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useEffect, useMemo } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -185,6 +186,7 @@ const buildInitialValues = (partner) => ({
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
+  const campusId = useCampusContext();
   const isEdit = Boolean(partner?._id);
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
 
@@ -214,7 +216,7 @@ const PartnerForm = ({ open, partner, onClose, onSuccess }) => {
         }
         const res = isEdit
           ? await updatePartner(partner._id, payload)
-          : await registerPartner(payload);
+          : await registerPartner({ ...payload, schoolCampus: campusId });
         showSnackbar(
           isEdit ? 'Partner updated successfully.' : 'Partner created successfully.',
           'success',

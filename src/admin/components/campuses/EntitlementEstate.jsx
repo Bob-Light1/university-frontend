@@ -201,7 +201,7 @@ export default function EntitlementEstate() {
                   <TableCell>
                     <Chip
                       size="small"
-                      label={t(`features.pilot.planOption.${campus.plan}`)}
+                      label={t(campus.plan ? `features.pilot.planOption.${campus.plan}` : 'features.pilot.estate.unconfigured')}
                       sx={{ fontWeight: 700 }}
                     />
                   </TableCell>

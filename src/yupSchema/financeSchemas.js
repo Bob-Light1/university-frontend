@@ -35,6 +35,11 @@ const optionalObjectId = (label = 'ID') =>
     .matches(OBJECT_ID_REGEX, `${label} must be a valid identifier`)
     .notRequired();
 
+// Blank optional dates are absent; nonempty invalid values still fail validation.
+const optionalDate = () => Yup.date()
+  .transform((value, original) => original === '' ? null : value)
+  .nullable().optional();
+
 // Supporting documents: an array of Cloudinary URLs (receipts / invoices).
 const attachmentsField = Yup.array()
   .of(Yup.string().url('Each attachment must be a valid URL.'))
@@ -62,7 +67,7 @@ export const feeSchema = Yup.object({
     .max(20, 'Academic year must not exceed 20 characters.')
     .nullable(),
 
-  dueDate: Yup.date().nullable().optional(),
+  dueDate: optionalDate(),
 
   notes: Yup.string().trim().max(500, 'Notes must not exceed 500 characters.').nullable(),
 });
@@ -87,7 +92,7 @@ export const buildPaymentSchema = (balance = Infinity) =>
 
     reference: Yup.string().trim().max(120, 'Reference is too long.').nullable(),
 
-    paidAt: Yup.date().nullable().optional(),
+    paidAt: optionalDate(),
 
     notes: Yup.string().trim().max(500, 'Notes must not exceed 500 characters.').nullable(),
   });

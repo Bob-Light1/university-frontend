@@ -51,7 +51,7 @@
   "closingBody": "Descubre una forma más integrada de gestionar tu institución.",
   "footerBody": "Gestión académica, personas y campus conectados.",
   "contactTitle": "Hablemos de tu institución.",
-  "contactBody": "Explora la plataforma o utiliza el canal de contacto disponible para compartir tus necesidades.",
+  "contactBody": "Cuéntanos sobre tu institución y tus necesidades. Nuestro equipo está aquí para ayudarte.",
   "facts": {
     "title0": "Pensado para varios campus",
     "body0": "Mantén conectadas tus instituciones.",
@@ -125,5 +125,10 @@
     "finance0": "Tasa de cobro",
     "finance1": "Saldos pendientes",
     "finance2": "Recibos"
-  }
+  },
+  "lightMode": "Cambiar al modo claro",
+  "darkMode": "Cambiar al modo oscuro",
+  "contactUnavailable": "El contacto en línea no está disponible en este momento. Inténtalo más tarde.",
+  "pauseBackground": "Pausar la animación del fondo",
+  "resumeBackground": "Reanudar la animación del fondo"
 }

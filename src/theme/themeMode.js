@@ -36,6 +36,21 @@ function _readStoredMode() {
   }
 }
 
+/** Notify mounted consumers without rewriting a preference from another tab. */
+function _updateMode(next) {
+  if (next === _mode) return;
+  _mode = next;
+  _listeners.forEach((fn) => fn(next));
+}
+
+/** Re-read the latest value, including removal/clear, rather than stale events. */
+function _onStorage(event) {
+  if (event.storageArea !== window.localStorage) return;
+  if (event.key === THEME_STORAGE_KEY || event.key === null) {
+    _updateMode(_readStoredMode());
+  }
+}
+
 /** Current colour mode preference ('light' | 'dark' | 'system'). */
 export function getThemeMode() {
   return _mode;
@@ -54,19 +69,26 @@ export function setThemeMode(mode) {
   } catch {
     /* storage may be unavailable (private mode) — mode still lives in memory */
   }
-  if (next === _mode) return;
-  _mode = next;
-  _listeners.forEach((fn) => fn(next));
+  _updateMode(next);
 }
 
 /**
- * Subscribe to colour-mode changes.
+ * Subscribe to colour-mode changes and immediately receive the current mode.
  * @param {(mode: string) => void} fn
  * @returns {() => void} unsubscribe
  */
 export function subscribeThemeMode(fn) {
+  if (_listeners.size === 0 && typeof window !== 'undefined') {
+    window.addEventListener('storage', _onStorage);
+  }
   _listeners.add(fn);
-  return () => _listeners.delete(fn);
+  fn(_mode);
+  return () => {
+    _listeners.delete(fn);
+    if (_listeners.size === 0 && typeof window !== 'undefined') {
+      window.removeEventListener('storage', _onStorage);
+    }
+  };
 }
 
 /**

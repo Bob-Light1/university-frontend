@@ -1,3 +1,8 @@
+/**
+ * @file StaffForm.jsx
+ * @description Create or edit staff identity and campus-owned role assignments.
+ */
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useEffect, useState } from 'react';
 import {
   Grid, Button, CircularProgress,
@@ -9,7 +14,6 @@ import {
 } from '@mui/icons-material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useParams } from 'react-router-dom';
 
 import api                  from '../../../api/axiosInstance';
 import { createStaff, updateStaff, assignStaffRole } from '../../../services/staffService';
@@ -51,10 +55,11 @@ const editSchema = Yup.object({
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/** Render the campus account form and activation result. */
 export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
   const { t }     = useAppTranslation('staff');
   const isEdit    = Boolean(staff?._id);
-  const { campusId } = useParams();
+  const campusId = useCampusContext();
   const theme     = useTheme();
   const isMobile  = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -112,7 +117,7 @@ export default function StaffForm({ initialData: staff, onSuccess, onCancel }) {
           }
           onSuccess(t('staff:form.updatedSuccess'));
         } else {
-          const res = await createStaff(payload);
+          const res = await createStaff({ ...payload, schoolCampus: campusId });
           const activation = res?.data?.data?.activation;
           if (activation) setActivationResult(activation);
           else onSuccess(t('staff:form.createdSuccess'));

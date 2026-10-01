@@ -51,7 +51,7 @@
   "closingBody": "探索更协同的学校管理方式。",
   "footerBody": "连接教务、人员和校区。",
   "contactTitle": "聊聊您的教育机构。",
-  "contactBody": "探索平台，或通过提供的联系方式交流您的需求。",
+  "contactBody": "告诉我们您的机构情况和需求。我们的团队随时为您提供帮助。",
   "facts": {
     "title0": "为多校区而设计",
     "body0": "连接各个教育机构。",
@@ -125,5 +125,10 @@
     "finance0": "收款率",
     "finance1": "待结余额",
     "finance2": "收据"
-  }
+  },
+  "lightMode": "切换到浅色模式",
+  "darkMode": "切换到深色模式",
+  "contactUnavailable": "在线联系暂不可用，请稍后再试。",
+  "pauseBackground": "暂停背景动画",
+  "resumeBackground": "恢复背景动画"
 }

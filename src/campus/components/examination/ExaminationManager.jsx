@@ -10,6 +10,7 @@
  *  - Analytics  : Campus KPIs, early-warning list, export
  */
 
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useState, useEffect, useCallback, useContext } from 'react';
 import {
   Box, Typography, Grid, Button, Stack, Chip, Alert,
@@ -718,7 +719,7 @@ const EnrollmentsDialog = ({ open, onClose, session }) => {
 const ExaminationManager = () => {
 
   const { user } = useContext(AuthContext);
-  const campusId = user?.campusId ?? user?.schoolCampus ?? '';
+  const campusId = useCampusContext();
 
   // ── Tab state ──────────────────────────────────────────────────────────────
   const [tab, setTab] = useState(0);
@@ -754,7 +755,7 @@ const ExaminationManager = () => {
   const loadSessions = useCallback(async () => {
     setSessionsLoading(true);
     try {
-      const params = { page: sessionsPage + 1, limit: 10 };
+      const params = { campusId, page: sessionsPage + 1, limit: 10 };
       if (sessionsFilter.status)      params.status      = sessionsFilter.status;
       if (sessionsFilter.examPeriod)  params.examPeriod  = sessionsFilter.examPeriod;
       if (sessionsFilter.academicYear) params.academicYear = sessionsFilter.academicYear;
@@ -769,7 +770,7 @@ const ExaminationManager = () => {
     } finally {
       setSessionsLoading(false);
     }
-  }, [sessionsPage, sessionsFilter]);
+  }, [sessionsPage, sessionsFilter, campusId]);
 
   const loadRelatedData = useCallback(async () => {
     try {
@@ -827,7 +828,7 @@ const ExaminationManager = () => {
   const loadGradings = useCallback(async () => {
     setGradingsLoading(true);
     try {
-      const params = { page: gradingsPage + 1, limit: 10 };
+      const params = { campusId, page: gradingsPage + 1, limit: 10 };
       if (gradingFilter.sessionId) params.sessionId = gradingFilter.sessionId;
       if (gradingFilter.status)    params.status    = gradingFilter.status;
       const res = await examService.listGradings(params);
@@ -838,7 +839,7 @@ const ExaminationManager = () => {
     } finally {
       setGradingsLoading(false);
     }
-  }, [gradingsPage, gradingFilter]);
+  }, [gradingsPage, gradingFilter, campusId]);
 
   useEffect(() => { if (tab === 1) loadGradings(); }, [tab, loadGradings]);
 
@@ -887,7 +888,7 @@ const ExaminationManager = () => {
   const loadAppeals = useCallback(async () => {
     setAppealsLoading(true);
     try {
-      const params = { page: appealsPage + 1, limit: 10 };
+      const params = { campusId, page: appealsPage + 1, limit: 10 };
       if (appealStatusFilter) params.status = appealStatusFilter;
       const res = await examService.listAppeals(params);
       setAppeals(res.data?.data?.appeals || res.data?.data || []);
@@ -897,7 +898,7 @@ const ExaminationManager = () => {
     } finally {
       setAppealsLoading(false);
     }
-  }, [appealsPage, appealStatusFilter]);
+  }, [appealsPage, appealStatusFilter, campusId]);
 
   useEffect(() => { if (tab === 2) loadAppeals(); }, [tab, loadAppeals]);
 
@@ -940,8 +941,8 @@ const ExaminationManager = () => {
     setAnalyticsLoading(true);
     try {
       const [ovRes, ewRes] = await Promise.all([
-        examService.getCampusOverview(),
-        examService.getEarlyWarning({ page: earlyWarningPage + 1, limit: 10 }),
+        examService.getCampusOverview({ campusId }),
+        examService.getEarlyWarning({ campusId, page: earlyWarningPage + 1, limit: 10 }),
       ]);
       setOverview(ovRes.data?.data || {});
       setEarlyWarning(ewRes.data?.data?.students || ewRes.data?.data || []);
@@ -951,7 +952,7 @@ const ExaminationManager = () => {
     } finally {
       setAnalyticsLoading(false);
     }
-  }, [earlyWarningPage]);
+  }, [earlyWarningPage, campusId]);
 
   useEffect(() => { if (tab === 3) loadAnalytics(); }, [tab, loadAnalytics]);
 
@@ -959,7 +960,7 @@ const ExaminationManager = () => {
     if (!exportYear) { showSnack('Select an academic year.', 'warning'); return; }
     setExportLoading(true);
     try {
-      const res = await examService.exportReport({ academicYear: exportYear, format: 'json' });
+      const res = await examService.exportReport({ campusId, academicYear: exportYear, format: 'json' });
       const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');

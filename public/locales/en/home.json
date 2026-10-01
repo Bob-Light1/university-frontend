@@ -51,7 +51,7 @@
   "closingBody": "Discover a more connected way to manage your institution.",
   "footerBody": "Academic operations, people and campuses. Connected.",
   "contactTitle": "Let's talk about your institution.",
-  "contactBody": "Discover the platform or use the configured contact channel to discuss your needs.",
+  "contactBody": "Tell us about your institution and your needs. Our team is here to help.",
   "facts": {
     "title0": "Multi-campus by design",
     "body0": "Keep your institutions connected.",
@@ -125,5 +125,10 @@
     "finance0": "Collection rate",
     "finance1": "Pending balances",
     "finance2": "Receipts"
-  }
+  },
+  "lightMode": "Switch to light mode",
+  "darkMode": "Switch to dark mode",
+  "contactUnavailable": "Online contact is currently unavailable. Please try again later.",
+  "pauseBackground": "Pause background animation",
+  "resumeBackground": "Resume background animation"
 }

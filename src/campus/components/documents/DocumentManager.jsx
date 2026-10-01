@@ -11,11 +11,11 @@
  *  - Detail drawer with share links, versions, audit log
  *  - Mobile-responsive: cards on xs, table on sm+
  *
- * Campus isolation: enforced server-side. No campusId injected here.
+ * Campus isolation: enforced server-side. The selected campus is passed to list queries.
  */
 
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -79,7 +79,6 @@ import {
   OfficialBadge,
   DocumentVersionBadge,
   DocumentEmptyState,
-  getMimeLabel,
 } from '../../../components/documents/DocumentShared';
 import { fDate } from '../../../utils/dateFormat';
 import HardDeleteDialog from '../../../components/shared/HardDeleteDialog';
@@ -165,7 +164,7 @@ const STATUS_TABS = [
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const DocumentManager = () => {
-  const { campusId } = useParams();
+  const campusId = useCampusContext();
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -173,7 +172,7 @@ const DocumentManager = () => {
   const userRole        = getUserRole();
   const isAdmin         = ['ADMIN', 'DIRECTOR'].includes(userRole);
 
-  const hookRef = useDocument('manager');
+  const hookRef = useDocument('manager', campusId);
   const {
     documents, total, loading, error,
     filters, fetch, handleFilterChange, handleReset, setPage,

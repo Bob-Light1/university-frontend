@@ -5,7 +5,7 @@
  */
 
 import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, Box,
@@ -19,7 +19,7 @@ import { DEFAULT_CURRENCY } from './financeConstants';
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
-  const { t } = useTranslation('finance');
+  const { t } = useAppTranslation('finance');
   const formik = useFormik({
     initialValues: {
       student: null,        // selected student object (picker)
@@ -133,7 +133,8 @@ const FeeFormDialog = ({ open, campusId, onClose, onSubmit }) => {
             <TextField
               fullWidth name="dueDate" label={t('fields.dueDate')} type="date"
               value={formik.values.dueDate}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange} onBlur={formik.handleBlur}
+              error={Boolean(fieldError('dueDate'))} helperText={fieldError('dueDate')}
               slotProps={{ inputLabel: { shrink: true } }}
               sx={ROUNDED}
             />

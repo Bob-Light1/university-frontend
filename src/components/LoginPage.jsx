@@ -4,21 +4,8 @@
  */
 import Brand from './shared/Brand';
 import { BRAND } from '../config/brand';
-/**
- * @file LoginPage.jsx
- * @description Unified login component.
- *
- *   variant="public" — 2-step flow:
- *     Step 1: full-screen role selector (large cards, gradient bg)
- *     Step 2: form with adaptive left-panel copy per role + forgot-password modal
- *
- *   variant="admin" — single step, email-only, fixed blue theme.
- *
- *   All @keyframes defined inline — no external CSS file needed.
- */
-
-import { useState }                   from 'react';
-import { useNavigate, useLocation }   from 'react-router-dom';
+import { useEffect, useRef, useState }                   from 'react';
+import { Link, useNavigate, useLocation }   from 'react-router-dom';
 import { useFormik }                  from 'formik';
 import * as Yup                       from 'yup';
 import {
@@ -114,19 +101,6 @@ const ADMIN_COLOR    = '#003285';
  */
 const roleAccent = (mode, color) => (mode === 'dark' ? lighten(color, 0.45) : color);
 
-// Fixed neutral gradient for Step 1 — independent of any role selection.
-// This ensures the "back" button always restores the same visual state.
-const STEP1_GRADIENT = 'linear-gradient(135deg, #0d1b3e 0%, #1c3a6e 100%)';
-
-// ── Bubbles (no CSS file) ─────────────────────────────────────────────────────
-
-const BUBBLES = [
-  { w: 320, h: 320, color: 'rgba(182,216,250,0.35)', top:   -80,  left:  -80,  dur: '58s' },
-  { w: 420, h: 420, color: 'rgba(140,203,230,0.25)', bottom:-120, right: -100, dur: '56s' },
-  { w: 260, h: 260, color: 'rgba(255,255,255,0.48)', top:  '30%', left: '70%', dur: '52s' },
-  { w: 200, h: 200, color: 'rgba(181,183,185,0.2)',  top:  '70%', left: '10%', dur: '50s' },
-];
-
 // ── Admin schema ──────────────────────────────────────────────────────────────
 
 const adminSchema = Yup.object({
@@ -136,6 +110,7 @@ const adminSchema = Yup.object({
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Accessible role selection and shared credential form, preserving login routing. */
 export default function LoginPage({ variant = 'public' }) {
   const isAdmin   = variant === 'admin';
   const navigate  = useNavigate();
@@ -144,12 +119,24 @@ export default function LoginPage({ variant = 'public' }) {
   const { t }     = useAppTranslation(['auth', 'common']);
   const { palette: { mode } } = useTheme();
 
+  const identifierInput = useRef(null);
+  const roleButtons = useRef({});
+  const previousStep = useRef(1);
+
   const [step,           setStep]           = useState(1); // 1 = role picker, 2 = form
   const [showPassword,   setShowPassword]   = useState(false);
   const [userType,       setUserType]       = useState('manager');
   const [identifierMode, setIdentifierMode] = useState('email');
   const [forgotOpen,     setForgotOpen]     = useState(false);
   const [snackbar,       setSnackbar]       = useState({ open: false, message: '', severity: 'success' });
+
+  useEffect(() => {
+    if (step === previousStep.current) return;
+    previousStep.current = step;
+    const target = step === 2 ? identifierInput.current : roleButtons.current[userType];
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView({ block: 'center', behavior: 'instant' });
+  }, [step, userType]);
 
   const currentType = USER_TYPES.find((ut) => ut.value === userType) ?? USER_TYPES[0];
   const RoleIcon    = currentType.icon;
@@ -209,6 +196,7 @@ export default function LoginPage({ variant = 'public' }) {
       const newType = USER_TYPES.find((t) => t.value === value);
       if (!newType?.supportsUsername) setIdentifierMode('email');
     }
+    setShowPassword(false);
     setStep(2);
   };
 
@@ -220,40 +208,29 @@ export default function LoginPage({ variant = 'public' }) {
 
   const closeSnackbar = () => setSnackbar((s) => ({ ...s, open: false }));
 
+  // Keep semantic error/disabled boundaries when role-colored fields are focused.
+  const inputSx = {
+    borderRadius: 2,
+    '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2, borderColor: 'text.secondary' },
+    '&:hover:not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
+    '&.Mui-focused:not(.Mui-error) .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
+  };
+
   // ── Shared background wrapper ─────────────────────────────────────────────
 
   const bgSx = {
-    minHeight: '100vh',
+    minHeight: isAdmin ? '100dvh' : 'calc(100dvh - 80px)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    p: { xs: 2, sm: 3 }, position: 'relative', overflow: 'hidden',
-    background: activeGrad, transition: 'background 0.5s ease',
-    '@keyframes floatBubble': {
-      '0%':   { transform: 'translateY(0) translateX(0) scale(1)' },
-      '50%':  { transform: 'translateY(-60px) translateX(40px) scale(1.1)' },
-      '100%': { transform: 'translateY(0) translateX(0) scale(1)' },
+    px: { xs: 2, sm: 3 }, py: { xs: isAdmin ? 8 : 4, sm: 6 }, position: 'relative',
+    background: isAdmin ? activeGrad : 'var(--entry-bg)',
+    '& *, & *::before, & *::after': {
+      '@media (prefers-reduced-motion: reduce)': { animation: 'none !important', transition: 'none !important' },
     },
-    '@keyframes logoFloat': {
-      '0%, 100%': { transform: 'translateY(0px)' },
-      '50%':      { transform: 'translateY(-14px)' },
+    '& .MuiButton-root:focus-visible, & .MuiIconButton-root:focus-visible': {
+      outline: '3px solid', outlineColor: 'primary.main', outlineOffset: 3,
     },
-    '@keyframes pulse': {
-      '0%, 100%': { opacity: 0.5 },
-      '50%':      { opacity: 1 },
-    },
+    '& input': { scrollMarginTop: '110px' },
   };
-
-  const bubblesJsx = (
-    <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-      {BUBBLES.map((b, i) => (
-        <Box key={i} sx={{
-          position: 'absolute', borderRadius: '50%', opacity: 0.6,
-          width: b.w, height: b.h, bgcolor: b.color,
-          top: b.top, left: b.left, bottom: b.bottom, right: b.right,
-          animation: `floatBubble ${b.dur} linear infinite`,
-        }} />
-      ))}
-    </Box>
-  );
 
   // ─────────────────────────────────────────────────────────────────────────
   // STEP 1 — Role picker (public variant only)
@@ -261,131 +238,46 @@ export default function LoginPage({ variant = 'public' }) {
 
   if (!isAdmin && step === 1) {
     return (
-      <Box sx={{ ...bgSx, background: STEP1_GRADIENT }}>
-        {/* Bubbles — inlined to avoid inner-component remount flicker */}
-        <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-          {BUBBLES.map((b, i) => (
-            <Box key={i} sx={{
-              position: 'absolute', borderRadius: '50%', opacity: 0.6,
-              width: b.w, height: b.h, bgcolor: b.color,
-              top: b.top, left: b.left, bottom: b.bottom, right: b.right,
-              animation: `floatBubble ${b.dur} linear infinite`,
-            }} />
-          ))}
-        </Box>
-        <Fade in timeout={500}>
-          <Box sx={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: 960, textAlign: 'center' }}>
-
-            {/* Wordmark */}
-            <Typography variant="h3" fontWeight={900} sx={{ color: 'white', mb: 1, letterSpacing: -1 }}>
-              <Brand />
-            </Typography>
-            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 300, mb: 5 }}>
-              {t('login.step1.whoAreYou')}
-            </Typography>
-
-            {/* Role cards grid */}
-            <Box sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' },
-              gap: { xs: 1.5, sm: 2 },
-              mb: 4,
-            }}>
-              {USER_TYPES.map(({ value, icon: Icon, color }) => {
-                const sel = userType === value;
-                const cardAccent = roleAccent(mode, color);
-                return (
-                  <Box
-                    key={value}
-                    role="button" tabIndex={0}
-                    onClick={() => selectRole(value)}
-                    onKeyDown={(e) => e.key === 'Enter' && selectRole(value)}
-                    sx={{
-                      // The card sits on the brand gradient but is a real surface:
-                      // it must follow the palette, otherwise `text.primary`
-                      // (white in dark mode) lands on a hardcoded white card.
-                      cursor: 'pointer', outline: 'none',
-                      bgcolor: 'background.paper', borderRadius: 3,
-                      p: { xs: 2, sm: 3 },
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5,
-                      border: `2px solid ${sel ? cardAccent : 'transparent'}`,
-                      boxShadow: sel
-                        ? `0 8px 32px ${alpha(cardAccent, 0.35)}`
-                        : '0 2px 12px rgba(0,0,0,0.1)',
-                      transition: 'all 0.22s ease',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        borderColor: cardAccent,
-                        boxShadow: `0 14px 40px ${alpha(cardAccent, 0.3)}`,
-                      },
-                      '&:focus-visible': {
-                        boxShadow: (t) => `0 0 0 3px ${t.palette.background.paper}, 0 0 0 5px ${cardAccent}`,
-                      },
-                    }}
-                  >
-                    <Box sx={{
-                      width: 60, height: 60, borderRadius: '50%',
-                      bgcolor: alpha(cardAccent, 0.1),
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <Icon sx={{ fontSize: 30, color: cardAccent }} />
-                    </Box>
-                    <Typography variant="subtitle1" fontWeight={700} color="text.primary">
-                      {t(`login.roles.${value}.label`)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4, textAlign: 'center' }}>
-                      {t(`login.roles.${value}.description`)}
-                    </Typography>
-                  </Box>
-                );
-              })}
-
-              {/* 8th card — wewigo home, balances the 4-column grid */}
-              <Box
-                role="button" tabIndex={0}
-                onClick={() => navigate('/')}
-                onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
-                aria-label={t('login.step1.backToHomeAria', { brand: BRAND.name })}
+      <Box className="product-login-page" sx={bgSx}>
+        <Box sx={{ width: '100%', maxWidth: 1000, textAlign: 'center' }}>
+          <Typography component="h1" variant="h3" fontWeight={700}
+            sx={{ color: 'var(--ink)', fontSize: { xs: '2rem', sm: '2.6rem' }, mb: 1 }}>
+            {t('login.title')}
+          </Typography>
+          <Typography sx={{ color: 'var(--muted)', mb: { xs: 3, sm: 4 } }}>{t('login.step1.whoAreYou')}</Typography>
+          <Box sx={{
+            display: 'grid', gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', sm: 'repeat(3, minmax(0, 1fr))', md: 'repeat(4, minmax(0, 1fr))' },
+            gap: { xs: 1.5, sm: 2 }, mb: 3,
+            '@media (max-width: 359px)': { gridTemplateColumns: '1fr' },
+          }}>
+            {USER_TYPES.map(type => {
+              const { value, icon: Icon, color } = type;
+              const cardAccent = roleAccent(mode, color);
+              return <Box component="button" type="button" key={value} data-login-role={value}
+                ref={element => { roleButtons.current[value] = element; }} onClick={() => selectRole(value)}
                 sx={{
-                  cursor: 'pointer', outline: 'none',
-                  borderRadius: 3,
-                  p: { xs: 2, sm: 3 },
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5,
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-                  border: '2px solid rgba(255,255,255,0.18)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-                  transition: 'all 0.22s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    background: 'rgba(255,255,255,0.18)',
-                    border: '2px solid rgba(255,255,255,0.45)',
-                    boxShadow: '0 14px 40px rgba(0,0,0,0.22)',
-                  },
-                  '&:focus-visible': { boxShadow: '0 0 0 3px white, 0 0 0 5px rgba(255,255,255,0.4)' },
-                }}
-              >
-                <Box sx={{
-                  width: 60, height: 60, borderRadius: '50%',
-                  bgcolor: 'rgba(255,255,255,0.15)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', font: 'inherit', textAlign: 'center', minWidth: 0,
+                  bgcolor: 'background.paper', color: 'text.primary', borderRadius: 3,
+                  p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5,
+                  border: '1px solid', borderColor: 'divider', boxShadow: '0 3px 12px rgba(0,0,0,0.03)',
+                  transition: 'border-color .2s, box-shadow .2s',
+                  '&:hover': { borderColor: cardAccent, boxShadow: `0 5px 18px ${alpha(cardAccent, 0.15)}` },
+                  '&:focus-visible': { outline: `3px solid ${cardAccent}`, outlineOffset: 3 },
                 }}>
-                  <HomeIcon sx={{ fontSize: 30, color: 'white' }} />
+                <Box component="span" sx={{ width: 48, height: 48, borderRadius: 2, bgcolor: alpha(cardAccent, 0.1), display: 'grid', placeItems: 'center' }}>
+                  <Icon sx={{ fontSize: 26, color: cardAccent }} />
                 </Box>
-                <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white' }}>
-                  <Brand />
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, textAlign: 'center' }}>
-                  {t('login.step1.backToHome')}
-                </Typography>
-              </Box>
+                <Typography component="span" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>{t(`login.roles.${value}.label`)}</Typography>
+                <Typography component="span" variant="body2" color="text.secondary" sx={{ lineHeight: 1.55, fontSize: '0.82rem' }}>{t(`login.roles.${value}.description`)}</Typography>
+              </Box>;
+            })}
+            <Box component={Link} to="/" aria-label={t('login.step1.backToHomeAria', { brand: BRAND.name })}
+              sx={{ p: 3, borderRadius: 3, border: '1px dashed', borderColor: 'divider', color: 'var(--muted)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, '&:hover': { color: 'var(--ink)', bgcolor: 'action.hover' }, '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main', outlineOffset: 3 } }}>
+              <HomeIcon /><Typography component="span" variant="body2">{t('login.step1.backToHome')}</Typography>
             </Box>
-
-            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-              {t('login.step1.clickRole')}
-            </Typography>
           </Box>
-        </Fade>
+          <Typography variant="body2" sx={{ color: 'var(--muted)' }}>{t('login.step1.clickRole')}</Typography>
+        </Box>
       </Box>
     );
   }
@@ -395,15 +287,14 @@ export default function LoginPage({ variant = 'public' }) {
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={bgSx}>
-      {bubblesJsx}
+    <Box className={isAdmin ? undefined : "product-login-page"} sx={bgSx}>
 
       {/* Back to site — admin only */}
       {isAdmin && (
         <Button startIcon={<ArrowBack />} onClick={() => navigate('/')}
           sx={{
-            position: 'fixed', top: 20, left: 20, zIndex: 10,
-            color: 'rgba(255,255,255,0.55)', fontSize: '0.78rem', textTransform: 'none',
+            position: 'absolute', top: 12, insetInlineStart: 12, zIndex: 10,
+            color: 'white', fontSize: '0.78rem', textTransform: 'none',
             '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
           }}>
           {t('login.admin.backToSite')}
@@ -413,27 +304,22 @@ export default function LoginPage({ variant = 'public' }) {
       <Fade key={`step2-${userType}`} in timeout={400}>
         <Paper elevation={24} sx={{
           display: 'flex', width: '100%',
-          maxWidth: isAdmin ? 1000 : 1100,
+          maxWidth: isAdmin ? 1000 : 980,
           borderRadius: 4, overflow: 'hidden',
-          minHeight: isAdmin ? 560 : 580,
+          minHeight: { xs: 'auto', md: 560 },
           zIndex: 2, position: 'relative',
           backgroundColor: (t) => alpha(t.palette.background.paper, 0.98),
-          boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
+          boxShadow: '0 16px 48px rgba(0,0,0,0.10)', border: '1px solid', borderColor: 'divider',
         }}>
 
           {/* ── Left branding panel (md+) ─────────────────────────────── */}
           <Box sx={{
             flex: 1, display: { xs: 'none', md: 'flex' },
             flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-            background: activeGrad, color: 'white',
+            background: activeColor, color: 'white',
             p: 6, textAlign: 'center',
             position: 'relative', overflow: 'hidden',
             transition: 'background 0.5s ease',
-            '&::before': {
-              content: '""', position: 'absolute', inset: 0,
-              background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1), transparent 50%)',
-              animation: 'pulse 4s ease-in-out infinite',
-            },
           }}>
             <Fade in timeout={600}>
               <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -457,14 +343,14 @@ export default function LoginPage({ variant = 'public' }) {
                     <Typography variant="h5" fontWeight={700} sx={{ mb: 1, opacity: 0.97 }}>
                       {isAdmin ? t('login.admin.portalTitle') : roleTagline}
                     </Typography>
-                    <Typography variant="body1" sx={{ opacity: 0.82, fontWeight: 300, mb: 4, maxWidth: 340, mx: 'auto', lineHeight: 1.6 }}>
+                    <Typography variant="body1" sx={{ fontWeight: 300, mb: 4, maxWidth: 340, mx: 'auto', lineHeight: 1.6 }}>
                       {isAdmin ? t('login.admin.portalSub') : roleSub}
                     </Typography>
                   </Box>
                 </Fade>
 
-                {/* Floating emblem */}
-                <Box sx={{ width: 170, height: 170, mx: 'auto', position: 'relative', animation: 'logoFloat 6s ease-in-out infinite' }}>
+                {/* Static emblem */}
+                <Box sx={{ width: 170, height: 170, mx: 'auto', position: 'relative' }}>
                   <Box sx={{ position: 'absolute', inset: 0,  borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.2)' }} />
                   <Box sx={{ position: 'absolute', inset: 20, borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.3)', bgcolor: 'rgba(255,255,255,0.05)' }} />
                   <Box sx={{
@@ -486,7 +372,7 @@ export default function LoginPage({ variant = 'public' }) {
 
           {/* ── Right form panel ─────────────────────────────────────── */}
           <Box sx={{
-            flex: 1, p: { xs: 3, sm: 5 }, bgcolor: 'background.paper',
+            flex: 1, minWidth: 0, p: { xs: 2.5, sm: 4, md: 5 }, bgcolor: 'background.paper',
             display: 'flex', flexDirection: 'column', justifyContent: 'center',
             overflowY: 'auto',
           }}>
@@ -498,6 +384,8 @@ export default function LoginPage({ variant = 'public' }) {
                   <Button
                     startIcon={<ArrowBack sx={{ fontSize: 16 }} />}
                     onClick={() => setStep(1)}
+                    data-testid="login-change-role"
+                    disabled={isLoading}
                     size="small"
                     sx={{
                       mb: 2.5, textTransform: 'none', fontSize: '0.8rem',
@@ -523,25 +411,14 @@ export default function LoginPage({ variant = 'public' }) {
                         <RoleIcon sx={{ fontSize: 18, color: activeAccent }} />
                       </Box>
                     )}
-                    {/* Gradient-clipped text is unreadable on a dark surface
-                        (the brand stops are near-black there) — fall back to the
-                        surface-legible accent. */}
-                    <Typography variant="h4" fontWeight={900} sx={{
-                      transition: 'all 0.5s ease',
-                      ...(mode === 'dark'
-                        ? { color: activeAccent }
-                        : {
-                            background: activeGrad,
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                          }),
+                    <Typography component="h1" variant="h4" fontWeight={700} sx={{
+                      color: 'text.primary', fontSize: { xs: '1.6rem', sm: '2rem' }, overflowWrap: 'anywhere',
                     }}>
                       {isAdmin ? t('login.admin.heading') : t('login.public.signInAs', { role: roleLabel })}
                     </Typography>
                   </Stack>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ pl: isAdmin ? 0 : 6.5 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>
                     {isAdmin ? t('login.admin.subheading') : t('login.public.enterCredentials')}
                   </Typography>
 
@@ -569,6 +446,8 @@ export default function LoginPage({ variant = 'public' }) {
                       {!isAdmin && currentType.supportsUsername && (
                         <Tabs
                           value={identifierMode}
+                          aria-label={t('login.emailTab') + ' / ' + t('login.username')}
+                          variant="fullWidth"
                           onChange={handleModeChange}
                           sx={{
                             mb: 1.5, minHeight: 36, borderBottom: 1, borderColor: 'divider',
@@ -588,6 +467,10 @@ export default function LoginPage({ variant = 'public' }) {
                         </InputLabel>
                         <OutlinedInput
                           id="login-identifier" name="identifier"
+                          inputRef={identifierInput}
+                          type={identifierMode === 'email' ? 'email' : 'text'}
+                          inputProps={{ autoCapitalize: 'none', spellCheck: false }}
+                          aria-describedby={formik.touched.identifier && formik.errors.identifier ? 'login-identifier-error' : undefined}
                           label={isAdmin || identifierMode === 'email' ? t('login.email') : t('login.username')}
                           value={formik.values.identifier}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
@@ -600,15 +483,10 @@ export default function LoginPage({ variant = 'public' }) {
                                 : <MailOutline sx={{ color: activeAccent }} />}
                             </InputAdornment>
                           }
-                          sx={{
-                            borderRadius: 2,
-                            '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
-                            '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeAccent },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
-                          }}
+                          sx={inputSx}
                         />
                         {formik.touched.identifier && formik.errors.identifier && (
-                          <FormHelperText>{formik.errors.identifier}</FormHelperText>
+                          <FormHelperText id="login-identifier-error">{formik.errors.identifier}</FormHelperText>
                         )}
                       </FormControl>
                     </Box>
@@ -618,6 +496,7 @@ export default function LoginPage({ variant = 'public' }) {
                       <InputLabel htmlFor="login-password">{t('login.password')}</InputLabel>
                       <OutlinedInput
                         id="login-password" name="password"
+                        aria-describedby={formik.touched.password && formik.errors.password ? 'login-password-error' : undefined}
                         type={showPassword ? 'text' : 'password'}
                         label={t('login.password')}
                         value={formik.values.password}
@@ -637,15 +516,10 @@ export default function LoginPage({ variant = 'public' }) {
                             </IconButton>
                           </InputAdornment>
                         }
-                        sx={{
-                          borderRadius: 2,
-                          '& .MuiOutlinedInput-notchedOutline': { borderWidth: 2 },
-                          '&:hover .MuiOutlinedInput-notchedOutline':      { borderColor: activeAccent },
-                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: activeAccent },
-                        }}
+                        sx={inputSx}
                       />
                       {formik.touched.password && formik.errors.password && (
-                        <FormHelperText>{formik.errors.password}</FormHelperText>
+                        <FormHelperText id="login-password-error">{formik.errors.password}</FormHelperText>
                       )}
                     </FormControl>
 
@@ -657,7 +531,9 @@ export default function LoginPage({ variant = 'public' }) {
                       sx={{
                         py: 1.8, borderRadius: 2, fontWeight: 700,
                         fontSize: '1rem', textTransform: 'none',
-                        background: activeGrad, transition: 'all 0.3s ease',
+                        background: mode === 'dark' ? activeAccent : activeColor,
+                        color: mode === 'dark' ? 'background.paper' : '#fff',
+                        transition: 'box-shadow .2s ease',
                         boxShadow: `0 8px 20px ${alpha(activeColor, 0.3)}`,
                         '&:hover':  { transform: 'translateY(-2px)', boxShadow: `0 12px 28px ${alpha(activeColor, 0.4)}` },
                         '&:active': { transform: 'translateY(0)' },
@@ -669,14 +545,14 @@ export default function LoginPage({ variant = 'public' }) {
                 </Box>
 
                 {/* Footer */}
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
+                <Stack spacing={1} alignItems="flex-start" sx={{ mt: 3 }}>
                   <Typography variant="body2" color="text.secondary">
                     {isAdmin ? t('login.admin.needHelp') : t('login.public.needHelp')}
                   </Typography>
                   <Button
                     size="small"
                     onClick={() => setForgotOpen(true)}
-                    sx={{ textTransform: 'none', fontSize: '0.78rem', color: 'text.secondary', whiteSpace: 'nowrap', ml: 1 }}
+                    sx={{ textTransform: 'none', fontSize: '0.78rem', color: 'text.secondary', minHeight: 44, px: 0, textAlign: 'start' }}
                   >
                     {t('login.forgotPassword')}
                   </Button>
@@ -714,7 +590,8 @@ export default function LoginPage({ variant = 'public' }) {
             variant="contained" size="small"
             sx={{
               textTransform: 'none', borderRadius: 2, fontWeight: 600,
-              background: activeGrad,
+              background: mode === 'dark' ? activeAccent : activeColor,
+              color: mode === 'dark' ? 'background.paper' : '#fff',
             }}
           >
             {t('login.forgot.gotIt')}

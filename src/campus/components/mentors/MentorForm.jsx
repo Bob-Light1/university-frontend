@@ -1,3 +1,8 @@
+/**
+ * @file MentorForm.jsx
+ * @description Create or edit mentor identity; new accounts use the current campus.
+ */
+import useCampusContext from '../../../hooks/useCampusContext';
 import { useState } from 'react';
 import {
   Grid, Button, CircularProgress,
@@ -46,7 +51,9 @@ const editSchema = Yup.object({
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/** Render the campus account form and activation result. */
 export default function MentorForm({ initialData: mentor, onSuccess, onCancel }) {
+  const campusId = useCampusContext();
   const isEdit   = Boolean(mentor?._id);
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -81,7 +88,7 @@ export default function MentorForm({ initialData: mentor, onSuccess, onCancel })
           await updateMentor(mentor._id, payload);
           onSuccess('Mentor updated successfully');
         } else {
-          const res = await createMentor(payload);
+          const res = await createMentor({ ...payload, schoolCampus: campusId });
           const activation = res?.data?.data?.activation;
           if (activation) setActivationResult(activation);
           else onSuccess('Mentor created successfully');

@@ -6,7 +6,7 @@
  * Mirrors the pattern of useCourse.js / useResult.js.
  *
  * Usage:
- *   const doc = useDocument('manager');  // 'manager' | 'teacher' | 'student'
+ *   const doc = useDocument('manager', campusId);  // 'manager' | 'teacher' | 'student'
  */
 
 import { useState, useCallback, useRef } from 'react';
@@ -20,7 +20,6 @@ import {
   updateDocument,
   softDeleteDocument,
   hardDeleteDocument,
-  searchDocuments,
   publishDocument,
   archiveDocument,
   restoreDocument,
@@ -90,8 +89,9 @@ const DEFAULT_FILTERS = {
 
 /**
  * @param {'manager'|'teacher'|'student'} mode
+ * @param {string} [campusId] Selected campus for the manager workspace.
  */
-const useDocument = (mode = 'manager') => {
+const useDocument = (mode = 'manager', campusId) => {
   // ── Data state ─────────────────────────────────────────────────────────────
   const [documents, setDocuments] = useState([]);
   const [total,     setTotal]     = useState(0);
@@ -118,7 +118,7 @@ const useDocument = (mode = 'manager') => {
     setError(null);
 
     try {
-      const params = { ...filters, ...overrides };
+      const params = { ...filters, ...overrides, ...(campusId && { campusId }) };
 
       // Strip empty strings so the backend doesn't receive them as filters
       const cleanParams = Object.fromEntries(
@@ -140,7 +140,7 @@ const useDocument = (mode = 'manager') => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, campusId]);
 
   // ─── FILTER HELPERS ────────────────────────────────────────────────────────
 

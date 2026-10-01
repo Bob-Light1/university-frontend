@@ -62,5 +62,9 @@
     "category": "分类",
     "tags": "标签",
     "date": "日期"
+  },
+  "workflow": {
+    "reason": "原因",
+    "optionalReason": "原因（选填）"
   }
 }

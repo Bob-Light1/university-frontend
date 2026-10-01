@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { BRAND } from '../../../config/brand';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import ProductPreview from './ProductPreview';
+import HomeAtmosphere from './HomeAtmosphere';
 import '../../styles/home.css';
 
 const FEATURES = [SchoolOutlined, EventAvailableOutlined, AssessmentOutlined, AccountBalanceWalletOutlined, ForumOutlined, ApartmentOutlined];
@@ -29,8 +30,9 @@ function Reveal({ children, className, id, ...props }) {
 export default function Home() {
   const { t } = useAppTranslation('home');
   return <div className="product-home" data-testid="product-home">
+    <HomeAtmosphere/>
     <Reveal className="product-hero product-container">
-      <div className="product-hero-copy"><span className="product-eyebrow"><span/>{t('eyebrow')}</span><h1>{t('heroTitle')} <em>{t('heroAccent')}</em></h1><p className="product-lead">{t('heroBody')}</p><div className="product-actions"><a className="product-button" href={BRAND.salesHref || '#preview'} data-testid="home-primary">{t(BRAND.salesHref ? 'requestDemo' : 'explore')}<ArrowForward fontSize="small"/></a><Link className="product-text-link" to="/login">{t('login')}<ArrowOutward fontSize="small"/></Link></div><div className="product-hero-notes"><span><Check fontSize="small"/>{t('roleAccess')}</span><span><Check fontSize="small"/>{t('multiCampus')}</span></div></div>
+      <div className="product-hero-copy"><span className="product-eyebrow"><span/>{t('eyebrow')}</span><h1>{t('heroTitle')} <em>{t('heroAccent')}</em></h1><p className="product-lead">{t('heroBody')}</p><div className="product-actions"><a className="product-button" href={BRAND.salesHref || '#preview'} data-testid="home-primary">{t(BRAND.salesHref ? 'requestDemo' : 'explore')}<ArrowForward fontSize="small"/></a><Link className="product-text-link" to="/contact">{t('contact')}<ArrowOutward fontSize="small"/></Link></div><div className="product-hero-notes"><span><Check fontSize="small"/>{t('roleAccess')}</span><span><Check fontSize="small"/>{t('multiCampus')}</span></div></div>
       <div className="product-hero-visual" id="preview"><div className="product-preview-caption"><span>{t('previewEyebrow')}</span><span className="product-preview-hint">{t('tryTabs')} ↓</span></div><ProductPreview/><div className="product-preview-footnote"><span className="product-small-line"/>{t('previewFootnote')}</div></div>
     </Reveal>
     <Reveal className="product-facts" aria-label={t('product')}><div className="product-container">{FACTS.map((Icon, index) => <div key={index}><Icon/><div><strong>{t(`facts.title${index}`)}</strong><span>{t(`facts.body${index}`)}</span></div></div>)}</div></Reveal>

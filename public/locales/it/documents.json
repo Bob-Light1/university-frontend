@@ -62,5 +62,9 @@
     "category": "Categoria",
     "tags": "Tag",
     "date": "Data"
+  },
+  "workflow": {
+    "reason": "Motivo",
+    "optionalReason": "Motivo (facoltativo)"
   }
 }

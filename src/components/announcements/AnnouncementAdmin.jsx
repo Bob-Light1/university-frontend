@@ -8,6 +8,7 @@
  *                              and a campus-filter chip (ADMIN / DIRECTOR only).
  */
 
+import useCampusContext from '../../hooks/useCampusContext';
 import { useState, useEffect, useCallback } from 'react';
 import {
   Box, Stack, Typography, Paper, Chip, Button,
@@ -285,6 +286,8 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
   // Campus selector (ADMIN / DIRECTOR only)
   const [campuses,          setCampuses]          = useState([]);
   const [selectedCampusId,  setSelectedCampusId]  = useState('');
+  const routeCampusId = useCampusContext();
+  const campusId = isAdminGlobal ? selectedCampusId : routeCampusId;
 
   // Filters
   const [search,          setSearch]          = useState('');
@@ -323,7 +326,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
         ...(pinnedOnly     && { pinned: 'true' }),
         ...(showDeleted    && { deleted: 'true' }),
         ...(debouncedSearch && { search: debouncedSearch }),
-        ...(isAdminGlobal && selectedCampusId && { campusId: selectedCampusId }),
+        ...(campusId && { campusId }),
       });
       setAnnouncements(data.data || []);
       setTotal(data.pagination?.total || 0);
@@ -332,7 +335,7 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
     } finally {
       setLoading(false);
     }
-  }, [page, status, typeFilter, pinnedOnly, showDeleted, debouncedSearch, isAdminGlobal, selectedCampusId, t]);
+  }, [page, status, typeFilter, pinnedOnly, showDeleted, debouncedSearch, campusId, t]);
 
   // Debounce search input — also resets page so the user lands on page 1.
   useEffect(() => {
@@ -353,8 +356,8 @@ export default function AnnouncementAdmin({ isAdminGlobal = false }) {
   // ── Actions ────────────────────────────────────────────────────────────────
 
   const handleCreate = async (values) => {
-    const payload = isAdminGlobal
-      ? { ...values, campusId: selectedCampusId }
+    const payload = campusId
+      ? { ...values, campusId }
       : values;
     await createAnnouncement(payload);
     showSnack(t('toast.created'));

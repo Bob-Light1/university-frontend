@@ -51,7 +51,7 @@
   "closingBody": "Découvrez une gestion plus cohérente de votre établissement.",
   "footerBody": "Scolarité, équipes et campus. Un espace commun.",
   "contactTitle": "Parlons de votre établissement.",
-  "contactBody": "Explorez la plateforme ou utilisez le contact proposé pour échanger sur vos besoins.",
+  "contactBody": "Parlez-nous de votre établissement et de vos besoins. Notre équipe est à votre écoute.",
   "facts": {
     "title0": "Pensé pour plusieurs campus",
     "body0": "Gardez vos établissements connectés.",
@@ -125,5 +125,10 @@
     "finance0": "Taux de recouvrement",
     "finance1": "Soldes en attente",
     "finance2": "Reçus"
-  }
+  },
+  "lightMode": "Passer en mode clair",
+  "darkMode": "Passer en mode sombre",
+  "contactUnavailable": "Le contact en ligne est momentanément indisponible. Veuillez réessayer plus tard.",
+  "pauseBackground": "Mettre le fond animé en pause",
+  "resumeBackground": "Reprendre l’animation du fond"
 }

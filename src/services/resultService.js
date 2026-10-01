@@ -30,34 +30,38 @@ export const getResults = (params = {}) =>
  * GET /results/:id
  * Full result detail with audit log.
  * @param {string} id
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const getResultById = (id) =>
-  api.get(`${BASE}/${id}`);
+export const getResultById = (id, params = {}) =>
+  api.get(`${BASE}/${id}`, { params });
 
 /**
  * POST /results
  * Create a single result (DRAFT).
  * @param {Object} data - Full result payload
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const createResult = (data) =>
-  api.post(BASE, data);
+export const createResult = (data, params = {}) =>
+  api.post(BASE, data, { params });
 
 /**
  * PUT /results/:id
  * Update a DRAFT or SUBMITTED result.
  * @param {string} id
  * @param {Object} data - Partial update payload
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const updateResult = (id, data) =>
-  api.put(`${BASE}/${id}`, data);
+export const updateResult = (id, data, params = {}) =>
+  api.put(`${BASE}/${id}`, data, { params });
 
 /**
  * DELETE /results/:id
  * Soft-delete. DRAFT only for non-admin roles.
  * @param {string} id
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const deleteResult = (id) =>
-  api.delete(`${BASE}/${id}`);
+export const deleteResult = (id, params = {}) =>
+  api.delete(`${BASE}/${id}`, { params });
 
 // ─── BULK & IMPORT ────────────────────────────────────────────────────────────
 
@@ -67,9 +71,10 @@ export const deleteResult = (id) =>
  * @param {{ classId, subjectId, teacherId, evaluationType, evaluationTitle,
  *           academicYear, semester, maxScore, results: Array, examDate?,
  *           examPeriod?, gradingScale? }} data
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const bulkCreateResults = (data) =>
-  api.post(`${BASE}/bulk`, data);
+export const bulkCreateResults = (data, params = {}) =>
+  api.post(`${BASE}/bulk`, data, { params });
 
 /**
  * POST /results/upload-csv
@@ -87,58 +92,66 @@ export const uploadResultsCSV = (formData) =>
  * POST /results/:id/submit
  * Submit a single DRAFT result → SUBMITTED.
  * @param {string} id
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const submitResult = (id) =>
-  api.post(`${BASE}/${id}/submit`);
+export const submitResult = (id, params = {}) =>
+  api.post(`${BASE}/${id}/submit`, {}, { params });
 
 /**
  * POST /results/submit-batch
  * Submit all DRAFTs for an evaluation → SUBMITTED.
  * @param {{ classId, subjectId, evaluationTitle, academicYear, semester }} data
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const submitBatch = (data) =>
-  api.post(`${BASE}/submit-batch`, data);
+export const submitBatch = (data, params = {}) =>
+  api.post(`${BASE}/submit-batch`, data, { params });
 
 /**
  * PATCH /results/:id/publish
  * Publish a single SUBMITTED result → PUBLISHED.
  * @param {string} id
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const publishResult = (id) =>
-  api.patch(`${BASE}/${id}/publish`);
+export const publishResult = (id, params = {}) =>
+  api.patch(`${BASE}/${id}/publish`, {}, { params });
 
 /**
  * PATCH /results/publish-batch
  * Publish all SUBMITTED results for an evaluation → PUBLISHED.
  * @param {{ classId, subjectId, evaluationTitle, academicYear, semester }} data
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const publishBatch = (data) =>
-  api.patch(`${BASE}/publish-batch`, data);
+export const publishBatch = (data, params = {}) =>
+  api.patch(`${BASE}/publish-batch`, data, { params });
 
 /**
  * PATCH /results/:id/archive
  * Archive a PUBLISHED result → ARCHIVED.
  * @param {string} id
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const archiveResult = (id) =>
-  api.patch(`${BASE}/${id}/archive`);
+export const archiveResult = (id, params = {}) =>
+  api.patch(`${BASE}/${id}/archive`, {}, { params });
 
 /**
  * PATCH /results/lock-semester
- * Lock a semester: freeze all results + generate FinalTranscripts.
+ * Lock a semester within the effective campus and generate FinalTranscripts.
+ * Global actors must supply params.campusId or data.schoolCampus.
  * @param {{ academicYear, semester, schoolCampus? }} data
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const lockSemester = (data) =>
-  api.patch(`${BASE}/lock-semester`, data);
+export const lockSemester = (data, params = {}) =>
+  api.patch(`${BASE}/lock-semester`, data, { params });
 
 /**
  * PATCH /results/audit/:id
  * Post-publication correction — ADMIN/DIRECTOR only.
  * @param {string} id
  * @param {{ score?, teacherRemarks?, reason }} data
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const auditCorrection = (id, data) =>
-  api.patch(`${BASE}/audit/${id}`, data);
+export const auditCorrection = (id, data, params = {}) =>
+  api.patch(`${BASE}/audit/${id}`, data, { params });
 
 // ─── ANALYTICS ────────────────────────────────────────────────────────────────
 
@@ -200,9 +213,10 @@ export const getCampusOverview = (params = {}) =>
 /**
  * GET /results/grading-scales
  * List active grading scales for the campus.
+ * @param {{ campusId?: string }} [params={}] Selected campus for global actors.
  */
-export const listGradingScales = () =>
-  api.get(`${BASE}/grading-scales`);
+export const listGradingScales = (params = {}) =>
+  api.get(`${BASE}/grading-scales`, { params });
 
 /**
  * POST /results/grading-scales

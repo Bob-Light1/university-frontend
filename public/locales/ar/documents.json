@@ -62,5 +62,9 @@
     "category": "الفئة",
     "tags": "الوسوم",
     "date": "التاريخ"
+  },
+  "workflow": {
+    "reason": "السبب",
+    "optionalReason": "السبب (اختياري)"
   }
 }

@@ -51,7 +51,7 @@
   "closingBody": "Descubra uma gestão mais integrada para a sua instituição.",
   "footerBody": "Gestão académica, pessoas e campus. Conectados.",
   "contactTitle": "Vamos falar da sua instituição.",
-  "contactBody": "Explore a plataforma ou utilize o contacto disponível para discutir as suas necessidades.",
+  "contactBody": "Fale-nos da sua instituição e das suas necessidades. A nossa equipa está aqui para ajudar.",
   "facts": {
     "title0": "Pensada para vários campus",
     "body0": "Mantenha as instituições conectadas.",
@@ -125,5 +125,10 @@
     "finance0": "Taxa de cobrança",
     "finance1": "Saldos pendentes",
     "finance2": "Recibos"
-  }
+  },
+  "lightMode": "Mudar para o modo claro",
+  "darkMode": "Mudar para o modo escuro",
+  "contactUnavailable": "O contacto online está indisponível de momento. Tente novamente mais tarde.",
+  "pauseBackground": "Pausar a animação de fundo",
+  "resumeBackground": "Retomar a animação de fundo"
 }

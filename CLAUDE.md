@@ -164,6 +164,7 @@ Mutating affordances inside are subject to §2 (`FeatureGate mode="write"`) and 
   forced logout on refresh failure, entitlement refusal (§2).
 - One `*Service.js` per domain in `src/services/`, named exports; **no component holds a raw URL.**
   (`admin_service.js` keeps the legacy snake_case name; new files are camelCase.)
+- Campus workspaces use `useCampusContext`: ADMIN/DIRECTOR take the route campus; scoped actors retain identity context. Pass it through service query parameters and creation payloads; the backend remains authoritative.
 - Form errors → `handleSubmitError` from `utils/handleSubmitError`.
 
 ---

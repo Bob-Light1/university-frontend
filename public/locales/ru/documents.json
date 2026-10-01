@@ -62,5 +62,9 @@
     "category": "Категория",
     "tags": "Теги",
     "date": "Дата"
+  },
+  "workflow": {
+    "reason": "Причина",
+    "optionalReason": "Причина (необязательно)"
   }
 }

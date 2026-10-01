@@ -51,7 +51,7 @@
   "closingBody": "Entdecken Sie eine vernetzte Verwaltung für Ihre Einrichtung.",
   "footerBody": "Studienverwaltung, Menschen und Standorte. Verbunden.",
   "contactTitle": "Sprechen wir über Ihre Einrichtung.",
-  "contactBody": "Entdecken Sie die Plattform oder nutzen Sie den angebotenen Kontaktweg für Ihre Fragen.",
+  "contactBody": "Erzählen Sie uns von Ihrer Einrichtung und Ihren Anforderungen. Unser Team hilft Ihnen gerne.",
   "facts": {
     "title0": "Für mehrere Standorte",
     "body0": "Verbinden Sie Ihre Einrichtungen.",
@@ -125,5 +125,10 @@
     "finance0": "Zahlungsquote",
     "finance1": "Offene Salden",
     "finance2": "Belege"
-  }
+  },
+  "lightMode": "Zum hellen Modus wechseln",
+  "darkMode": "Zum dunklen Modus wechseln",
+  "contactUnavailable": "Der Online-Kontakt ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.",
+  "pauseBackground": "Hintergrundanimation pausieren",
+  "resumeBackground": "Hintergrundanimation fortsetzen"
 }

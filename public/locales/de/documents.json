@@ -62,5 +62,9 @@
     "category": "Kategorie",
     "tags": "Tags",
     "date": "Datum"
+  },
+  "workflow": {
+    "reason": "Begründung",
+    "optionalReason": "Begründung (optional)"
   }
 }

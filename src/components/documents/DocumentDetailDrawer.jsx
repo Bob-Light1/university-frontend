@@ -25,6 +25,7 @@
  *     This mirrors the pattern already in place for handleClose.
  */
 
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 import { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Drawer,
@@ -49,7 +50,6 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  alpha,
   useTheme,
 } from '@mui/material';
 import {
@@ -90,6 +90,8 @@ import { fDate, fDateTime } from '../../utils/dateFormat';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DRAWER_WIDTH = 480;
+// Mirrors document.workflow.controller.js: lock, unlock and restore reasons.
+const WORKFLOW_REASON_MIN_LENGTH = 10;
 
 /**
  * Blur the currently focused element, if any.
@@ -105,10 +107,12 @@ const blurActive = () => {
 // ─── Reason dialog — used for publish / archive / lock / delete ───────────────
 
 const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confirmLabel = 'Confirm' }) => {
+  const { t } = useAppTranslation(['documents', 'errors']);
   const [reason, setReason] = useState('');
 
   const handleConfirm = () => {
-    onConfirm(reason);
+    if (required && reason.trim().length < WORKFLOW_REASON_MIN_LENGTH) return;
+    onConfirm(reason.trim());
     setReason('');
   };
 
@@ -129,7 +133,10 @@ const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confi
           multiline
           rows={3}
           size="small"
-          label={required ? 'Reason (required)' : 'Reason (optional)'}
+          label={t(required ? 'documents:workflow.reason' : 'documents:workflow.optionalReason')}
+          helperText={required ? t('errors:validation.minLength', { min: WORKFLOW_REASON_MIN_LENGTH }) : undefined}
+          required={required}
+          error={required && reason.length > 0 && reason.trim().length < WORKFLOW_REASON_MIN_LENGTH}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           sx={{ mt: 1 }}
@@ -140,7 +147,7 @@ const ReasonDialog = ({ open, title, required = false, onConfirm, onClose, confi
         <Button
           variant="contained"
           onClick={handleConfirm}
-          disabled={required && !reason.trim()}
+          disabled={required && reason.trim().length < WORKFLOW_REASON_MIN_LENGTH}
         >
           {confirmLabel}
         </Button>
@@ -823,8 +830,8 @@ const DocumentDetailDrawer = ({
       {[
         { action: 'publish',  title: 'Publish Document',  required: false, label: 'Publish'  },
         { action: 'archive',  title: 'Archive Document',  required: false, label: 'Archive'  },
-        { action: 'restore',  title: 'Restore Document',  required: false, label: 'Restore'  },
-        { action: 'lock',     title: 'Lock Document',     required: false, label: 'Lock'     },
+        { action: 'restore',  title: 'Restore Document',  required: true,  label: 'Restore'  },
+        { action: 'lock',     title: 'Lock Document',     required: true,  label: 'Lock'     },
         { action: 'unlock',   title: 'Unlock Document',   required: true,  label: 'Unlock'   },
         { action: 'official', title: 'Mark as Official',  required: false, label: 'Mark'     },
       ].map(({ action, title, required, label }) => (

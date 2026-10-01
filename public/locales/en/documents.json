@@ -62,5 +62,9 @@
     "category": "Category",
     "tags": "Tags",
     "date": "Date"
+  },
+  "workflow": {
+    "reason": "Reason",
+    "optionalReason": "Reason (optional)"
   }
 }

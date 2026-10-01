@@ -10,7 +10,7 @@
 
 import { useMemo } from 'react';
 import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack,
   TextField, Typography, CircularProgress, Alert, Box,
@@ -24,7 +24,7 @@ import { formatMoney } from './financeConstants';
 const ROUNDED = { '& .MuiOutlinedInput-root': { borderRadius: 2 } };
 
 const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
-  const { t } = useTranslation('finance');
+  const { t } = useAppTranslation('finance');
   const balance = useMemo(
     () => Math.max(0, (fee?.amountDue ?? 0) - (fee?.amountPaid ?? 0)),
     [fee],
@@ -134,7 +134,8 @@ const PaymentDialog = ({ open, fee, onClose, onSubmit }) => {
             <TextField
               fullWidth name="paidAt" label={t('payment.paymentDate')} type="date"
               value={formik.values.paidAt}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange} onBlur={formik.handleBlur}
+              error={Boolean(fieldError('paidAt'))} helperText={fieldError('paidAt')}
               slotProps={{ inputLabel: { shrink: true } }}
               sx={ROUNDED}
             />
