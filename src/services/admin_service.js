@@ -110,15 +110,5 @@ export const listAdminAccounts = (params = {}) =>
 export const updateAdminStatus = (id, status) =>
   api.patch(`/admin/${id}/status`, { status });
 
-// ─── AI ENTITLEMENT — retired on the client (phase 4) ─────────────────────────
-//
-// `GET|PUT /admin/campuses/:id/ai-entitlement` still exists on the server, with
-// its contract frozen, until the legacy fields are dropped from the schema
-// (CAMPUS_ENTITLEMENT_DESIGN.md §3.2). No screen calls it any more: the AI is a
-// module of the unified grid, piloted from `EntitlementDialog` through
-// `entitlementService`, and its tier is the PLATFORM tier (decision D-D).
-//
-// The client functions were REMOVED rather than left unused, the way
-// `deleteStaffRole()` was: a live client for a second door to the same decision
-// is an invitation to rebuild a dialog that could set a campus's whole offer
-// while appearing to set only its AI.
+// AI administration uses entitlementService and EntitlementDialog. The retired
+// AI-only server route is removed in phase 1-B row 2; no client calls it.

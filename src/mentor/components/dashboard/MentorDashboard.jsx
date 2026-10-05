@@ -25,6 +25,7 @@ import {
 
 import { getMentorDashboard, getMyProfile } from '../../../services/mentorService';
 import { IMAGE_BASE_URL } from '../../../config/env';
+import FeatureGate from '../../../components/shared/FeatureGate';
 import { mentorPrimary } from '../../../theme/mentorTokens';
 
 // ─── Theme tokens ─────────────────────────────────────────────────────────────
@@ -228,14 +229,16 @@ export default function MentorDashboard() {
       <Grid container spacing={2}>
         {[
           { label: 'My Students', icon: <Group />,        path: '/mentor/students',   color: mentorAccent },
-          { label: 'Results',     icon: <Assessment />,   path: '/mentor/results',    color: '#2e7d32' },
+          { label: 'Results',     icon: <Assessment />,   path: '/mentor/results',    feature: 'result', color: '#2e7d32' },
           { label: 'Attendance',  icon: <ChecklistRtl />, path: '/mentor/attendance', color: '#ed6c02' },
-          { label: 'Courses',     icon: <MenuBook />,     path: '/mentor/courses',    color: '#7b1fa2' },
+          { label: 'Courses',     icon: <MenuBook />,     path: '/mentor/courses',    feature: 'course', color: '#7b1fa2' },
           { label: 'My Profile',  icon: <Person />,       path: '/mentor/profile',    color: '#0288d1' },
         ].map((q) => (
-          <Grid item xs={6} sm={4} md={2.4} key={q.label}>
-            <QuickCard {...q} navigate={navigate} />
-          </Grid>
+          <FeatureGate key={q.path} feature={q.feature}>
+            <Grid item xs={6} sm={4} md={2.4}>
+              <QuickCard {...q} navigate={navigate} />
+            </Grid>
+          </FeatureGate>
         ))}
       </Grid>
     </Box>

@@ -1,6 +1,11 @@
+/**
+ * @file App.jsx
+ * @description Application routes composed with identity, campus and feature guards.
+ */
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../src/routes/ProtectedRoute';
 import CampusGuard from '../src/routes/CampusGuard';
+import FeatureGuard from './routes/FeatureGuard';
 import CssBaseline from '@mui/material/CssBaseline';
 import { GlobalStyles } from '@mui/material';
 import { campusRoutes } from './routes/CampusRoutes';
@@ -28,6 +33,7 @@ const ActivateAccount = lazy(() => import('../src/client/components/activate/Act
 
 
 
+/** Render the public entry points and authenticated role workspaces. */
 function App() {
   return (
     <>
@@ -112,7 +118,7 @@ function App() {
 
         {/* Mentor routes */}
         <Route element={<ProtectedRoute allowedRoles={['MENTOR']} />}>
-          <Route path="mentor" element={<Mentor />}>
+          <Route path="mentor" element={<FeatureGuard feature="mentor"><Mentor /></FeatureGuard>}>
             {mentorRoutes}
           </Route>
         </Route>

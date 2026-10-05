@@ -247,6 +247,12 @@ Upload → `ProfileImageUploader` / `ImportDialog`; **`react-dropzone` is a depe
 
 ## 12. Role layouts
 
+The mentor workspace is guarded on `mentor` before its layout mounts. A hidden
+module renders the shared translated refusal instead of mounting a dashboard whose
+API calls are refused. Authentication and role guards remain outside this guard. Dashboard shortcuts
+for Results and Courses use the shared read gate, preserving frozen history and
+removing shortcuts for hidden modules.
+
 One folder per role — `src/<role>/<Role>.jsx` served at `/<role>/` — and **all nine wrap `AppShell`**, declaring their own
 `navItems` with `feature` keys (§2). Two exceptions: CAMPUS_MANAGER is `campus/Campus.jsx` at `/campus/:campusId/`,
 and `client/Client.jsx` is the public Tailwind area with no `AppShell`.
