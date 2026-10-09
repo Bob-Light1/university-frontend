@@ -1,5 +1,9 @@
+/** @file AuthContext.jsx
+ * @description Shared role identity and verified server-session lifecycle.
+ */
 import { createContext, useEffect, useState } from 'react';
-import { API_BASE_URL } from '../config/env';
+import api, { setAuthToken } from '../api/axiosInstance';
+import { getAccessToken, endSession, clearSession, startSession, tokenClaims } from '../api/sessionClient';
 import i18n, { RTL_LANGUAGES } from '../i18n/i18n.js';
 import { configureLocale, configureDateFormat } from '../utils/dateFormat.js';
 import { configureGradeFormat } from '../utils/gradeFormat.js';
@@ -19,6 +23,8 @@ function applyLanguage(lang, timezone, preferredLocale, dateFormat) {
   configureDateFormat(dateFormat);
 }
 
+// The established public context export is consumed by hooks and role layouts.
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(undefined);
 
 // User type to endpoint mapping
@@ -40,6 +46,19 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const clear = () => setUser(null);
+    const changed = (event) => {
+      if (event.key === 'token' && tokenClaims(event.oldValue)?.sid !== tokenClaims(event.newValue)?.sid) window.location.reload();
+    };
+    window.addEventListener('erp-session-cleared', clear);
+    window.addEventListener('storage', changed);
+    return () => {
+      window.removeEventListener('erp-session-cleared', clear);
+      window.removeEventListener('storage', changed);
+    };
+  }, []);
+
   /**
    * Universal login function
    * @param {Object} credentials - { email, password } or { username, password }
@@ -55,19 +74,7 @@ export function AuthProvider({ children }) {
         throw new Error(`Invalid user type: ${userType}`);
       }
 
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || 'Login failed');
-      }
+      const responseData = await startSession(endpoint, credentials);
 
       const { token, user: userData } = responseData.data;
 
@@ -91,6 +98,7 @@ export function AuthProvider({ children }) {
 
       // Save to localStorage
       localStorage.setItem('token', token);
+      setAuthToken(token);
       localStorage.setItem('user', JSON.stringify(enrichedUserData));
       localStorage.setItem('userType', userType);
 
@@ -100,14 +108,15 @@ export function AuthProvider({ children }) {
       return responseData;
     } catch (error) {
       console.error('❌ Login error:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   };
 
   /**
    * Logout function
    */
-  const logout = () => {
+  const logout = async () => {
+    await endSession();
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('userType');
@@ -122,34 +131,6 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Verify token validity by decoding it client-side and checking expiry.
-   * Does NOT verify the signature (impossible without the secret) — the backend
-   * will reject any tampered/expired token on the first API call anyway.
-   */
-  const verifyToken = () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return false;
-
-      // JWT structure: header.payload.signature (base64url encoded)
-      const parts = token.split('.');
-      if (parts.length !== 3) return false;
-
-      // Decode payload (base64url → JSON)
-      const payload = JSON.parse(
-        atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))
-      );
-
-      // Reject if already expired
-      if (payload.exp && payload.exp * 1000 < Date.now()) return false;
-
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  /**
    * Initialize authentication on mount
    */
   useEffect(() => {
@@ -161,7 +142,8 @@ export function AuthProvider({ children }) {
 
         if (token && savedUser && savedUserType) {
           // Verify token is still valid
-          const isValid = verifyToken();
+          await getAccessToken();
+          const isValid = (await api.get('/account/session')).data.success;
 
           if (isValid) {
             const parsedUser = JSON.parse(savedUser);
@@ -179,10 +161,8 @@ export function AuthProvider({ children }) {
             setUser(parsedUser);
 
             // Background resync from server — reconciles multi-device preference changes
-            fetch(`${API_BASE_URL}/settings`, {
-              headers: { Authorization: `Bearer ${token}` },
-            })
-              .then((r) => r.json())
+            api.get('/settings')
+              .then((r) => r.data)
               .then(({ data }) => {
                 if (!data) return;
                 const { preferredLanguage, timezone, preferredLocale, dateFormat, gradeFormat, theme } = data;
@@ -206,12 +186,12 @@ export function AuthProvider({ children }) {
               })
               .catch(() => {});
           } else {
-            logout();
+            clearSession();
           }
         }
       } catch (error) {
         console.error('❌ Auth initialization error:', error);
-        logout();
+        clearSession();
       } finally {
         setLoading(false);
       }

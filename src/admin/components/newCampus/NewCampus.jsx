@@ -29,11 +29,10 @@ import {
   PhotoCamera, CheckCircle, ArrowBack, ArrowForward,
   Shield,
 } from '@mui/icons-material';
-import axios                     from 'axios';
+import api from '../../../api/axiosInstance';
 
 import { createCampusSchema }    from '../../../yupSchema/createCampusSchema';
 import UploadCampusImage         from '../../../client/utility-components/uploadImage/UploadCampusImage';
-import { API_BASE_URL }          from '../../../config/env';
 import { ADMIN_GRADIENT, ADMIN_SHADOW } from '../../../theme/adminTokens';
 import PhoneInput from '../../../components/shared/PhoneInput';
 import { useAppTranslation } from '../../../hooks/useAppTranslation';
@@ -65,7 +64,7 @@ export default function NewCampus() {
     const wake = async () => {
       for (let attempt = 1; attempt <= 8; attempt++) {
         try {
-          const { data } = await axios.get(`${API_BASE_URL}/health`, { timeout: 20000 });
+          const { data } = await api.get('/health', { timeout: 20000 });
           if (data.database === 'connected') {
             if (!cancelled) setServerReady(true);
             return;
@@ -123,10 +122,9 @@ export default function NewCampus() {
           },
         };
 
-        await axios.post(`${API_BASE_URL}/campus/create`, payload, {
+        await api.post('/campus/create', payload, {
           headers: {
             'Content-Type':  'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
           timeout: 60000, // Render free tier cold start can take up to 60 s
         });

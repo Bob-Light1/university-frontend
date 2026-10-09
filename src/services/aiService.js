@@ -1,3 +1,4 @@
+import { getAccessToken } from '../api/sessionClient';
 /**
  * @file aiService.js
  * @description API service layer for the AI gateway (/api/ai, Phase 3 M4).
@@ -143,7 +144,7 @@ export const streamAiChat = (payload, handlers = {}) => {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          Authorization: `Bearer ${await getAccessToken()}`,
         },
         body: JSON.stringify({
           message: payload.message,

@@ -1,7 +1,11 @@
+/** @file axiosInstance.js
+ * @description Shared authenticated API transport and entitlement refusals.
+ */
 import axios from 'axios';
 import { API_BASE_URL } from '../config/env';
 import { GATE_ERROR_CODES } from '../config/featureConstants';
 import { emitFeatureRefusal } from './featureRefusal';
+import { AUTH_ERRORS, getAccessToken, clearSession, tokenClaims } from './sessionClient';
 
 /**
  * Default request timeout for regular API calls (10 s).
@@ -22,25 +26,6 @@ const api = axios.create({
   timeout: DEFAULT_TIMEOUT,
 });
 
-const refreshClient = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // Supports httpOnly cookies for refresh token (recommended)
-  timeout: 15000,        // Avoids requests that hang for too long
-});
-
-
-let isRefreshing = false;
-let failedQueue = [];
-
-// Utility function to manage the queue
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(({ resolve, reject }) => {
-    if (error) reject(error);
-    else resolve(token);
-  });
-  failedQueue = [];
-};
-
 // Allows manual injection/removal of the token (after login, logout, etc.)
 export const setAuthToken = (token) => {
   if (token) {
@@ -50,69 +35,41 @@ export const setAuthToken = (token) => {
   }
 };
 
-// Request interceptor: adds the token if present (fallback to localStorage)
-api.interceptors.request.use(
-  (config) => {
-    // If the token is not already in the headers (e.g., after refresh)
-    if (!config.headers.Authorization) {
-      const token = localStorage.getItem('token'); // or sessionStorage, or your store
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+window.addEventListener('erp-session-cleared', () => setAuthToken(null));
+
+// Always use the current storage identity; cached defaults must not outlive logout.
+api.interceptors.request.use(async (config) => {
+  const token = localStorage.getItem('token');
+  if (token && !config.skipAuth) config.headers.Authorization = `Bearer ${await getAccessToken()}`;
+  else delete config.headers.Authorization;
+  config.sessionId = tokenClaims(config.headers.Authorization?.slice(7))?.sid;
+  return config;
+});
 
 // Response interceptor: handles refresh + queue
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-   const originalRequest = error.config || {};
+    const originalRequest = error.config || {};
+    // A delayed response must never retry a mutation under a newer login.
+    if (originalRequest.sessionId && originalRequest.sessionId !== tokenClaims(localStorage.getItem('token'))?.sid) {
+      return Promise.reject(error);
+    }
 
-    // Case for 401 not already handled
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Already refreshing → we put it on hold
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return api(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
-      }
-
-      // First 401 → we initiate the refresh
+    const code = error.response?.data?.errors?.code;
+    if (error.response?.status === 401 && code === AUTH_ERRORS.EXPIRED && !originalRequest._retry) {
       originalRequest._retry = true;
-      isRefreshing = true;
-
       try {
-        // Call to refresh (adapt the URL if different)
-        const { data } = await refreshClient.post('/auth/refresh');
-        const newAccessToken = data.accessToken;
-        // Optional: data.refreshToken if your backend returns a new one
-
-        setAuthToken(newAccessToken);
-        localStorage.setItem('token', newAccessToken); // or your store
-
-        // Resolves all pending requests with the new token
-        processQueue(null, newAccessToken);
-
-        // Restart the original request
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        await getAccessToken(true);
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed → forced logout
-        processQueue(refreshError, null);
-        localStorage.removeItem('token');
-        window.location.href = '/login?session_expired=true'; // Maybe with a parameter to show a message
+        window.location.assign('/login?session_expired=true');
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
+    }
+    if (error.response?.status === 401 && code === AUTH_ERRORS.INVALID) {
+      clearSession();
+      window.location.assign('/login?session_expired=true');
     }
 
     // Entitlement gate refusal → tell the provider before rejecting.

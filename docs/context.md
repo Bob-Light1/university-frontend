@@ -43,3 +43,5 @@ existing SSE transport exception and avoid presenting historical lint/CI results
 as current evidence. Recheck the relevant commands for each implementation task.
 
 See [current task](current_task.md) for the dated working-tree snapshot.
+
+Authentication lifecycle: [backend session contract](../../backend/docs/architecture/features/auth-session-hardening.md), `src/api/sessionClient.js` and `src/context/AuthContext.jsx`.

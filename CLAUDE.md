@@ -158,7 +158,7 @@ Mutating affordances inside are subject to §2 (`FeatureGate mode="write"`) and 
 ## 7. API — Axios
 
 - **Always** the singleton: `import api from '../api/axiosInstance'`. **Never** `fetch()` or a direct `axios` import
-  (exceptions: `AuthContext.jsx` login and the existing `streamAiChat` SSE transport in
+  (exceptions: the cookie-aware `api/sessionClient.js` lifecycle transport and the existing `streamAiChat` SSE transport in
   `services/aiService.js`, which uses fetch + ReadableStream).
 - The interceptor owns three cross-cutting behaviours — never re-implement them per call: refresh-token replay,
   forced logout on refresh failure, entitlement refusal (§2).
@@ -177,6 +177,17 @@ const { user, login, logout, isAuthenticated, hasRole, updateUser } = useAuth();
 //         profileImage?, preferredLanguage?, preferredLocale?, timezone? }
 ```
 `updateUser` — partial merge into user state (used by `LanguageSelector` after save).
+
+`api/sessionClient.js` owns cookie login, refresh and server revocation. It uses
+`VITE_API_BASE_URL`, credentials and the backend-required request header. The
+backend owns the error codes and durations (cross-brick transport tests pin the
+mirror). Bootstrap verifies the live session before restoring cached identity;
+Axios refreshes only expired access, and SSE obtains current access before opening
+a stream. Parallel refresh coalesces; supported tabs serialize cookie operations
+through Web Locks. Old-session responses cannot clear a newer login or retry its
+mutation under a different actor. Logout waits for server revocation. Access is
+15 minutes and the absolute refresh session is seven days; the refresh cookie is
+HttpOnly. See [backend contract and evidence](../backend/docs/architecture/features/auth-session-hardening.md).
 
 ---
 

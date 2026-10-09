@@ -1,3 +1,6 @@
+/** @file UploadCampusImage.jsx
+ * @description Fetch signed upload parameters using the shared session transport.
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
@@ -14,7 +17,7 @@ import {
 } from '@mui/material';
 import { CloudUpload, Delete, Image as ImageIcon, CheckCircle } from '@mui/icons-material';
 import axios from 'axios';
-import { API_BASE_URL } from '../../../config/env';
+import api from '../../../api/axiosInstance';
 
 export default function UploadCampusImage({ onImageChange, disabled = false }) {
   const [file, setFile] = useState(null);
@@ -33,8 +36,7 @@ export default function UploadCampusImage({ onImageChange, disabled = false }) {
     setUploadDone(false);
     try {
       // 1. Fetch signed upload params from backend
-      const { data } = await axios.get(`${API_BASE_URL}/campus/upload-signature`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      const { data } = await api.get('/campus/upload-signature', {
         timeout: 10000,
       });
       const { signature, timestamp, folder, cloudName, apiKey } = data.data;

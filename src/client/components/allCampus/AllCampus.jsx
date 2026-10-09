@@ -1,3 +1,4 @@
+import api from '../../../api/axiosInstance';
 /**
  * @file AllCampus.jsx
  * @description Public campus listing page.
@@ -29,7 +30,7 @@ import GroupsIcon        from '@mui/icons-material/Groups';
 import TrendingUpIcon    from '@mui/icons-material/TrendingUp';
 import { useNavigate }   from 'react-router-dom';
 
-import { API_BASE_URL, IMAGE_BASE_URL } from '../../../config/env';
+import { IMAGE_BASE_URL } from '../../../config/env';
 import { AuthContext }                  from '../../../context/AuthContext';
 
 // ─── Motion aliases ───────────────────────────────────────────────────────────
@@ -82,10 +83,7 @@ export default function AllCampus() {
 
     const fetchCampuses = async () => {
       try {
-        const res  = await fetch(`${API_BASE_URL}/campus/all`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        const body = await res.json();
+        const { data: body } = await api.get('/campus/all');
         setCampuses(body.data || []);
       } catch (err) {
         console.error('AllCampus fetch error:', err);
