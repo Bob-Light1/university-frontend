@@ -10,7 +10,8 @@
  * links to it (ERP document deep-link); otherwise it is plain text.
  */
 
-import { useTranslation } from 'react-i18next';
+import { AI_SOURCE_TYPES } from './aiConstants';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
 import {
   Box, Stack, Typography, Link, Chip, Paper, Tooltip,
 } from '@mui/material';
@@ -18,8 +19,9 @@ import { InsertDriveFile, Verified } from '@mui/icons-material';
 
 const citationKey = (c, i) => `${c.sourceType || 'src'}:${c.sourceId || i}`;
 
-export default function CitationList({ items = [], dense = false }) {
-  const { t } = useTranslation('ai');
+/** Render verified sources; document links open the selected campus GED drawer. */
+export default function CitationList({ items = [], dense = false, campusId }) {
+  const { t } = useAppTranslation('ai');
   if (!Array.isArray(items) || items.length === 0) return null;
 
   return (
@@ -34,6 +36,10 @@ export default function CitationList({ items = [], dense = false }) {
       <Stack spacing={1}>
         {items.map((c, i) => {
           const label = c.title || c.label || c.sourceId || t('citations.untitled');
+          const href = c.sourceType === AI_SOURCE_TYPES.DOCUMENT
+            && /^[a-f\d]{24}$/i.test(c.sourceId) && /^[a-f\d]{24}$/i.test(campusId || '')
+            ? `/campus/${campusId}/documents?documentId=${c.sourceId}`
+            : c.url;
           return (
             <Paper
               key={citationKey(c, i)}
@@ -43,9 +49,9 @@ export default function CitationList({ items = [], dense = false }) {
               <InsertDriveFile sx={{ fontSize: 18, color: 'text.disabled', mt: 0.25 }} />
               <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: 'wrap' }}>
-                  {c.url ? (
+                  {href ? (
                     <Link
-                      href={c.url}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       underline="hover"

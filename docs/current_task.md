@@ -1,39 +1,42 @@
 # Current task and handoff
 
-Last updated: 2026-10-09.
-Status: COMPLETED — phase 1-B row 3, authentication session hardening.
-Branch: `main`; sibling backend starts at `8c6cfa4`.
+Last updated: 2026-10-16.
+Status: LOCAL IMPLEMENTATION COMPLETE — phase 1-B row 4 AI consumer acceptance.
+Branch: main; initially clean. Backend roadmap row 4 remains in progress.
 
-## Objective and implementation
+## Objective and changes
 
-Continue the backend authentication hardening row. The backend owns the
-[contract and evidence](../../backend/docs/architecture/features/auth-session-hardening.md).
+Continue the next phase 1-B row after delivered authentication. Canonical
+[scope, audits and evidence](../../backend/docs/architecture/features/ai-operational-acceptance.md)
+own this work; D2 remains bge-m3/1024d. The owner confirms no target exists and
+requests local preparation and validation; no deployment or provider call.
 
-- `src/api/sessionClient.js`: cookie login/rotation/logout, identity checks,
-  request coalescing and supported cross-tab Web Locks.
-- `src/api/axiosInstance.js`: current identity per request, one expired-access
-  retry, revocation cleanup and delayed-response identity guards.
-- `src/context/AuthContext.jsx`: verified session bootstrap, server logout,
-  preference restoration and cross-tab identity synchronization.
-- SSE obtains fresh access; campus creation/listing and upload-signature calls
-  use the shared API transport. External Cloudinary transport stays separate.
-- Retired nonexistent auth-service endpoints replaced with the actual contract.
+- AiChat/Search/Analytics/Advisors reuse useFeature to disable generation when
+  scoped AI is read-only, including action/Enter guards; history stays readable.
+- CitationList and its callers carry the workspace campus to the existing GED
+  route. DocumentManager resolves the authorized document independently of list
+  pagination and refuses another campus; late responses cannot reopen a closed drawer.
+- Touched AI panels use useAppTranslation and the existing ten locale catalogs.
+- aiService reports incomplete SSE EOF through the translated STREAM error and
+  preserves explicit cancellation and terminal done/error outcomes.
 
-## Verification on 2026-10-09
+## Verification
 
-Final loopback build passes (`/tmp/row3-frontend-dist-current`). Touched lint has no
-errors or warnings. Localization passes 190 combinations, no new keys. Backend
-transport tests pass 8/8; both delayed-response scenarios were red before their
-fixes, including identity changes while awaiting a request token. Complete browser
-QA passes 146/146. Final-build authentication replay passes 12/12 across real
-administrator/manager login, HttpOnly cookie, expired access on reload, saved
-light/dark theme and server logout. Screenshots inspected. Backend evidence owns
-full tests, audit and disposable database results. Logs: `/tmp/row3-checks`.
+Current ERP build passes with loopback API configuration; touched lint is clean;
+190 locale/namespace combinations pass. Seven permanent backend-hosted tests execute
+this actual consumer transport with isolated browser adapters. Three EOF cases
+failed before correction; dropped terminal callbacks and noisy cancellation made
+the other three fail. The source-type enum parity check was red before adding
+the mirror. The backend permanent browser act covers both themes,
+administrator/campus-manager identities, read-only/hidden/disabled states, history,
+GED links and ERP figures. Final complete browser QA passes 174/174 (28 AI) on 2026-10-16; screenshots
+inspected for both roles/themes and all module states. Eight targeted backend
+regressions pass. The canonical note owns the full evidence and historical checks.
+No environment contract, dependency or product locale changes.
 
 ## Remaining boundaries
 
-No implementation work remains for this consumer. Coordinated conventional local
-commits cover backend, frontend and course; no publication or deployment.
-Production requires the configured HTTPS cookie/CORS origins and a fresh login
-for old tokens. CH-0 and earlier administrator acceptance remain with their
-backend work items; no subsequent row is started automatically.
+Consumer implementation is complete; real-provider SLO acceptance waits for target
+infrastructure and is tracked by backend roadmap row 4. No later phase, push or
+deployment. Prior row 3 remains delivered; CH-0 and administrator acceptance remain
+with their backend work items. Start a future session from context and recheck Git.

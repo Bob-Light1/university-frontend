@@ -18,7 +18,8 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
+import { useFeature } from '../../hooks/useFeature';
 import {
   Box, Stack, Paper, Typography, Button, ToggleButtonGroup, ToggleButton,
   CircularProgress, Alert, Chip, Divider,
@@ -59,8 +60,8 @@ const ACTION_ROUTE = {
   OPEN_LEAD_ANALYTICS: 'partners',
 };
 
-function ProposalCard({ proposal, onAction }) {
-  const { t } = useTranslation('ai');
+function ProposalCard({ proposal, onAction, campusId }) {
+  const { t } = useAppTranslation('ai');
   const action = proposal.suggestedAction;
   const hasRoute = action?.type && ACTION_ROUTE[action.type];
 
@@ -76,7 +77,7 @@ function ProposalCard({ proposal, onAction }) {
 
           {Array.isArray(proposal.evidence) && proposal.evidence.length > 0 && (
             <Box sx={{ mt: 1.5 }}>
-              <CitationList items={proposal.evidence} dense />
+              <CitationList items={proposal.evidence} campusId={campusId} dense />
             </Box>
           )}
 
@@ -106,8 +107,11 @@ function ProposalCard({ proposal, onAction }) {
   );
 }
 
+/** Render the existing AI capability under the server-owned module state. */
 export default function AiAdvisors({ campusId }) {
-  const { t } = useTranslation('ai');
+  const { ready, canWrite } = useFeature('ai');
+  const canGenerate = ready && canWrite;
+  const { t } = useAppTranslation('ai');
   const navigate = useNavigate();
 
   const [advisor, setAdvisor] = useState(ADVISOR_ORDER[0]);
@@ -132,6 +136,7 @@ export default function AiAdvisors({ campusId }) {
     });
 
   const run = () => {
+    if (!canGenerate || loading) return;
     setLoading(true);
     setError(null);
     runAiAdvisor(advisor, params, campusId)
@@ -181,12 +186,12 @@ export default function AiAdvisors({ campusId }) {
           fields={ADVISORS[advisor].params}
           values={params}
           onChange={setParam}
-          disabled={loading}
+          disabled={!canGenerate || loading}
         />
         <Button
           variant="contained"
           onClick={run}
-          disabled={loading}
+          disabled={!canGenerate || loading}
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <PlayArrow />}
           sx={{ textTransform: 'none', borderRadius: 2 }}
         >
@@ -217,7 +222,7 @@ export default function AiAdvisors({ campusId }) {
                 )}
               </Stack>
               {result.proposals.map((p, i) => (
-                <ProposalCard key={i} proposal={p} onAction={handleAction} />
+                <ProposalCard key={i} proposal={p} onAction={handleAction} campusId={campusId} />
               ))}
             </>
           ) : (

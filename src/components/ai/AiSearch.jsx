@@ -13,7 +13,8 @@
  */
 
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
+import { useFeature } from '../../hooks/useFeature';
 import {
   Box, Stack, Paper, Typography, TextField, InputAdornment, IconButton,
   CircularProgress, Alert, Chip,
@@ -25,8 +26,11 @@ import { searchAi } from '../../services/aiService';
 import { extractAiError, errorKey, isUnavailableError } from './aiConstants';
 import AiUnavailable from './AiUnavailable';
 
+/** Render the existing AI capability under the server-owned module state. */
 export default function AiSearch({ campusId }) {
-  const { t } = useTranslation('ai');
+  const { ready, canWrite } = useFeature('ai');
+  const canGenerate = ready && canWrite;
+  const { t } = useAppTranslation('ai');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(null);   // null = never searched
   const [loading, setLoading] = useState(false);
@@ -36,7 +40,7 @@ export default function AiSearch({ campusId }) {
 
   const run = () => {
     const q = query.trim();
-    if (!q || loading) return;
+    if (!canGenerate || !q || loading) return;
     setLoading(true);
     setError(null);
     setLastQuery(q);
@@ -64,6 +68,7 @@ export default function AiSearch({ campusId }) {
 
       <TextField
         fullWidth
+        disabled={!canGenerate}
         placeholder={t('search.placeholder')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -75,7 +80,7 @@ export default function AiSearch({ campusId }) {
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={run} disabled={!query.trim() || loading} color="primary" edge="end">
+              <IconButton onClick={run} disabled={!canGenerate || !query.trim() || loading} color="primary" edge="end">
                 {loading ? <CircularProgress size={20} /> : <TravelExplore />}
               </IconButton>
             </InputAdornment>
@@ -110,7 +115,7 @@ export default function AiSearch({ campusId }) {
                 <Typography variant="body2" color="text.secondary">{t('search.empty')}</Typography>
               </Paper>
             ) : (
-              <CitationList items={results} />
+              <CitationList items={results} campusId={campusId} />
             )}
           </>
         )}

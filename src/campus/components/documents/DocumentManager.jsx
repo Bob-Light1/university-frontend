@@ -15,6 +15,8 @@
  */
 
 import useCampusContext from '../../../hooks/useCampusContext';
+import { useSearchParams } from 'react-router-dom';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import { useState, useEffect, useCallback, useContext } from 'react';
 import {
   Box,
@@ -165,6 +167,9 @@ const STATUS_TABS = [
 
 const DocumentManager = () => {
   const campusId = useCampusContext();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const documentId = searchParams.get('documentId');
+  const { t } = useAppTranslation('errors');
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -176,7 +181,7 @@ const DocumentManager = () => {
   const {
     documents, total, loading, error,
     filters, fetch, handleFilterChange, handleReset, setPage,
-    remove,
+    remove, fetchById,
   } = hookRef;
 
   // ── Local UI state ─────────────────────────────────────────────────────────
@@ -191,6 +196,33 @@ const DocumentManager = () => {
 
   // ── Fetch on filter change ─────────────────────────────────────────────────
   useEffect(() => { fetch(); }, [fetch, filters]);
+
+  // Resolve a citation independently of list pagination, through the existing
+  // authorized detail endpoint. A late response cannot reopen a closed drawer.
+  useEffect(() => {
+    let active = true;
+    if (!documentId) return undefined;
+    const loadCitation = async () => {
+      if (!/^[a-f\d]{24}$/i.test(documentId)) throw new Error('Invalid citation id');
+      const { document } = await fetchById(documentId);
+      const owner = String(document?.campusId?._id ?? document?.campusId ?? '');
+      if (owner !== String(campusId)) throw new Error('Citation campus mismatch');
+      if (active) setDrawerDoc(document);
+    };
+    loadCitation().catch(() => {
+      if (active) setSnack({ severity: 'error', message: t('api.notFound') });
+    });
+    return () => { active = false; };
+  }, [documentId, campusId, fetchById, t]);
+
+  const closeDrawer = () => {
+    setDrawerDoc(null);
+    if (documentId) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('documentId');
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -571,7 +603,7 @@ const DocumentManager = () => {
       <DocumentDetailDrawer
         open={!!drawerDoc}
         doc={drawerDoc}
-        onClose={() => setDrawerDoc(null)}
+        onClose={closeDrawer}
         onEdit={(d)   => { setEditDoc(d); setFormOpen(true); }}
         onDelete={(d) => setDeleteDoc(d)}
         onRefresh={() => { fetch(); setDrawerDoc(null); }}

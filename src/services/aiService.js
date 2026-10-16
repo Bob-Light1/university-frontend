@@ -174,6 +174,7 @@ export const streamAiChat = (payload, handlers = {}) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
+    let terminal = false;
     try {
       for (;;) {
         const { done, value } = await reader.read();
@@ -187,12 +188,20 @@ export const streamAiChat = (payload, handlers = {}) => {
           if (parsed.event === 'message_start') handlers.onMessageStart?.(parsed.data);
           else if (parsed.event === 'delta') handlers.onDelta?.(parsed.data);
           else if (parsed.event === 'citations') handlers.onCitations?.(parsed.data);
-          else if (parsed.event === 'done') handlers.onDone?.(parsed.data);
-          else if (parsed.event === 'error') emitError(parsed.data.code, parsed.data.message);
+          else if (parsed.event === 'done') {
+            terminal = true;
+            handlers.onDone?.(parsed.data);
+          } else if (parsed.event === 'error') {
+            terminal = true;
+            emitError(parsed.data.code, parsed.data.message);
+          }
         }
       }
+      if (!terminal && !controller.signal.aborted) {
+        emitError('STREAM', 'The chat stream ended before completion. Please retry.');
+      }
     } catch (error) {
-      if (error.name !== 'AbortError') emitError('STREAM', error.message);
+      if (!terminal && error.name !== 'AbortError') emitError('STREAM', error.message);
     }
   })();
 

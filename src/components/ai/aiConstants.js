@@ -3,7 +3,7 @@
  * @description Frontend mirror of the backend AI entitlement constants
  * (shared/constants/ai.constants.js — the single source of truth, PHASE3
  * design §11.3). Kept in sync manually: plans, per-plan feature presets,
- * report/advisor names and gateway error codes are declared verbatim by the
+ * source types, report/advisor names and gateway error codes are declared verbatim by the
  * backend and only mirrored here for local gating and label resolution.
  *
  * The UI never trusts these for security — the gateway enforces plan / feature
@@ -47,6 +47,13 @@ export const AI_PLAN_BUDGETS = Object.freeze({
   [AI_PLANS.FREE]: 200000,
   [AI_PLANS.STANDARD]: 1000000,
   [AI_PLANS.PREMIUM]: 5000000,
+});
+
+/** Citation source types (verbatim backend mirror). */
+export const AI_SOURCE_TYPES = Object.freeze({
+  DOCUMENT: 'document',
+  PORTAL_PROGRAM: 'portal-program',
+  PORTAL_FAQ: 'portal-faq',
 });
 
 /** Descriptive analytics reports (Feature 2). */

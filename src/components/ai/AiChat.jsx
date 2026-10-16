@@ -18,7 +18,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../hooks/useAppTranslation';
+import { useFeature } from '../../hooks/useFeature';
 import {
   Box, Stack, Paper, Typography, TextField, IconButton, Button, Divider,
   List, ListItemButton, ListItemText, CircularProgress, Alert, Tooltip,
@@ -36,7 +37,7 @@ import { extractAiError, errorKey, isUnavailableError } from './aiConstants';
 import AiUnavailable from './AiUnavailable';
 
 /** One rendered chat bubble. */
-function MessageBubble({ role, content, citations, streaming }) {
+function MessageBubble({ role, content, citations, streaming, campusId }) {
   const theme = useTheme();
   const isUser = role === 'user';
   return (
@@ -72,7 +73,7 @@ function MessageBubble({ role, content, citations, streaming }) {
         </Paper>
         {Array.isArray(citations) && citations.length > 0 && (
           <Box sx={{ mt: 1 }}>
-            <CitationList items={citations} dense />
+            <CitationList items={citations} campusId={campusId} dense />
           </Box>
         )}
       </Box>
@@ -80,9 +81,12 @@ function MessageBubble({ role, content, citations, streaming }) {
   );
 }
 
+/** Render the existing AI capability under the server-owned module state. */
 export default function AiChat({ campusId }) {
+  const { ready, canWrite } = useFeature('ai');
+  const canGenerate = ready && canWrite;
   const theme = useTheme();
-  const { t } = useTranslation('ai');
+  const { t } = useAppTranslation('ai');
 
   const [messages, setMessages] = useState([]);       // { role, content, citations }
   const [conversationId, setConversationId] = useState(null);
@@ -150,7 +154,7 @@ export default function AiChat({ campusId }) {
 
   const send = () => {
     const text = input.trim();
-    if (!text || streaming) return;
+    if (!canGenerate || !text || streaming) return;
     setError(null);
     setInput('');
 
@@ -286,6 +290,7 @@ export default function AiChat({ campusId }) {
               {messages.map((m, i) => (
                 <MessageBubble
                   key={i}
+                  campusId={campusId}
                   role={m.role}
                   content={m.content}
                   citations={m.citations}
@@ -314,7 +319,7 @@ export default function AiChat({ campusId }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKeyDown}
-              disabled={streaming}
+              disabled={!canGenerate || streaming}
               inputProps={{ maxLength: 4000 }}
               sx={{ '& fieldset': { border: 'none' } }}
             />
@@ -325,7 +330,7 @@ export default function AiChat({ campusId }) {
             ) : (
               <Tooltip title={t('chat.send')}>
                 <span>
-                  <IconButton color="primary" onClick={send} disabled={!input.trim()}><Send /></IconButton>
+                  <IconButton color="primary" onClick={send} disabled={!canGenerate || !input.trim()}><Send /></IconButton>
                 </span>
               </Tooltip>
             )}
