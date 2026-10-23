@@ -24,3 +24,13 @@
 - Environment: §11, `src/config/env.js`, `src/config/brand.js` and `.env.example`. Keep applicant intake in the separate portal.
 - Feature delivery across repositories follows [backend CLAUDE.md](../backend/CLAUDE.md) §12, including required design, tests, audit, browser QA and registry/status updates. Read the relevant design note before changing its subsystem.
 - For application changes, run `npm run build`, lint touched code, and run `node scripts/check-missing-keys.js` for localization. No `npm test` script exists. Historical lint counts and CI results are not current evidence.
+
+## Manual QA Workbench
+
+[QA Workbench](../../qa-workbench/README.md) is the independent manual-test workspace. Its source
+lives in `/home/adminsecu/Projects/qa-workbench`; it has its own design, roadmap
+and agent handoff. Consult its README for verified hosting status and setup.
+For every product-roadmap task, identify the manual case IDs to add, revise or
+archive, or record why no manual-QA update is required. Update cases through the
+Workbench UI/API/CLI while preserving historical campaign snapshots and results.
+Do not store fixture passwords, invitation links or real personal data in cases.

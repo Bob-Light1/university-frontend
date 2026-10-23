@@ -45,3 +45,12 @@ as current evidence. Recheck the relevant commands for each implementation task.
 See [current task](current_task.md) for the dated working-tree snapshot.
 
 Authentication lifecycle: [backend session contract](../../backend/docs/architecture/features/auth-session-hardening.md), `src/api/sessionClient.js` and `src/context/AuthContext.jsx`.
+
+## Manual QA Workbench
+
+[QA Workbench](../../../qa-workbench/README.md) is the independent manual-test workspace. Its source
+lives in `/home/adminsecu/Projects/qa-workbench`; it has its own design, roadmap
+and agent handoff. Consult its README for verified hosting status and setup.
+Each product change must reference affected manual case IDs or explain its lack
+of manual-QA impact. This support does not replace automated checks, CH-* acceptance
+or the product-roadmap phase order. Initial campaigns target local synthetic ERP data.
