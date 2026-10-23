@@ -8,6 +8,8 @@
  */
 
 import { useState } from 'react';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
+import { fDateTime } from '../../../utils/dateFormat';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, Stack, Typography, TextField, IconButton,
@@ -17,6 +19,7 @@ import { ContentCopy, CheckCircle } from '@mui/icons-material';
 
 export default function ActivationResultDialog({ open, activation, onClose }) {
   const [copied, setCopied] = useState('');
+  const { t } = useAppTranslation('common');
 
   if (!activation) return null;
 
@@ -37,7 +40,7 @@ export default function ActivationResultDialog({ open, activation, onClose }) {
         readOnly: true,
         endAdornment: (
           <InputAdornment position="end">
-            <Tooltip title={copied === k ? 'Copied!' : 'Copy'}>
+            <Tooltip title={copied === k ? t('admission.activation.copied') : t('admission.activation.copy')}>
               <IconButton edge="end" onClick={() => copy(value, k)}>
                 {copied === k ? <CheckCircle color="success" /> : <ContentCopy />}
               </IconButton>
@@ -49,28 +52,26 @@ export default function ActivationResultDialog({ open, activation, onClose }) {
   );
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Account ready — share the activation details</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth disableEnforceFocus closeAfterTransition={false}>
+      <DialogTitle>{t('admission.activation.title')}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <Alert severity="info">
-            No password was set. The user activates their account and chooses their own
-            password using the link below, or — if they have no email — with their
-            username/matricule and the activation code.
+            {t('admission.activation.notice')}
           </Alert>
 
-          {copyField('Activation link', activation.activationUrl, 'link')}
-          {copyField('Activation code (offline)', activation.code, 'code')}
+          {copyField(t('admission.activation.link'), activation.activationUrl, 'link')}
+          {copyField(t('admission.activation.code'), activation.code, 'code')}
 
           {activation.expiresAt && (
             <Typography variant="caption" color="text.secondary">
-              Expires on {new Date(activation.expiresAt).toLocaleString()}.
+              {t('admission.activation.expires', { date: fDateTime(activation.expiresAt) })}
             </Typography>
           )}
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant="contained">Done</Button>
+        <Button onClick={onClose} variant="contained">{t('admission.close')}</Button>
       </DialogActions>
     </Dialog>
   );

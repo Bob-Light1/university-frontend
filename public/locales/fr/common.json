@@ -349,5 +349,77 @@
         "empty": "Aucun campus à afficher."
       }
     }
+  },
+  "admission": {
+    "title": "Dossier d’admission",
+    "close": "Fermer",
+    "requirements": "Pièces obligatoires",
+    "saveRequirements": "Enregistrer les exigences",
+    "snapshotNotice": "Les changements concernent les prochaines soumissions. Les dossiers soumis conservent leurs exigences.",
+    "noRequirements": "Aucune pièce obligatoire",
+    "category": "Catégorie",
+    "upload": "Déposer une pièce",
+    "fileRules": "PDF passif, PNG ou JPEG ; 5 Mio par fichier, 10 fichiers maximum.",
+    "download": "Télécharger",
+    "archive": "Archiver",
+    "archived": "Pièces archivées",
+    "enrollment": "Finaliser l’inscription",
+    "sendAccess": "Envoyer un lien privé par courriel",
+    "revokeAccess": "Révoquer l’accès privé",
+    "reissueActivation": "Réémettre l’activation du compte",
+    "note": "Note facultative",
+    "tuitionFee": "Base de scolarité pour la commission (facultatif)",
+    "historical": "Cette inscription historique n’a pas d’étudiant lié. Contactez un administrateur pour régularisation.",
+    "required": "Champ obligatoire",
+    "invalid": "Valeur invalide",
+    "male": "Masculin",
+    "female": "Féminin",
+    "status": {
+      "new": "Nouveau",
+      "contacted": "Contacté",
+      "dossier_submitted": "Dossier soumis",
+      "admitted": "Admis",
+      "enrolled": "Inscrit",
+      "rejected": "Refusé",
+      "abandoned": "Abandonné"
+    },
+    "categories": {
+      "identity": "Identité / naissance",
+      "diploma": "Diplôme",
+      "transcript": "Relevé de notes",
+      "other": "Autre"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "username": "Identifiant",
+      "phone": "Téléphone",
+      "dateOfBirth": "Date de naissance",
+      "gender": "Sexe",
+      "studentClass": "Classe"
+    },
+    "delivery": {
+      "sent": "Message envoyé.",
+      "failed": "Échec de l’envoi ; une nouvelle tentative est possible.",
+      "skipped": "Le courriel n’est pas configuré ; l’envoi a été ignoré.",
+      "pending": "Message en attente d’envoi."
+    },
+    "activation": {
+      "title": "Compte créé — transmettre l’activation",
+      "notice": "L’utilisateur choisit son mot de passe avec ce lien ou avec son identifiant et son code.",
+      "link": "Lien d’activation",
+      "code": "Code d’activation hors ligne",
+      "expires": "Expire le {date}.",
+      "copy": "Copier",
+      "copied": "Copié"
+    },
+    "errors": {
+      "generic": "L’opération a échoué. Rechargez le dossier.",
+      "ADMISSION_INCOMPLETE": "Des pièces obligatoires manquent.",
+      "ADMISSION_CONFLICT": "Le dossier a changé. Rechargez-le avant de réessayer.",
+      "ADMISSION_QUOTA": "Le quota du campus ou la limite de fichiers est atteint.",
+      "ADMISSION_DUPLICATE_STUDENT": "Cette identité étudiante est déjà enregistrée.",
+      "ADMISSION_INVALID_FILE": "Le fichier est invalide, actif, chiffré ou trop volumineux."
+    }
   }
 }

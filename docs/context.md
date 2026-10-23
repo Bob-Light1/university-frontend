@@ -54,3 +54,7 @@ and agent handoff. Consult its README for verified hosting status and setup.
 Each product change must reference affected manual case IDs or explain its lack
 of manual-QA impact. This support does not replace automated checks, CH-* acceptance
 or the product-roadmap phase order. Initial campaigns target local synthetic ERP data.
+
+Admission management: [canonical contract](../../backend/docs/architecture/features/online-admission.md),
+`src/campus/components/partners/LeadDetailDrawer.jsx`, `src/hooks/useAdmissionDossier.js`
+and `src/config/admissionConstants.js`. Candidate intake remains in the separate portal.

@@ -349,5 +349,77 @@
         "empty": "No hay ningún campus que mostrar."
       }
     }
+  },
+  "admission": {
+    "title": "Expediente de admisión",
+    "close": "Cerrar",
+    "requirements": "Documentos obligatorios",
+    "saveRequirements": "Guardar requisitos",
+    "snapshotNotice": "Los cambios se aplican a futuras entregas. Los expedientes presentados conservan sus requisitos.",
+    "noRequirements": "Sin documentos obligatorios",
+    "category": "Categoría",
+    "upload": "Subir un documento",
+    "fileRules": "PDF pasivo, PNG o JPEG; 5 MiB por archivo, hasta 10 archivos.",
+    "download": "Descargar",
+    "archive": "Archivar",
+    "archived": "Documentos archivados",
+    "enrollment": "Finalizar matrícula",
+    "sendAccess": "Enviar enlace privado por correo",
+    "revokeAccess": "Revocar acceso privado",
+    "reissueActivation": "Reemitir activación de cuenta",
+    "note": "Nota opcional",
+    "tuitionFee": "Base de matrícula para comisión (opcional)",
+    "historical": "Esta matrícula histórica no tiene estudiante vinculado. Contacte con un administrador para regularizarla.",
+    "required": "Campo obligatorio",
+    "invalid": "Valor inválido",
+    "male": "Masculino",
+    "female": "Femenino",
+    "status": {
+      "new": "Nuevo",
+      "contacted": "Contactado",
+      "dossier_submitted": "Expediente presentado",
+      "admitted": "Admitido",
+      "enrolled": "Matriculado",
+      "rejected": "Rechazado",
+      "abandoned": "Abandonado"
+    },
+    "categories": {
+      "identity": "Identidad / nacimiento",
+      "diploma": "Diploma",
+      "transcript": "Expediente académico",
+      "other": "Otro"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "username": "Usuario",
+      "phone": "Teléfono",
+      "dateOfBirth": "Fecha de nacimiento",
+      "gender": "Sexo",
+      "studentClass": "Clase"
+    },
+    "delivery": {
+      "sent": "Mensaje enviado.",
+      "failed": "El envío falló; puede reintentarse.",
+      "skipped": "El correo no está configurado; se omitió el envío.",
+      "pending": "Mensaje en cola de envío."
+    },
+    "activation": {
+      "title": "Cuenta creada — compartir activación",
+      "notice": "El usuario elige su contraseña con este enlace o con su identificador y código.",
+      "link": "Enlace de activación",
+      "code": "Código de activación sin conexión",
+      "expires": "Caduca el {date}.",
+      "copy": "Copiar",
+      "copied": "Copiado"
+    },
+    "errors": {
+      "generic": "La operación falló. Recargue el expediente.",
+      "ADMISSION_INCOMPLETE": "Faltan documentos obligatorios.",
+      "ADMISSION_CONFLICT": "El expediente cambió. Recárguelo antes de reintentar.",
+      "ADMISSION_QUOTA": "Se alcanzó la cuota del campus o el límite de archivos.",
+      "ADMISSION_DUPLICATE_STUDENT": "Esta identidad de estudiante ya está registrada.",
+      "ADMISSION_INVALID_FILE": "El archivo es inválido, activo, cifrado o demasiado grande."
+    }
   }
 }

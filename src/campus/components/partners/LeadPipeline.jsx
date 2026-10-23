@@ -203,7 +203,7 @@ const LeadPipeline = () => {
   const {
     leads, kpis, pagination, filters, loading, error,
     fetch, handleFilterChange, handleReset, setPage,
-    changeLeadStatus, removeLead, downloadCSV,
+    removeLead, downloadCSV,
   } = useLead();
 
   const { snackbar, showSnackbar, closeSnackbar } = useFormSnackbar();
@@ -219,16 +219,6 @@ const LeadPipeline = () => {
   const handleCloseDrawer = () => {
     setDrawerOpen(false);
     setViewTarget(null);
-  };
-
-  const handleStatusChange = async (id, status, note, tuitionFee) => {
-    try {
-      await changeLeadStatus(id, status, note, tuitionFee);
-      showSnackbar(`Lead status updated to "${LEAD_STATUS_LABEL[status] ?? status}".`, 'success');
-      handleCloseDrawer();
-    } catch (err) {
-      showSnackbar(err.response?.data?.message || 'Failed to update lead status.', 'error');
-    }
   };
 
   const handleDelete = async (id) => {
@@ -459,8 +449,7 @@ const LeadPipeline = () => {
                 key={lead._id}
                 lead={lead}
                 onView={handleOpenView}
-                onDelete={handleDelete}
-              />
+                    />
             ))}
           </Stack>
         )}
@@ -483,12 +472,12 @@ const LeadPipeline = () => {
         onClose={handleCloseDrawer}
         PaperProps={{ sx: { width: { xs: '100vw', sm: 460 }, borderRadius: { sm: '16px 0 0 16px' } } }}
       >
-        <LeadDetailDrawer
+        {viewTarget && <LeadDetailDrawer
+          key={viewTarget?._id}
           lead={viewTarget}
           onClose={handleCloseDrawer}
-          onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
-        />
+          onUpdated={fetch}
+        />}
       </Drawer>
 
       {/* Snackbar */}

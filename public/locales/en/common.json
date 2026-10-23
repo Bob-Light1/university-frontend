@@ -349,5 +349,77 @@
         "empty": "No campus to show."
       }
     }
+  },
+  "admission": {
+    "title": "Admission dossier",
+    "close": "Close",
+    "requirements": "Required documents",
+    "saveRequirements": "Save requirements",
+    "snapshotNotice": "Changes apply to future submissions. Submitted dossiers keep their requirements.",
+    "noRequirements": "No required documents",
+    "category": "Category",
+    "upload": "Upload a document",
+    "fileRules": "Passive PDF, PNG or JPEG; 5 MiB per file, up to 10 files.",
+    "download": "Download",
+    "archive": "Archive",
+    "archived": "Archived documents",
+    "enrollment": "Finalize enrollment",
+    "sendAccess": "Email a private link",
+    "revokeAccess": "Revoke private access",
+    "reissueActivation": "Reissue account activation",
+    "note": "Optional note",
+    "tuitionFee": "Tuition basis for commission (optional)",
+    "historical": "This historical enrollment has no linked student. Contact an administrator for reconciliation.",
+    "required": "Required field",
+    "invalid": "Invalid value",
+    "male": "Male",
+    "female": "Female",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "dossier_submitted": "Dossier submitted",
+      "admitted": "Admitted",
+      "enrolled": "Enrolled",
+      "rejected": "Rejected",
+      "abandoned": "Abandoned"
+    },
+    "categories": {
+      "identity": "Identity / birth document",
+      "diploma": "Diploma",
+      "transcript": "Transcript",
+      "other": "Other"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "username": "Username",
+      "phone": "Phone",
+      "dateOfBirth": "Date of birth",
+      "gender": "Gender",
+      "studentClass": "Class"
+    },
+    "delivery": {
+      "sent": "Message sent.",
+      "failed": "Delivery failed; it can be retried.",
+      "skipped": "Email is not configured; delivery was skipped.",
+      "pending": "Message queued for delivery."
+    },
+    "activation": {
+      "title": "Account created — share activation details",
+      "notice": "The user chooses their own password using this link or their identifier and code.",
+      "link": "Activation link",
+      "code": "Offline activation code",
+      "expires": "Expires on {date}.",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
+    "errors": {
+      "generic": "The operation failed. Please reload the dossier.",
+      "ADMISSION_INCOMPLETE": "Required documents are missing.",
+      "ADMISSION_CONFLICT": "The dossier changed. Reload it before retrying.",
+      "ADMISSION_QUOTA": "The campus quota or file limit is reached.",
+      "ADMISSION_DUPLICATE_STUDENT": "This student identity is already registered.",
+      "ADMISSION_INVALID_FILE": "The file is invalid, active, encrypted or too large."
+    }
   }
 }

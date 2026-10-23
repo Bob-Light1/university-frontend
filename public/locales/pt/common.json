@@ -349,5 +349,77 @@
         "empty": "Nenhum campus a mostrar."
       }
     }
+  },
+  "admission": {
+    "title": "Processo de admissão",
+    "close": "Fechar",
+    "requirements": "Documentos obrigatórios",
+    "saveRequirements": "Guardar requisitos",
+    "snapshotNotice": "As alterações aplicam-se a envios futuros. Os processos enviados mantêm os seus requisitos.",
+    "noRequirements": "Sem documentos obrigatórios",
+    "category": "Categoria",
+    "upload": "Carregar um documento",
+    "fileRules": "PDF passivo, PNG ou JPEG; 5 MiB por ficheiro, até 10 ficheiros.",
+    "download": "Descarregar",
+    "archive": "Arquivar",
+    "archived": "Documentos arquivados",
+    "enrollment": "Concluir inscrição",
+    "sendAccess": "Enviar ligação privada por e-mail",
+    "revokeAccess": "Revogar acesso privado",
+    "reissueActivation": "Reemitir ativação da conta",
+    "note": "Nota opcional",
+    "tuitionFee": "Base de propinas para comissão (opcional)",
+    "historical": "Esta inscrição histórica não tem estudante associado. Contacte um administrador para regularização.",
+    "required": "Campo obrigatório",
+    "invalid": "Valor inválido",
+    "male": "Masculino",
+    "female": "Feminino",
+    "status": {
+      "new": "Novo",
+      "contacted": "Contactado",
+      "dossier_submitted": "Processo enviado",
+      "admitted": "Admitido",
+      "enrolled": "Inscrito",
+      "rejected": "Rejeitado",
+      "abandoned": "Abandonado"
+    },
+    "categories": {
+      "identity": "Identidade / nascimento",
+      "diploma": "Diploma",
+      "transcript": "Histórico escolar",
+      "other": "Outro"
+    },
+    "fields": {
+      "firstName": "Nome",
+      "lastName": "Apelido",
+      "username": "Utilizador",
+      "phone": "Telefone",
+      "dateOfBirth": "Data de nascimento",
+      "gender": "Género",
+      "studentClass": "Turma"
+    },
+    "delivery": {
+      "sent": "Mensagem enviada.",
+      "failed": "O envio falhou; pode ser repetido.",
+      "skipped": "O e-mail não está configurado; o envio foi ignorado.",
+      "pending": "Mensagem em fila de envio."
+    },
+    "activation": {
+      "title": "Conta criada — partilhar ativação",
+      "notice": "O utilizador escolhe a palavra-passe com esta ligação ou com o identificador e código.",
+      "link": "Ligação de ativação",
+      "code": "Código de ativação offline",
+      "expires": "Expira em {date}.",
+      "copy": "Copiar",
+      "copied": "Copiado"
+    },
+    "errors": {
+      "generic": "A operação falhou. Recarregue o processo.",
+      "ADMISSION_INCOMPLETE": "Faltam documentos obrigatórios.",
+      "ADMISSION_CONFLICT": "O processo mudou. Recarregue-o antes de tentar novamente.",
+      "ADMISSION_QUOTA": "A quota do campus ou o limite de ficheiros foi atingido.",
+      "ADMISSION_DUPLICATE_STUDENT": "Esta identidade de estudante já está registada.",
+      "ADMISSION_INVALID_FILE": "O ficheiro é inválido, ativo, encriptado ou demasiado grande."
+    }
   }
 }

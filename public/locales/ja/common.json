@@ -349,5 +349,77 @@
         "empty": "表示するキャンパスがありません。"
       }
     }
+  },
+  "admission": {
+    "title": "入学申請書類",
+    "close": "閉じる",
+    "requirements": "必要書類",
+    "saveRequirements": "要件を保存",
+    "snapshotNotice": "変更は今後の提出に適用されます。提出済みの申請は元の要件を保持します。",
+    "noRequirements": "必要書類なし",
+    "category": "分類",
+    "upload": "書類をアップロード",
+    "fileRules": "動的コンテンツのないPDF、PNG、JPEGのみ。1ファイル5 MiB以下、最大10ファイル。",
+    "download": "ダウンロード",
+    "archive": "アーカイブ",
+    "archived": "アーカイブ済み書類",
+    "enrollment": "登録を完了",
+    "sendAccess": "専用リンクをメールで送信",
+    "revokeAccess": "専用アクセスを取り消す",
+    "reissueActivation": "アカウント有効化を再発行",
+    "note": "備考（任意）",
+    "tuitionFee": "手数料計算用の学費基準額（任意）",
+    "historical": "この過去の登録には学生が関連付けられていません。管理者に確認を依頼してください。",
+    "required": "必須項目",
+    "invalid": "無効な値",
+    "male": "男性",
+    "female": "女性",
+    "status": {
+      "new": "新規",
+      "contacted": "連絡済み",
+      "dossier_submitted": "書類提出済み",
+      "admitted": "入学承認",
+      "enrolled": "登録済み",
+      "rejected": "不承認",
+      "abandoned": "辞退"
+    },
+    "categories": {
+      "identity": "本人確認／出生証明",
+      "diploma": "卒業証書",
+      "transcript": "成績証明書",
+      "other": "その他"
+    },
+    "fields": {
+      "firstName": "名",
+      "lastName": "姓",
+      "username": "ユーザー名",
+      "phone": "電話番号",
+      "dateOfBirth": "生年月日",
+      "gender": "性別",
+      "studentClass": "クラス"
+    },
+    "delivery": {
+      "sent": "メッセージを送信しました。",
+      "failed": "送信に失敗しました。再試行できます。",
+      "skipped": "メールが未設定のため送信を省略しました。",
+      "pending": "メッセージは送信待ちです。"
+    },
+    "activation": {
+      "title": "アカウントを作成しました。有効化情報を伝えてください",
+      "notice": "利用者はこのリンク、または識別子とコードを使用してパスワードを設定します。",
+      "link": "有効化リンク",
+      "code": "オフライン有効化コード",
+      "expires": "有効期限：{date}。",
+      "copy": "コピー",
+      "copied": "コピー済み"
+    },
+    "errors": {
+      "generic": "操作に失敗しました。申請を再読み込みしてください。",
+      "ADMISSION_INCOMPLETE": "必要書類が不足しています。",
+      "ADMISSION_CONFLICT": "申請が変更されました。再読み込みしてから再試行してください。",
+      "ADMISSION_QUOTA": "キャンパスの容量またはファイル数の上限に達しました。",
+      "ADMISSION_DUPLICATE_STUDENT": "この学生情報はすでに登録されています。",
+      "ADMISSION_INVALID_FILE": "ファイルが無効、動的、暗号化済み、または大きすぎます。"
+    }
   }
 }

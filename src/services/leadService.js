@@ -49,5 +49,28 @@ export const updateLeadStatus = (id, data) =>
  * Soft-delete a lead (marks as 'abandoned'). Blocked if a commission is attached.
  * @param {string} id
  */
-export const deleteLead = (id) =>
-  api.delete(`/partners/leads/${id}`);
+export const deleteLead = (id, revision) =>
+  api.delete(`/partners/leads/${id}`, { data: { revision } });
+
+/** Read the management dossier, private-file metadata and requirement snapshot. */
+export const getDossier = (id) => api.get(`/partners/leads/${id}/dossier`);
+/** Upload only to an authorized draft dossier. */
+export const uploadDossierFile = (id, file, category, revision) => {
+  const data = new FormData();
+  data.append('file', file);
+  data.append('category', category);
+  data.append('revision', revision);
+  return api.post(`/partners/leads/${id}/dossier/files`, data);
+};
+/** Download an authorized private attachment. */
+export const downloadDossierFile = (id, fileId) => api.get(`/partners/leads/${id}/dossier/files/${fileId}`, { responseType: 'blob' });
+/** Archive a draft file while retaining its history and stored bytes. */
+export const archiveDossierFile = (id, fileId, revision) => api.delete(`/partners/leads/${id}/dossier/files/${fileId}`, { data: { revision } });
+/** Send a private access link to the stored candidate email. */
+export const issueDossierAccess = (id) => api.post(`/partners/leads/${id}/dossier/access`);
+/** Revoke existing candidate access. */
+export const revokeDossierAccess = (id) => api.delete(`/partners/leads/${id}/dossier/access`);
+/** Read the selected campus's required attachment categories. */
+export const getAdmissionConfig = (campusId) => api.get('/partners/admission/config', { params: { campusId } });
+/** Configure requirements for future submissions only. */
+export const setAdmissionConfig = (campusId, requirements) => api.put('/partners/admission/config', { requirements }, { params: { campusId } });

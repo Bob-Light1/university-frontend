@@ -319,3 +319,16 @@ Keep backend `PRODUCT_BRAND_NAME` and portal `NEXT_PUBLIC_PRODUCT_BRAND_NAME` al
 Existing campus names/logos and the portal's establishment override remain independent.
 The public language selector stores the preference locally without an anonymous
 settings PATCH. Product texts are in the lazy `home` namespace in all ten locales.
+
+## Admission dossier integration
+
+The existing partner lead drawer uses `useAdmissionDossier`, a serialized mutation/
+refresh hook, and `leadService` for private files, requirement configuration, access
+rotation/revocation and optimistic business transitions. `admissionConstants.js`
+mirrors backend statuses/roles/errors and is pinned by the backend contract suite.
+Director/admin alone sees admission; management can finalize a pending student
+with validated class, demographics and username. ActivationResultDialog displays
+one-time credentials from the finalization response; subsequent reads require
+explicit reissue. Read-only scoped identities keep history and cannot mutate.
+The [backend admission note](../backend/docs/architecture/features/online-admission.md)
+owns the API and unfinished acceptance gates. No new environment variable is added.

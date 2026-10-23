@@ -81,8 +81,8 @@ const useLead = () => {
 
   // ─── Mutations ──────────────────────────────────────────────────────────────
 
-  const changeLeadStatus = useCallback(async (id, status, note = '', tuitionFee) => {
-    const payload = { status, note };
+  const changeLeadStatus = useCallback(async (id, status, note = '', tuitionFee, assignment = {}) => {
+    const payload = { status, note, ...assignment };
     if (tuitionFee !== undefined) payload.tuitionFee = tuitionFee;
     const res = await updateLeadStatus(id, payload);
     await fetch();
@@ -90,10 +90,11 @@ const useLead = () => {
   }, [fetch]);
 
   const removeLead = useCallback(async (id) => {
-    const res = await deleteLead(id);
+    const lead = leads.find((item) => item._id === id);
+    const res = await deleteLead(id, lead?.dossier?.revision ?? 0);
     await fetch();
     return res.data;
-  }, [fetch]);
+  }, [fetch, leads]);
 
   const fetchDetail = useCallback(async (id) => {
     const res = await getLead(id);

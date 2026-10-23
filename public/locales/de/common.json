@@ -349,5 +349,77 @@
         "empty": "Kein Standort vorhanden."
       }
     }
+  },
+  "admission": {
+    "title": "Bewerbungsunterlagen",
+    "close": "Schließen",
+    "requirements": "Erforderliche Dokumente",
+    "saveRequirements": "Anforderungen speichern",
+    "snapshotNotice": "Änderungen gelten für künftige Einreichungen. Eingereichte Unterlagen behalten ihre Anforderungen.",
+    "noRequirements": "Keine erforderlichen Dokumente",
+    "category": "Kategorie",
+    "upload": "Dokument hochladen",
+    "fileRules": "Passive PDF, PNG oder JPEG; 5 MiB pro Datei, höchstens 10 Dateien.",
+    "download": "Herunterladen",
+    "archive": "Archivieren",
+    "archived": "Archivierte Dokumente",
+    "enrollment": "Einschreibung abschließen",
+    "sendAccess": "Privaten Link per E-Mail senden",
+    "revokeAccess": "Privaten Zugriff widerrufen",
+    "reissueActivation": "Kontoaktivierung erneut ausstellen",
+    "note": "Optionale Notiz",
+    "tuitionFee": "Gebührenbasis für die Provision (optional)",
+    "historical": "Dieser früheren Einschreibung ist kein Studierender zugeordnet. Wenden Sie sich zur Klärung an die Verwaltung.",
+    "required": "Pflichtfeld",
+    "invalid": "Ungültiger Wert",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "status": {
+      "new": "Neu",
+      "contacted": "Kontaktiert",
+      "dossier_submitted": "Unterlagen eingereicht",
+      "admitted": "Zugelassen",
+      "enrolled": "Eingeschrieben",
+      "rejected": "Abgelehnt",
+      "abandoned": "Abgebrochen"
+    },
+    "categories": {
+      "identity": "Identitäts- / Geburtsnachweis",
+      "diploma": "Abschlusszeugnis",
+      "transcript": "Notenübersicht",
+      "other": "Sonstiges"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "username": "Benutzername",
+      "phone": "Telefon",
+      "dateOfBirth": "Geburtsdatum",
+      "gender": "Geschlecht",
+      "studentClass": "Klasse"
+    },
+    "delivery": {
+      "sent": "Nachricht gesendet.",
+      "failed": "Versand fehlgeschlagen; ein erneuter Versuch ist möglich.",
+      "skipped": "E-Mail ist nicht konfiguriert; der Versand wurde übersprungen.",
+      "pending": "Nachricht zum Versand vorgemerkt."
+    },
+    "activation": {
+      "title": "Konto erstellt — Aktivierung weitergeben",
+      "notice": "Der Benutzer wählt sein Passwort über diesen Link oder mit seiner Kennung und dem Code.",
+      "link": "Aktivierungslink",
+      "code": "Offline-Aktivierungscode",
+      "expires": "Gültig bis {date}.",
+      "copy": "Kopieren",
+      "copied": "Kopiert"
+    },
+    "errors": {
+      "generic": "Der Vorgang ist fehlgeschlagen. Laden Sie die Unterlagen neu.",
+      "ADMISSION_INCOMPLETE": "Erforderliche Dokumente fehlen.",
+      "ADMISSION_CONFLICT": "Die Unterlagen wurden geändert. Laden Sie sie erneut.",
+      "ADMISSION_QUOTA": "Das Campus-Kontingent oder die Dateigrenze ist erreicht.",
+      "ADMISSION_DUPLICATE_STUDENT": "Diese Studierendenidentität ist bereits registriert.",
+      "ADMISSION_INVALID_FILE": "Die Datei ist ungültig, aktiv, verschlüsselt oder zu groß."
+    }
   }
 }

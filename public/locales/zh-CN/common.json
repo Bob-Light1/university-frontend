@@ -349,5 +349,77 @@
         "empty": "没有可显示的校区。"
       }
     }
+  },
+  "admission": {
+    "title": "入学申请档案",
+    "close": "关闭",
+    "requirements": "必需材料",
+    "saveRequirements": "保存要求",
+    "snapshotNotice": "更改适用于今后的提交。已提交的档案保留原有要求。",
+    "noRequirements": "无必需材料",
+    "category": "类别",
+    "upload": "上传材料",
+    "fileRules": "仅接受无活动内容的PDF、PNG或JPEG；每个文件不超过5 MiB，最多10个文件。",
+    "download": "下载",
+    "archive": "归档",
+    "archived": "已归档材料",
+    "enrollment": "完成注册",
+    "sendAccess": "通过电子邮件发送私人链接",
+    "revokeAccess": "撤销私人访问",
+    "reissueActivation": "重新签发账户激活信息",
+    "note": "备注（选填）",
+    "tuitionFee": "计算佣金的学费基数（选填）",
+    "historical": "此历史注册记录尚未关联学生。请联系管理员处理。",
+    "required": "必填项",
+    "invalid": "值无效",
+    "male": "男",
+    "female": "女",
+    "status": {
+      "new": "新申请",
+      "contacted": "已联系",
+      "dossier_submitted": "档案已提交",
+      "admitted": "已录取",
+      "enrolled": "已注册",
+      "rejected": "已拒绝",
+      "abandoned": "已放弃"
+    },
+    "categories": {
+      "identity": "身份证明／出生证明",
+      "diploma": "毕业证书",
+      "transcript": "成绩单",
+      "other": "其他"
+    },
+    "fields": {
+      "firstName": "名",
+      "lastName": "姓",
+      "username": "用户名",
+      "phone": "电话",
+      "dateOfBirth": "出生日期",
+      "gender": "性别",
+      "studentClass": "班级"
+    },
+    "delivery": {
+      "sent": "邮件已发送。",
+      "failed": "发送失败，可以重试。",
+      "skipped": "电子邮件尚未配置，已跳过发送。",
+      "pending": "邮件已加入发送队列。"
+    },
+    "activation": {
+      "title": "账户已创建，请传达激活信息",
+      "notice": "用户可通过此链接，或使用标识符和激活码，自行设置密码。",
+      "link": "激活链接",
+      "code": "离线激活码",
+      "expires": "到期时间：{date}。",
+      "copy": "复制",
+      "copied": "已复制"
+    },
+    "errors": {
+      "generic": "操作失败，请重新加载档案。",
+      "ADMISSION_INCOMPLETE": "缺少必需材料。",
+      "ADMISSION_CONFLICT": "档案已更改，请重新加载后重试。",
+      "ADMISSION_QUOTA": "已达到校区配额或文件数量上限。",
+      "ADMISSION_DUPLICATE_STUDENT": "此学生身份已注册。",
+      "ADMISSION_INVALID_FILE": "文件无效、包含活动内容、已加密或过大。"
+    }
   }
 }

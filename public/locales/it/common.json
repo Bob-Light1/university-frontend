@@ -349,5 +349,77 @@
         "empty": "Nessuna sede da mostrare."
       }
     }
+  },
+  "admission": {
+    "title": "Domanda di ammissione",
+    "close": "Chiudi",
+    "requirements": "Documenti obbligatori",
+    "saveRequirements": "Salva requisiti",
+    "snapshotNotice": "Le modifiche valgono per i prossimi invii. Le domande inviate mantengono i propri requisiti.",
+    "noRequirements": "Nessun documento obbligatorio",
+    "category": "Categoria",
+    "upload": "Carica un documento",
+    "fileRules": "PDF passivo, PNG o JPEG; 5 MiB per file, massimo 10 file.",
+    "download": "Scarica",
+    "archive": "Archivia",
+    "archived": "Documenti archiviati",
+    "enrollment": "Completa l’iscrizione",
+    "sendAccess": "Invia un collegamento privato via e-mail",
+    "revokeAccess": "Revoca l’accesso privato",
+    "reissueActivation": "Riemetti l’attivazione dell’account",
+    "note": "Nota facoltativa",
+    "tuitionFee": "Base della retta per la commissione (facoltativa)",
+    "historical": "Questa iscrizione storica non ha uno studente collegato. Contatta un amministratore per la regolarizzazione.",
+    "required": "Campo obbligatorio",
+    "invalid": "Valore non valido",
+    "male": "Maschile",
+    "female": "Femminile",
+    "status": {
+      "new": "Nuovo",
+      "contacted": "Contattato",
+      "dossier_submitted": "Domanda inviata",
+      "admitted": "Ammesso",
+      "enrolled": "Iscritto",
+      "rejected": "Respinto",
+      "abandoned": "Abbandonato"
+    },
+    "categories": {
+      "identity": "Identità / nascita",
+      "diploma": "Diploma",
+      "transcript": "Certificato dei voti",
+      "other": "Altro"
+    },
+    "fields": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "username": "Nome utente",
+      "phone": "Telefono",
+      "dateOfBirth": "Data di nascita",
+      "gender": "Genere",
+      "studentClass": "Classe"
+    },
+    "delivery": {
+      "sent": "Messaggio inviato.",
+      "failed": "Invio non riuscito; è possibile riprovare.",
+      "skipped": "E-mail non configurata; invio saltato.",
+      "pending": "Messaggio in attesa di invio."
+    },
+    "activation": {
+      "title": "Account creato — condividi l’attivazione",
+      "notice": "L’utente sceglie la password con questo collegamento oppure con identificativo e codice.",
+      "link": "Collegamento di attivazione",
+      "code": "Codice di attivazione offline",
+      "expires": "Scade il {date}.",
+      "copy": "Copia",
+      "copied": "Copiato"
+    },
+    "errors": {
+      "generic": "Operazione non riuscita. Ricaricare la domanda.",
+      "ADMISSION_INCOMPLETE": "Mancano documenti obbligatori.",
+      "ADMISSION_CONFLICT": "La domanda è cambiata. Ricaricarla prima di riprovare.",
+      "ADMISSION_QUOTA": "Quota del campus o limite dei file raggiunto.",
+      "ADMISSION_DUPLICATE_STUDENT": "Questa identità studente è già registrata.",
+      "ADMISSION_INVALID_FILE": "Il file non è valido, è attivo, cifrato o troppo grande."
+    }
   }
 }
