@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../../hooks/useAppTranslation';
 import {
   Box, Stack, Typography, Paper, Chip, Button, IconButton, Tooltip,
   Alert, TextField, InputAdornment, MenuItem, Select, FormControl,
@@ -31,6 +31,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import {
   getNotificationLog,
   retryNotification,
+  getWhatsAppUsage,
 } from '../../../services/notificationService';
 import { fDateTime } from '../../../utils/dateFormat';
 
@@ -61,12 +62,12 @@ const CHANNEL_ICON = {
 // A row is replayable only for an external channel that hasn't been delivered and
 // is not already in flight (`sending` is a transient worker-claim state).
 const isRetryable = (row) =>
-  row.channel !== 'inapp' && !['sent', 'read', 'sending'].includes(row.status);
+  row.channel !== 'inapp' && !row.whatsapp?.submissionStartedAt && !['sent', 'read', 'sending'].includes(row.status);
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function NotificationLog() {
-  const { t } = useTranslation('notifications', { useSuspense: false });
+  const { t } = useAppTranslation('notifications');
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { campusId } = useParams();
@@ -76,6 +77,7 @@ export default function NotificationLog() {
   const [page,     setPage]     = useState(1);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(false);
+  const [usage, setUsage] = useState(null);
   const [retrying, setRetrying] = useState(null); // row id being replayed
 
   // Filters
@@ -97,6 +99,7 @@ export default function NotificationLog() {
         ...(campusId && { campusId }), // scope hint — ignored by backend for scoped roles
       });
       setRows(data?.data || []);
+      try { const result = await getWhatsAppUsage(campusId); setUsage(result.data.data); } catch { setUsage(null); }
       setTotal(data?.pagination?.total ?? 0);
     } catch {
       setError(true);
@@ -249,7 +252,7 @@ export default function NotificationLog() {
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
             <ChannelCell value={row.channel} />
-            <StatusChip value={row.status} />
+            <StatusChip value={row.channel === 'whatsapp' && row.whatsapp?.submissionStartedAt ? row.whatsapp.deliveryStatus : row.status} />
             {row.attempts > 0 && (
               <Typography variant="caption" color="text.secondary">
                 {t('log.attempts', { defaultValue: 'attempts' })}: {row.attempts}/{row.maxAttempts}
@@ -258,7 +261,7 @@ export default function NotificationLog() {
           </Stack>
           {row.lastError && (
             <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block', wordBreak: 'break-word' }}>
-              {row.lastError}
+              {t(`whatsapp.reasons.${row.lastError}`, { defaultValue: row.lastError })}
             </Typography>
           )}
         </Paper>
@@ -304,11 +307,11 @@ export default function NotificationLog() {
               </TableCell>
               <TableCell align="center">
                 {row.lastError ? (
-                  <Tooltip title={row.lastError}>
-                    <span><StatusChip value={row.status} /></span>
+                  <Tooltip title={t(`whatsapp.reasons.${row.lastError}`, { defaultValue: row.lastError })}>
+                    <span><StatusChip value={row.channel === 'whatsapp' && row.whatsapp?.submissionStartedAt ? row.whatsapp.deliveryStatus : row.status} /></span>
                   </Tooltip>
                 ) : (
-                  <StatusChip value={row.status} />
+                  <StatusChip value={row.channel === 'whatsapp' && row.whatsapp?.submissionStartedAt ? row.whatsapp.deliveryStatus : row.status} />
                 )}
               </TableCell>
               <TableCell align="center">
@@ -339,6 +342,7 @@ export default function NotificationLog() {
         </Box>
       </Stack>
 
+      {usage && <Alert severity={usage.remaining ? 'info' : 'warning'} sx={{ mb: 2 }} data-whatsapp-usage>{t('whatsapp.usage', usage)}</Alert>}
       {filtersBar}
 
       {loading ? (

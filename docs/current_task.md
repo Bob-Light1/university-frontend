@@ -1,40 +1,43 @@
 # Current task and handoff
 
-Last updated: 2026-10-23.
-Status: IN PROGRESS — phase 1-B row 5 online admission.
-Branch: main; preserve pre-existing AGENTS/context edits.
+Last updated: 2026-11-01.
+Status: COMPLETED — phase 1-B row 7 WhatsApp Business, source/local acceptance.
+Branch: main. Scoped local commits requested; no push, deployment or live Meta send.
 
-The owner approves candidate/private-email-link and manager dossier uploads,
-campus-configurable requirements with none required by default, and management
-finalization. Director/admin alone pronounces admission; no payment prerequisite.
-[Backend design/evidence](../../backend/docs/architecture/features/online-admission.md)
-owns scope, audits, tests and delivery gates.
+## Delivered scope
 
-Implemented: lead service/revision contract, serialized dossier hook, private
-file/config/access controls in LeadDetailDrawer, validated enrollment form,
-activation display/reissue, role/state guards, shared constants and ten locales.
-The existing partner route/navigation and Axios/session transport remain in use.
-API environment is VITE_API_BASE_URL (including /api), plus existing media/portal URLs.
+The [backend contract and evidence](../../backend/docs/architecture/features/whatsapp-business.md)
+own D-R11 quotas 500/2,000/5,000 per campus/UTC month, four event families,
+approved templates, explicit phone-bound consent and external activation.
 
-The reviewed sources are synchronized into this checkout. The owner now requests
-a checkpoint commit; admission remains in progress.
-The staged build passes with explicit loopback API configuration; earlier touched
-lint and 190 locale/namespace combinations pass. Browser acceptance is incomplete:
-a fresh configured build is ready. An earlier automatic-review quota rejection
-prevented its browser replay; scoped synchronization/pre-commit checks now resume. No
-push or deployment. Final lint/locale/build and full browser replay remain required.
+Shared identity-local consent hook, Formik/Yup dialog and account-menu entry serve
+all nine authenticated roles. Shared/parent legacy WhatsApp switches and summary
+chips are retired. The delivery log shows separate provider receipts, safe translated
+reasons and server-owned monthly usage; started submissions cannot be replayed.
+All ten locales are wired through existing Axios/session transport and
+VITE_API_BASE_URL. No new public-portal/AI contract or environment variable.
+Bounded existing AppNavBar/ParentProfile lint corrections accompany the touched UI.
 
-Manual cases ERP-ADM-001–005 are proposed in the prepared Workbench payload;
-the owner says editor membership will be granted. Verify and register before closure.
-Do not mark row 5 delivered or start a dependent row while its acceptance is pending.
-AI provider SLOs, CH-0 independent acceptance, GED release DDL and hosted CI retain
-their existing backend-owned boundaries.
+## Observed verification
 
-## Pre-commit verification — 2026-10-23
+Actual frontend production build, touched-file lint and 190 locale/namespace
+combinations pass. Backend full Jest passes 99 suites / 1,815 tests; later
+settings extraction passes 39 targeted tests and 102 facade assertions. The owned
+WhatsApp real-data journey passes 48/48; fixture/base checks pass 36/36 and 25/25.
+Complete browser replay passes 224/224, including 22 WhatsApp checks, with the
+focused flags unset. All six final consent/log captures are inspected in both
+themes for administrator and campus manager; enabled/read_only/hidden originating
+modules retain readable core history. Backend lint/audit and course 67/67 pass.
 
-Current synchronized-source checks pass: backend admission/contract/redirect suites
-44/44, portal 52/52 with lint and TypeScript, ERP touched lint and 190 locale/
-namespace combinations. The complete separate course guard passes 67/67 and
-references resolve. These supplement the dated build results above; final browser,
-latest production build and manual-case acceptance are still pending. The owner
-explicitly requests the local checkpoint commits; no push or deployment.
+ERP-WA-001–005 are registered through the existing Workbench editor and CLI;
+exact saved/revision bodies, unchanged prior cases/revisions and idempotent import
+are verified. No manual verdict is claimed. The backend note retains the failed
+readiness attempts and their corrections; no deliberate mutation remains.
+No executable frontend source changed after the validated build.
+
+## Remaining boundary
+
+No frontend implementation remains for this work item. No Meta account/configuration
+exists; real activation remains separate under the owner-approved backend runbook.
+CH-0 independent review, deployed AI SLOs, GED release DDL and hosted portal CI
+keep their owning gates. No later roadmap phase or independent Workbench increment.

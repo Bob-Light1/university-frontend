@@ -52,7 +52,34 @@
       "sent": "Gesendet",
       "failed": "Fehlgeschlagen",
       "skipped": "Übersprungen",
-      "read": "Gelesen"
+      "read": "Gelesen",
+      "accepted": "Vom Anbieter angenommen",
+      "delivered": "Zugestellt",
+      "unknown": "Zustellung unbestätigt"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp-Benachrichtigungen",
+    "scope": "Erhalten Sie veröffentlichte Ergebnisse, Prüfungsnoten, Gebührenerinnerungen und Betrugswarnungen des Campus über WhatsApp.",
+    "withdrawal": "Die Zustimmung ist freiwillig. Entfernen Sie das Häkchen und speichern Sie, um künftige Nachrichten zu stoppen. Eine neue Profilnummer erfordert eine neue Zustimmung.",
+    "agree": "Ich stimme diesen Benachrichtigungen an diese Nummer zu.",
+    "phone": "Internationale Telefonnummer",
+    "phoneHelp": "Verwenden Sie dieselbe internationale Nummer wie im Profil, beginnend mit +.",
+    "invalidPhone": "Geben Sie + und 7 bis 15 Ziffern ein.",
+    "error": "Zustimmung konnte nicht geladen oder gespeichert werden. Bitte erneut versuchen.",
+    "save": "Zustimmung speichern",
+    "cancel": "Abbrechen",
+    "usage": "WhatsApp · {month}: {used} / {limit} Übermittlungen reserviert; {remaining} übrig. Fehlgeschlagene oder ungewisse Übermittlungen zählen ebenfalls.",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "Ausdrückliche Zustimmung für diese Nummer erforderlich.",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "Keine genehmigte Vorlage für diese Sprache konfiguriert.",
+      "WHATSAPP_QUOTA_EXHAUSTED": "Das monatliche WhatsApp-Limit ist erreicht.",
+      "WHATSAPP_CAMPUS_REQUIRED": "Ein Campus ist erforderlich.",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "Übermittlung ungewiss; keine automatische Wiederholung.",
+      "WHATSAPP_SUBMISSION_FAILED": "Anbieterübermittlung fehlgeschlagen; keine automatische Wiederholung.",
+      "WHATSAPP_NOT_CONFIGURED": "WhatsApp ist für diese Installation nicht konfiguriert.",
+      "WHATSAPP_PHONE_REQUIRED": "Keine gültige internationale Telefonnummer verfügbar.",
+      "WHATSAPP_MODULE_DISABLED": "Das sendende Modul ist deaktiviert."
     }
   }
 }

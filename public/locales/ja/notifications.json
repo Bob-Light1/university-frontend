@@ -52,7 +52,34 @@
       "sent": "送信済み",
       "failed": "失敗",
       "skipped": "スキップ",
-      "read": "既読"
+      "read": "既読",
+      "accepted": "プロバイダーが受付済み",
+      "delivered": "配信済み",
+      "unknown": "配信未確認"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp通知",
+    "scope": "公開された成績、試験結果、学費の支払い案内、キャンパスの不正警告をWhatsAppで受け取ります。",
+    "withdrawal": "同意は任意です。チェックを外して保存すると今後の送信が停止します。プロフィールの番号を変更した場合は再度同意が必要です。",
+    "agree": "この番号でこれらの通知を受け取ることに同意します。",
+    "phone": "国際電話番号",
+    "phoneHelp": "プロフィールと同じ国際電話番号を+から入力してください。",
+    "invalidPhone": "+に続けて7〜15桁の数字を入力してください。",
+    "error": "同意の読み込みまたは保存ができませんでした。再試行してください。",
+    "save": "同意を保存",
+    "cancel": "キャンセル",
+    "usage": "WhatsApp · {month}：{used} / {limit}件の送信を予約済み、残り{remaining}件。失敗や結果不明の送信も含まれます。",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "この番号への明示的な同意が必要です。",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "この言語の承認済みテンプレートがありません。",
+      "WHATSAPP_QUOTA_EXHAUSTED": "WhatsAppの月間上限に達しました。",
+      "WHATSAPP_CAMPUS_REQUIRED": "キャンパスが必要です。",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "送信結果が不明のため自動再送しません。",
+      "WHATSAPP_SUBMISSION_FAILED": "プロバイダーへの送信に失敗したため自動再送しません。",
+      "WHATSAPP_NOT_CONFIGURED": "この環境ではWhatsAppが設定されていません。",
+      "WHATSAPP_PHONE_REQUIRED": "有効な国際電話番号がありません。",
+      "WHATSAPP_MODULE_DISABLED": "送信元のモジュールが無効です。"
     }
   }
 }

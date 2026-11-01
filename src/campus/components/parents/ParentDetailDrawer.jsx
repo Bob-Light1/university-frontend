@@ -324,7 +324,7 @@ const ParentDetailDrawer = ({ entity: parent, onClose, onEdit, onArchive, onRest
                     slotProps={{ primary: { variant: 'caption', color: 'text.secondary' } }}
                     secondary={
                       <Stack direction="row" spacing={0.5} flexWrap="wrap" component="span">
-                        {[['inapp', 'IN-APP'], ['email', 'EMAIL'], ['whatsapp', 'WHATSAPP']].map(([key, lbl]) => (
+                        {[['inapp', 'IN-APP'], ['email', 'EMAIL']].map(([key, lbl]) => (
                           <Chip
                             key={key}
                             label={lbl}

@@ -54,6 +54,7 @@ import { useAuth }             from '../hooks/useAuth';
 import { useAppTranslation }  from '../hooks/useAppTranslation';
 import { IMAGE_BASE_URL } from '../config/env';
 import NotificationBell from './notifications/NotificationBell';
+import WhatsAppConsentDialog from './notifications/WhatsAppConsentDialog';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -107,6 +108,9 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   const { t } = useAppTranslation('common');
 
   const [profileAnchor, setProfileAnchor] = useState(null);
+  const [avatarVersion] = useState(() => Date.now());
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const { t: tn } = useAppTranslation('notifications');
 
   const navigate     = useNavigate();
   const breadcrumbs  = useBreadcrumbs();
@@ -114,8 +118,8 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
   // Build avatar source URL (with cache-busting)
   const avatarSrc = user?.image_url
     ? (user.image_url.startsWith('http')
-        ? `${user.image_url}?t=${Date.now()}`
-        : `${IMAGE_BASE_URL}${user.image_url}?t=${Date.now()}`)
+        ? `${user.image_url}?t=${avatarVersion}`
+        : `${IMAGE_BASE_URL}${user.image_url}?t=${avatarVersion}`)
     : null;
 
   // Derive display name from any user type shape
@@ -288,7 +292,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
               onClick={handleProfileOpen}
               aria-controls="profile-menu"
               aria-haspopup="true"
-              aria-expanded={Boolean(profileAnchor) ? 'true' : undefined}
+              aria-expanded={profileAnchor ? 'true' : undefined}
               sx={{ p: 0, ml: 0.5 }}
             >
               <Avatar
@@ -375,6 +379,8 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
               )}
             </Box>
 
+            <MenuItem data-whatsapp-consent onClick={() => { handleProfileClose(); setWhatsappOpen(true); }}>{tn('whatsapp.title')}</MenuItem>
+
             {profileRoute && (
               <MenuItem onClick={handleGoProfile} sx={{ gap: 1.5, py: 1.2 }}>
                 <ListItemIcon sx={{ minWidth: 'unset' }}>
@@ -407,6 +413,7 @@ const AppNavBar = ({ drawerOpen, onDrawerOpen, pageTitle }) => {
           </Menu>
         </Toolbar>
       </StyledAppBar>
+      <WhatsAppConsentDialog open={whatsappOpen} onClose={() => setWhatsappOpen(false)} />
     </>
   );
 };

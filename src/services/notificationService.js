@@ -35,3 +35,10 @@ export const getNotificationLog = (params) =>
 
 export const retryNotification = (id) =>
   api.post(`/notifications/${id}/retry`);
+
+/** Retrieve the caller's current explicit permission and consent text version. */
+export const getWhatsAppConsent = () => api.get('/notifications/my/whatsapp-consent');
+/** Grant or revoke consent for the caller; never accepts another user/campus id. */
+export const updateWhatsAppConsent = (input) => api.put('/notifications/my/whatsapp-consent', input);
+/** Campus-scoped monthly reserved submission count. */
+export const getWhatsAppUsage = (campusId) => api.get('/notifications/whatsapp-usage', { params: { campusId } });

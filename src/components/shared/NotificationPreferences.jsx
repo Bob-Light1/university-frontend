@@ -1,12 +1,12 @@
 /**
  * @file NotificationPreferences.jsx
- * @description Reusable panel for editing notification preferences. The keys mirror
- * the real delivery channels honoured by the backend: in-app, email, WhatsApp.
+ * @description Reusable panel for legacy in-app/email preferences. WhatsApp uses
+ * the dedicated phone-bound consent dialog, independent of legacy flags.
  * In-app is the baseline inbox — always on and not user-disableable.
- * Used in all profile pages (Student, Teacher, Admin, Mentor, Staff, Parent).
+ * Used in shared role profile pages; parent preferences use their own form.
  *
  * Props:
- *  value       { inapp: bool, email: bool, whatsapp: bool }
+ *  value       { inapp: bool, email: bool, whatsapp?: legacy bool }
  *  onChange    (updatedPrefs) => void  — called immediately on toggle
  *  onSave      () => Promise           — called when user clicks Save
  *  onError     (err) => void           — called if onSave rejects (optional)
@@ -19,6 +19,7 @@ import {
   Paper, Stack, Typography, Divider, Switch,
   Button, CircularProgress,
 } from '@mui/material';
+import WhatsAppConsentDialog from '../notifications/WhatsAppConsentDialog';
 import { Notifications } from '@mui/icons-material';
 import { useAppTranslation } from '../../hooks/useAppTranslation';
 
@@ -32,13 +33,15 @@ export default function NotificationPreferences({
 }) {
   const { t } = useAppTranslation('common');
   const [saving, setSaving] = useState(false);
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const { t: tn } = useAppTranslation('notifications');
 
   // `locked` channels are always on and cannot be toggled (the in-app inbox is the
   // baseline — every user always receives in-app notifications).
   const PREFS_META = [
     { key: 'inapp',    label: t('notifPref.inapp'),    description: t('notifPref.inappDesc'),    locked: true },
     { key: 'email',    label: t('notifPref.email'),    description: t('notifPref.emailDesc') },
-    { key: 'whatsapp', label: t('notifPref.whatsapp'), description: t('notifPref.whatsappDesc') },
+
   ];
 
   const handleToggle = (key, locked) => {
@@ -91,6 +94,8 @@ export default function NotificationPreferences({
         ))}
       </Stack>
 
+      <Button onClick={() => setWhatsappOpen(true)}>{tn('whatsapp.title')}</Button>
+      <WhatsAppConsentDialog open={whatsappOpen} onClose={() => setWhatsappOpen(false)} />
       <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
         <Button
           variant="contained"

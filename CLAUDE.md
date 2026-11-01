@@ -332,3 +332,17 @@ one-time credentials from the finalization response; subsequent reads require
 explicit reissue. Read-only scoped identities keep history and cannot mutate.
 The [backend admission note](../backend/docs/architecture/features/online-admission.md)
 owns the API and unfinished acceptance gates. No new environment variable is added.
+
+## WhatsApp Business consent and delivery
+
+All nine authenticated account menus expose the shared
+`components/notifications/WhatsAppConsentDialog.jsx`. The identity-local
+`useWhatsAppConsent` hook and `notificationService` consume the backend's own-consent
+endpoints; `whatsappConsentSchema` mirrors its explicit international-number
+validation. Existing actor channel flags never grant consent. The version comes
+from the server, and the dialog explains scope and withdrawal in all ten locales.
+`NotificationLog` displays provider receipts separately from submission status,
+translates safe skip codes and reads the authenticated campus's UTC-month usage.
+A submission already started is never offered for replay. The backend
+[contract and acceptance](../backend/docs/architecture/features/whatsapp-business.md)
+own policy, transport and release readiness; no Meta credential belongs in Vite.

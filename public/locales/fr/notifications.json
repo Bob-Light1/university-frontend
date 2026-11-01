@@ -9,9 +9,25 @@
   "loadMore": "Charger plus",
   "loadError": "Échec du chargement des notifications.",
   "retry": "Réessayer",
-  "type": { "announcement": "Annonce", "result": "Nouveaux résultats", "attendance": "Alerte présence", "payment": "Rappel paiement", "exam": "Rappel examen", "document": "Document partagé", "system": "Système" },
-  "announcement": { "new": "Nouvelle annonce", "from": "De", "pinned": "Épinglé" },
-  "alert": { "absence": "Alerte absence", "latePayment": "Paiement en retard", "examUpcoming": "Examen à venir" },
+  "type": {
+    "announcement": "Annonce",
+    "result": "Nouveaux résultats",
+    "attendance": "Alerte présence",
+    "payment": "Rappel paiement",
+    "exam": "Rappel examen",
+    "document": "Document partagé",
+    "system": "Système"
+  },
+  "announcement": {
+    "new": "Nouvelle annonce",
+    "from": "De",
+    "pinned": "Épinglé"
+  },
+  "alert": {
+    "absence": "Alerte absence",
+    "latePayment": "Paiement en retard",
+    "examUpcoming": "Examen à venir"
+  },
   "log": {
     "title": "Journal de livraison des notifications",
     "subtitle": "Suivre et relancer les envois multicanaux",
@@ -36,7 +52,34 @@
       "sent": "Envoyé",
       "failed": "Échoué",
       "skipped": "Ignoré",
-      "read": "Lu"
+      "read": "Lu",
+      "accepted": "Accepté par le fournisseur",
+      "delivered": "Distribué",
+      "unknown": "Livraison non confirmée"
+    }
+  },
+  "whatsapp": {
+    "title": "Notifications WhatsApp",
+    "scope": "Recevez sur WhatsApp les résultats publiés, les notes d’examen, les rappels de frais et les alertes de fraude du campus.",
+    "withdrawal": "Le consentement est facultatif. Décochez et enregistrez pour arrêter les prochains envois. Un nouveau numéro de profil nécessite un nouveau consentement.",
+    "agree": "J’accepte de recevoir ces notifications sur ce numéro.",
+    "phone": "Numéro de téléphone international",
+    "phoneHelp": "Utilisez le même numéro international que votre profil, avec le préfixe +.",
+    "invalidPhone": "Saisissez + suivi de 7 à 15 chiffres.",
+    "error": "Impossible de charger ou d’enregistrer le consentement. Réessayez.",
+    "save": "Enregistrer le consentement",
+    "cancel": "Annuler",
+    "usage": "WhatsApp · {month} : {used} / {limit} soumissions réservées ; {remaining} restantes. Les échecs et résultats incertains comptent aussi.",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "Le consentement explicite pour ce numéro est requis.",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "Aucun modèle approuvé n’est configuré pour cette langue.",
+      "WHATSAPP_QUOTA_EXHAUSTED": "Le plafond WhatsApp mensuel est atteint.",
+      "WHATSAPP_CAMPUS_REQUIRED": "Un campus est requis.",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "Résultat incertain ; aucun renvoi automatique.",
+      "WHATSAPP_SUBMISSION_FAILED": "Échec de soumission au fournisseur ; aucun renvoi automatique.",
+      "WHATSAPP_NOT_CONFIGURED": "WhatsApp n’est pas configuré pour cette installation.",
+      "WHATSAPP_PHONE_REQUIRED": "Aucun numéro international valide n’est disponible.",
+      "WHATSAPP_MODULE_DISABLED": "Le module émetteur est désactivé."
     }
   }
 }

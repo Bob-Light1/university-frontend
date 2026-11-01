@@ -52,7 +52,34 @@
       "sent": "Enviada",
       "failed": "Fallida",
       "skipped": "Omitida",
-      "read": "Leída"
+      "read": "Leída",
+      "accepted": "Aceptado por el proveedor",
+      "delivered": "Entregado",
+      "unknown": "Entrega sin confirmar"
+    }
+  },
+  "whatsapp": {
+    "title": "Notificaciones de WhatsApp",
+    "scope": "Recibe resultados publicados, notas de examen, recordatorios de cuotas y alertas de fraude del campus por WhatsApp.",
+    "withdrawal": "El consentimiento es opcional. Desmarca y guarda para detener futuros envíos. Cambiar el número del perfil requiere un nuevo consentimiento.",
+    "agree": "Acepto recibir estas notificaciones en este número.",
+    "phone": "Número de teléfono internacional",
+    "phoneHelp": "Usa el mismo número internacional que en tu perfil, empezando por +.",
+    "invalidPhone": "Introduce + seguido de 7 a 15 dígitos.",
+    "error": "No se pudo cargar o guardar el consentimiento. Inténtalo de nuevo.",
+    "save": "Guardar consentimiento",
+    "cancel": "Cancelar",
+    "usage": "WhatsApp · {month}: {used} / {limit} envíos reservados; quedan {remaining}. También cuentan los envíos fallidos o inciertos.",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "Se requiere consentimiento explícito para este número.",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "No hay plantilla aprobada para este idioma.",
+      "WHATSAPP_QUOTA_EXHAUSTED": "Se ha alcanzado el límite mensual de WhatsApp.",
+      "WHATSAPP_CAMPUS_REQUIRED": "Se requiere un campus.",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "Resultado incierto; no se reenvía automáticamente.",
+      "WHATSAPP_SUBMISSION_FAILED": "Falló el envío al proveedor; no se reenvía automáticamente.",
+      "WHATSAPP_NOT_CONFIGURED": "WhatsApp no está configurado para esta instalación.",
+      "WHATSAPP_PHONE_REQUIRED": "No hay un número internacional válido disponible.",
+      "WHATSAPP_MODULE_DISABLED": "El módulo emisor está desactivado."
     }
   }
 }

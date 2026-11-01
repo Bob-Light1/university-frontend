@@ -52,7 +52,34 @@
       "sent": "Sent",
       "failed": "Failed",
       "skipped": "Skipped",
-      "read": "Read"
+      "read": "Read",
+      "accepted": "Accepted by provider",
+      "delivered": "Delivered",
+      "unknown": "Delivery unconfirmed"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp notifications",
+    "scope": "Receive published results, exam grades, fee reminders and campus fraud alerts on WhatsApp.",
+    "withdrawal": "Consent is optional. Uncheck and save to stop future sends. Changing your profile number requires new consent.",
+    "agree": "I agree to receive these notifications on this number.",
+    "phone": "International phone number",
+    "phoneHelp": "Use the same international number as your profile, starting with +.",
+    "invalidPhone": "Enter + followed by 7 to 15 digits.",
+    "error": "Unable to load or save consent. Please try again.",
+    "save": "Save consent",
+    "cancel": "Cancel",
+    "usage": "WhatsApp · {month}: {used} / {limit} submissions reserved; {remaining} remaining. Failed or uncertain submissions also count.",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "Explicit consent for this number is required.",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "No approved template is configured for this language.",
+      "WHATSAPP_QUOTA_EXHAUSTED": "The monthly WhatsApp limit has been reached.",
+      "WHATSAPP_CAMPUS_REQUIRED": "A campus is required.",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "Submission outcome is uncertain; no automatic resend.",
+      "WHATSAPP_SUBMISSION_FAILED": "Provider submission failed; no automatic resend.",
+      "WHATSAPP_NOT_CONFIGURED": "WhatsApp is not configured for this deployment.",
+      "WHATSAPP_PHONE_REQUIRED": "No valid international phone number is available.",
+      "WHATSAPP_MODULE_DISABLED": "The sending module is disabled."
     }
   }
 }

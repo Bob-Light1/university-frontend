@@ -52,7 +52,34 @@
       "sent": "已发送",
       "failed": "失败",
       "skipped": "已跳过",
-      "read": "已读"
+      "read": "已读",
+      "accepted": "服务商已接受",
+      "delivered": "已送达",
+      "unknown": "送达未确认"
+    }
+  },
+  "whatsapp": {
+    "title": "WhatsApp通知",
+    "scope": "通过WhatsApp接收已发布的成绩、考试分数、缴费提醒和校区欺诈警报。",
+    "withdrawal": "同意为自愿。取消勾选并保存即可停止后续发送。更改个人资料中的号码后需要重新同意。",
+    "agree": "我同意在此号码接收这些通知。",
+    "phone": "国际电话号码",
+    "phoneHelp": "请输入与个人资料相同的国际号码，以+开头。",
+    "invalidPhone": "请输入+及7至15位数字。",
+    "error": "无法加载或保存同意设置，请重试。",
+    "save": "保存同意",
+    "cancel": "取消",
+    "usage": "WhatsApp · {month}：已预留{used} / {limit}次发送，剩余{remaining}次。失败或结果不明的发送也会计入。",
+    "reasons": {
+      "WHATSAPP_CONSENT_REQUIRED": "需要对此号码的明确同意。",
+      "WHATSAPP_TEMPLATE_UNAVAILABLE": "此语言未配置已批准的模板。",
+      "WHATSAPP_QUOTA_EXHAUSTED": "已达到WhatsApp月度上限。",
+      "WHATSAPP_CAMPUS_REQUIRED": "需要指定校区。",
+      "WHATSAPP_SUBMISSION_UNCERTAIN": "发送结果不明，不会自动重发。",
+      "WHATSAPP_SUBMISSION_FAILED": "向服务商发送失败，不会自动重发。",
+      "WHATSAPP_NOT_CONFIGURED": "此部署尚未配置WhatsApp。",
+      "WHATSAPP_PHONE_REQUIRED": "没有有效的国际电话号码。",
+      "WHATSAPP_MODULE_DISABLED": "发送模块已停用。"
     }
   }
 }

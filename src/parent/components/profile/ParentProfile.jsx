@@ -171,10 +171,7 @@ const ProfileForm = ({ parent, onSaved, onCancel, onError }) => {
               control={<Switch name="notifEmail" checked={formik.values.notifEmail} onChange={formik.handleChange} />}
               label="Email"
             />
-            <FormControlLabel
-              control={<Switch name="notifWhatsapp" checked={formik.values.notifWhatsapp} onChange={formik.handleChange} />}
-              label="WhatsApp"
-            />
+
           </Stack>
         </Grid>
 
@@ -296,7 +293,6 @@ const ParentProfile = () => {
     setSnackbar({ open: true, message, severity });
 
   const fetchProfile = () => {
-    setLoading(true);
     getMe()
       .then(({ data }) => setParent(data.data))
       .catch((err) => setError(err.response?.data?.message || 'Failed to load profile.'))
@@ -421,7 +417,7 @@ const ParentProfile = () => {
                   <Box>
                     <Typography variant="caption" color="text.secondary">Notifications</Typography>
                     <Stack direction="row" spacing={0.5} sx={{ mt: 0.25 }}>
-                      {[['inapp', 'IN-APP'], ['email', 'EMAIL'], ['whatsapp', 'WHATSAPP']].map(([k, lbl]) => (
+                      {[['inapp', 'IN-APP'], ['email', 'EMAIL']].map(([k, lbl]) => (
                         <Chip
                           key={k}
                           label={lbl}
@@ -479,6 +475,7 @@ const ParentProfile = () => {
               onSaved={() => {
                 setEditMode(false);
                 showSnack('Profile updated successfully.');
+                setLoading(true);
                 fetchProfile();
               }}
               onError={(msg) => showSnack(msg, 'error')}
